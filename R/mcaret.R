@@ -1,8 +1,8 @@
 #' Perform mutlivariate ensemble learning with models available in caret
 #'
-#' This function allows you to perform ensemble learning on mutliple response variables (SNP loci/OTUs/Species)
-#' @param X is a data.frame with rows as sites or individuals/populations and columns as loci/species/OTUs.
-#' @param Y is a data.frame with rows as sites or individuals/populations and columns as features e.henvironmental'host/demographic variables.
+#' This function allows you to perform ensemble learning on mutliple response variables (SNP loci or OTUs or Species)
+#' @param X is a data.frame with rows as sites or individuals/populations and columns as loci or species or OTUs.
+#' @param Y is a data.frame with rows as sites or individuals/populations and columns as features e.g. environmental or host or demographic variables.
 #' @param grid is the model specific grid of values to tune each model e.g. random forest. Not quite working properly yet
 #' @keywords multivariate ensemble learning
 #' @export
