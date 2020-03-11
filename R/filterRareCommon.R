@@ -1,6 +1,6 @@
 #' Filter rare or common OTUs or SNPs or species from your response data
 #'
-#' This function allows you to remove OTUs/SNPs/species from your response data as a preprocessing step. Suitable when the response is a binary outcome (e.g. presence or absence)
+#' This function allows you to remove OTUs or SNPs or species from your response data as a preprocessing step. Suitable when the response is a binary outcome (e.g. presence or absence)
 #' @param X is a data.frame with rows as sites or individuals or populations and columns as loci or species OTUs.
 #' @param lower is the lower threshold value (percentage) in which response varialkes are removed from the data.frame.
 #' @param higher is the upper threshold value (percenatge) in which response varialkes are removed from the data.frame.
