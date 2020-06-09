@@ -121,7 +121,6 @@ StackPredictions = function(yhats, data.test, covariance_mod = 'gbm'){
                                           as.matrix(predictors)),
                        n.trees = 1000, shrinkage = 0.01, interaction.depth = 3,
                        cv.folds = 10, keep.data = T)
-    rhat_k <- predict(mod2_k)
     }
     
     if(covariance_mod == 'gam'){
@@ -133,7 +132,6 @@ StackPredictions = function(yhats, data.test, covariance_mod = 'gbm'){
                                               ", bs = 'cs', k = 5)",collapse = "+")))
       mod2_k <- mgcv::gam(gam_formula, data = cbind(data.frame(Y = outcome),
                                             as.matrix(predictors)))
-      rhat_k <- mgcv::predict.gam(mod2_k, outcome = 'response')
     }
     
     if(covariance_mod == 'lm'){
@@ -142,12 +140,10 @@ StackPredictions = function(yhats, data.test, covariance_mod = 'gbm'){
                                        paste0(colnames(predictors),collapse = "+")))
       mod2_k <- lm(lm_formula, data = cbind(data.frame(Y = outcome),
                                                     as.matrix(predictors)))
-      rhat_k <- predict(mod2_k, outcome = 'response')
     }
     
     # Return the model as well as the 'multivariate residual adjustments'
-    list(rhat_k = rhat_k,
-         mod2_k = mod2_k, pred_names = colnames(predictors))
+    list(mod2_k = mod2_k, pred_names = colnames(predictors))
   })
   
   # Now to generate the stacked predictions
@@ -156,7 +152,7 @@ StackPredictions = function(yhats, data.test, covariance_mod = 'gbm'){
     
     # Predict mod 1 for each species using the out-of-sample test data
     mod1_test_preds <- do.call(cbind, lapply(seq(1, n_variables), function(y){
-      # may need to find the class in order to specify the predict function class(yhats[[1]]$mod1)
+      # may need to find class of mod1 in order to specify the predict function: class(yhats[[1]]$mod1)
       predict(yhats[[y]]$mod1, newdata = data.test, type = 'response') 
     }))
     
