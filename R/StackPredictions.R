@@ -157,7 +157,7 @@ StackPredictions = function(yhats, data.test, covariance_mod = 'gbm'){
     }))
     
     # Predict mod 2 'adjustments' using the test mod 1's predictions
-    mod2_test_preds <- do.call(cbind, lapply(seq(1, 4), function(y){
+    mod2_test_preds <- do.call(cbind, lapply(seq(1, n_variables), function(y){
       test_preds <- data.frame(mod1_test_preds[,-y])
       colnames(test_preds) <- rhats[[y]]$pred_names
       
@@ -173,12 +173,13 @@ StackPredictions = function(yhats, data.test, covariance_mod = 'gbm'){
       adj_preds
     }))
     
-    # Adjust predictions using the 'proportion of the inverted distance' metric
-    # and convert them to the outcome scale
+    # Adjust predictions using the Xing et al 'proportion of the inverted distance' metric
+    # and convert them to the outcome probability scale
     d1 <- abs(1 / (mod2_test_preds[,species] - sqrt((-2 * log(mod1_test_preds[,species])))))
     d0 <- abs(1 / (mod2_test_preds[,species] + sqrt((-2 * log(mod1_test_preds[,species])))))
-    
     final_preds <- d1 / (d1 + d0)
+    
+    # Return both the probability predictions and the binary predictions
     final_preds_binary <- ifelse(final_preds > 0.4999, 1, 0)
     list(probability_preds = final_preds,
          binary_preds = final_preds_binary)
