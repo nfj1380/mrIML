@@ -2,5 +2,6 @@
 
 export(CreateBalancedFolds)
 export(CreateBalancedMultiFolds)
+export(StackPredictions)
 export(filterRareCommon)
 export(mcaret)

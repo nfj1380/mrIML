@@ -2,18 +2,18 @@
 % Please edit documentation in R/filterRareCommon.R
 \name{filterRareCommon}
 \alias{filterRareCommon}
-\title{Filter rare or common OTUs/SNPs/species from your response data}
+\title{Filter rare or common OTUs or SNPs or species from your response data}
 \usage{
 filterRareCommon(X, lower = 0.25, higher = 0.75)
 }
 \arguments{
-\item{X}{is a data.frame with rows as sites or individuals/populations and columns as loci/species/OTUs.}
+\item{X}{is a data.frame with rows as sites or individuals or populations and columns as loci or species OTUs.}
 
-\item{lower}{is the lower threshold value (%) in which response varialkes are removed from the data.frame.}
+\item{lower}{is the lower threshold value  in which response varialkes are removed from the data.frame.}
 
-\item{higher}{is the upper threshold value (%) in which response varialkes are removed from the data.frame.}
+\item{higher}{is the upper threshold value  in which response varialkes are removed from the data.frame.}
 }
 \description{
-This function allows you to remove OTUs/SNPs/species from your response data as a preprocessing step. Suitable when the response is a binary outcome (e.g. presence/absence)
+This function allows you to remove OTUs or SNPs or species from your response data as a preprocessing step. Suitable when the response is a binary outcome.
 }
 \keyword{filter}

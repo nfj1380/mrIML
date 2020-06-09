@@ -7,14 +7,14 @@
 mcaret(X, Y, grid)
 }
 \arguments{
-\item{X}{is a data.frame with rows as sites or individuals/populations and columns as loci/species/OTUs.}
+\item{X}{is a data.frame with rows as sites or individuals/populations and columns as loci or species or OTUs.}
 
-\item{Y}{is a data.frame with rows as sites or individuals/populations and columns as features e.henvironmental'host/demographic variables.}
+\item{Y}{is a data.frame with rows as sites or individuals/populations and columns as features e.g. environmental or host or demographic variables.}
 
 \item{grid}{is the model specific grid of values to tune each model e.g. random forest. Not quite working properly yet}
 }
 \description{
-This function allows you to perform ensemble learning on mutliple response variables (SNP loci/OTUs/Species)
+This function allows you to perform ensemble learning on mutliple response variables
 }
 \keyword{ensemble}
 \keyword{learning}
