@@ -60,15 +60,9 @@
 #'# Calculate probability predictions for the fitted training data
 #'yhat <- predict(mod1, type = 'response')
 #'
-#'# Calculate deviance residuals
-#'# To calc residuals consistently for gbm or others for binomial models we need the formula
-#'# train.dat[, species] equals binary observations; yhat equals model probability predictions
-#'resid <- ifelse(train.dat[, species] == 1, 
-#'sqrt((-2 * log(yhat))), 
-#'-1 * (sqrt((-2*log(1 - yhat)))))
-#'resid <- as.vector(resid)
-#'#resid <- residuals(mod1, "deviance")
-#'list(mod1 = mod1, yhat = yhat, resid = resid)
+#' Calculate deviance residuals 
+#' resid <- devianceResids(yhat, train.dat[, species])
+#' list(mod1 = mod1, yhat = yhat, resid = resid)
 #'})
 #'
 #'# A GAM example for the covariance matrix

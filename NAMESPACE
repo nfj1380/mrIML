@@ -3,5 +3,6 @@
 export(CreateBalancedFolds)
 export(CreateBalancedMultiFolds)
 export(StackPredictions)
+export(devianceResids)
 export(filterRareCommon)
 export(mcaret)
