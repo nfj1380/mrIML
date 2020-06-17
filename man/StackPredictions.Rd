@@ -25,6 +25,14 @@ learning the covariance matrix. Allowed options are currently 'gbm', 'gam' or 'l
 for gbm models, \code{1000} regression trees will be stored for each outcome variable. Due to memory constraints, 
 datasets with \code{>50} outcomes therefore cannot use gbm and will instead use a penalized gam by default}
 }
+\value{
+A \code{list} of length \code{length(yhats)} containing:
+\itemize{
+   \item \code{probability_preds}: Predictions for \code{data.test} on the probability scale
+   \item \code{binary_preds}: Predictions for \code{data.test} on the binary scale, where
+   \code{probability_preds >= 0.5 <- 1}
+   }
+}
 \description{
 This function fits separate penalized models to the residuals for each outcome variable 
 to estimate parameters of complex multivariate variance covariance matrices. 
@@ -68,14 +76,8 @@ family = 'binomial', data = train.dat)
 # Calculate probability predictions for the fitted training data
 yhat <- predict(mod1, type = 'response')
 
-# Calculate deviance residuals
-# To calc residuals consistently for gbm or others for binomial models we need the formula
-# train.dat[, species] equals binary observations; yhat equals model probability predictions
-resid <- ifelse(train.dat[, species] == 1, 
-sqrt((-2 * log(yhat))), 
--1 * (sqrt((-2*log(1 - yhat)))))
-resid <- as.vector(resid)
-#resid <- residuals(mod1, "deviance")
+Calculate deviance residuals 
+resid <- devianceResids(yhat, train.dat[, species])
 list(mod1 = mod1, yhat = yhat, resid = resid)
 })
 

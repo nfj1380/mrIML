@@ -21,6 +21,12 @@
 #'learning the covariance matrix. Allowed options are currently 'gbm', 'gam' or 'lm'. Note that
 #'for gbm models, \code{1000} regression trees will be stored for each outcome variable. Due to memory constraints, 
 #'datasets with \code{>50} outcomes therefore cannot use gbm and will instead use a penalized gam by default
+#'@return A \code{list} of length \code{length(yhats)} containing:
+#'\itemize{
+#'    \item \code{probability_preds}: Predictions for \code{data.test} on the probability scale
+#'    \item \code{binary_preds}: Predictions for \code{data.test} on the binary scale, where
+#'    \code{probability_preds >= 0.5 <- 1}
+#'    }
 #'@references Xing, L, Lesperance, ML and Zhang, X (2020). Simultaneous prediction of multiple outcomes 
 #'using revised stacking algorithms. Bioinformatics, 36, 65-72.
 #'
@@ -111,7 +117,7 @@ StackPredictions = function(yhats, data.test, covariance_mod = 'gbm'){
     
     if(covariance_mod == 'gbm'){
     # Use a boosted regression tree to learn complex, nonlinear covariance relationships
-    mod2_k <- gbm::gbm(Y ~., data = cbind(data.frame(Y = outcome),
+    mod2 <- gbm::gbm(Y ~., data = cbind(data.frame(Y = outcome),
                                           as.matrix(predictors)),
                        n.trees = 1000, shrinkage = 0.01, interaction.depth = 3,
                        cv.folds = 10, keep.data = T)
@@ -121,10 +127,23 @@ StackPredictions = function(yhats, data.test, covariance_mod = 'gbm'){
       # Use a GAM to learn the covariance matrix
       # Include each other outcome as a smooth predictor and use penalisation to
       # force coefficients to zero if support is limited. No interactions here
+      max_knots <- apply(predictors, 2, function(x) length(unique(x)))
+      
+      # Need to set terms with few max_knots to be linear terms
+      predictor_formula <- matrix(NA, nrow = 1, ncol = ncol(predictors))
+      for(i in 1:ncol(predictors)){
+        predictor_formula[1, i] <- ifelse(max_knots[i] < 5, 
+                                          colnames(predictors)[i],
+                                          paste0("s(", colnames(predictors)[i],", 
+                                                bs = 'cs', k = 5",
+                                                ")"))
+      }
+      
+      predictor_terms <- paste0(predictor_formula[1,],
+                                collapse = '+')
       gam_formula <- as.formula(paste0("Y~", 
-                                       paste0("s(",colnames(predictors),
-                                              ", bs = 'cs', k = 5)",collapse = "+")))
-      mod2_k <- mgcv::gam(gam_formula, data = cbind(data.frame(Y = outcome),
+                                       predictor_terms))
+      mod2 <- mgcv::gam(gam_formula, data = cbind(data.frame(Y = outcome),
                                             as.matrix(predictors)))
     }
     
@@ -132,12 +151,12 @@ StackPredictions = function(yhats, data.test, covariance_mod = 'gbm'){
       # Use a simple linear model to learn the covariance matrix
       lm_formula <- as.formula(paste0("Y~", 
                                        paste0(colnames(predictors),collapse = "+")))
-      mod2_k <- lm(lm_formula, data = cbind(data.frame(Y = outcome),
+      mod2 <- lm(lm_formula, data = cbind(data.frame(Y = outcome),
                                                     as.matrix(predictors)))
     }
     
     # Return the model as well as the 'multivariate residual adjustments'
-    list(mod2_k = mod2_k, pred_names = colnames(predictors))
+    list(mod2 = mod2, pred_names = colnames(predictors))
   })
   
   # Now to generate the stacked predictions
@@ -156,13 +175,13 @@ StackPredictions = function(yhats, data.test, covariance_mod = 'gbm'){
       colnames(test_preds) <- rhats[[y]]$pred_names
       
       if(covariance_mod == 'gbm'){
-        adj_preds <- gbm::predict.gbm(rhats[[y]]$mod2_k, newdata = test_preds, verbose = F)
+        adj_preds <- gbm::predict.gbm(rhats[[y]]$mod2, newdata = test_preds, verbose = F)
       }
       if(covariance_mod == 'gam'){
-        adj_preds <- mgcv::predict.gam(rhats[[y]]$mod2_k, newdata = test_preds)
+        adj_preds <- mgcv::predict.gam(rhats[[y]]$mod2, newdata = test_preds)
       }
       if(covariance_mod == 'lm'){
-        adj_preds <- predict(rhats[[y]]$mod2_k, newdata = test_preds)
+        adj_preds <- predict(rhats[[y]]$mod2, newdata = test_preds)
       }
       adj_preds
     }))
