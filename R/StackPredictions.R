@@ -44,8 +44,35 @@
 #'
 #'# Load the MRFcov library to access the testing dataset
 #'library(MRFcov)
-#'data("Bird.parasites")
+
+#could merge this into one function i.e. model 1 and model 2 combined?
+
+data("Bird.parasites")
 #'
+#'
+if(!require(devtools)){
+install.packages('devtools')
+}
+
+if(!require(caret)){
+  install.packages('caret')
+}
+
+if(!require(gbm)){
+  install.packages('gbm')
+}
+
+if(!require(MRFcov)){
+  devtools::install_github('nicholasjclark/MRFcov')
+}
+
+if(!require(tidymodels)){
+  install.packages('tidymodels')
+}
+
+
+# Load the MRFcov library to access the testing dataset
+library(MRFcov)
 #'# A simple split of the data into training and testing subsets
 #'train.dat <- Bird.parasites[1:350, ]
 #'test.dat <- Bird.parasites[351:449, ]
@@ -55,40 +82,122 @@
 #'# from simple regressions to complex hierarchical or deep learning models.
 #'
 #'# Different structures can also be used for each species to handle mixed multivariate outcomes
-#'yhats <- lapply(colnames(Bird.parasites)[1:4], function(species){
-#'
-#'# Fit model one for each parasite; can easily modify this so that the user
-#'# can specify the formula necessary for each species as a list of formulas
-#'
-#'mod1 <- glm(formula(paste0(species,' ~ scale.prop.zos')), 
-#'family = 'binomial', data = train.dat)
-#'
-#'# Calculate probability predictions for the fitted training data
-#'yhat <- predict(mod1, type = 'response')
-#'
-#' Calculate deviance residuals 
-#' resid <- devianceResids(yhat, train.dat[, species])
-#' list(mod1 = mod1, yhat = yhat, resid = resid)
-#'})
-#'
-#'# A GAM example for the covariance matrix
-#'gam_stack <- StackPredictions(yhats, data.test = test.dat, covariance_mod = 'gam')
-#'
-#'# Calculate prediction accuracies for the stacked model and compare to the 
-#'# simpler univariate model (i.e. model 1 only) for each species
-#'lapply(seq(1, 4), function(species){
-#'stacked_stats <- caret::confusionMatrix(factor(gam_stack$binary_preds[, species]), 
-#'factor(as.matrix(test.dat)[, species]))
-#'single_preds <- predict(yhats[[species]]$mod1, newdata = test.dat, type = 'response')
-#'single_preds <- ifelse(single_preds > 0.4999, 1, 0)
-#'single_stats <- caret::confusionMatrix(factor(single_preds), 
-#'factor(as.matrix(test.dat)[, species]))
-#'list(stacked_stats = round(stacked_stats$overall, 4),
-#'single_stats = round(single_stats$overall, 4))
-#'})
-#'
-#'@export
-#'
+
+
+X <- select(Bird.parasites, -scale.prop.zos) #response variables eg. SNPs, pathogens, species....
+Y <- select(Bird.parasites, scale.prop.zos) # feature set
+
+
+
+#user can specify any tidy model here. 
+
+#user provides the models they would like for each component (model1, model2 for the second bit)
+model1 <- #model used to generate yhat
+  # specify that the model is a random forest
+  logistic_reg() %>%
+  # select the engine/package that underlies the model
+  set_engine("glm") %>%
+  # choose either the continuous regression or binary classification mode
+  set_mode("classification")
+
+#----------------------------------------------
+mrTidyPredict<- function(X, Y, model1) {
+  
+  n_response<- length(X)
+  # Run model 1 for each parasite; a simple logistic regression with a single covariate
+  # in this case but note that model 1 can be any model of the user's choice, 
+  # from simple regressions to complex hierarchical or deep learning models.
+  # Different structures can also be used for each species to handle mixed multivariate outcomes
+  
+  mod1_perf <- NULL #place to save performance matrix
+  
+  #yhats <- for(i in 1:length(X)) {
+    yhats <- lapply(seq(1,n_response), function(i){
+      #rhats <- lapply(seq(1, n_variables), function(species){
+    
+    #not needed for this model
+    #OtherSNPs <- as.data.frame(X[-1]) 
+    #OtherSNPs[OtherSNPs=='Negative'] <- 0
+    #OtherSNPs[OtherSNPs== 'Positive'] <- 1 #could do a PCA/PCoA?
+    #OtherSNPsa <-apply(OtherSNPs, 2, as.numeric) 
+    
+    data <- cbind(X[i], Y)
+    colnames(data)[1] <- c('class')
+
+    data$class<- as.factor(data$class)
+                           
+    #data<-data[complete.cases(data)] #removes NAs but there must be a conflict somewhere
+    data_split <- initial_split(data, prop = 0.75)
+    
+    # extract training and testing sets
+    data_train <- training(data_split)
+    data_test <- testing(data_split)
+    #10 fold cross validation
+    data_cv <- vfold_cv(data_train, v= 10)
+    
+    data_recipe <- training(data_split) %>%
+      recipe(class ~., data= data_train)
+    
+    mod_workflow <- workflow() %>%
+      # add the recipe
+      add_recipe(data_recipe) %>%
+      # add the model
+      add_model(model1)
+    
+    # Fit model one for each parasite; can easily modify this so that the user
+    # can specify the formula necessary for each species as a list of formulas
+    
+    mod1_k <- mod_workflow %>%
+      fit(data = data_train)
+    
+    #fit on the training set and evaluate on test set. Not needed 
+    #last_fit(data_split) 
+    
+    # Calculate probability predictions for the fitted training data. The steps belwo didnt work
+    
+    yhatO <- predict(mod1_k, new_data = data_train, type='prob' )
+    
+    yhat <- yhatO$.pred_1
+    
+    #' Calculate deviance residuals 
+    resid <- devianceResids(yhatO, data_train$class )
+    
+    #predictions based on testing data
+    yhatT <- predict(mod1_k, new_data = data_test, type='class' ) %>% 
+      bind_cols(data_test %>% select(class))
+    
+    #calculate metrics on testing data
+    mathews <- mcc(yhatT,class, .pred_class)
+    mathews <- mathews$.estimate
+    sen <- sens(yhatT,class, .pred_class)
+    sen <- sen$.estimate
+    spe <- spec(yhatT,class, .pred_class)
+    spe <- spe$.estimate
+    #rocAUC <- roc_auc(yhatT,class, .pred_class) #not working for some reason. Wants pred_class as numeric?
+    
+    #add some identifiers
+    mod_name <- class(model1)[1]
+    sp <- names(X[i])
+    
+    #save all the metrics
+   # mod1_perf[[i]] = c( sp, mod_name, mathews, sen, spe))
+
+  
+  list(mod1_k = mod1_k, yhat = yhat, resid = resid) 
+    })  
+
+  #cant get performance to work
+  #mod1_perf <- do.call(rbind, mod1_perf)
+  #colnames( mod1_perf) <- c('Response','Model','MCC', 'Sensitivity', 'Specificity')
+  #mod1_perf <- as.data.frame( mod1_perf )
+ 
+}
+
+#---------------------------------------------------------------------------------------------------------------
+#yhats <- mrTidyPredict(X=X,Y-Y, model1=model1)
+#str(yhats)
+#yhats[[1]]$resid
+#---------------------------------------------------------------------------------------------------------------
 StackPredictions = function(yhats, data.test, covariance_mod = 'gbm'){
   
   # Determine the total number of outcome variables in the yhat data
@@ -117,6 +226,8 @@ StackPredictions = function(yhats, data.test, covariance_mod = 'gbm'){
     
     if(covariance_mod == 'gbm'){
     # Use a boosted regression tree to learn complex, nonlinear covariance relationships
+      
+      #can use the TidyModel syntax here too
     mod2 <- gbm::gbm(Y ~., data = cbind(data.frame(Y = outcome),
                                           as.matrix(predictors)),
                        n.trees = 1000, shrinkage = 0.01, interaction.depth = 3,
@@ -201,4 +312,8 @@ StackPredictions = function(yhats, data.test, covariance_mod = 'gbm'){
   list(probability_preds = do.call(cbind, purrr::map(combiner_preds, 'probability_preds')),
        binary_preds = do.call(cbind, purrr::map(combiner_preds, 'binary_preds')))
 }
+#---------------------------------------------------------------------------------------------------------
+#test <- StackPredictions(yhats, data.test=data_test, covariance_mod = 'gam')
 
+#get this error:  Error in hardhat::forge(new_data, blueprint) : 
+#argument "new_data" is missing, with no default
