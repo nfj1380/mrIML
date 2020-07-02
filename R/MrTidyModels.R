@@ -1,23 +1,29 @@
-#'mrTidyModels:  Wrapper to generate multi-response tidy models. 
-#'
+#'mrIMLpredicts:  Wrapper to generate multi-response tidy models.This function produces yhats that are used in the stack function as well 
+#'as saving all model characteristics for subsequent functions.
 #'
 #'This function fits separate classication models for each response variable in a dataset. 
-#'@param X  #is a response variable data set (specie, SNPs etc).
-#'@param Y #represents predictor or feature data.
-#'Row id's must match bewtween X and Y. Will add something to make sure of this.
+#'@param X A \code{dataframe} is a response variable data set (species, OTUs, SNPs etc).
+#'@param Y A \code{dataframe} represents predictor or feature data.
+#'@param balance_data A \code{character} 'up', 'down' or 'no'. 
 
-#'@param Model 1 #can be any model from the tidy model package in the follwoing format
-#'model1 <- 
-
-#logistic_reg() %>%
+#'@param Model 1 A \code{list} can be any model from the tidy model package. See examples.
+#'
+#'@examples
+#'model1 <- #model used to generate yhat
+#'specify that the model is a random forest
+#'logistic_reg() %>%
+#' # select the engine/package that underlies the model
 #'set_engine("glm") %>%
-#'set_mode("classification")
-#'
-#'
-#'This function produces yhats that are used in the stack function as well 
-#'as saving all model characteristics for subsequent functions.
+#'  # choose either the continuous regression or binary classification mode
+#'  set_mode("classification")
+#'  
+#'@details X (response variables) should be binary (0/1). Rows in Y (features) have the same id (host/site/population)
+#'  as Y. 
+#'  Class imblanace can be a real issue for classification analyses. Class imbalance can be addressed for each
+#'   response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling) 
+#'or 'no' (no balancing of classes).
 
-mrTidyPredict<- function(X, Y, model1) {
+mrIMLpredicts<- function(X, Y, model1, balance_data ='up') { 
   
   n_response<- length(X)
   # Run model 1 for each parasite; a simple logistic regression with a single covariate
@@ -38,7 +44,7 @@ mrTidyPredict<- function(X, Y, model1) {
     #OtherSNPsa <-apply(OtherSNPs, 2, as.numeric) 
     
     data <- cbind(X[i], Y)
-    colnames(data)[1] <- c('class')
+    colnames(data)[1] <- c('class') #define response variable
     
     data$class<- as.factor(data$class)
     
@@ -50,9 +56,29 @@ mrTidyPredict<- function(X, Y, model1) {
     data_test <- testing(data_split)
     #10 fold cross validation
     data_cv <- vfold_cv(data_train, v= 10)
+      
+    if(balance_data == 'down'){ 
+      data_recipe <- training(data_split) %>%
+        recipe(class ~., data= data_train) %>% #if downsampling is needed
+        themis::step_downsample(class)
+      }
     
-    data_recipe <- training(data_split) %>%
-      recipe(class ~., data= data_train)
+    if(balance_data == 'up'){
+      data_recipe <- training(data_split) %>%
+        recipe(class ~., data= data_train) %>%
+        themis::step_rose(class) #ROSE works better on smaller data sets. SMOTE is an option too.
+    }
+  
+      
+      if(balance_data == 'no'){ 
+        data_recipe <- training(data_split) %>% #data imbalance not corrected 
+          recipe(class ~., data= data_train)
+        }
+      
+    #optional recipe ingredients
+    #step_corr(all_predictors()) %>% # removes all corrleated features
+      #step_center(all_predictors(), -all_outcomes()) %>% #center features
+      #step_scale(all_predictors(), -all_outcomes()) %>% #scale features
     
     mod_workflow <- workflow() %>%
       # add the recipe
@@ -66,10 +92,16 @@ mrTidyPredict<- function(X, Y, model1) {
     mod1_k <- mod_workflow %>%
       fit(data = data_train)
     
+    # the last fit
+    set.seed(345)
+    last_mod_fit <- 
+      mod_workflow %>% 
+      last_fit(data_split)
+    
     #fit on the training set and evaluate on test set. Not needed 
     #last_fit(data_split) 
     
-    # Calculate probability predictions for the fitted training data. The steps belwo didnt work
+    # Calculate probability predictions for the fitted training data. 
     
     yhatO <- predict(mod1_k, new_data = data_train, type='prob' )
     
@@ -83,9 +115,8 @@ mrTidyPredict<- function(X, Y, model1) {
       bind_cols(data_test %>% select(class))
     
     
-    list(mod1_k = mod1_k, yhat = yhat,yhatT = yhatT, resid = resid) 
+    list(mod1_k = mod1_k, last_mod_fit=last_mod_fit, data=data, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid) 
   })  
-
   
 }
 
