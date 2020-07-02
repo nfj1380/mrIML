@@ -5,7 +5,7 @@ This package aims to enable users to build and interpret multivariate machine le
 
 This package can be of use for any multi-response machine learning problem, but was designed to handle data common to community ecology (site by species data) and ecological genomics (individual or population by SNP loci).
 
-##References
+## References
 Xing, L, Lesperance, ML and Zhang, X (2020). Simultaneous prediction of multiple outcomes 
 #'using revised stacking algorithms. Bioinformatics, 36, 65-72.
 
