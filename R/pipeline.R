@@ -1,27 +1,42 @@
-#'Testing functions out on real data.I will turn this into a vignette to go with the paper. Currently we have two test datasets. 
-#'One coinfection data set where columns represent parasite species. Rows reflect sites. This dataset has only one feature (scale prop.
-#' Currently just set up for binary classification. But multiclass/regression would be useful additions and easy
+#'Testing functions out on real data.I will turn this into a vignette
+#' to go with the paper. Currently we have two test datasets. 
+#'One coinfection data set where columns represent parasite species.
+#' Rows reflect sites. This dataset has only one feature (scale prop.
+#' Currently just set up for binary classification. But multiclass/regression 
+#' would be useful additions and easy
 #'in the tidymodel environment. Multiclass could be pick SNP identities which would be useful.
 #'
 #
 #lean toward mrIML as a name for the package.
 
-#I'm thinking for the paper having three test datasets plus simulations. 1. FIV bobcat data (host/pathogen example) 
-#2.amphibian SNP data (landscape genetics). 3. Moose microbiome data. This would hit the key audience for Molecular Ecology resources.
+#I'm thinking for the paper having three test datasets plus simulations.
+#1. FIV bobcat data (host/pathogen example) 
+#2. Amphibian SNP data (landscape genetics).
+#3. Moose microbiome data. This would hit the key audience for Molecular Ecology resources.
+#4.PRRS data on multi-strain circulation in swine https://www.biorxiv.org/content/10.1101/2020.04.09.034181v2
 
-#There then could be sepparate papers on coinfection data extending 
-#the apporach to focus on co-occurence  (Lion/avian malaria data) as well as a paper tracking between farm transisiion (Gustavo's data)
+#There then could be separate papers on confection data extending 
+#the approach to focus on co-occurence  (Lion/avian malaria data) 
+#as well as a paper tracking between farm transisiion (Gustavo's data)
 
 #load packages
 library(vip)
+library(mice)
+library(VIM)
+library(imputeTS)
 library(fastshap)
 library(tidymodels)
 library(pdp)
-library(randomForest);library(caret)
-library(pROC);library("ROCR")
-library(plyr);library(missForest)
-library(tidyverse);library(gbm)
-library(iml); library(tidyverse)
+library(randomForest)
+library(caret)
+library(pROC)
+library(ROCR)
+library(plyr)
+library(missForest)
+library(tidyverse)
+library(gbm)
+library(iml)
+library(tidyverse)
 library(parallel)
 library(doParallel)
 library(themis)
@@ -31,28 +46,38 @@ library(hrbrthemes)
 library(MRFcov)
 library(xgboost)
 
-set.seed(123)
+# load all function codes
+source("./R/filterRareCommon.R")
+source("./R/MrTidyModels.R")
+source("./R/StackPredictions.R")
+source("./R/devianceResids.R")
+source("./R/CreateBalancedFolds.R")
+source("./R/CreateBalancedMultiFolds.R")
+source("./R/filterRareCommon.R")
 
 #---------------------------------------------------------------------------------
 #Viral SNP test data
-
+set.seed(123)
 #load data for training
-Responsedata <- read.csv("GF SNPs posBinary.csv")
-rownames(Responsedata) <- Responsedata$X
+Responsedata <-read.csv("GF SNPs posBinary.csv")
+rownames(Responsedata) <-Responsedata$X
 Responsedata$X <- NULL
-Responsedata[Responsedata==4] <- 0 #fix random 4s in response data. 
+Responsedata[Responsedata==4] <-0 #fix random 4s in response data. 
 
 #feature set
-Features <-  read.csv("Landscape and host data.csv", row.names = 1, head=T)
-#remove NAs from the feature/predictor data.
-FeaturesnoNA<-Features[complete.cases(Features), ];str(Features) #dropping NAs
+Features <-read.csv("Landscape and host data.csv", row.names = 1, head=T)
+summary(Features)
+# #remove NAs from the feature/predictor data.
+# FeaturesnoNA<-Features[complete.cases(Features), ];str(Features) #dropping NAs
+# instead we can devlop a cut % for interpolation in the func_load_data
+Features<-na.interpolation(Features, option = "spline")
 
-Y <- FeaturesnoNA #for simplicity
+Y <- Features #for simplicity
 
 #imputation could be a good solution too.
-
+# see above
 #---------------------------------------------------------------------------------
-#coinfection test data
+#coinfection test data # from MRFcov
 X <- select(Bird.parasites, -scale.prop.zos) #response variables eg. SNPs, pathogens, species....
 Y <- select(Bird.parasites, scale.prop.zos) # feature set
 #---------------------------------------------------------------------------------
@@ -60,7 +85,7 @@ Y <- select(Bird.parasites, scale.prop.zos) # feature set
 #Optional: Filter rare/common SNPs or species
 
 fData <- filterRareCommon (Responsedata, lower=0.35, higher=0.25) #this removes all SNPs 
- X <- fData #for simplicity when comparing
+X <- fData #for simplicity when comparing
  
 #that occur in less than 35% of individuals and > 75% of individuals
 #fData <- rownames_to_column(fData, "Individual")#get individual id back
@@ -98,10 +123,10 @@ boost_tree() %>%
 #---------------------------------------------------------------------  
   
 #models just using features/predictor variables
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') #model 1 has to be the model used in mrIMLpredicts. Im sure we could fix this
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='up') #model 1 has to be the model used in mrIMLpredicts. Im sure we could fix this
 
 #adding other response varables to see if this improves predictions
-rhats <- StackPredictions(yhats, data.test, covariance_mod = 'gbm')
+rhats <- StackPredictions(yhats, data.test, covariance_mod = 'gam')
 
 #ideally we shopuld get this to work on the stacked or not stacked models
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) #ROC wont work for some reason. But MCC is useful (higher numbers = better fit)
