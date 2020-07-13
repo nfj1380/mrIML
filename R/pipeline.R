@@ -46,7 +46,7 @@ library(hrbrthemes)
 library(MRFcov)
 library(xgboost)
 
-# load all function codes
+# load all function codes. This will disappear when we formally make this a function
 source("./R/filterRareCommon.R")
 source("./R/MrTidyModels.R")
 source("./R/StackPredictions.R")
@@ -54,8 +54,11 @@ source("./R/devianceResids.R")
 source("./R/CreateBalancedFolds.R")
 source("./R/CreateBalancedMultiFolds.R")
 source("./R/filterRareCommon.R")
-
+source("./R/MrtTidyPerf.R")
+source("./R/mrvip.R")
+source("./R/plot_vi.R")
 #---------------------------------------------------------------------------------
+
 #Viral SNP test data
 set.seed(123)
 #load data for training
@@ -67,17 +70,17 @@ Responsedata[Responsedata==4] <-0 #fix random 4s in response data.
 #feature set
 Features <-read.csv("Landscape and host data.csv", row.names = 1, head=T)
 summary(Features)
-# #remove NAs from the feature/predictor data.
-# FeaturesnoNA<-Features[complete.cases(Features), ];str(Features) #dropping NAs
-# instead we can devlop a cut % for interpolation in the func_load_data
+
+# instead we can devlop a cut % for interpolation in the func_load_data. Seems to be a random row somehow added to the feature data.
 Features<-na.interpolation(Features, option = "spline")
 
-Y <- Features #for simplicity
+# # or remove NAs from the feature/predictor data.
+FeaturesnoNA<-Features[complete.cases(Features), ];str(Features) #dropping NAs
 
-#imputation could be a good solution too.
-# see above
+Y <- FeaturesnoNA #for simplicity
+
 #---------------------------------------------------------------------------------
-#coinfection test data # from MRFcov
+#coinfection test data # from MRFcov. This data can also be used in this pipeline replacing X/Y
 X <- select(Bird.parasites, -scale.prop.zos) #response variables eg. SNPs, pathogens, species....
 Y <- select(Bird.parasites, scale.prop.zos) # feature set
 #---------------------------------------------------------------------------------
@@ -123,10 +126,7 @@ boost_tree() %>%
 #---------------------------------------------------------------------  
   
 #models just using features/predictor variables
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='up') #model 1 has to be the model used in mrIMLpredicts. Im sure we could fix this
-
-#adding other response varables to see if this improves predictions
-rhats <- StackPredictions(yhats, data.test, covariance_mod = 'gam')
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') #model 1 has to be the model used in mrIMLpredicts. Im sure we could fix this
 
 #ideally we shopuld get this to work on the stacked or not stacked models
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) #ROC wont work for some reason. But MCC is useful (higher numbers = better fit)
@@ -155,6 +155,22 @@ testPdp
 #plot
 plot_mrPd(testPdp, Y)
 
-#at some point it would be good to add interactions here too. 
+#adding other response varables to see if this improves predictions
+
+covariance_mod <- 
+  boost_tree() %>%
+  set_engine("xgboost") %>%
+  set_mode("regression")
+
+#rhats <- StackPredictions(yhats, data.test, covariance_mod = 'gam')
+
+#calculate covariance predictions. Nick - I just split this function up as I image it would be handy to look
+#at this bit,
+rhats <- response_covariance(yhats, covariance_mod)
+
+#stack everything together
+finalPred <- stacked_preds(rhats, yhats)
+
+#at some point it would be good to add interactions/Shapely here too. 
 
 #---------------------------------------------------------------------------------------------------------------
