@@ -36,7 +36,7 @@ plot_vi <- function (VI, modelPerf, Y, X, groupCov, cutoff= 0.5 ){
 
     rsA <- rownames_to_column(rs)
     rsA <- cbind(rsA, groupCov) # attach group info
-
+  names(rsA)[2] <- c('prop')
     rsA$row <- 1 #dummy x axis
     
    p1 <-  ggplot(rsA, aes(fill= groupCov, y=prop, x= row)) + 

@@ -72,7 +72,7 @@ Features <-read.csv("Landscape and host data.csv", row.names = 1, head=T)
 summary(Features)
 
 # instead we can devlop a cut % for interpolation in the func_load_data. Seems to be a random row somehow added to the feature data.
-Features<-na.interpolation(Features, option = "spline")
+#Features<-na.interpolation(Features, option = "spline")
 
 # # or remove NAs from the feature/predictor data.
 FeaturesnoNA<-Features[complete.cases(Features), ];str(Features) #dropping NAs
@@ -144,7 +144,8 @@ VI <- mrVip(yhats, Y=Y)
 groupCov <- c(rep ("Host_characteristics", 1),rep("Urbanisation", 3), rep("Vegetation", 2), rep("Urbanisation",1), rep("Spatial", 2), 
               rep('Host_relatedness', 6),rep ("Host_characteristics", 1),rep("Vegetation", 2), rep("Urbanisation",1))  
 
-plot_vi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov, cutoff= 0.5)
+plot_vi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov, cutoff= 0.5) #not there are two plots here. 
+#First plot is overall importance and the second is individual SNP models.
 #warning are about x axis labels so can ignore 
 
 testPdp <- mrPdP(yhats, model1,X=X,Y=Y) #doesn't work with mutliple features -  Error in rep.int(rep.int(seq_len(nx), rep.int(rep.fac, nx)), orep) :
