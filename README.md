@@ -1,5 +1,5 @@
 # mrIML
-![Logo_mrIML](https://user-images.githubusercontent.com/33707823/88988817-531ad080-d31d-11ea-8d76-f1ad0506e405.png| width=100 height=100)
+<img src = "https://user-images.githubusercontent.com/33707823/88988817-531ad080-d31d-11ea-8d76-f1ad0506e405.png" width="100" height="100"/>
 
 Multivariate (multi-response) interpretable machine learning.
 
