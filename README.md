@@ -1,4 +1,5 @@
 # mrIML
+![MrIML Logo](C:\Users\Nick FJ\Desktop\MrIML paper\Logo_mrIML.png)
 Multivariate (multi-response) interpretable machine learning.
 
 This package aims to enable users to build and interpret multivariate machine learning models harnessing the tidyverse (tidy model syntax in particular). This package builds off ideas from Gradient Forests (Ellis et al 2012), ecological genomic approaches (Fitzpatrick and Keller, 2014) and multi-response stacking algorithms (Xing et al 2019).
