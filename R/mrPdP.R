@@ -23,48 +23,62 @@ mrPdP <- function(yhats, model1, X, Y){
   mList <- yhats %>% purrr::map(pluck('last_mod_fit'))
   tList <- yhats %>% purrr::map(pluck('data_train')) #get together training data.
   dList <- yhats %>% purrr::map(pluck('data')) #get together training data.
+  modList <- yhats %>% purrr::map(pluck('mod1_k'))
   
-  
-  pdI <- NULL #create empty datafram for pd values
+  PdIn <- NULL #create empty datafram for pd values
   
   for (i in 1:l_response){ #went with a for loop as I was having problems naming columns/rows
     
-    p <-  mList[[1]] %>% #change back to i
+    p <-  mList[[i]] %>% 
       purrr::pluck(".workflow",1) %>%   # I like tidy model workflows but it is annoying to extract fits like this
       pull_workflow_fit() 
    #create multi-class probability function 
-    pfun <- function(object, newdata){
-      colMeans(predict(object, data= newdata)$predictions)}
+    #from Brandon
+   #pfun <- function(object, newdata){
+    # colMeans(predict(object, data= newdata)$predictions)}
+   
+     pfun <- function(object, newdata) { # had to add this as pdp doesn't like tidymodel new_data call 
+       colMeans(predict(p, new_data=tList[[i]], type = "prob")[,2], na.rm=TRUE)# [,2} selects postive yhats (change to 1 for negative class). 
+       #mean(c$.pred_1, drop = TRUE) #drop=T removes NAs.
+     }
+     
+     # [,2} selects postive yhats (change to 1 for negative class). 
+     # mean(c$.pred_1, drop = TRUE) #drop=T removes NAs.
       
-      pd <- partial(p, pred.var = 'Forest', pred.fun = pfun)
-      
-    
     #old function
     #pred_prob <- function(object, newdata) { # had to add this as pdp doesn't like tidymodel new_data call 
      # c<- predict(p, new_data=tList[[i]], type = "prob")[,2]# [,2} selects postive yhats (change to 1 for negative class). 
       #mean(c$.pred_1, drop = TRUE) #drop=T removes NAs.
-    }
+    #}
       #mean makes it a pd rather than ICE. ICE would be impossible to see for the global plot but we could add
       #it for the individual model plots
   
     #need to add for all features
-    
-    #currently with the bocat FIV data (multiple features) this isn't working.
-    
-    #Get the error: Error in rep.int(rep.int(seq_len(nx), rep.int(rep.fac, nx)), orep) : 
-     # invalid 'times' value
-    #
-     pdI[[i]] <- partial(p, pred.var = n_features, train = tList[[i]],  type = c("classification"), pred.fun = pred_prob)
+
+     #pdI[[i]] <- partial(p, pred.var = n_features, train = tList[[i]],  type = c("classification"), pred.fun = pred_prob)
      
-     names(pdI[[i]])[2] <-  n_response[i]
      
-     as.data.frame(pdI)
+     pdI <- partial(p, pred.var = 'Grassland', train = tList[[i]],  type = c("classification"), pred.fun = pfun)
+     
+      yhat.id <- rep(names(X[i]), nrow(pdI)) #add names to the new dataframe.Problem here in the loop
+     
+      PdIn[[i]] <- cbind(pdI, yhat.id)
+
+     
+  
 
      #then the idea is to plot the yhat values for each response for each Y
 }
 
-   PdpGlobal <- do.call(cbind, pdI) 
+   PdpGlobal <- do.call(rbind, PdIn) 
    
-   return(PdpGlobal)
+   #plot
+   pdPlot <- ggplot(PdpGlobal, aes(Grassland, yhat, color=yhat.id))+
+     geom_line() +
+     theme_bw()+
+     theme(legend.title = element_blank())
+   print(pdPlot)
+   
+   return(list(PdpGlobal))
 }   
 # values seem odd in that in the coinfection example scale prop. zos has no impact on 

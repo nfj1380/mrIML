@@ -25,7 +25,7 @@
 
 mrIMLpredicts<- function(X, Y, model1, balance_data ='up') { 
   
-  n_response<- length(Y)
+  n_response<- length(X)
   # Run model 1 for each parasite; a simple logistic regression with a single covariate
   # in this case but note that model 1 can be any model of the user's choice, 
   # from simple regressions to complex hierarchical or deep learning models.
@@ -43,7 +43,7 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
     #OtherSNPs[OtherSNPs== 'Positive'] <- 1 #could do a PCA/PCoA?
     #OtherSNPsa <-apply(OtherSNPs, 2, as.numeric) 
     
-    data <- cbind(Y[i], X)
+    data <- cbind(X[i], Y) 
     colnames(data)[1] <- c('class') #define response variable
     
     data$class<- as.factor(data$class)
@@ -55,7 +55,7 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
     data_train <- training(data_split)
     data_test <- testing(data_split)
     #10 fold cross validation
-    data_cv <- vfold_cv(data_train, v= 10)
+    data_cv <- vfold_cv(data_train, v= 10) #not used yet.
       
     if(balance_data == 'down'){ 
       data_recipe <- training(data_split) %>%

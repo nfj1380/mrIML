@@ -55,9 +55,12 @@ source("./R/filterRareCommon.R")
 source("./R/MrtTidyPerf.R")
 source("./R/mrvip.R")
 source("./R/plot_vi.R")
-source("./R/response_covariance") #this should create the covatiance matrix
+
+
 #Nick C - this and the function below are the functions with tidy model code I made from your original
 source("./R/stacked_preds.R") #this does the stacking
+source("./R/response_covariance") #this should create the covatiance matrix
+
 #---------------------------------------------------------------------------------
 
 #Viral SNP test data
@@ -70,7 +73,7 @@ Responsedata[Responsedata==4] <-0 #fix random 4s in response data.
 
 #feature set
 Features <-read.csv("Landscape and host data.csv", row.names = 1, head=T)
-summary(Features)
+#summary(Features)
 
 # instead we can devlop a cut % for interpolation in the func_load_data. Seems to be a random row somehow added to the feature data.
 #Features<-na.interpolation(Features, option = "spline")
