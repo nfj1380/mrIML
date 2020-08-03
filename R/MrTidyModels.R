@@ -2,8 +2,8 @@
 #'as saving all model characteristics for subsequent functions.
 #'
 #'This function fits separate classication models for each response variable in a dataset. 
-#'@param X A \code{dataframe} is a response variable data set (species, OTUs, SNPs etc).
-#'@param Y A \code{dataframe} represents predictor or feature data.
+#'@param Y A \code{dataframe} is a response variable data set (species, OTUs, SNPs etc).
+#'@param X A \code{dataframe} represents predictor or feature data.
 #'@param balance_data A \code{character} 'up', 'down' or 'no'. 
 
 #'@param Model 1 A \code{list} can be any model from the tidy model package. See examples.
@@ -17,7 +17,7 @@
 #'  # choose either the continuous regression or binary classification mode
 #'  set_mode("classification")
 #'  
-#'@details X (response variables) should be binary (0/1). Rows in Y (features) have the same id (host/site/population)
+#'@details Y (response variables) should be binary (0/1). Rows in X (features) have the same id (host/site/population)
 #'  as Y. 
 #'  Class imblanace can be a real issue for classification analyses. Class imbalance can be addressed for each
 #'   response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling) 
@@ -25,7 +25,7 @@
 
 mrIMLpredicts<- function(X, Y, model1, balance_data ='up') { 
   
-  n_response<- length(X)
+  n_response<- length(Y)
   # Run model 1 for each parasite; a simple logistic regression with a single covariate
   # in this case but note that model 1 can be any model of the user's choice, 
   # from simple regressions to complex hierarchical or deep learning models.
@@ -43,7 +43,7 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
     #OtherSNPs[OtherSNPs== 'Positive'] <- 1 #could do a PCA/PCoA?
     #OtherSNPsa <-apply(OtherSNPs, 2, as.numeric) 
     
-    data <- cbind(X[i], Y)
+    data <- cbind(Y[i], X)
     colnames(data)[1] <- c('class') #define response variable
     
     data$class<- as.factor(data$class)
@@ -115,7 +115,7 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
       bind_cols(data_test %>% select(class))
     
     
-    list(mod1_k = mod1_k, last_mod_fit=last_mod_fit, data=data, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid) 
+    list(mod1_k = mod1_k, last_mod_fit=last_mod_fit, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid) 
   })  
   
 }

@@ -51,12 +51,13 @@ source("./R/filterRareCommon.R")
 source("./R/MrTidyModels.R")
 source("./R/StackPredictions.R")
 source("./R/devianceResids.R")
-source("./R/CreateBalancedFolds.R")
-source("./R/CreateBalancedMultiFolds.R")
 source("./R/filterRareCommon.R")
 source("./R/MrtTidyPerf.R")
 source("./R/mrvip.R")
 source("./R/plot_vi.R")
+source("./R/response_covariance") #this should create the covatiance matrix
+#Nick C - this and the function below are the functions with tidy model code I made from your original
+source("./R/stacked_preds.R") #this does the stacking
 #---------------------------------------------------------------------------------
 
 #Viral SNP test data
@@ -144,7 +145,7 @@ VI <- mrVip(yhats, Y=Y)
 groupCov <- c(rep ("Host_characteristics", 1),rep("Urbanisation", 3), rep("Vegetation", 2), rep("Urbanisation",1), rep("Spatial", 2), 
               rep('Host_relatedness', 6),rep ("Host_characteristics", 1),rep("Vegetation", 2), rep("Urbanisation",1))  
 
-plot_vi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov, cutoff= 0.5) #not there are two plots here. 
+plot_vi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov, cutoff= 0.5) #note there are two plots here.#I get a strange error running this some times 'prop not found'. 
 #First plot is overall importance and the second is individual SNP models.
 #warning are about x axis labels so can ignore 
 
@@ -156,21 +157,28 @@ testPdp
 #plot
 plot_mrPd(testPdp, Y)
 
-#adding other response varables to see if this improves predictions
+#adding other response varables to see if this improves predictions. wecould say that it only has been tested 
+#on 3 algorithms (GAMs, Xgboost which is an improved GBM and liner models) and user beware otherwise.
 
 covariance_mod <- 
   boost_tree() %>%
   set_engine("xgboost") %>%
   set_mode("regression")
 
+#or 
+covariance_mod <- 
+  rand_forest(trees = 100, mode = "regression") %>%
+  set_engine("ranger", importance = "permutation") %>%
+  set_mode("regression")
+
 #rhats <- StackPredictions(yhats, data.test, covariance_mod = 'gam')
 
-#calculate covariance predictions. Nick - I just split this function up as I image it would be handy to look
+#calculate covariance predictions. Nick - I just split this function up as I imagine it would be handy.
 #at this bit,
-rhats <- response_covariance(yhats, covariance_mod)
+rhats_2 <- response_covariance(yhats, covariance_mod)
 
 #stack everything together
-finalPred <- stacked_preds(rhats, yhats)
+finalPred <- stacked_preds(rhats_2, yhats)
 
 #at some point it would be good to add interactions/Shapely here too. 
 

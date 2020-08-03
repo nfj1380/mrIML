@@ -29,13 +29,20 @@ mrPdP <- function(yhats, model1, X, Y){
   
   for (i in 1:l_response){ #went with a for loop as I was having problems naming columns/rows
     
-    p <-  mList[[i]] %>% 
+    p <-  mList[[1]] %>% #change back to i
       purrr::pluck(".workflow",1) %>%   # I like tidy model workflows but it is annoying to extract fits like this
       pull_workflow_fit() 
+   #create multi-class probability function 
+    pfun <- function(object, newdata){
+      colMeans(predict(object, data= newdata)$predictions)}
+      
+      pd <- partial(p, pred.var = 'Forest', pred.fun = pfun)
+      
     
-    pred_prob <- function(object, newdata) { # had to add this as pdp doesn't like tidymodel new_data call 
-      c<- predict(p, new_data=tList[[i]], type = "prob")[,2]# [,2} selects postive yhats (change to 1 for negative class). 
-      mean(c$.pred_1, drop = TRUE) #drop=T removes NAs.
+    #old function
+    #pred_prob <- function(object, newdata) { # had to add this as pdp doesn't like tidymodel new_data call 
+     # c<- predict(p, new_data=tList[[i]], type = "prob")[,2]# [,2} selects postive yhats (change to 1 for negative class). 
+      #mean(c$.pred_1, drop = TRUE) #drop=T removes NAs.
     }
       #mean makes it a pd rather than ICE. ICE would be impossible to see for the global plot but we could add
       #it for the individual model plots
@@ -58,6 +65,6 @@ mrPdP <- function(yhats, model1, X, Y){
 
    PdpGlobal <- do.call(cbind, pdI) 
    
-   return(PdpGlobal)#just need to get the response names to be the column names. maybe for loop here instead of lapply
+   return(PdpGlobal)
 }   
 # values seem odd in that in the coinfection example scale prop. zos has no impact on 
