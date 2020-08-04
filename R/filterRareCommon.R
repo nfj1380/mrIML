@@ -7,7 +7,7 @@
 #' @keywords filter
 #' @export
 
-filterRareCommon <- function(X, lower=0.25, higher=0.75){
+filterRareCommon <- function(X, lower=lower, higher=higher){
   n = ncol(X)
   r = nrow(X)
   Xt <- as.data.frame(t(X))

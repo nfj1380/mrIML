@@ -29,7 +29,7 @@ mrPdP <- function(yhats, model1, X, Y){
   
   for (i in 1:l_response){ #went with a for loop as I was having problems naming columns/rows
     
-    p <-  mList[[i]] %>% 
+    p <-  mList[[2]] %>% 
       purrr::pluck(".workflow",1) %>%   # I like tidy model workflows but it is annoying to extract fits like this
       pull_workflow_fit() 
    #create multi-class probability function 
@@ -38,8 +38,10 @@ mrPdP <- function(yhats, model1, X, Y){
     # colMeans(predict(object, data= newdata)$predictions)}
    
      pfun <- function(object, newdata) { # had to add this as pdp doesn't like tidymodel new_data call 
-       colMeans(predict(p, new_data=tList[[i]], type = "prob")[,2], na.rm=TRUE)# [,2} selects postive yhats (change to 1 for negative class). 
+       #colMeans(predict(p, new_data=tList[[i]], type = "prob")[,2], na.rm=TRUE)# [,2} selects postive yhats (change to 1 for negative class). 
        #mean(c$.pred_1, drop = TRUE) #drop=T removes NAs.
+      predict(p, new_data=tList[[2]], type = "prob")[,2]
+       #predict(p, new_data=tList[[1]])
      }
      
      # [,2} selects postive yhats (change to 1 for negative class). 
@@ -58,16 +60,21 @@ mrPdP <- function(yhats, model1, X, Y){
      #pdI[[i]] <- partial(p, pred.var = n_features, train = tList[[i]],  type = c("classification"), pred.fun = pred_prob)
      
      
-     pdI <- partial(p, pred.var = 'Grassland', train = tList[[i]],  type = c("classification"), pred.fun = pfun)
+     pdI <- partial(p, pred.var = 'Grassland', train = tList[[2]],  type = c("classification"), pred.fun = pfun)
+     pdI$Grassland <- as.factor(pdI$Grassland)
+     
+     p2 <- autoplot(pdI, contour = FALSE, main = "ggplot2 version", 
+                    legend.title = "Partial\ndependence")
+     
+     
+    pd1 <- pdI %>% dplyr::group_by(Grassland) %>% 
+      dplyr::summarise(AvgYhat= mean(yhat))
+     
      
       yhat.id <- rep(names(X[i]), nrow(pdI)) #add names to the new dataframe.Problem here in the loop
      
       PdIn[[i]] <- cbind(pdI, yhat.id)
 
-     
-  
-
-     #then the idea is to plot the yhat values for each response for each Y
 }
 
    PdpGlobal <- do.call(rbind, PdIn) 

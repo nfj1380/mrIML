@@ -19,7 +19,7 @@
 #the approach to focus on co-occurence  (Lion/avian malaria data) 
 #as well as a paper tracking between farm transisiion (Gustavo's data)
 
-#load packages
+#load packages. Reduce this list.
 library(vip)
 library(mice)
 library(VIM)
@@ -119,7 +119,7 @@ model1 <-
   set_engine("ranger", importance = "impurity") %>%
   set_mode("classification")
 
-#Boosted model (xgrboost). Not tuned either currently.
+#Boosted model (xgrboost). Not tuned either currently. This doesn't work with the small bobcat dataset. Much too small
 model1 <- 
 boost_tree() %>%
   set_engine("xgboost") %>%
@@ -129,13 +129,13 @@ boost_tree() %>%
 #Perform the analysis
 #---------------------------------------------------------------------  
   
-#models just using features/predictor variables
+#models just using features/predictor variables.
 yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') #model 1 has to be the model used in mrIMLpredicts. Im sure we could fix this
 
 #ideally we shopuld get this to work on the stacked or not stacked models
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) #ROC wont work for some reason. But MCC is useful (higher numbers = better fit)
 #doesn't work with upsampled data - something to do with mcc? Still unclear
-ModelPerf #nice to have ROC curves for each response (each response with a differing colour. 
+ModelPerf #nice to have ROC curves for each response (each response with a differing colour. Add prevalence
 
 save(ModelPerf, "randF.RData") #save to compare later.
 
@@ -152,13 +152,17 @@ plot_vi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov, cutoff= 0
 #First plot is overall importance and the second is individual SNP models.
 #warning are about x axis labels so can ignore 
 
-testPdp <- mrPdP(yhats, model1,X=X,Y=Y) #doesn't work with mutliple features -  Error in rep.int(rep.int(seq_len(nx), rep.int(rep.fac, nx)), orep) :
+testPdp <- mrPdP(yhats, X=X,Y=Y, Feature='Longitude')
 #something to do with the expand grid function within partial. Making a vector too long?
 #invalid 'times' value 
-testPdp 
 
-#plot
-plot_mrPd(testPdp, Y)
+#indiv SNPs
+env131 <- testPdp[[1]] %>% filter(response.id=='env_131')
+summary(env131)
+ ggplot(env131, aes(Longitude, yhat, color=response.id))+
+  geom_line() +
+  theme_bw()
+
 
 #adding other response varables to see if this improves predictions. wecould say that it only has been tested 
 #on 3 algorithms (GAMs, Xgboost which is an improved GBM and liner models) and user beware otherwise.
@@ -182,6 +186,8 @@ rhats_2 <- response_covariance(yhats, covariance_mod)
 
 #stack everything together
 finalPred <- stacked_preds(rhats_2, yhats)
+
+#add similarity in predictions to look for SNP patterns.
 
 #at some point it would be good to add interactions/Shapely here too. 
 
