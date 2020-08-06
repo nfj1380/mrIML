@@ -12,8 +12,8 @@ filterRareCommon <- function(X, lower=lower, higher=higher){
   r = nrow(X)
   Xt <- as.data.frame(t(X))
   Xt$Xsum <- rowSums(Xt[1:n,] )
-  FilterNoCommon <-subset(Xt, Xsum < (r*0.6)) 
-  FilterNoRare <-subset(FilterNoCommon , Xsum > (r*0.4))
+  FilterNoCommon <-subset(Xt, Xsum < (r*higher)) 
+  FilterNoRare <-subset(FilterNoCommon , Xsum > (r*lower))
   #remove 'new' sort column
   FilterNoRare$Xsum <- NULL
   X <- as.data.frame(t(FilterNoRare))

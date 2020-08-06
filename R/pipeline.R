@@ -46,6 +46,7 @@ library(hrbrthemes)
 library(MRFcov)
 library(xgboost)
 
+
 # load all function codes. This will disappear when we formally make this a function
 source("./R/filterRareCommon.R")
 source("./R/MrTidyModels.R")
@@ -55,11 +56,13 @@ source("./R/filterRareCommon.R")
 source("./R/MrtTidyPerf.R")
 source("./R/mrvip.R")
 source("./R/plot_vi.R")
+source("./R/MrResamplePerformance.R")
 
 
 #Nick C - this and the function below are the functions with tidy model code I made from your original
 source("./R/stacked_preds.R") #this does the stacking
 source("./R/response_covariance") #this should create the covatiance matrix
+
 
 #---------------------------------------------------------------------------------
 
@@ -83,20 +86,21 @@ FeaturesnoNA<-Features[complete.cases(Features), ];str(Features) #dropping NAs
 
 Y <- FeaturesnoNA #for simplicity
 
+#Optional: Filter rare/common SNPs or species. Retaining minor allelle frequncies >0.1 and removing common allelles (occur>0.9)
+fData <- filterRareCommon (Responsedata, lower=0.25, higher=0.7) 
+
+X <- fData #for simplicity when comparing
+
+ 
+#that occur in less than 35% of individuals and > 75% of individuals
+#fData <- rownames_to_column(fData, "Individual")#get individual id back
+#user can specify any tidy model here. 
+
 #---------------------------------------------------------------------------------
 #coinfection test data # from MRFcov. This data can also be used in this pipeline replacing X/Y
 X <- select(Bird.parasites, -scale.prop.zos) #response variables eg. SNPs, pathogens, species....
 Y <- select(Bird.parasites, scale.prop.zos) # feature set
 #---------------------------------------------------------------------------------
-
-#Optional: Filter rare/common SNPs or species
-
-fData <- filterRareCommon (Responsedata, lower=0.35, higher=0.25) #this removes all SNPs 
-X <- fData #for simplicity when comparing
- 
-#that occur in less than 35% of individuals and > 75% of individuals
-#fData <- rownames_to_column(fData, "Individual")#get individual id back
-#user can specify any tidy model here. 
 
 #---------------------------------------------------------------------
 #Set up the model
@@ -110,7 +114,7 @@ model1 <- #model used to generate yhat
   # select the engine/package that underlies the model
   set_engine("glm") %>%
   # choose either the continuous regression or binary classification mode
-  set_mode("classification")
+  set_mode("classification") #just for your response
 
 #random forest. Note that these models are tuned   - need to fix this.
  
@@ -130,31 +134,40 @@ boost_tree() %>%
 #---------------------------------------------------------------------  
   
 #models just using features/predictor variables.
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') #model 1 has to be the model used in mrIMLpredicts. Im sure we could fix this
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no')
 
-#ideally we shopuld get this to work on the stacked or not stacked models
-ModelPerf <- mrIMLperformance(yhats, model1, X=X) #ROC wont work for some reason. But MCC is useful (higher numbers = better fit)
+#we can now assess model performance briefly.
+ModelPerf <- mrIMLperformance(yhats, model1, X=X) # MCC is useful (higher numbers = better fit)
 #doesn't work with upsampled data - something to do with mcc? Still unclear
-ModelPerf #nice to have ROC curves for each response (each response with a differing colour. Add prevalence
+ModelPerf 
 
-save(ModelPerf, "randF.RData") #save to compare later.
+#However this approach just comparing model predictions to test data doesn't give a full assessment of how the model is performing.
+#The next function goes into model performance in more detail.It does take longer to compute.
 
-#we can look at variable importance 
+ModelPerf10foldCV <- mrResamplePerformance(yhats, model1, X=X)
+ModelPerf10foldCV[1] #this also allows the user to assess if models are overfitting ie. is the AUC calculated using the 
+#training data much better than the testing AUC
+ModelPerf10foldCV[2] #this is the mean AUC calculated using the testing data. Probably the best way to see how well
+#the models have gone overall. Good when there is lots of response variables.
+
+save(ModelPerf10foldCV, "randF.RData") #save to compare later.
+
+#we can look at variable importance. Coinfection data only has one feature so not much use there.
 VI <- mrVip(yhats, Y=Y)
+#plot modle similarity
 
 #plot variable importance
 
-#for interpretation group features. Annoying but I cant see an easier way. 
+#for interpretation group features. Annoying but I cant see an easier way. Features are in alphabetical order
 groupCov <- c(rep ("Host_characteristics", 1),rep("Urbanisation", 3), rep("Vegetation", 2), rep("Urbanisation",1), rep("Spatial", 2), 
               rep('Host_relatedness', 6),rep ("Host_characteristics", 1),rep("Vegetation", 2), rep("Urbanisation",1))  
 
-plot_vi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov, cutoff= 0.5) #note there are two plots here.#I get a strange error running this some times 'prop not found'. 
+plot_vi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov=groupCov, cutoff= 0.5) #note there are two plots here.#I get a strange error running this some times 'prop not found'. 
 #First plot is overall importance and the second is individual SNP models.
 #warning are about x axis labels so can ignore 
 
-testPdp <- mrPdP(yhats, X=X,Y=Y, Feature='Longitude')
-#something to do with the expand grid function within partial. Making a vector too long?
-#invalid 'times' value 
+#plot partial dependencies. Strange results
+testPdp <- mrPdP(yhats, X=X,Y=Y, Feature='Longitude') 
 
 #indiv SNPs
 env131 <- testPdp[[1]] %>% filter(response.id=='env_131')

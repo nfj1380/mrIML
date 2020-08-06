@@ -4,88 +4,93 @@
 #'@param X A \code{dataframe} is a response variable data set (species, OTUs, SNPs etc)
 #'@param Y  A \code{dataframe} #is the feature dataset
 #'@param Model 1 A \code{list} can be any model from the tidy model package. See examples.
+#'@param 'Feature' \code{character} Feature from the Y set to plot the partial dependency.
 #'
 #'@details The aim of this function is to enable users to calculate partial dependencies for the response variables for each model (i.e. species/SNPs)
 #' and then use plot_mrpd (a plotting function) to create a pd plot for all species/SNPs for each feature. 
 #' Could build functionality for ICE plots but that would be messy for multiple repsonse variables.
 #' 
 #' @example 
-#' testPdp <- mrPdP(yhats, model1,X=X,Y=Y) #doesn't work with mutliple features yet.
+#' testPdp <- mrPdP(yhats, model1,X=X,Y=Y)
 
 
-mrPdP <- function(yhats, model1, X, Y){
+mrPdP <- function(yhats, X, Y, Feature=Feature){
   
   l_response<- length(yhats)
   n_features <- names(Y)
   n_response <- names(X)
   
   #unpack everything from yhats
-  mList <- yhats %>% purrr::map(pluck('last_mod_fit'))
-  tList <- yhats %>% purrr::map(pluck('data_train')) #get together training data.
   dList <- yhats %>% purrr::map(pluck('data')) #get together training data.
   modList <- yhats %>% purrr::map(pluck('mod1_k'))
+  #testList <- yhats %>% purrr::map(pluck('data_testa')) could be useful
   
-  PdIn <- NULL #create empty datafram for pd values
+  workflow_partial_mr <- NULL #create empty dataframe for pd values
   
-  for (i in 1:l_response){ #went with a for loop as I was having problems naming columns/rows
+  pdp_pred_fun <- function(object, newdata) { #pd funtion
+   predict(object, newdata, type = "prob")$.pred_1 #predict positive class. couldn't get colMeans to work. Werid results for the FIV dataset
+  }
+  
+  for (i in 1:l_response){ 
     
-    p <-  mList[[2]] %>% 
-      purrr::pluck(".workflow",1) %>%   # I like tidy model workflows but it is annoying to extract fits like this
-      pull_workflow_fit() 
-   #create multi-class probability function 
-    #from Brandon
-   #pfun <- function(object, newdata){
-    # colMeans(predict(object, data= newdata)$predictions)}
-   
-     pfun <- function(object, newdata) { # had to add this as pdp doesn't like tidymodel new_data call 
-       #colMeans(predict(p, new_data=tList[[i]], type = "prob")[,2], na.rm=TRUE)# [,2} selects postive yhats (change to 1 for negative class). 
-       #mean(c$.pred_1, drop = TRUE) #drop=T removes NAs.
-      predict(p, new_data=tList[[2]], type = "prob")[,2]
-       #predict(p, new_data=tList[[1]])
-     }
-     
-     # [,2} selects postive yhats (change to 1 for negative class). 
-     # mean(c$.pred_1, drop = TRUE) #drop=T removes NAs.
-      
-    #old function
-    #pred_prob <- function(object, newdata) { # had to add this as pdp doesn't like tidymodel new_data call 
-     # c<- predict(p, new_data=tList[[i]], type = "prob")[,2]# [,2} selects postive yhats (change to 1 for negative class). 
-      #mean(c$.pred_1, drop = TRUE) #drop=T removes NAs.
-    #}
-      #mean makes it a pd rather than ICE. ICE would be impossible to see for the global plot but we could add
-      #it for the individual model plots
+    
+    # testing:
+    #pdp_pred_fun(modList[[i]], testList[[i]])
+    
+    workflow_partial <-
+      partial(modList[[i]],
+              pred.var = paste0(Feature),
+              pred.fun = pdp_pred_fun,
+              grid.resolution = 15, #this may improve things for the bobcat FIV data
+              train = dList[[i]])
+    response.id <- rep(names(X[i]), nrow(workflow_partial)) #add names to the new dataframe.Problem here in the loop
+    
+    workflow_partial_mr[[i]] <- cbind(workflow_partial , response.id)
+  }
   
-    #need to add for all features
-
-     #pdI[[i]] <- partial(p, pred.var = n_features, train = tList[[i]],  type = c("classification"), pred.fun = pred_prob)
-     
-     
-     pdI <- partial(p, pred.var = 'Grassland', train = tList[[2]],  type = c("classification"), pred.fun = pfun)
-     pdI$Grassland <- as.factor(pdI$Grassland)
-     
-     p2 <- autoplot(pdI, contour = FALSE, main = "ggplot2 version", 
-                    legend.title = "Partial\ndependence")
-     
-     
-    pd1 <- pdI %>% dplyr::group_by(Grassland) %>% 
-      dplyr::summarise(AvgYhat= mean(yhat))
-     
-     
-      yhat.id <- rep(names(X[i]), nrow(pdI)) #add names to the new dataframe.Problem here in the loop
-     
-      PdIn[[i]] <- cbind(pdI, yhat.id)
-
+  PdpGlobal <- as.data.frame(do.call(rbind, workflow_partial_mr))
+  
+  #plot - could be a sepparate function
+  pdPlot <- ggplot(PdpGlobal, aes_string(Feature, 'yhat', color='response.id'))+
+    geom_line() +
+    theme_bw()+
+    theme(legend.title = element_blank())
+  print(pdPlot)
+  
+ readline(prompt="All responses plot. Press [enter] to continue to the global summary plot")
+ 
+  turnover <-PdpGlobal %>% 
+    dplyr:: group_by_at(paste(Feature)) %>%  #this doesn't work right and leads to an error. Im sure there is a simple fix.
+    #dplyr::group_by(scale.prop.zos) %>% 
+    dplyr::summarise(avgYhat = mean(yhat))
+  
+  GlobalPD <- ggplot(turnover, aes_string(Feature, 'avgYhat'))+
+    geom_line(size=1.5) +
+    theme_bw()
+  print( GlobalPD)
+  
+  return(PdpGlobal)
 }
 
-   PdpGlobal <- do.call(rbind, PdIn) 
-   
-   #plot
-   pdPlot <- ggplot(PdpGlobal, aes(Grassland, yhat, color=yhat.id))+
-     geom_line() +
-     theme_bw()+
-     theme(legend.title = element_blank())
-   print(pdPlot)
-   
-   return(list(PdpGlobal))
-}   
-# values seem odd in that in the coinfection example scale prop. zos has no impact on 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

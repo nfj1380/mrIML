@@ -20,7 +20,7 @@
 #'
 #plot_vi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov, cutoff= 0.5)
 
-plot_vi <- function (VI, modelPerf, Y, X, groupCov, cutoff= 0.5 ){
+plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.5 ){
 
   colnames(VI) <- names(X)
   n_features <- sort(names(Y))
@@ -33,11 +33,15 @@ plot_vi <- function (VI, modelPerf, Y, X, groupCov, cutoff= 0.5 ){
   #for interpretation group features. Annoying but I cant see an easier way 
   
     rs <- as.data.frame( rowSums(VI)/sum(VI) ) #make it a proportion
-
-    rsA <- rownames_to_column(rs)
+      rsA <- rownames_to_column(rs)
+      
+  if (!is.null(groupCov)) { 
+    
+   
     rsA <- cbind(rsA, groupCov) # attach group info
   names(rsA)[2] <- c('prop')
     rsA$row <- 1 #dummy x axis
+    
     
    p1 <-  ggplot(rsA, aes(fill= groupCov, y=prop, x= row)) + 
          theme_bw()+
@@ -98,6 +102,74 @@ plot_vi <- function (VI, modelPerf, Y, X, groupCov, cutoff= 0.5 ){
   labs(fill='Feature set') #could be a nice extension to add mcc/spec/sens to the model
 #theme(legend.position="none") + #I like the legend personally rather than lots of x axis text.
   print(p2)
-
+  }
+#-----------------------------------------------------------------------------------------------------------  
+  if (is.null(groupCov)) {
+    
+FeatureName <- as.data.frame(names(Y)) 
+          FNameOrdered <- FeatureName[order(FeatureName$'names(Y)'),]
+    
+    rsA <- cbind(rsA, FNameOrdered ) # add featue names back
+    
+    names(rsA)[2] <- c('prop')
+    rsA$row <- 1 #dummy x axis
+    
+    
+    p1 <-  ggplot(rsA, aes(y=reorder(FNameOrdered, prop), x= prop)) + 
+      geom_bar(stat="identity")+
+      theme_bw()+
+      labs(y= "Feature", x='Cumulative importance')
+    print(p1)
+    readline(prompt="Press [enter] to continue")
+    
+    #----------------------------------------------------------------
+    #Individual response importance
+    #----------------------------------------------------------------
+    
+    trans <- as.data.frame(t(VI) )
+    colnames(trans) <- n_features
+    
+    combi <- bind_cols(ModelPerf, trans ) %>% 
+      na.omit() #nas mean the model didn't work properly remove. Should provide a warning perhaps?
+    
+    combi$mcc<- as.numeric(as.character(combi$mcc)) #have to make mcc numeric again.
+    combiF <- filter(combi, mcc > cutoff) # poorly performing models don't get included. COuld make this user defined.
+    combiF$Species <- as.character(combiF$Species) 
+    
+    combiF$Model_name <- NULL #don't need these columns anymore. May be nice to print them on plot?
+    combiF$mcc <- NULL
+    combiF$sensitivity <- NULL
+    combiF$specificity <- NULL
+    
+    combiFT <- as.data.frame(t(combiF)) %>%  row_to_names(row_number = 1) 
+    
+    data_long <- gather(combiFT,  key ='Species', value = importance) #turns this wide frame into something suitable to plot
+    
+    charvec <- rep(n_features, length(combiFT)) #create a vector of feature names
+    
+    #up to here
+    charvecGroup <- rep(FNameOrdered, length(combiFT)) #make it easier to read 
+    
+    finaldf <- as.data.frame(cbind(data_long, charvec)) #if we want ungrouped features. COuld add this functionality
+    finaldfg <- as.data.frame(cbind(data_long, charvecGroup))
+    
+    finaldf$importance <- as.numeric(finaldf$importance) 
+    finaldfg$importance <- as.numeric(finaldfg$importance)
+    
+    #not the biggest fan of barplots  - but they are the easiest to see in this case.
+    
+    p2 <- ggplot(finaldfg, aes(fill=charvecGroup  , y=importance, x=charvecGroup )) + 
+      geom_bar(position="dodge", stat="identity") +
+      scale_fill_viridis(discrete = T, option = "E") +
+      ggtitle("Individual response models") +
+      facet_wrap(~Species) +
+      theme_ipsum() +
+      theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.ticks.x=element_blank())+
+      labs(fill='Feature set') #could be a nice extension to add mcc/spec/sens to the model
+    #theme(legend.position="none") + #I like the legend personally rather than lots of x axis text.
+    print(p2)
+  }
 }
 #---------------------------------------------------------------------------------------------------------------

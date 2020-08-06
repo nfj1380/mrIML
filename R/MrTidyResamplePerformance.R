@@ -16,14 +16,28 @@ mrIMLperformance <- function(yhats, model1, X){ #should be able to extract model
   
   n_response<- length(yhats)
   mod_perf <- NULL
-
+  
   
   yList <- yhats %>% purrr::map(pluck('yhatT')) #get the training yhats all together
-    
-    #modelperf <- map(seq(1,n_response), function(i){
+  modList <- yhats %>% purrr::map(pluck('mod1_k')) #extracts model
+  tList <- yhats %>% purrr::map(pluck('data_train')) #get together training data.
+  
+  modelperf <- map(seq(1,n_response), function(i){
   for( i in 1:n_response) {
-      
-    yd <- as.data.frame(yList[i]) 
+    
+    folds <- vfold_cv(tList[[1]], v = 10)
+    
+    metrics = metric_set(roc_auc, sens, spec)
+    metrics = metric_set(mcc, sens)
+    fit_rs <- 
+      modList[[1]] %>% 
+      fit_resamples(folds) %>% 
+      collect_metrics(metrics)
+    
+    
+    
+    
+    yd <- as.data.frame(yList[1]) #
     mathews <-  yardstick::mcc(yd,class, .pred_class) #yardstick is the tifymodels performance package.
     mathews <- mathews$.estimate #extract mcc
     sen <- yardstick::sens(yd,class, .pred_class)
@@ -31,21 +45,20 @@ mrIMLperformance <- function(yhats, model1, X){ #should be able to extract model
     spe <- yardstick::spec(yd,class, .pred_class)
     spe <- spe$.estimate
     #rocAUC <- yardstick::roc_auc(yhatT,class, .pred_class) #not working for some reason. Wants pred_class as numeric?
-
-#add some identifiers
-  mod_name <- class(model1)[1] #extracts model name
-  #model1_perf <- c(mod_name, mathews, sen, spe)
-  sp <- names(X[i])
-  prev <- sum(X[i])/nrow(X)
-
-#save all the metrics
-  mod_perf[[i]] <- c( sp, mod_name, mathews, sen, spe, prev)
-
+    
+    #add some identifiers
+    mod_name <- class(model1)[1] #extracts model name
+    #model1_perf <- c(mod_name, mathews, sen, spe)
+    sp <- names(X[i])
+    
+    #save all the metrics
+    mod_perf[[i]] <- c( sp, mod_name, mathews, sen, spe)
+    
   }
   
   mod1_perf<- do.call(rbind, mod_perf)
   mod1_perf <- as.data.frame( mod1_perf)
-  colnames(mod1_perf) <- c('response', 'model_name', 'mcc', 'sensitivity', 'specificity', 'prevalence')
+  colnames(mod1_perf) <- c('Species', 'Model_name', 'mcc', 'sensitivity', 'specificity')
   
   return ( mod1_perf)
 }
