@@ -22,6 +22,7 @@ response_covariance = function(yhats, covariance_mod){
                      as.matrix(predictors))
     
     data_split_R <- initial_split(data_R, prop = 0.75) #75% training and 25 %testing data
+    #data_split_R <- initial_split(data_R, strata = outcome) #to avoid data linkage
     
     data_train_R <- training(data_split_R) 
     data_test_R <- testing(data_split_R)

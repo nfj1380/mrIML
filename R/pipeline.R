@@ -57,7 +57,7 @@ source("./R/MrtTidyPerf.R")
 source("./R/mrvip.R")
 source("./R/plot_vi.R")
 source("./R/MrResamplePerformance.R")
-
+source("./R/mrPdP.R")
 
 #Nick C - this and the function below are the functions with tidy model code I made from your original
 source("./R/stacked_preds.R") #this does the stacking
@@ -134,15 +134,17 @@ boost_tree() %>%
 #---------------------------------------------------------------------  
   
 #models just using features/predictor variables.
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no')
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') ## in MrTidymodels
 
 #we can now assess model performance briefly.
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) # MCC is useful (higher numbers = better fit)
 #doesn't work with upsampled data - something to do with mcc? Still unclear
 ModelPerf 
 
-#However this approach just comparing model predictions to test data doesn't give a full assessment of how the model is performing.
-#The next function goes into model performance in more detail.It does take longer to compute.
+#However this approach just comparing model predictions to test
+#data doesn't give a full assessment of how the model is performing.
+#The next function goes into model performance in more detail.It does
+#take longer to compute.
 
 ModelPerf10foldCV <- mrResamplePerformance(yhats, model1, X=X)
 ModelPerf10foldCV[1] #this also allows the user to assess if models are overfitting ie. is the AUC calculated using the 
@@ -154,7 +156,7 @@ save(ModelPerf10foldCV, "randF.RData") #save to compare later.
 
 #we can look at variable importance. Coinfection data only has one feature so not much use there.
 VI <- mrVip(yhats, Y=Y)
-#plot modle similarity
+#plot model similarity
 
 #plot variable importance
 
@@ -169,12 +171,20 @@ plot_vi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov=groupCov, 
 #plot partial dependencies. Strange results
 testPdp <- mrPdP(yhats, X=X,Y=Y, Feature='Longitude') 
 
+
 #indiv SNPs
-env131 <- testPdp[[1]] %>% filter(response.id=='env_131')
-summary(env131)
- ggplot(env131, aes(Longitude, yhat, color=response.id))+
+testPdp %>% 
+  filter(response.id=="env_131")%>%
+ggplot(aes(Longitude, yhat, group = yhat.id))+
   geom_line() +
   theme_bw()
+
+# #indiv SNPs
+# env131 <- testPdp[[1]] %>% filter(response.id=="env_131")
+# summary(env131)
+#  ggplot(env131, aes(Longitude, yhat, color=response.id))+
+#   geom_line() +
+#   theme_bw()
 
 
 #adding other response varables to see if this improves predictions. wecould say that it only has been tested 
