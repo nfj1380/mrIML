@@ -134,7 +134,7 @@ boost_tree() %>%
 #---------------------------------------------------------------------  
   
 #models just using features/predictor variables.
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') ## in MrTidymodels
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='up') ## in MrTidymodels
 
 #we can now assess model performance briefly.
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) # MCC is useful (higher numbers = better fit)
