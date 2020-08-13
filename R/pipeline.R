@@ -128,13 +128,22 @@ model1 <-
 boost_tree() %>%
   set_engine("xgboost") %>%
   set_mode("classification")
-
+  
 #---------------------------------------------------------------------
 #Perform the analysis
 #---------------------------------------------------------------------  
   
 #models just using features/predictor variables.
 yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='up') ## in MrTidymodels
+
+## bested tuned hyperparameter
+cv_res<-as_tibble(yhats[[1]]$res_tune) %>% 
+  show_best(metric = ("roc_auc"))
+  
+yhats[[1]]$res_tune %>% 
+  show_best(metric = ("accuracy"))%>%
+  autoplot()
+
 
 #we can now assess model performance briefly.
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) # MCC is useful (higher numbers = better fit)
@@ -171,6 +180,9 @@ plot_vi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov=groupCov, 
 #plot partial dependencies. Strange results
 testPdp <- mrPdP(yhats, X=X,Y=Y, Feature='Longitude') 
 
+
+## make one plot for each 
+## pre plot for each
 
 #indiv SNPs
 testPdp %>% 

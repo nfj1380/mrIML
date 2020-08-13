@@ -63,7 +63,13 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
         themis::step_downsample(class)
       }
     
-    if(balance_data == 'up'){
+    if(balance_data == 'up'){ 
+      data_recipe <- training(data_split) %>%
+        recipe(class ~., data= data_train) %>% #if downsampling is needed
+        themis::step_upsample(class)
+    }
+    
+    if(balance_data == 'rose'){
       data_recipe <- training(data_split) %>%
         recipe(class ~., data= data_train) %>%
         themis::step_rose(class) #ROSE works better on smaller data sets. SMOTE is an option too.
@@ -89,14 +95,32 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
     # Fit model one for each parasite; can easily modify this so that the user
     # can specify the formula necessary for each species as a list of formulas
     
+    # Find best tuned model
+    k3_20 <- expand_grid(neighbors = 3:20)
+    res_tune <-
+      mod_workflow %>%
+      tune::tune_grid(resamples = data_cv,
+                      grid = k3_20,
+                      metrics = yardstick::metric_set(accuracy,roc_auc),
+                      control= tune:: control_resamples(save_pred = TRUE),
+                      collect_metrics())
+    
+    # get the results of tunning
+    tune_results <- res_tune %>% 
+      show_best(metric = "roc_auc", n = 5, maximize = FALSE)
+    
     mod1_k <- mod_workflow %>%
       fit(data = data_train)
     
     # the last fit
     set.seed(345)
     last_mod_fit <- 
-      mod_workflow %>% 
-      last_fit(data_split)
+     mod_workflow %>% 
+     last_fit(data_split,res_tune)
+  
+## add the best for the tuning  option for user (Gustavo)# 
+## turn it off if you want 
+    
     
     #fit on the training set and evaluate on test set. Not needed 
     #last_fit(data_split) 
@@ -108,15 +132,15 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
     yhat <- yhatO$.pred_1
     
     #' Calculate deviance residuals 
-    resid <- devianceResids(yhatO, data_train$class )
+    resid <- devianceResids(yhatO, data_train$class)
     
     #predictions based on testing data
-    yhatT <- predict(mod1_k, new_data = data_test, type='class' ) %>% 
-      bind_cols(data_test %>% select(class))
+    yhatT <- predict(mod1_k, new_data = data_test, type='class') %>% 
+      bind_cols(data_test %>%
+                  select(class))
     
     
-    list(mod1_k = mod1_k, last_mod_fit=last_mod_fit, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid) 
+    list(mod1_k = mod1_k, res_tune=res_tune, last_mod_fit=last_mod_fit,tune_results=tune_results, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid) 
   })  
-  
 }
 
