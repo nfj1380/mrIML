@@ -86,8 +86,10 @@ FeaturesnoNA<-Features[complete.cases(Features), ];str(Features) #dropping NAs
 
 Y <- FeaturesnoNA #for simplicity
 
+#for more efficent testing for interactions (more variables more interacting pairs)
+Y <- FeaturesnoNA[c(1:5)]
 #Optional: Filter rare/common SNPs or species. Retaining minor allelle frequncies >0.1 and removing common allelles (occur>0.9)
-fData <- filterRareCommon (Responsedata, lower=0.25, higher=0.7) 
+fData <- filterRareCommon (Responsedata, lower=0.2, higher=0.75) 
 
 X <- fData #for simplicity when comparing
 
@@ -123,7 +125,7 @@ model1 <-
   set_engine("ranger", importance = "impurity") %>%
   set_mode("classification")
 
-#Boosted model (xgrboost). Not tuned either currently. This doesn't work with the small bobcat dataset. Much too small
+#Boosted model (xgboost). Not tuned either currently. This doesn't work with the small bobcat dataset. Much too small
 model1 <- 
 boost_tree() %>%
   set_engine("xgboost") %>%
@@ -134,7 +136,7 @@ boost_tree() %>%
 #---------------------------------------------------------------------  
   
 #models just using features/predictor variables.
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='up') ## in MrTidymodels
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') ## in MrTidymodels
 
 #we can now assess model performance briefly.
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) # MCC is useful (higher numbers = better fit)
@@ -164,13 +166,12 @@ VI <- mrVip(yhats, Y=Y)
 groupCov <- c(rep ("Host_characteristics", 1),rep("Urbanisation", 3), rep("Vegetation", 2), rep("Urbanisation",1), rep("Spatial", 2), 
               rep('Host_relatedness', 6),rep ("Host_characteristics", 1),rep("Vegetation", 2), rep("Urbanisation",1))  
 
-plot_vi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov=groupCov, cutoff= 0.5) #note there are two plots here.#I get a strange error running this some times 'prop not found'. 
+plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, groupCov=groupCov, cutoff= 0.5) #note there are two plots here. 
 #First plot is overall importance and the second is individual SNP models.
 #warning are about x axis labels so can ignore 
 
 #plot partial dependencies. Strange results
-testPdp <- mrPdP(yhats, X=X,Y=Y, Feature='Longitude') 
-
+testPdp <- mrPdP(yhats, X=X,Y=Y, Feature='scale.prop.zos') 
 
 #indiv SNPs
 testPdp %>% 
@@ -186,6 +187,11 @@ ggplot(aes(Longitude, yhat, group = yhat.id))+
 #   geom_line() +
 #   theme_bw()
 
+#calculate interactions  -this is qute slow and memory intensive
+
+Interact <-mrInteractions(yhats, X, Y) 
+
+mrPlot_interactions(Interact, X,Y, top_ranking = 10, top_response=10)
 
 #adding other response varables to see if this improves predictions. wecould say that it only has been tested 
 #on 3 algorithms (GAMs, Xgboost which is an improved GBM and liner models) and user beware otherwise.
