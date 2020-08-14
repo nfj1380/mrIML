@@ -24,7 +24,7 @@ mrPdP <- function(yhats, X, Y, Feature=Feature){
   dList <- yhats %>% purrr::map(pluck('data')) #get together training data.
   modList <- yhats %>% purrr::map(pluck('mod1_k'))
   #testList <- yhats %>% purrr::map(pluck('data_testa')) could be useful
-  
+  modList <- yhats %>% purrr::map(pluck('mod1_k'))
   workflow_partial_mr <- NULL #create empty dataframe for pd values
   
   pdp_pred_fun <- function(object, newdata) { #pd funtion

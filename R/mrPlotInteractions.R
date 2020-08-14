@@ -88,7 +88,8 @@ mrPlot_interactions <- function(interactions, X,Y, top_ranking = 10, top_respons
       t_inDataOrered_top <- as.data.frame(t(inDataOrered_top)) %>% 
         janitor::row_to_names(row_number = 1) %>% 
         rownames_to_column()
-        
+      
+  print(p3)      
      
   topIntC <- filter( t_inDataOrered_top, rowname %in%  top_int_response$rowname)
   
@@ -114,5 +115,5 @@ mrPlot_interactions <- function(interactions, X,Y, top_ranking = 10, top_respons
            axis.ticks.x=element_blank())+
      labs(fill='Feature set') 
    
-  
+  print(p4)
    }
