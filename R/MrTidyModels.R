@@ -31,6 +31,9 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
   # from simple regressions to complex hierarchical or deep learning models.
   # Different structures can also be used for each species to handle mixed multivariate outcomes
   
+  #options(show.error.messages= FALSE) not working
+  #sink(type="message")
+  
   mod1_perf <- NULL #place to save performance matrix
   
   #yhats <- for(i in 1:length(X)) {
@@ -43,7 +46,7 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
     #OtherSNPs[OtherSNPs== 'Positive'] <- 1 #could do a PCA/PCoA?
     #OtherSNPsa <-apply(OtherSNPs, 2, as.numeric) 
     
-    data <- cbind(X[i], Y) 
+    data <- cbind(X[1 ], Y) 
     colnames(data)[1] <- c('class') #define response variable
     
     data$class<- as.factor(data$class)
@@ -54,8 +57,9 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
     # extract training and testing sets
     data_train <- training(data_split)
     data_test <- testing(data_split)
+    
     #10 fold cross validation
-    data_cv <- vfold_cv(data_train, v= 10) #not used yet.
+    data_cv <- vfold_cv(data_train, v= 10) 
       
     if(balance_data == 'down'){ 
       data_recipe <- training(data_split) %>%
@@ -101,22 +105,32 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
       mod_workflow %>%
       tune::tune_grid(resamples = data_cv,
                       grid = k3_20,
-                      metrics = yardstick::metric_set(accuracy,roc_auc),
+                      metrics = yardstick::metric_set(roc_auc),#remove accuracy
                       control= tune:: control_resamples(save_pred = TRUE),
-                      collect_metrics())
+                      collect_metrics()) #this isnt working properly - what is neighbors in this context?
     
     # get the results of tunning
     tune_results <- res_tune %>% 
-      show_best(metric = "roc_auc", n = 5, maximize = FALSE)
+      show_best(metric = "roc_auc", n = 5)
     
-    mod1_k <- mod_workflow %>%
+    param_final <- res_tune %>%
+      select_best(metric = "roc_auc")
+    
+    #update model
+    final_workflow <- mod_workflow %>%
+      finalize_workflow(param_final)
+    
+    mod1_k <- final_workflow %>%
       fit(data = data_train)
     
-    # the last fit
+    # the best model fit
     set.seed(345)
-    last_mod_fit <- 
+    best_mod_fit <- 
      mod_workflow %>% 
      last_fit(data_split,res_tune)
+      #select_best(res_tune, metric = "roc_auc")
+    
+   # best_mod_fit$.workflow
   
 ## add the best for the tuning  option for user (Gustavo)# 
 ## turn it off if you want 
@@ -135,12 +149,14 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
     resid <- devianceResids(yhatO, data_train$class)
     
     #predictions based on testing data
-    yhatT <- predict(mod1_k, new_data = data_test, type='class') %>% 
+    yhatT <- predict(mod1_k, new_data = data_test, type='prob') %>% 
       bind_cols(data_test %>%
                   select(class))
+  
+    })
     
     
-    list(mod1_k = mod1_k, res_tune=res_tune, last_mod_fit=last_mod_fit,tune_results=tune_results, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid) 
-  })  
-}
+    list(mod1_k = mod1_k, res_tune=res_tune, best_mod_fit=best_mod_fit, tune_results=tune_results, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid) 
+  } 
+
 

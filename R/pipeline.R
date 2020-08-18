@@ -45,7 +45,8 @@ library(janitor)
 library(hrbrthemes)
 library(MRFcov)
 library(xgboost)
-
+library(vegan)
+library(ggrepel)
 
 # load all function codes. This will disappear when we formally make this a function
 source("./R/filterRareCommon.R")
@@ -56,8 +57,12 @@ source("./R/filterRareCommon.R")
 source("./R/MrtTidyPerf.R")
 source("./R/mrvip.R")
 source("./R/plot_vi.R")
-source("./R/MrResamplePerformance.R")
 source("./R/mrPdP.R")
+
+#new interaction code
+source("./R/mrInteractions.R")
+source("./R/mrPlotInteractions.R") #not finding this for some reason
+source("./R/vintTidy.R")
 
 #Nick C - this and the function below are the functions with tidy model code I made from your original
 source("./R/stacked_preds.R") #this does the stacking
@@ -89,11 +94,10 @@ Y <- FeaturesnoNA #for simplicity
 #for more efficent testing for interactions (more variables more interacting pairs)
 Y <- FeaturesnoNA[c(1:5)]
 #Optional: Filter rare/common SNPs or species. Retaining minor allelle frequncies >0.1 and removing common allelles (occur>0.9)
-fData <- filterRareCommon (Responsedata, lower=0.2, higher=0.75) 
+fData <- filterRareCommon (Responsedata, lower=0.4, higher=0.75) 
 
 X <- fData #for simplicity when comparing
 
- 
 #that occur in less than 35% of individuals and > 75% of individuals
 #fData <- rownames_to_column(fData, "Individual")#get individual id back
 #user can specify any tidy model here. 
@@ -118,14 +122,22 @@ model1 <- #model used to generate yhat
   # choose either the continuous regression or binary classification mode
   set_mode("classification") #just for your response
 
-#random forest. Note that these models are tuned   - need to fix this.
- 
 model1 <- 
   rand_forest(trees = 100, mode = "classification") %>%
   set_engine("ranger", importance = "impurity") %>%
   set_mode("classification")
 
+#model 1 with tuning. The user has to supply this too
+model1tune<- rand_forest(
+  mtry = tune(),
+  trees = 100,
+  min_n = tune()
+) %>%
+  set_mode("classification") %>%
+  set_engine("ranger")
+
 #Boosted model (xgboost). Not tuned either currently. This doesn't work with the small bobcat dataset. Much too small
+
 model1 <- 
 boost_tree() %>%
   set_engine("xgboost") %>%
@@ -138,35 +150,26 @@ boost_tree() %>%
 #models just using features/predictor variables.
 yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') ## in MrTidymodels
 
-## bested tuned hyperparameter
+## best tuned hyperparameter
 cv_res<-as_tibble(yhats[[1]]$res_tune) %>% 
   show_best(metric = ("roc_auc"))
   
 yhats[[1]]$res_tune %>% 
   show_best(metric = ("accuracy"))%>%
-  autoplot()
+  autoplot() #not working
 
+yhats[[1]]$mod1_k$fit #check model fit. 1 in this case is the first reponse variable in the data 
 
-#we can now assess model performance briefly.
+#we can now assess model performance from the best tuned model
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) # MCC is useful (higher numbers = better fit)
 #doesn't work with upsampled data - something to do with mcc? Still unclear
-ModelPerf 
 
-#However this approach just comparing model predictions to test
-#data doesn't give a full assessment of how the model is performing.
-#The next function goes into model performance in more detail.It does
-#take longer to compute.
+ModelPerf[1] #summary table
+ModelPerf[2] #summary rocAUC for all response variables
 
-ModelPerf10foldCV <- mrResamplePerformance(yhats, model1, X=X)
-ModelPerf10foldCV[1] #this also allows the user to assess if models are overfitting ie. is the AUC calculated using the 
-#training data much better than the testing AUC
-ModelPerf10foldCV[2] #this is the mean AUC calculated using the testing data. Probably the best way to see how well
-#the models have gone overall. Good when there is lots of response variables.
-
-save(ModelPerf10foldCV, "randF.RData") #save to compare later.
 
 #we can look at variable importance. Coinfection data only has one feature so not much use there.
-VI <- mrVip(yhats, Y=Y)
+VI <- mrVip(yhats, Y=Y) #seem not to used all features for log regression for some reason
 #plot model similarity
 
 #plot variable importance
@@ -175,7 +178,15 @@ VI <- mrVip(yhats, Y=Y)
 groupCov <- c(rep ("Host_characteristics", 1),rep("Urbanisation", 3), rep("Vegetation", 2), rep("Urbanisation",1), rep("Spatial", 2), 
               rep('Host_relatedness', 6),rep ("Host_characteristics", 1),rep("Vegetation", 2), rep("Urbanisation",1))  
 
-plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, groupCov=groupCov, cutoff= 0.5) #note there are two plots here. 
+#not that GLMs in particular wont produce coefficents for features that are strongly colinear and will drop them from the model.
+#in this case group cov will have to be changed to reflect features included in the model. 
+
+plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, groupCov=groupCov, cutoff= 0.5)#note there are two plots here. 
+
+#if you dont want/need to group covariates:
+
+plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0.5) #mcc cutoff not working right
+
 #First plot is overall importance and the second is individual SNP models.
 #warning are about x axis labels so can ignore 
 
@@ -187,17 +198,11 @@ testPdp <- mrPdP(yhats, X=X,Y=Y, Feature='scale.prop.zos')
 
 #indiv SNPs
 testPdp %>% 
-  filter(response.id=="env_131")%>%
-ggplot(aes(Longitude, yhat, group = yhat.id))+
+  filter(response.id=="Plas")%>%
+ggplot(aes(scale.prop.zos, yhat, group = yhat.id))+
   geom_line() +
   theme_bw()
 
-# #indiv SNPs
-# env131 <- testPdp[[1]] %>% filter(response.id=="env_131")
-# summary(env131)
-#  ggplot(env131, aes(Longitude, yhat, color=response.id))+
-#   geom_line() +
-#   theme_bw()
 
 #calculate interactions  -this is qute slow and memory intensive
 

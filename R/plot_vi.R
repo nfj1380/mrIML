@@ -23,14 +23,14 @@
 plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.5 ){
 
   colnames(VI) <- names(X)
-  n_features <- sort(names(Y))
-  row.names(VI) <-  n_features
+  #n_features <- sort(names(Y))
+  n_features <-  row.names(VI)
 
   #----------------------------------------------------------------
   #Global importance
   #----------------------------------------------------------------
 
-  #for interpretation group features. Annoying but I cant see an easier way 
+  #for interpretation of group features.
   
     rs <- as.data.frame( rowSums(VI)/sum(VI) ) #make it a proportion
       rsA <- rownames_to_column(rs)
@@ -53,30 +53,57 @@ plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.5 ){
           axis.ticks.x=element_blank())+
           labs(fill='Feature') 
    print(p1)
-   readline(prompt="Press [enter] to continue")
+   readline(prompt="Press [enter] to continue for the top individual models")
    
     #----------------------------------------------------------------
     #Individual response importance
     #----------------------------------------------------------------
   
   trans <- as.data.frame(t(VI) )
-  colnames(trans) <- n_features
+  features <-  colnames(trans) 
 
-  combi <- bind_cols(ModelPerf, trans ) %>% 
+  combi <- bind_cols(ModelPerf[1], trans ) %>% 
   na.omit() #nas mean the model didn't work properly remove. Should provide a warning perhaps?
 
   combi$mcc<- as.numeric(as.character(combi$mcc)) #have to make mcc numeric again.
-  combiF <- filter(combi, mcc > cutoff) # poorly performing models don't get included. COuld make this user defined.
-  combiF$Species <- as.character(combiF$Species) 
+  combiF <- filter(combi, mcc > cutoff) 
+  # poorly performing models don't get included. COuld make this user defined. Need a warning here
+  combiF$response <- as.character(combiF$response) 
   
-  combiF$Model_name <- NULL #don't need these columns anymore. May be nice to print them on plot?
+  combiF$model_name <- NULL #don't need these columns anymore. May be nice to print them on plot?
   combiF$mcc <- NULL
   combiF$sensitivity <- NULL
   combiF$specificity <- NULL
-
+  combiF$roc_AUC <- NULL
+  combiF$prevalence <- NULL
+  
   combiFT <- as.data.frame(t(combiF)) %>%  row_to_names(row_number = 1) 
-
-  data_long <- gather(combiFT,  key ='Species', value = importance) #turns this wide frame into something suitable to plot
+  
+#------------------------------------------------------------------  
+  #Importance PCA plot. Responses with similar importance scores group together
+#------------------------------------------------------------------    
+  readline(prompt="Press [enter] to plot the importance PCA plot")  
+ 
+  a1 <- a[,-1] %>%  mutate_if( is.factor, ~ as.numeric(as.character(.x))) #this is a handy function
+  row.names(a1) <- a$rowname
+  
+  a.pca <- rda(a1)
+  
+    uscores <- data.frame(a.pca$CA$u)
+  
+   p2 <- ggplot(uscores  , aes(x = PC1, y = PC2)) + 
+    geom_point() + 
+    geom_label_repel(aes(label = rownames(a1)),
+                     box.padding   = 0.35, 
+                     point.padding = 0.5,
+                     segment.color = 'grey50') +
+    theme_bw()
+  #  geom_text(data = vscores, aes(x = PC1, y = PC2, label = rownames(vscores)), col = 'red')
+ # geom_text(data = vscores, aes(x = PC1, y = PC2, label = rownames(vscores)), col = 'red')
+   print(p2)
+  #------------------------------------------------------------------  
+  
+  data_long <- gather(combiFT,  key ='response', value = importance) #turns this wide frame into something suitable to plot
 
   charvec <- rep(n_features, length(combiFT)) #create a vector of feature names
 
@@ -90,86 +117,115 @@ plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.5 ){
 
   #not the biggest fan of barplots  - but they are the easiest to see in this case.
   
-  p2 <- ggplot(finaldfg, aes(fill=charvecGroup  , y=importance, x=charvecGroup )) + 
+  p3 <- ggplot(finaldfg, aes(fill=charvecGroup  , y=importance, x=charvecGroup )) + 
     geom_bar(position="dodge", stat="identity") +
     scale_fill_viridis(discrete = T, option = "E") +
     ggtitle("Individual response models") +
-    facet_wrap(~Species) +
+    facet_wrap(~response) +
     theme_ipsum() +
     theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank())+
   labs(fill='Feature set') #could be a nice extension to add mcc/spec/sens to the model
 #theme(legend.position="none") + #I like the legend personally rather than lots of x axis text.
-  print(p2)
+  
+readline(prompt="Press [enter] to plot individual variable importance summaries")  
+  print(p3)
   }
 #-----------------------------------------------------------------------------------------------------------  
   if (is.null(groupCov)) {
     
-FeatureName <- as.data.frame(names(Y)) 
-          FNameOrdered <- FeatureName[order(FeatureName$'names(Y)'),]
+#FeatureName <- as.data.frame(names(Y))   #this is more flexible
+         # FNameOrdered <- FeatureName[order(FeatureName$'names(Y)'),]
     
-    rsA <- cbind(rsA, FNameOrdered ) # add featue names back
+    #rsA <- cbind(rsA, n ) # add featue names back
     
     names(rsA)[2] <- c('prop')
     rsA$row <- 1 #dummy x axis
     
     
-    p1 <-  ggplot(rsA, aes(y=reorder(FNameOrdered, prop), x= prop)) + 
+    p1 <-  ggplot(rsA, aes(y=reorder(rowname, prop), x= prop)) + 
       geom_bar(stat="identity")+
       theme_bw()+
       labs(y= "Feature", x='Cumulative importance')
     print(p1)
-    readline(prompt="Press [enter] to continue")
     
-    #----------------------------------------------------------------
+    readline(prompt="Press [enter] to plot the importance PCA plot") 
+    
+    
+    
+#----------------------------------------------------------------
     #Individual response importance
-    #----------------------------------------------------------------
+#----------------------------------------------------------------
     
     trans <- as.data.frame(t(VI) )
-    colnames(trans) <- n_features
+   # colnames(trans) <- n_features
     
-    combi <- bind_cols(ModelPerf, trans ) %>% 
+    combi <- bind_cols(ModelPerf[1], trans ) %>% 
       na.omit() #nas mean the model didn't work properly remove. Should provide a warning perhaps?
     
     combi$mcc<- as.numeric(as.character(combi$mcc)) #have to make mcc numeric again.
     combiF <- filter(combi, mcc > cutoff) # poorly performing models don't get included. COuld make this user defined.
-    combiF$Species <- as.character(combiF$Species) 
+    combiF$response <- as.character(combiF$response) 
     
-    combiF$Model_name <- NULL #don't need these columns anymore. May be nice to print them on plot?
+    combiF$model_name <- NULL #don't need these columns anymore. May be nice to print them on plot?
     combiF$mcc <- NULL
     combiF$sensitivity <- NULL
     combiF$specificity <- NULL
+    combiF$roc_AUC <- NULL
+    combiF$prevalence <- NULL
     
     combiFT <- as.data.frame(t(combiF)) %>%  row_to_names(row_number = 1) 
     
-    data_long <- gather(combiFT,  key ='Species', value = importance) #turns this wide frame into something suitable to plot
+#------------------------------------------------------------------  
+#Importance PCA plot. Responses with similar importance scores group together
+#------------------------------------------------------------------    
     
-    charvec <- rep(n_features, length(combiFT)) #create a vector of feature names
     
-    #up to here
-    charvecGroup <- rep(FNameOrdered, length(combiFT)) #make it easier to read 
+    a1 <- a[,-1] %>%  mutate_if( is.factor, ~ as.numeric(as.character(.x))) #this is a handy function
+    row.names(a1) <- a$rowname
+    
+    a.pca <- rda(a1)
+    
+    uscores <- data.frame(a.pca$CA$u)
+    
+    p2 <- ggplot(uscores  , aes(x = PC1, y = PC2)) + 
+      geom_point() + 
+      geom_label_repel(aes(label = rownames(a1)),
+                       box.padding   = 0.35, 
+                       point.padding = 0.5,
+                       segment.color = 'grey50') +
+      theme_bw()
+
+    print(p2)
+#------------------------------------------------------------------
+    
+    data_long <- gather(combiFT,  key ='response', value = importance) #turns this wide frame into something suitable to plot
+    
+    charvec <- rep(n_features, ncol(combiFT)) #create a vector of feature names
+  
     
     finaldf <- as.data.frame(cbind(data_long, charvec)) #if we want ungrouped features. COuld add this functionality
-    finaldfg <- as.data.frame(cbind(data_long, charvecGroup))
-    
+
     finaldf$importance <- as.numeric(finaldf$importance) 
     finaldfg$importance <- as.numeric(finaldfg$importance)
     
     #not the biggest fan of barplots  - but they are the easiest to see in this case.
     
-    p2 <- ggplot(finaldfg, aes(fill=charvecGroup  , y=importance, x=charvecGroup )) + 
+    p3 <- ggplot(finaldfg, aes(fill=charvecGroup  , y=importance, x=charvecGroup )) + 
       geom_bar(position="dodge", stat="identity") +
       scale_fill_viridis(discrete = T, option = "E") +
       ggtitle("Individual response models") +
-      facet_wrap(~Species) +
+      facet_wrap(~response) +
       theme_ipsum() +
       theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
             axis.ticks.x=element_blank())+
       labs(fill='Feature set') #could be a nice extension to add mcc/spec/sens to the model
     #theme(legend.position="none") + #I like the legend personally rather than lots of x axis text.
-    print(p2)
+    
+  readline(prompt="Press [enter] to plot individual variable importance summaries") 
+    print(p3)
   }
 }
 #---------------------------------------------------------------------------------------------------------------

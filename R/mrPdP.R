@@ -65,7 +65,7 @@ mrPdP <- function(yhats, X, Y, Feature=Feature){
     dplyr::summarise(avgYhat = mean(yhat))
   
   GlobalPD <- ggplot(turnover, aes_string(Feature, 'avgYhat'))+
-    geom_line(size=1.5) +
+    geom_line(size=1.2, color='red') +
     theme_bw()
   print( GlobalPD)
   
