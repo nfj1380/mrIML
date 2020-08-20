@@ -24,7 +24,7 @@ mrPdP <- function(yhats, X, Y, Feature=Feature){
   dList <- yhats %>% purrr::map(pluck('data')) #get together training data.
   modList <- yhats %>% purrr::map(pluck('mod1_k'))
   #testList <- yhats %>% purrr::map(pluck('data_testa')) could be useful
-  
+  modList <- yhats %>% purrr::map(pluck('mod1_k'))
   workflow_partial_mr <- NULL #create empty dataframe for pd values
   
   pdp_pred_fun <- function(object, newdata) { #pd funtion
@@ -65,7 +65,7 @@ mrPdP <- function(yhats, X, Y, Feature=Feature){
     dplyr::summarise(avgYhat = mean(yhat))
   
   GlobalPD <- ggplot(turnover, aes_string(Feature, 'avgYhat'))+
-    geom_line(size=1.5) +
+    geom_line(size=1.2, color='red') +
     theme_bw()
   print( GlobalPD)
   
