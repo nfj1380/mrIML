@@ -155,8 +155,12 @@ cv_res<-as_tibble(yhats[[1]]$res_tune) %>%
   show_best(metric = ("roc_auc"))
   
 yhats[[1]]$res_tune %>% 
+<<<<<<< HEAD
+   show_best(metric = ("accuracy"))
+=======
   show_best(metric = ("accuracy"))%>%
   autoplot() #not working
+>>>>>>> 7d78076d510a93b2d4b3c34c35649a34b64d5d36
 
 yhats[[1]]$mod1_k$fit #check model fit. 1 in this case is the first reponse variable in the data 
 
