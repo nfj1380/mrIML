@@ -141,8 +141,7 @@ cv_res<-as_tibble(yhats[[1]]$res_tune) %>%
   show_best(metric = ("roc_auc"))
   
 yhats[[1]]$res_tune %>% 
-  show_best(metric = ("accuracy"))%>%
-  autoplot()
+   show_best(metric = ("accuracy"))
 
 
 #we can now assess model performance briefly.
