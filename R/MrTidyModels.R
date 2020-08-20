@@ -23,7 +23,7 @@
 #'   response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling) 
 #'or 'no' (no balancing of classes).
 
-mrIMLpredicts<- function(X, Y, model1, balance_data ='up') { 
+mrIMLpredicts<- function(X, Y, model1, balance_data ='no') { 
   
   n_response<- length(X)
   # Run model 1 for each parasite; a simple logistic regression with a single covariate
@@ -46,7 +46,7 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
     #OtherSNPs[OtherSNPs== 'Positive'] <- 1 #could do a PCA/PCoA?
     #OtherSNPsa <-apply(OtherSNPs, 2, as.numeric) 
     
-    data <- cbind(X[1 ], Y) 
+    data <- cbind(X[i ], Y) 
     colnames(data)[1] <- c('class') #define response variable
     
     data$class<- as.factor(data$class)
@@ -124,11 +124,11 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
       fit(data = data_train)
     
     # the best model fit
-    set.seed(345)
+   # set.seed(345)
     best_mod_fit <- 
      mod_workflow %>% 
      last_fit(data_split,res_tune)
-      #select_best(res_tune, metric = "roc_auc")
+      select_best(res_tune, metric = "roc_auc")
     
    # best_mod_fit$.workflow
   
