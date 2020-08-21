@@ -17,20 +17,29 @@ mrIMLperformance <- function(yhats, model1, X){ #should be able to extract model
   n_response<- length(yhats)
   mod_perf <- NULL
 
-  
-  yList <- yhats %>% purrr::map(pluck('yhatT')) #get the training yhats all together
+#  yList <- yhats %>% purrr::map(pluck('yhatT')) #get the training yhats all together
+  bList <- yhats %>% purrr::map(pluck('best_mod_fit'))
     
     #modelperf <- map(seq(1,n_response), function(i){
   for( i in 1:n_response) {
-      
-    yd <- as.data.frame(yList[i]) 
-    mathews <-  yardstick::mcc(yd,class, .pred_class) #yardstick is the tifymodels performance package.
-    mathews <- mathews$.estimate #extract mcc
-    sen <- yardstick::sens(yd,class, .pred_class)
-    sen <- sen$.estimate
-    spe <- yardstick::spec(yd,class, .pred_class)
-    spe <- spe$.estimate
-    #rocAUC <- yardstick::roc_auc(yhatT,class, .pred_class) #not working for some reason. Wants pred_class as numeric?
+   
+    #get already calculated ROC and accuracy
+   met1 <- as.data.frame(bList[[i]]$.metrics)
+   
+   roc <- met1$.estimate[2]
+   #accuracy <-  met1$.estimate[1]
+   
+   #data from best model to get MCC, specificity and sensivity using yardstick
+   
+   yd <- as.data.frame(bList[[i]]$.predictions)
+    
+     mathews <-  yardstick::mcc(yd,class, .pred_class) #yardstick is the tifymodels performance package.
+     mathews <- mathews$.estimate #extract mcc
+      sen <- yardstick::sens(yd,class, .pred_class)
+      sen <- sen$.estimate
+      spe <- yardstick::spec(yd,class, .pred_class)
+      spe <- spe$.estimate
+    
 
 #add some identifiers
   mod_name <- class(model1)[1] #extracts model name
@@ -39,13 +48,25 @@ mrIMLperformance <- function(yhats, model1, X){ #should be able to extract model
   prev <- sum(X[i])/nrow(X)
 
 #save all the metrics
-  mod_perf[[i]] <- c( sp, mod_name, mathews, sen, spe, prev)
+  mod_perf[[i]] <- c( sp, mod_name, roc, mathews, sen, spe, prev)
 
   }
   
   mod1_perf<- do.call(rbind, mod_perf)
   mod1_perf <- as.data.frame( mod1_perf)
-  colnames(mod1_perf) <- c('response', 'model_name', 'mcc', 'sensitivity', 'specificity', 'prevalence')
+  colnames(mod1_perf) <- c('response', 'model_name', 'roc_AUC', 'mcc', 'sensitivity', 'specificity', 'prevalence')
   
-  return ( mod1_perf)
+  
+Global_summary_roc<- as.numeric(as.character(unlist(mod1_perf$roc_AUC))) #cant be mcc as it goes negative
+  
+Global_summary_roc [is.na(Global_summary_roc)] <- 0
+Global_summary_roc <-  mean(Global_summary_roc )
+  
+  #calculate mean for all response variables
+  #Global_summary <- mean(as.numeric(as.character(unlist( mod1_perf[[5]]))), na.rm = FALSE) #mean testing mcc
+  #Global_summary <- mean(as.numeric(as.character(unlist( ModelPerf[[1]]$mcc)))) #mean testing
+  
+  #
+  return (list(mod1_perf, Global_summary_roc))
+  
 }
