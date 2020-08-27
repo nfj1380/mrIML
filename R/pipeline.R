@@ -47,7 +47,7 @@ library(MRFcov)
 library(xgboost)
 library(vegan)
 library(ggrepel)
-library(LEA)
+library(LEA) 
 
 # load all function codes. This will disappear when we formally make this a function
 source("./R/filterRareCommon.R")
@@ -142,7 +142,7 @@ model1 <- #model used to generate yhat
 
 model1 <- 
   rand_forest(trees = 100, mode = "classification") %>%
-  set_engine("ranger", importance = "impurity") %>%
+  set_engine("ranger", importance = c("impurity","impurity_corrected")) %>%
   set_mode("classification")
 
 #model 1 with tuning. The user has to supply this too
@@ -198,6 +198,8 @@ ggplot(aes(mcc, specificity, shape=response, colour=response, fill=response   ))
 ### Not sure we want to have this
 ModelPerf[3] #summary mcc for all response variables
 
+
+
 ## Tuned performance
 ## best tuned hyperparameter
 cv_res<-as_tibble(yhats[[1]]$res_tune) %>% 
@@ -216,7 +218,7 @@ yhats[[1]]$mod1_k$fit #check model fit. 1 in this case is the first response var
 ## GM add here
 
 
-#we can look at variable importance. Coinfection data only has one feature so not much use there.
+#we can look at variable importance. Co-infection data only has one feature so not much use there.
 VI <- mrVip(yhats, Y=Y) #seem not to used all features for log regression for some reason
 #plot model similarity
 
