@@ -184,7 +184,7 @@ ModelPerf <- mrIMLperformance(yhats, model1, X=X) # MCC is useful (higher number
 ## perfromance by outcome
 ModelPerf%>%
   drop_na()%>%
-ggplot(aes(sensitivity, specificity, shape=response   , colour=response   , fill=response   )) +
+  ggplot(aes(sensitivity, specificity, shape=response   , colour=response   , fill=response   )) +
   geom_smooth(method="lm") +
   geom_point(size=3)
 

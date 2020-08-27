@@ -102,14 +102,14 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
       fit(data = data_train)
     
     mod1_k %>%
-      fit_resamples(resamples = data_cv) %>% 
-      collect_metrics()
-    
+      fit_resamples(resamples = data_cv)
+
+# keep the tune all list 
     
     # the last fit
     set.seed(345)
     last_mod_fit <- 
-      mod_workflow %>% 
+      mod1_k %>% 
       last_fit(data_split)
     
     #fit on the training set and evaluate on test set. Not needed 
