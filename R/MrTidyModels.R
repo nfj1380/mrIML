@@ -34,7 +34,6 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no') {
   #options(show.error.messages= FALSE) not working
   #sink(type="message")
   
-  mod1_perf <- NULL #place to save performance matrix
   
   #yhats <- for(i in 1:length(X)) {
   yhats <- lapply(seq(1,n_response), function(i){
@@ -79,7 +78,6 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no') {
         themis::step_rose(class) #ROSE works better on smaller data sets. SMOTE is an option too.
     }
   
-      
       if(balance_data == 'no'){ 
         data_recipe <- training(data_split) %>% #data imbalance not corrected 
           recipe(class ~., data= data_train)
@@ -132,12 +130,9 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no') {
     
    # best_mod_fit$.workflow
   
-## add the best for the tuning  option for user (Gustavo)# 
-## turn it off if you want 
+
     
-    
-    #fit on the training set and evaluate on test set. Not needed 
-    #last_fit(data_split) 
+ 
     
     # Calculate probability predictions for the fitted training data. 
     
@@ -152,11 +147,12 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no') {
     yhatT <- predict(mod1_k, new_data = data_test, type='prob') %>% 
       bind_cols(data_test %>%
                   select(class))
-  
+    
+    list(mod1_k = mod1_k, res_tune=res_tune, best_mod_fit=best_mod_fit, tune_results=tune_results, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid) 
+    
     })
     
     
-    list(mod1_k = mod1_k, res_tune=res_tune, best_mod_fit=best_mod_fit, tune_results=tune_results, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid) 
-  } 
+} 
 
 

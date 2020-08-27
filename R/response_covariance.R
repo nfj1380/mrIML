@@ -13,9 +13,11 @@ response_covariance = function(yhats, covariance_mod){
   # For each outcome, use model 1 residuals (resid from the yhats list) as outcomes and 
   # predictions from each other outcome's mod 1 (yhat) as predictors to learn the covariance matrix
   cat('Fitting sequential', covariance_mod$engine, 'models to learn the multivariate covariance matrix...\n')
+  
   rhats <- lapply(seq(1, n_variables), function(response){
+    
     outcome <- yhats[[response]]$resid #response 
-    predictors <- do.call(cbind, purrr::map(yhats, 'yhat'))[, -response]#response
+    predictors <- do.call(cbind, purrr::map(yhats, 'yhat'))[, -response ]#response
     colnames(predictors) <- paste0('pred_', seq(1, ncol(predictors)))
     
     data_R <-  cbind(data.frame(Y = outcome),
@@ -28,9 +30,7 @@ response_covariance = function(yhats, covariance_mod){
     data_test_R <- testing(data_split_R)
     
     # extract training and testing sets
-    
-    #10 fold cross validation
-    #data_cv <- vfold_cv(data_train_R, v= 10) #not properly implemented yet
+  
     
     formula <- as.formula(paste0("Y~", 
                                  paste0(colnames(predictors),collapse = "+")))
@@ -49,27 +49,34 @@ response_covariance = function(yhats, covariance_mod){
     set.seed(123)
     #10 fold CV to check performance
     folds <- vfold_cv( data_R,  v = 10) # the complete data?
-    flights_fit_rs <- fit_resamples(mod2_workflow, folds)
-    collect_metrics(flights_fit_rs)# need to incorporate this.
+
+    
+    # Find best tuned model
+    k3_20 <- expand_grid(neighbors = 3:20)
+    res_tune <-
+      mod2_workflow %>%
+      tune::tune_grid(resamples = folds,
+                      grid = k3_20,
+                      metrics = yardstick::metric_set(rmse),#
+                      control= tune:: control_resamples(save_pred = TRUE),
+                      collect_metrics())
+    
+    param_final <- res_tune %>%
+      select_best(metric = "rmse")
+    
+    #update model
+    final_workflow2 <- mod2_workflow %>%
+      finalize_workflow(param_final)
     
     # Fit model one for each parasite; can easily modify this so that the user
     # can specify the formula necessary for each species as a list of formulas
     
-    mod2 <- mod2_workflow %>%
+    mod2 <- final_workflow2 %>%
       fit(data =  data_R )
-    
-    # the last fit
-    #set.seed(345)
-    last_mod2_fit <- 
-      mod2_workflow %>% 
-      last_fit(data_split_R) %>% 
-      purrr::pluck(".workflow",1) %>%   
-      pull_workflow_fit()
-    
-    
+  
     
     # Return the model as well as the 'multivariate residual adjustments'
-    list(rhat_k = predict(mod2, new_data = select(data_R, -Y)), mod2 = last_mod2_fit , pred_names = colnames(predictors))
+    list(rhat_k = predict( mod2, new_data = select(data_R, -Y)), pred_names = colnames(predictors))
   })
 }
   
