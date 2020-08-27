@@ -108,7 +108,14 @@ X <- select(Bird.parasites, -scale.prop.zos) #response variables eg. SNPs, patho
 Y <- select(Bird.parasites, scale.prop.zos) # feature set
 #---------------------------------------------------------------------------------
 
-#---------------------------------------------------------------------
+
+#-------------------------------------------------------------------
+#Pre-training data visualization- checks for long tall distributions
+#-------------------------------------------------------------------
+## GM add here
+
+
+#-------------------------------------------------------------------
 #Set up the model
 #-------------------------------------------------------------------
 
@@ -150,26 +157,52 @@ boost_tree() %>%
 #models just using features/predictor variables.
 yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') ## in MrTidymodels
 
-## best tuned hyperparameter
-cv_res<-as_tibble(yhats[[1]]$res_tune) %>% 
-  show_best(metric = ("roc_auc"))
-  
-yhats[[1]]$res_tune %>% 
-<<<<<<< HEAD
-   show_best(metric = ("accuracy"))
-=======
-  show_best(metric = ("accuracy"))%>%
-  autoplot() #not working
->>>>>>> 7d78076d510a93b2d4b3c34c35649a34b64d5d36
 
-yhats[[1]]$mod1_k$fit #check model fit. 1 in this case is the first reponse variable in the data 
+#-------------------------------------------------------------------
+# Visualization for model tunning and performance
+#-------------------------------------------------------------------
+## GM add here
+
+##Visualization for  
+
 
 #we can now assess model performance from the best tuned model
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) # MCC is useful (higher numbers = better fit)
 #doesn't work with upsampled data - something to do with mcc? Still unclear
 
-ModelPerf[1] #summary table
-ModelPerf[2] #summary rocAUC for all response variables
+## perfromance by outcome
+ModelPerf%>%
+  drop_na()%>%
+ggplot(aes(sensitivity, specificity, shape=response   , colour=response   , fill=response   )) +
+  geom_smooth(method="lm") +
+  geom_point(size=3)
+
+## also
+ModelPerf%>%
+  drop_na()%>%
+ggplot(aes(mcc, specificity, shape=response, colour=response, fill=response   )) +
+  geom_smooth(method="lm") +
+  geom_point(size=3)
+
+### Not sure we want to have this
+ModelPerf[3] #summary mcc for all response variables
+
+## Tuned performance
+## best tuned hyperparameter
+cv_res<-as_tibble(yhats[[1]]$res_tune) %>% 
+  show_best(metric = ("roc_auc"))
+
+yhats[[1]]$res_tune %>% 
+  show_best(metric = ("accuracy"))
+
+
+yhats[[1]]$mod1_k$fit #check model fit. 1 in this case is the first response variable in the data 
+
+
+#-------------------------------------------------------------------
+# Visualization individual and global feature importance
+#-------------------------------------------------------------------
+## GM add here
 
 
 #we can look at variable importance. Coinfection data only has one feature so not much use there.
@@ -203,10 +236,8 @@ testPdp <- mrPdP(yhats, X=X,Y=Y, Feature='scale.prop.zos')
 #indiv SNPs
 testPdp %>% 
   filter(response.id=="Plas")%>%
-ggplot(aes(scale.prop.zos, yhat, group = yhat.id))+
-  geom_line() +
-  theme_bw()
-
+  ggplot(aes(scale.prop.zos, yhat, group = yhat.id))+
+  geom_line()
 
 #calculate interactions  -this is qute slow and memory intensive
 
