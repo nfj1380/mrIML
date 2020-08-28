@@ -117,6 +117,7 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
       fit(data = data_train)
     
     mod1_k %>%
+<<<<<<< HEAD
       fit_resamples(resamples = data_cv) %>% 
       collect_metrics()
     
@@ -125,11 +126,16 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
   
 
 =======
+=======
+      fit_resamples(resamples = data_cv)
+
+# keep the tune all list 
+>>>>>>> 843de508f13fad331df0d154bd2ea60fc6fd7f4b
     
     # the last fit
     set.seed(345)
     last_mod_fit <- 
-      mod_workflow %>% 
+      mod1_k %>% 
       last_fit(data_split)
 >>>>>>> 9149e1876b16d50d0edb0fb1904af022ac681899
     
