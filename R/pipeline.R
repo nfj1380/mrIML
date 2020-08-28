@@ -62,7 +62,7 @@ source("./R/mrPdP.R")
 
 #new interaction code
 source("./R/mrInteractions.R")
-source("./R/mrPlotInteractions.R") #not finding this for some reason
+source("./R/mrPlotInteractions.R") #not finding this for some reason - no idea why
 source("./R/vintTidy.R")
 
 #Nick C - this and the function below are the functions with tidy model code I made from your original
@@ -76,8 +76,7 @@ source("./R/readSnpsPed.R") #function for reading SNP data from plink .ped file
 
 #Example: read bobcat SNP data - from Plink file
 
-snps <- readSnpsPed("bobcat.plink.ped", "bobcat.plink.map")
-
+snps <- readSnpsPed("bobcat.plink.ped", "bobcat.plink.map") #NAs in data and interpolated as the mode. 
 
 #Viral SNP test data
 set.seed(123)
@@ -100,9 +99,11 @@ FeaturesnoNA<-Features[complete.cases(Features), ];str(Features) #dropping NAs
 Y <- FeaturesnoNA #for simplicity
 
 #for more efficent testing for interactions (more variables more interacting pairs)
-Y <- FeaturesnoNA[c(1:5)]
+Y <- FeaturesnoNA[c(1:3)]
 #Optional: Filter rare/common SNPs or species. Retaining minor allelle frequncies >0.1 and removing common allelles (occur>0.9)
 fData <- filterRareCommon (Responsedata, lower=0.4, higher=0.75) 
+#for the snps data
+fData <- filterRareCommon (snps, lower=0.4, higher=0.75) 
 
 X <- fData #for simplicity when comparing
 
@@ -236,9 +237,9 @@ testPdp %>%
 
 #calculate interactions  -this is qute slow and memory intensive
 
-Interact <-mrInteractions(yhats, X, Y) 
+interactions <-mrInteractions(yhats, X, Y) 
 
-mrPlot_interactions(Interact, X,Y, top_ranking = 10, top_response=10)
+mrPlot_interactions(Interact, X,Y, top_ranking = 3, top_response=3)
 
 #adding other response varables to see if this improves predictions. wecould say that it only has been tested 
 #on 3 algorithms (GAMs, Xgboost which is an improved GBM and liner models) and user beware otherwise.
