@@ -18,7 +18,7 @@ mrIMLperformance <- function(yhats, model1, X){ #should be able to extract model
   mod_perf <- NULL
 
 #  yList <- yhats %>% purrr::map(pluck('yhatT')) #get the training yhats all together
-  bList <- yhats %>% purrr::map(pluck('last_mod_fit')) ## fix the model ID
+  bList <- yhats %>% purrr::map(pluck('mod1_k')) ## fix the model ID
     
     #modelperf <- map(seq(1,n_response), function(i){
   for( i in 1:n_response) {
@@ -33,7 +33,7 @@ mrIMLperformance <- function(yhats, model1, X){ #should be able to extract model
    
    yd <- as.data.frame(bList[[i]]$.predictions)
     
-     mathews <-  yardstick::mcc(yd,class, .pred_class) #yardstick is the tifymodels performance package.
+     mathews <-  yardstick::mcc(yd,class, .pred_class) #yardstick is the tidymodels performance package.
      mathews <- mathews$.estimate #extract mcc
       sen <- yardstick::sens(yd,class, .pred_class)
       sen <- sen$.estimate
