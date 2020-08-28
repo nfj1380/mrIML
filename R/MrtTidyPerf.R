@@ -18,7 +18,7 @@ mrIMLperformance <- function(yhats, model1, X){ #should be able to extract model
   mod_perf <- NULL
 
 #  yList <- yhats %>% purrr::map(pluck('yhatT')) #get the training yhats all together
-  bList <- yhats %>% purrr::map(pluck('best_mod_fit'))
+  bList <- yhats %>% purrr::map(pluck('last_mod_fit')) ## fix the model ID
     
     #modelperf <- map(seq(1,n_response), function(i){
   for( i in 1:n_response) {

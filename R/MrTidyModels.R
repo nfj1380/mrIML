@@ -88,28 +88,44 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
     #step_center(all_predictors(), -all_outcomes()) %>% #center features
     #step_scale(all_predictors(), -all_outcomes()) %>% #scale features
     
+   
+    
     mod_workflow <- workflow() %>%
       # add the recipe
       add_recipe(data_recipe) %>%
       # add the model
       add_model(model1)
+
     
+     ## full tunning 
     
+     tune_m<-tune::tune_grid(mod_workflow,
+                       resamples = data_cv,
+                            grid = 10)
+     
+     # select the best model
+      best_m <- tune_m %>%
+       select_best("roc_auc")
+      
+      # final workflow
+      final_model <- 
+        mod_workflow %>% 
+       finalize_workflow(best_m)
+      
     # Fit model one for each parasite; can easily modify this so that the user
     # can specify the formula necessary for each species as a list of formulas
-    
-    mod1_k <- mod_workflow %>%
+     mod1_k <- final_model %>%
       fit(data = data_train)
     
-    mod1_k %>%
-      fit_resamples(resamples = data_cv)
+    #mod1_k %>%
+      #fit_resamples(resamples = data_cv)
 
 # keep the tune all list 
     
     # the last fit
     set.seed(345)
     last_mod_fit <- 
-      mod1_k %>% 
+      final_model %>% 
       last_fit(data_split)
     
     #fit on the training set and evaluate on test set. Not needed 
@@ -129,6 +145,6 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
       bind_cols(data_test %>% select(class))
     
     
-    return(list(mod1_k = mod1_k, last_mod_fit=last_mod_fit, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid)) 
+   list(mod1_k = mod1_k, last_mod_fit=last_mod_fit,tune_m=tune_m, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid) 
   })
 }
