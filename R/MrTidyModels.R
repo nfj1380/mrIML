@@ -32,12 +32,7 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
   # from simple regressions to complex hierarchical or deep learning models.
   # Different structures can also be used for each species to handle mixed multivariate outcomes
   
-
-  #options(show.error.messages= FALSE) not working
-  #sink(type="message")
-
   mod1_perf <- NULL #place to save performance matrix
-
   
   #yhats <- for(i in 1:length(X)) {
   yhats <- lapply(seq(1,n_response), function(i){
@@ -68,7 +63,7 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
     #data_testalt <- testing(data_splitalt)
     
     #10 fold cross validation
-    data_cv <- vfold_cv(data_train, v= 10) 
+    data_cv <- vfold_cv(data_train, v= 10) #not used yet.
     
     if(balance_data == 'down'){ 
       data_recipe <- training(data_split) %>%
@@ -81,14 +76,7 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
         recipe(class ~., data= data_train) %>%
         themis::step_rose(class) #ROSE works better on smaller data sets. SMOTE is an option too.
     }
-
-  
-      if(balance_data == 'no'){ 
-        data_recipe <- training(data_split) %>% #data imbalance not corrected 
-          recipe(class ~., data= data_train)
-        }
-      
-
+    
     
     if(balance_data == 'no'){ 
       data_recipe <- training(data_split) %>% #data imbalance not corrected 
@@ -100,56 +88,47 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
     #step_center(all_predictors(), -all_outcomes()) %>% #center features
     #step_scale(all_predictors(), -all_outcomes()) %>% #scale features
     
-   
+    
     
     mod_workflow <- workflow() %>%
       # add the recipe
       add_recipe(data_recipe) %>%
       # add the model
       add_model(model1)
-
     
-     ## full tunning 
     
-     tune_m<-tune::tune_grid(mod_workflow,
-                       resamples = data_cv,
+    ## full tunning 
+    
+    tune_m<-tune::tune_grid(mod_workflow,
+                            resamples = data_cv,
                             grid = 10)
-     
-     # select the best model
-      best_m <- tune_m %>%
-       select_best("roc_auc")
-      
-      # final
-      final_model <- finalize_workflow(mod_workflow,
-                                       best_m )
-      
+    
+    # select the best model
+    best_m <- tune_m %>%
+      select_best("roc_auc")
+    
+    # final
+    final_model <- finalize_workflow(mod_workflow,
+                                     best_m )
+    
     # Fit model one for each parasite; can easily modify this so that the user
     # can specify the formula necessary for each species as a list of formulas
-     mod1_k <- final_model %>%
+    mod1_k <- final_model %>%
       fit(data = data_train)
     
-  #  mod1_k %>% # we dont need to do this???>
-   #  fit_resamples(resamples = data_cv) %>% 
-    #  collect_metrics()
-    
-   # best_mod_fit$.workflow
-  
-
-    #fit_resamples(resamples = data_cv)
-
     #mod1_k %>%
-      #fit_resamples(resamples = data_cv)
-
-
-# keep the tune all list 
+    #fit_resamples(resamples = data_cv)
+    
+    # keep the tune all list 
     
     # the last fit
     set.seed(345)
     last_mod_fit <- 
       final_model %>% 
       last_fit(data_split)
- 
- 
+    
+    #fit on the training set and evaluate on test set. Not needed 
+    #last_fit(data_split) 
     
     # Calculate probability predictions for the fitted training data. 
     
@@ -161,14 +140,11 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
     resid <- devianceResids(yhatO, data_train$class )
     
     #predictions based on testing data
-    yhatT <- predict(mod1_k, new_data = data_test, type='prob') %>% 
-      bind_cols(data_test %>%
-                  select(class))
+    yhatT <- predict(mod1_k, new_data = data_test, type='class' ) %>% 
+      bind_cols(data_test %>% select(class))
     
-    list(mod1_k = mod1_k, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid) 
-    })
     
-  
-  #was getting a weird error with tune_m=tune_m
+    list(mod1_k = mod1_k, last_mod_fit=last_mod_fit,tune_m=tune_m, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid) 
+  })
 }
 
