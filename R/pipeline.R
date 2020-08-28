@@ -76,10 +76,7 @@ source("./R/readSnpsPed.R") #function for reading SNP data from plink .ped file
 
 #Example: read bobcat SNP data - from Plink file
 
-indnames <- read.table("bobcat.plink.ped")[,2] #create list of sample names
-locnames <- read.table("bobcat.plink.map")[,2] #create list of locus names
-
-snps <- readSnpsPed("bobcat.plink.ped", indnames, locnames)
+snps <- readSnpsPed("bobcat.plink.ped", "bobcat.plink.map")
 
 
 #Viral SNP test data
