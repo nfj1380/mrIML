@@ -49,6 +49,6 @@ readSnpsPed <- function (pedfile, mapfile){
     snpobj[i] <- replace(snpobj[i], (snpobj[i] == "A" | snpobj[i] == "G" | snpobj[i] == "T" | snpobj[i] == "C"), "1") #recode the minor allele as "1"
   }
   
-  return(snpobj)
+  return(data.matrix(snpobj, rownames.force = TRUE))
 }
 
