@@ -23,7 +23,8 @@
 #'   response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling) 
 #'or 'no' (no balancing of classes).
 
-mrIMLpredicts<- function(X, Y, model1, balance_data ='no') { 
+
+mrIMLpredicts<- function(X, Y, model1, balance_data ='up') { 
   
   n_response<- length(X)
   # Run model 1 for each parasite; a simple logistic regression with a single covariate
@@ -31,9 +32,13 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no') {
   # from simple regressions to complex hierarchical or deep learning models.
   # Different structures can also be used for each species to handle mixed multivariate outcomes
   
+<<<<<<< HEAD
   #options(show.error.messages= FALSE) not working
   #sink(type="message")
   
+=======
+  mod1_perf <- NULL #place to save performance matrix
+>>>>>>> 9149e1876b16d50d0edb0fb1904af022ac681899
   
   #yhats <- for(i in 1:length(X)) {
   yhats <- lapply(seq(1,n_response), function(i){
@@ -45,48 +50,58 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no') {
     #OtherSNPs[OtherSNPs== 'Positive'] <- 1 #could do a PCA/PCoA?
     #OtherSNPsa <-apply(OtherSNPs, 2, as.numeric) 
     
-    data <- cbind(X[i ], Y) 
+    data <- cbind(X[i], Y) 
     colnames(data)[1] <- c('class') #define response variable
     
     data$class<- as.factor(data$class)
     
     #data<-data[complete.cases(data)] #removes NAs but there must be a conflict somewhere
+    set.seed(100)
     data_split <- initial_split(data, prop = 0.75)
+    #data_splitalt <- initial_split(data, strata = class)
     
     # extract training and testing sets
     data_train <- training(data_split)
     data_test <- testing(data_split)
     
+    # extract training and testing sets stata
+    #data_trainalt <- training(data_splitalt)
+    #data_testalt <- testing(data_splitalt)
+    
     #10 fold cross validation
-    data_cv <- vfold_cv(data_train, v= 10) 
-      
+    data_cv <- vfold_cv(data_train, v= 10) #not used yet.
+    
     if(balance_data == 'down'){ 
       data_recipe <- training(data_split) %>%
         recipe(class ~., data= data_train) %>% #if downsampling is needed
         themis::step_downsample(class)
-      }
-    
-    if(balance_data == 'up'){ 
-      data_recipe <- training(data_split) %>%
-        recipe(class ~., data= data_train) %>% #if downsampling is needed
-        themis::step_upsample(class)
     }
     
-    if(balance_data == 'rose'){
+    if(balance_data == 'up'){
       data_recipe <- training(data_split) %>%
         recipe(class ~., data= data_train) %>%
         themis::step_rose(class) #ROSE works better on smaller data sets. SMOTE is an option too.
     }
+<<<<<<< HEAD
   
       if(balance_data == 'no'){ 
         data_recipe <- training(data_split) %>% #data imbalance not corrected 
           recipe(class ~., data= data_train)
         }
       
+=======
+    
+    
+    if(balance_data == 'no'){ 
+      data_recipe <- training(data_split) %>% #data imbalance not corrected 
+        recipe(class ~., data= data_train)
+    }
+    
+>>>>>>> 9149e1876b16d50d0edb0fb1904af022ac681899
     #optional recipe ingredients
     #step_corr(all_predictors()) %>% # removes all corrleated features
-      #step_center(all_predictors(), -all_outcomes()) %>% #center features
-      #step_scale(all_predictors(), -all_outcomes()) %>% #scale features
+    #step_center(all_predictors(), -all_outcomes()) %>% #center features
+    #step_scale(all_predictors(), -all_outcomes()) %>% #scale features
     
     mod_workflow <- workflow() %>%
       # add the recipe
@@ -94,43 +109,29 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no') {
       # add the model
       add_model(model1)
     
+    
     # Fit model one for each parasite; can easily modify this so that the user
     # can specify the formula necessary for each species as a list of formulas
     
-    # Find best tuned model
-    k3_20 <- expand_grid(neighbors = 3:20)
-    res_tune <-
-      mod_workflow %>%
-      tune::tune_grid(resamples = data_cv,
-                      grid = k3_20,
-                      metrics = yardstick::metric_set(roc_auc),#remove accuracy
-                      control= tune:: control_resamples(save_pred = TRUE),
-                      collect_metrics()) #this isnt working properly - what is neighbors in this context?
-    
-    # get the results of tunning
-    tune_results <- res_tune %>% 
-      show_best(metric = "roc_auc", n = 5)
-    
-    param_final <- res_tune %>%
-      select_best(metric = "roc_auc")
-    
-    #update model
-    final_workflow <- mod_workflow %>%
-      finalize_workflow(param_final)
-    
-    mod1_k <- final_workflow %>%
+    mod1_k <- mod_workflow %>%
       fit(data = data_train)
     
-    # the best model fit
-   # set.seed(345)
-    best_mod_fit <- 
-     mod_workflow %>% 
-     last_fit(data_split,res_tune)
-      select_best(res_tune, metric = "roc_auc")
+    mod1_k %>%
+      fit_resamples(resamples = data_cv) %>% 
+      collect_metrics()
     
+<<<<<<< HEAD
    # best_mod_fit$.workflow
   
 
+=======
+    
+    # the last fit
+    set.seed(345)
+    last_mod_fit <- 
+      mod_workflow %>% 
+      last_fit(data_split)
+>>>>>>> 9149e1876b16d50d0edb0fb1904af022ac681899
     
  
     
@@ -141,9 +142,10 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no') {
     yhat <- yhatO$.pred_1
     
     #' Calculate deviance residuals 
-    resid <- devianceResids(yhatO, data_train$class)
+    resid <- devianceResids(yhatO, data_train$class )
     
     #predictions based on testing data
+<<<<<<< HEAD
     yhatT <- predict(mod1_k, new_data = data_test, type='prob') %>% 
       bind_cols(data_test %>%
                   select(class))
@@ -156,3 +158,12 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no') {
 } 
 
 
+=======
+    yhatT <- predict(mod1_k, new_data = data_test, type='class' ) %>% 
+      bind_cols(data_test %>% select(class))
+    
+    
+    return(list(mod1_k = mod1_k, last_mod_fit=last_mod_fit, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid)) 
+  })
+}
+>>>>>>> 9149e1876b16d50d0edb0fb1904af022ac681899
