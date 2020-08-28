@@ -32,7 +32,13 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
   # from simple regressions to complex hierarchical or deep learning models.
   # Different structures can also be used for each species to handle mixed multivariate outcomes
   
+<<<<<<< HEAD
+  #options(show.error.messages= FALSE) not working
+  #sink(type="message")
+  
+=======
   mod1_perf <- NULL #place to save performance matrix
+>>>>>>> 9149e1876b16d50d0edb0fb1904af022ac681899
   
   #yhats <- for(i in 1:length(X)) {
   yhats <- lapply(seq(1,n_response), function(i){
@@ -76,6 +82,14 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
         recipe(class ~., data= data_train) %>%
         themis::step_rose(class) #ROSE works better on smaller data sets. SMOTE is an option too.
     }
+<<<<<<< HEAD
+  
+      if(balance_data == 'no'){ 
+        data_recipe <- training(data_split) %>% #data imbalance not corrected 
+          recipe(class ~., data= data_train)
+        }
+      
+=======
     
     
     if(balance_data == 'no'){ 
@@ -83,37 +97,70 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
         recipe(class ~., data= data_train)
     }
     
+>>>>>>> 9149e1876b16d50d0edb0fb1904af022ac681899
     #optional recipe ingredients
     #step_corr(all_predictors()) %>% # removes all corrleated features
     #step_center(all_predictors(), -all_outcomes()) %>% #center features
     #step_scale(all_predictors(), -all_outcomes()) %>% #scale features
+    
+   
     
     mod_workflow <- workflow() %>%
       # add the recipe
       add_recipe(data_recipe) %>%
       # add the model
       add_model(model1)
+
     
+     ## full tunning 
     
+     tune_m<-tune::tune_grid(mod_workflow,
+                       resamples = data_cv,
+                            grid = 10)
+     
+     # select the best model
+      best_m <- tune_m %>%
+       select_best("roc_auc")
+      
+      # final workflow
+      final_model <- 
+        mod_workflow %>% 
+       finalize_workflow(best_m)
+      
     # Fit model one for each parasite; can easily modify this so that the user
     # can specify the formula necessary for each species as a list of formulas
-    
-    mod1_k <- mod_workflow %>%
+     mod1_k <- final_model %>%
       fit(data = data_train)
     
+<<<<<<< HEAD
     mod1_k %>%
+<<<<<<< HEAD
+      fit_resamples(resamples = data_cv) %>% 
+      collect_metrics()
+    
+<<<<<<< HEAD
+   # best_mod_fit$.workflow
+  
+
+=======
+=======
       fit_resamples(resamples = data_cv)
+=======
+    #mod1_k %>%
+      #fit_resamples(resamples = data_cv)
+>>>>>>> 22c2dd67ba4e797054b995174623e3bc931f6077
 
 # keep the tune all list 
+>>>>>>> 843de508f13fad331df0d154bd2ea60fc6fd7f4b
     
     # the last fit
     set.seed(345)
     last_mod_fit <- 
-      mod1_k %>% 
+      final_model %>% 
       last_fit(data_split)
+>>>>>>> 9149e1876b16d50d0edb0fb1904af022ac681899
     
-    #fit on the training set and evaluate on test set. Not needed 
-    #last_fit(data_split) 
+ 
     
     # Calculate probability predictions for the fitted training data. 
     
@@ -125,10 +172,25 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
     resid <- devianceResids(yhatO, data_train$class )
     
     #predictions based on testing data
+<<<<<<< HEAD
+    yhatT <- predict(mod1_k, new_data = data_test, type='prob') %>% 
+      bind_cols(data_test %>%
+                  select(class))
+    
+    list(mod1_k = mod1_k, res_tune=res_tune, best_mod_fit=best_mod_fit, tune_results=tune_results, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid) 
+    
+    })
+    
+    
+} 
+
+
+=======
     yhatT <- predict(mod1_k, new_data = data_test, type='class' ) %>% 
       bind_cols(data_test %>% select(class))
     
     
-    return(list(mod1_k = mod1_k, last_mod_fit=last_mod_fit, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid)) 
+   list(mod1_k = mod1_k, last_mod_fit=last_mod_fit,tune_m=tune_m, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid) 
   })
 }
+>>>>>>> 9149e1876b16d50d0edb0fb1904af022ac681899
