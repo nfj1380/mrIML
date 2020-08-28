@@ -107,10 +107,9 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up') {
       best_m <- tune_m %>%
        select_best("roc_auc")
       
-      # final workflow
-      final_model <- 
-        mod_workflow %>% 
-       finalize_workflow(best_m)
+      # final
+      final_model <- finalize_workflow(mod_workflow,
+                                       best_m )
       
     # Fit model one for each parasite; can easily modify this so that the user
     # can specify the formula necessary for each species as a list of formulas
