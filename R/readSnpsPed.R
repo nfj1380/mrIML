@@ -4,10 +4,10 @@
 #     stop("missing 'inames' file")
 #   if (missing(lnames))
 #     stop("missing 'lnames' file")
-#   tempfile <- "temp.lfmm"
+#
 #   LEA::ped2lfmm(infile, output.file=tempfile, force=TRUE)
 #   snpobj <- read.table(tempfile)
-#   file.remove(tempfile)
+# 
 #   
 #   rownames(snpobj) <- inames
 #   colnames(snpobj) <- lnames
@@ -49,8 +49,8 @@ readSnpsPed <- function (pedfile, mapfile){
     snpobj[i] <- replace(snpobj[i], (snpobj[i] == "A" | snpobj[i] == "G" | snpobj[i] == "T" | snpobj[i] == "C"), "1") #recode the minor allele as "1"
   }
   
-  data.frame(lapply(snpobj,as.numeric))
-  
-  return(snpobj)
+
+  return(data.matrix(snpobj, rownames.force = TRUE))
+
 }
 
