@@ -165,48 +165,33 @@ boost_tree() %>%
 #models just using features/predictor variables.
 yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') ## in MrTidymodels
 
-
 #-------------------------------------------------------------------
 # Visualization for model tunning and performance
 #-------------------------------------------------------------------
 ## GM add here
 
-##Visualization for  
-
-
 #we can now assess model performance from the best tuned model
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) # MCC is useful (higher numbers = better fit)
 #doesn't work with upsampled data - something to do with mcc? Still unclear
 
+ModelPerf_p<-do.call(rbind.data.frame, ModelPerf)
+
 ## perfromance by outcome
-ModelPerf%>%
+ModelPerf_p%>%
   drop_na()%>%
-  ggplot(aes(sensitivity, specificity, shape=response   , colour=response   , fill=response   )) +
+  ggplot(aes(sensitivity, specificity, shape=response, colour=response  , fill=response)) +
   geom_smooth(method="lm") +
   geom_point(size=3)
 
 ## also
-ModelPerf%>%
+ModelPerf_p%>%
   drop_na()%>%
-ggplot(aes(mcc, specificity, shape=response, colour=response, fill=response   )) +
+  ggplot(aes(mcc, specificity, shape=response, colour=response, fill=response   )) +
   geom_smooth(method="lm") +
   geom_point(size=3)
 
 ### Not sure we want to have this
-ModelPerf[3] #summary mcc for all response variables
-
-
-
-## Tuned performance
-## best tuned hyperparameter
-cv_res<-as_tibble(yhats[[1]]$res_tune) %>% 
-  show_best(metric = ("roc_auc"))
-
-yhats[[1]]$res_tune %>% 
-  show_best(metric = ("accuracy"))
-
-
-yhats[[1]]$mod1_k$fit #check model fit. 1 in this case is the first response variable in the data 
+ModelPerf_p[3] #summary mcc for all response variables
 
 
 #-------------------------------------------------------------------
@@ -238,15 +223,15 @@ plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0.5) #mcc cutoff not worki
 #warning are about x axis labels so can ignore 
 
 #plot partial dependencies. Strange results
-testPdp <- mrPdP(yhats, X=X,Y=Y, Feature='scale.prop.zos') 
+testPdp <- mrPdP(yhats, X=X,Y=Y, Feature='Grassland') 
 
 ## make one plot for each 
 ## pre plot for each
 
 #indiv SNPs
 testPdp %>% 
-  filter(response.id=="Plas")%>%
-  ggplot(aes(scale.prop.zos, yhat, group = yhat.id))+
+  filter(response.id=="env_131")%>%
+  ggplot(aes(Grassland , yhat, group = yhat.id))+
   geom_line()
 
 #calculate interactions  -this is qute slow and memory intensive
