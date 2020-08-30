@@ -16,23 +16,23 @@
 #'
 #
 
-mrPlot_interactions <- function(interactions, X,Y, top_ranking = 10, top_response=10 ){
+mrPlot_interactions <- function(interactions, X,Y, top_ranking = 3, top_response=10 ){
   
   n_features <- names(Y)
   
   variable_interactions <- as.data.frame((t(utils::combn( n_features, m = 2)))) %>% 
     unite('variables', V1:V2, sep='*')
   
-  colnames(Interact) <- names(X)
+  colnames(interactions) <- names(X)
   
- meanInteractions <- as.data.frame( rowMeans(interaction) ) #calculate average
+ meanInteractions <- as.data.frame( rowMeans(interactions) ) #calculate average
   names( meanInteractions )[1] <- c('meanInt')
   
-  sumInteractions <- as.data.frame( rowSums(interaction) ) #calculate average
+  sumInteractions <- as.data.frame( rowSums(interactions) ) #calculate average
   names(sumInteractions )[1] <- c('sumInt')
   
   
-  intData <- as.data.frame(interaction)
+  intData <- as.data.frame(interactions)
   intData <- cbind(variable_interactions, intData, meanInteractions, sumInteractions )
   
   inDataOrered <-   intData %>% 
@@ -54,7 +54,7 @@ mrPlot_interactions <- function(interactions, X,Y, top_ranking = 10, top_respons
     grid.arrange(p1,p2, nrow = 1) #plotting both ensures that the cumulative score isn't 
     #biased towards some strong interactions for some predictors
     
-    readline(prompt="Press [enter] to continue for individual response results")
+    
  #-----------------------------------------------------------------------------------
     
  #select SNPS most effected by interactions for top 10 features
@@ -84,12 +84,14 @@ mrPlot_interactions <- function(interactions, X,Y, top_ranking = 10, top_respons
         theme_bw()+
         labs(x= "Cumulative interaction importance", y='Response')+
         geom_bar(stat="identity")
-      
-      t_inDataOrered_top <- as.data.frame(t(inDataOrered_top)) %>% 
+  
+  print(p3) 
+  readline(prompt="Press [enter] to continue for individual response results")   
+  t_inDataOrered_top <- as.data.frame(t(inDataOrered_top)) %>% 
         janitor::row_to_names(row_number = 1) %>% 
         rownames_to_column()
       
-  print(p3)      
+      
      
   topIntC <- filter( t_inDataOrered_top, rowname %in%  top_int_response$rowname)
   
@@ -102,7 +104,6 @@ mrPlot_interactions <- function(interactions, X,Y, top_ranking = 10, top_respons
    
    topIntC_plotData$importance <- as.numeric(topIntC_plotData$importance)
    
-   readline(prompt="Press [enter] to continue to view the top individual response interactions ")
    
    p4 <- ggplot(topIntC_plotData, aes(fill= rowname , y=importance, x=rowname)) + 
      geom_bar(position="dodge", stat="identity") +
