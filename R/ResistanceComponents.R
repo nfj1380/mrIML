@@ -66,24 +66,30 @@ resist_components <- function (data_resist, SiteData, pval=0.05){
    
    names(PcoA2D_AT)[1:2] <- c('PCoA1', 'PCoA2')
    
-   
-   Tr_PcoA <- ggplot(PcoA2D_AT, aes(x = PCoA1, y = PCoA2, label = siteData$Site))+
+   #plot it
+   Tr_PcoA <- ggplot(PcoA2D_AT, aes(x = PCoA1, y = PCoA2, label = siteData$Site))+ #would be good to make this 3D at some point
      geom_point(size =2) +
      geom_text(col = 'black', size=4, check_overlap=TRUE)+
-     #labs(y= 'PcOA-2 (40% variance explained)', x= 'PcOA-1 (18% variance explained)')+ #these are based on l1/l2
-     labs(y = paste("PcOA-2 (", label_percent()(l2), " variance explained)", sep=''), x= paste("PcOA-1 (", label_percent()(l1), " variance explained)", sep=''))+
+     labs(y = paste("PCoA-2 (", label_percent()(l2), " variance explained)", sep=''), x= paste("PCoA-1 (", label_percent()(l1), " variance explained)", sep=''))+
      theme_bw()
+   print( Tr_PcoA)
   
    sigPC$`P-value` <- as.numeric(as.character(sigPC$`P-value`))
    
    threholdScore <- test %>%  filter( `P-value`< p_val)
    
-   ReducedAxis <- pcdat %>% filter
+   pcdatT <- as.data.frame(t(pcdat))
+  
+   ReducedAxis <- pcdatT %>% 
+     rownames_to_column() %>% 
+     filter (rowname==threholdScore$Axis)
    
-     
-   print( Tr_PcoA)
+   ReducedAxisT <- as.data.frame(t( ReducedAxis)) %>% 
+     janitor::row_to_names(row_number = 1) %>% 
+     cbind(siteData)
+
    
-   return(sigPC)
+   return(list(sigPC,ReducedAxisT ))
    
 }
    

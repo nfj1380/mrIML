@@ -123,6 +123,16 @@ Y <- select(Bird.parasites, scale.prop.zos) # feature set
 #-------------------------------------------------------------------
 ## GM add here
 
+#-------------------------------------------------------------------
+#Create resistance components using PCoA
+#-------------------------------------------------------------------
+
+#load resistance matrix generated using circuitscape
+
+data_resist <- read.csv('roadsWS_resistanceMatrix.csv')
+siteData<- read.csv('SiteWS.csv')
+
+test <- resist_components(data_resist,siteData)
 
 #-------------------------------------------------------------------
 #Set up the model
