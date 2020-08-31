@@ -164,7 +164,7 @@ boost_tree() %>%
 #---------------------------------------------------------------------  
   
 #models just using features/predictor variables.
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') ## in MrTidymodels
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='up') ## in MrTidymodels
 
 #-------------------------------------------------------------------
 # Visualization for model tunning and performance
@@ -173,8 +173,8 @@ yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') ## in MrTidymo
 
 #we can now assess model performance from the best tuned model
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) # MCC is useful (higher numbers = better fit)
-#doesn't work with upsampled data - something to do with mcc? Still unclear
 
+#another way to look at it
 ModelPerf_p<-do.call(rbind.data.frame, ModelPerf)
 
 ## perfromance by outcome
@@ -199,7 +199,6 @@ ModelPerf_p[3] #summary mcc for all response variables
 # Visualization individual and global feature importance
 #-------------------------------------------------------------------
 ## GM add here
-
 
 #we can look at variable importance. Co-infection data only has one feature so not much use there.
 VI <- mrVip(yhats, Y=Y) #seem not to used all features for log regression for some reason
@@ -231,9 +230,10 @@ testPdp <- mrPdP(yhats, X=X,Y=Y, Feature='Grassland')
 
 #indiv SNPs
 testPdp %>% 
-  filter(response.id=="env_131")%>%
+  filter(response.id=="env_212")%>%
   ggplot(aes(Grassland , yhat, group = yhat.id))+
-  geom_line()
+  geom_line()+
+  theme_bw()
 
 #calculate interactions  -this is qute slow and memory intensive
 

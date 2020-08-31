@@ -18,20 +18,20 @@ mrIMLperformance <- function(yhats, model1, X){ #should be able to extract model
   mod_perf <- NULL
 
 #  yList <- yhats %>% purrr::map(pluck('yhatT')) #get the training yhats all together
-  bList <- yhats %>% purrr::map(pluck('mod1_k')) ## fix the model ID
+  bList <- yhats %>% purrr::map(pluck('last_mod_fit')) ## fix the model ID
     
     #modelperf <- map(seq(1,n_response), function(i){
   for( i in 1:n_response) {
    
     #get already calculated ROC and accuracy
-   met1 <- as.data.frame(bList[[i]]$.metrics)
+   met1 <- as.data.frame(bList[[i]]$.metrics) ####
    
    roc <- met1$.estimate[2]
    #accuracy <-  met1$.estimate[1]
    
    #data from best model to get MCC, specificity and sensivity using yardstick
    
-   yd <- as.data.frame(bList[[i]]$.predictions)
+   yd <- as.data.frame(bList[[i]]$.predictions) ###
     
      mathews <-  yardstick::mcc(yd,class, .pred_class) #yardstick is the tidymodels performance package.
      mathews <- mathews$.estimate #extract mcc
