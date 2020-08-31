@@ -32,25 +32,38 @@ readSnpsPed <- function (pedfile, mapfile){
   locnames2 <- paste0(lnames, ".2")
   locnames3 <- c(rbind(locnames1,locnames2))
   colnames(snpobj) <- locnames3
- 
-  #Function for finding the major allele for each column
-  Mode <- function(x, na.rm = FALSE) {
-    if(na.rm){
-      x = x[!is.na(x)]
-    }
-    
-    ux <- unique(x)
-    return(ux[which.max(tabulate(match(x, ux)))])
-  }
   
-  for(i in 1:ncol(snpobj)){
-    snpobj[i] <- na.replace(snpobj[i], Mode(snpobj[i], na.rm=TRUE)) #replace NAs with the major allele at a given locus
+  if (any(is.na(snpobj))){
+    hist(colSums(is.na(as.matrix(snpobj))), main="Missing genotypes per SNP", xlab="No. missing genotpyes")
+    Sys.sleep(1)
+    impute <- readline("This dataset contains NAs. Please select an imputation method (type a number): 0. none, 1. mode ")
+    
+    if (impute == "1"){
+      
+      #Function for finding the major allele for each column
+      Mode <- function(x, na.rm = FALSE) {
+        if(na.rm){
+          x = x[!is.na(x)]
+        }
+    
+        ux <- unique(x)
+        return(ux[which.max(tabulate(match(x, ux)))])
+      }
+  
+      for(i in 1:ncol(snpobj)){
+        snpobj[i] <- na.replace(snpobj[i], Mode(snpobj[i], na.rm=TRUE)) #replace NAs with the major allele at a given locus
+        snpobj[i] <- replace(snpobj[i], snpobj[i] == Mode(snpobj[i], na.rm=TRUE), "0") #recode the major allele as "0"
+        snpobj[i] <- replace(snpobj[i], (snpobj[i] == "A" | snpobj[i] == "G" | snpobj[i] == "T" | snpobj[i] == "C"), "1") #recode the minor allele as "1"
+      }
+    }
+  }  else{
+    
+    for(i in 1:ncol(snpobj)){
     snpobj[i] <- replace(snpobj[i], snpobj[i] == Mode(snpobj[i], na.rm=TRUE), "0") #recode the major allele as "0"
     snpobj[i] <- replace(snpobj[i], (snpobj[i] == "A" | snpobj[i] == "G" | snpobj[i] == "T" | snpobj[i] == "C"), "1") #recode the minor allele as "1"
+    }
   }
   
-
   return(data.matrix(snpobj, rownames.force = TRUE))
 
 }
-
