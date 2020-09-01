@@ -221,7 +221,9 @@ yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') ## in MrTidymo
 ## GM add here
 
 #we can now assess model performance from the best tuned model
-ModelPerf <- mrIMLperformance(yhats, model1, X=X) # MCC is useful (higher numbers = better fit)
+ModelPerf <- mrIMLperformance(yhats, model1, X=X) # MCC is useful (higher numbers = better fit) 
+
+ModelPerf[[2]]#overall predictive performance
 
 #another way to look at it
 ModelPerf_p<-do.call(rbind.data.frame, ModelPerf)
@@ -250,7 +252,7 @@ ModelPerf_p[3] #summary mcc for all response variables
 ## GM add here
 
 #we can look at variable importance. Co-infection data only has one feature so not much use there.
-VI <- mrVip(yhats, Y=Y) #seem not to used all features for log regression for some reason
+VI <- mrVip(yhats, Y=Y) 
 #plot model similarity
 
 #plot variable importance
@@ -268,14 +270,16 @@ plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, groupCov=groupCov, cutoff= 0.5)#no
 
 plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0.5) #mcc cutoff not working right
 
-#First plot is overall importance and the second is individual SNP models.
+#First plot is overall importance, the second a pca showing responses with similar importance scores and the third is individual SNP models.
 #warning are about x axis labels so can ignore 
 
 #plot partial dependencies. Strange results
-testPdp <- mrPdP(yhats, X=X,Y=Y, Feature='Grassland') 
+testPdp <- mrPdP(yhats, X=X,Y=Y, Feature='broad60evi3_resistances_Axis.2') 
+#when there are many responses the first plot will be very hard/impossible to read
 
 ## make one plot for each 
 ## pre plot for each
+#Need a way to plot only predictors with a response
 
 #indiv SNPs
 testPdp %>% 
