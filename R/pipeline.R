@@ -70,16 +70,40 @@ source("./R/stacked_preds.R") #this does the stacking
 source("./R/response_covariance") #this should create the covatiance matrix
 
 source("./R/readSnpsPed.R") #function for reading SNP data from plink .ped file
+source("./R/ResistanceComponents.R") #function for generating resistance component data from resistance matrices
 
+#----------------------------------------------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------
-
-#Example: read bobcat SNP data - from Plink file
+#Example: Bobcat SNP data- from Plink file
+#---------------------------------------------------------------------------------
 
 snps <- readSnpsPed("bobcat.plink.ped", "bobcat.plink.map") #NAs in data and interpolated as the mode. 
+X <- filterRareCommon (snps, lower=0.4, higher=0.75) #these are harsh
 
-#Viral SNP test data
-set.seed(123)
+X <- X[-c(279:281),] #these didnt match
+
+#Create resistance components for features using PCoA
+
+#load resistance matrix generated using circuitscape. Add any matrix to a sub file in the working directory
+#and provide that name to the function below. This will create a resistance component dataframe. Could add Mems here too
+
+Y <- resist_components(data_resist,siteData, p_val=0.001,  filename = 'Bobcat_cs_matrices')
+
+df1 <- mutate_all(Y, function(x) as.numeric(as.character(x))) #this is now in the function
+
+
+#check for correlations and remove
+df2 <- cor(df1) #find correlations
+hc <-  findCorrelation(df2, cutoff=0.9) # put any value as a "cutoff". This is quite high
+hc <-  sort(hc)
+
+Y <-  df1[,-c(hc)] #reduced set of Y features. Labelled Y for simplicity
+
+#---------------------------------------------------------------------------------
+#Example: Bobcat FIV data  - read  viral data already curated
+#---------------------------------------------------------------------------------
+
 #load data for training
 Responsedata <-read.csv("GF SNPs posBinary.csv")
 rownames(Responsedata) <-Responsedata$X
@@ -113,26 +137,35 @@ X <- fData #for simplicity when comparing
 
 #---------------------------------------------------------------------------------
 #coinfection test data # from MRFcov. This data can also be used in this pipeline replacing X/Y
-X <- select(Bird.parasites, -scale.prop.zos) #response variables eg. SNPs, pathogens, species....
-Y <- select(Bird.parasites, scale.prop.zos) # feature set
 #---------------------------------------------------------------------------------
 
+X <- select(Bird.parasites, -scale.prop.zos) #response variables eg. SNPs, pathogens, species....
+Y <- select(Bird.parasites, scale.prop.zos) # feature set
+
+#---------------------------------------------------------------------------------
+#Simulated data
+#---------------------------------------------------------------------------------
+X <- read.csv('grid101.csv', row.names = NULL, head=T)
+X[1:3] <- NULL
+X[2:6] <- NULL; X[1:2] <- NULL #removing these for the moment.
+
+X[X==2] <- 1 #'cough' this is terrible  - it would be easier to have each loci as two columns to make this properly 
+ #a classification model (rather than dealing with nominal data but i need to rethink probability)
+
+#remove NAs
+X[X==NA] <- 0 #not optimal
+
+#heavy filtering
+Xsim <- filterRareCommon (X, lower=0.01, higher=0.999)  #this isnt working
+
+Y <- read.csv('simple_sims_env.csv')
 
 #-------------------------------------------------------------------
 #Pre-training data visualization- checks for long tall distributions
 #-------------------------------------------------------------------
 ## GM add here
 
-#-------------------------------------------------------------------
-#Create resistance components using PCoA
-#-------------------------------------------------------------------
 
-#load resistance matrix generated using circuitscape
-
-data_resist <- read.csv('roadsWS_resistanceMatrix.csv')
-siteData<- read.csv('SiteWS.csv')
-
-test <- resist_components(data_resist,siteData)
 
 #-------------------------------------------------------------------
 #Set up the model
@@ -172,9 +205,15 @@ boost_tree() %>%
 #---------------------------------------------------------------------
 #Perform the analysis
 #---------------------------------------------------------------------  
+#parallell processing
+all_cores <- parallel::detectCores(logical = FALSE)
+
+library(doParallel)
+cl <- makePSOCKcluster(all_cores)
+registerDoParallel(cl)
   
 #models just using features/predictor variables.
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='up') ## in MrTidymodels
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set
 
 #-------------------------------------------------------------------
 # Visualization for model tunning and performance
