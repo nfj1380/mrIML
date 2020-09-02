@@ -2,9 +2,10 @@
 #-----------------------------------------------------------
  #sig_pcoa <- function (data_resist, SiteData, spatial){ #GDM version
 
-resist_components <- function (data_resist, SiteData, p_val=p_val, filename = filename){
+resist_components <- function (data_resist, p_val=p_val, filename = filename){
   
   files <- list.files(paste(filename))
+
   n_matrix <- length(files)
   
 #for (i in 1:length(files)){
@@ -27,7 +28,7 @@ final_d <- sapply(seq(1, n_matrix), function(i) {
 
    l2 <- round(res$values$Relative_eig[2], 2) #variance explained by pcoa 2 etc
    
-   n_axes <- ncol(pcoa$vectors)
+   n_axes <- ncol(res$vectors)
    
    pcdat <- as.data.frame(res$vectors)
    
@@ -47,7 +48,7 @@ final_d <- sapply(seq(1, n_matrix), function(i) {
      names(vec) <- c('pc_axis')
      
      ## Basic dbRDA Analysis
-     vare.cap <- capscale(data_resist ~ vec$pc_axis) #  sqrt.dist= TRUE avoids negatuve eiganvalues but not working
+     vare.cap <- capscale(data_resist ~ vec$pc_axis, parallel = cl) #  sqrt.dist= TRUE avoids negatuve eiganvalues but not working
      
      sig <- anova(vare.cap) #999 permutations
      
@@ -82,7 +83,7 @@ final_d <- sapply(seq(1, n_matrix), function(i) {
    Tr_PcoA <- ggplot(PcoA2D_AT, aes(x = PCoA1, y = PCoA2, label = siteData$Site))+ #would be good to make this 3D at some point
      geom_point(size =2) +
      geom_text(col = 'black', size=4, check_overlap=TRUE)+ #dont want to print every name
-     labs(y = paste("PCoA-2 (", label_percent()(l2), " variance explained)", sep=''), x= paste("PCoA-1 (", label_percent()(l1), " variance explained)", sep=''))+
+     labs(y = paste("PCoA-2 (", scales::label_percent()(l2), " variance explained)", sep=''), x= paste("PCoA-1 (", scales::label_percent()(l1), " variance explained)", sep=''))+
      theme_bw()+
      ggtitle(paste('PCoA', gsub('.csv','', files[i]))) ###
    print( Tr_PcoA)
@@ -129,6 +130,7 @@ row.names(final_d) <- final_d$Site
 final_d$Site <- NULL
 final_d <- mutate_all(final_d, function(x) as.numeric(as.character(x)))
 final_d
+
   #combinedPC <- as.data.frame(do.call(cbind, all_d ))
 #combinedPCRed <- as.data.frame(do.call(cbind, final_d))
 #combinedPCRed <- do.call(cbind, final_d)  
