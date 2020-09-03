@@ -76,7 +76,7 @@ response_covariance = function(yhats, covariance_mod){
   
     
     # Return the model as well as the 'multivariate residual adjustments'
-    list(rhat_k = predict( mod2, new_data = select(data_R, -Y)), pred_names = colnames(predictors))
+    list(rhat_k = predict( mod2, new_data = select(data_R, -Y)), pred_names = colnames(predictors), mod2=mod2)
   })
 }
   

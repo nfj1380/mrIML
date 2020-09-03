@@ -67,7 +67,7 @@ source("./R/vintTidy.R")
 
 #Nick C - this and the function below are the functions with tidy model code I made from your original
 source("./R/stacked_preds.R") #this does the stacking
-source("./R/response_covariance") #this should create the covatiance matrix
+source("./R/response_covariance") #this should create the covatiance matrix #not working
 
 source("./R/readSnpsPed.R") #function for reading SNP data from plink .ped file
 source("./R/ResistanceComponents.R") #function for generating resistance component data from resistance matrices
@@ -149,14 +149,22 @@ X <- read.csv('grid101.csv', row.names = NULL, head=T)
 X[1:3] <- NULL
 X[2:6] <- NULL; X[1:2] <- NULL #removing these for the moment.
 
-X[X==2] <- 1 #'cough' this is terrible  - it would be easier to have each loci as two columns to make this properly 
+#X[X==2] <- 1 #'cough' this is terrible  - it would be easier to have each loci as two columns to make this properly 
  #a classification model (rather than dealing with nominal data but i need to rethink probability)
 
 #remove NAs
-X[X==NA] <- 0 #not optimal
+X[is.na(X)] <- 0 #not optimal
 
 #heavy filtering
-Xsim <- filterRareCommon (X, lower=0.01, higher=0.999)  #this isnt working
+#Xsim <- filterRareCommon (X, lower=0.2, higher=0.7)  #this isnt working for mutinomial
+
+#check for correlations and remove. In this case all independent which makes sene
+df2 <- cor(X, method = c('spearman')) #find correlations
+df2[is.na(df2)] <- 0 #weird NAs in the last row
+hc <-  findCorrelation(df2, cutoff=0.3) # put any value as a "cutoff".  removes half the SNPs. Aim for 50%
+hc <-  sort(hc)
+
+X <-  X[,-c(hc)] 
 
 Y <- read.csv('simple_sims_env.csv')
 
@@ -182,7 +190,7 @@ model1 <- #model used to generate yhat
   set_mode("classification") #just for your response
 
 model1 <- 
-  rand_forest(trees = 100, mode = "classification") %>%
+  rand_forest(trees = 100, mode = "classification") %>% #this should cope with multinomial data alreadf
   set_engine("ranger", importance = c("impurity","impurity_corrected")) %>%
   set_mode("classification")
 
@@ -208,6 +216,7 @@ boost_tree() %>%
 #parallell processing
 all_cores <- parallel::detectCores(logical = FALSE)
 
+#this can speed it up
 library(doParallel)
 cl <- makePSOCKcluster(all_cores)
 registerDoParallel(cl)
