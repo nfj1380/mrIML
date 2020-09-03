@@ -68,6 +68,7 @@ library(vegan)
 library(ggrepel)
 library(LEA) 
 library(ape)
+library(ALEPlot)
 #if (!requireNamespace("BiocManager", quietly = TRUE))
  # install.packages("BiocManager")
 
@@ -103,10 +104,18 @@ source("./R/ResistanceComponents.R") #function for generating resistance compone
 #Example: Bobcat SNP data- from Plink file
 #---------------------------------------------------------------------------------
 
-snps <- readSnpsPed("bobcat.plink.ped", "bobcat.plink.map") #NAs in data and interpolated as the mode. 
+snps <- readSnpsPed("bobcat.plink.ped", "bobcat.plink.map.map") #NAs in data and interpolated as the mode. 
 X <- filterRareCommon (snps, lower=0.4, higher=0.75) #these are harsh
 
 X <- X[-c(279:281),] #these didnt match
+
+#filter correlated SNPS
+
+df2 <- cor(X) #find correlations
+hc <-  findCorrelation(df2, cutoff=0.5) # put any value as a "cutoff". This is quite high
+hc <-  sort(hc)
+
+X <-  X[,-c(hc)] #reduced set of Y features. Labelled Y for simplicity
 
 #Create resistance components for features using PCoA
 
@@ -178,7 +187,7 @@ X[2:6] <- NULL; X[1:2] <- NULL #removing these for the moment.
  #a classification model (rather than dealing with nominal data but i need to rethink probability)
 
 #remove NAs
-X[is.na(X)] <- 0 #not optimal
+X[is.na(X)] <- 0 #not optimal. Will fix
 
 #heavy filtering
 #Xsim <- filterRareCommon (X, lower=0.2, higher=0.7)  #this isnt working for mutinomial
@@ -192,6 +201,12 @@ hc <-  sort(hc)
 X <-  X[,-c(hc)] 
 
 Y <- read.csv('simple_sims_env.csv')
+
+#note that for multinomial models we do not have a great solution yet to calculate model deivance
+#this means that model stacking currently is unavialable for this class of models
+
+#--------------------------------------------------------------------------------------------------------------------------------------
+#creating the models
 
 #-------------------------------------------------------------------
 #Pre-training data visualization- checks for long tall distributions
@@ -249,7 +264,7 @@ cl <- makePSOCKcluster(all_cores)
 registerDoParallel(cl)
   
 #models just using features/predictor variables.
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', calculate.resid = 'no') ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set
 
 #-------------------------------------------------------------------
 # Visualization for model tunning and performance
