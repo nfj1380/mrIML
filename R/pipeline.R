@@ -19,25 +19,44 @@
 #the approach to focus on co-occurence  (Lion/avian malaria data) 
 #as well as a paper tracking between farm transisiion (Gustavo's data)
 
+#--------------------------------------------------------------------------------------------------------------
+# Use the ipak function to install and load multiple R packages. Thanks to Steven Worthington for this code.
+# checks to see if packages are installed. Install them if they are not, then load them into the R session. Only work for CRAN 
+#packages. Details are provided for the others required.
+
+ipak <- function(pkg){
+  new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
+  if (length(new.pkg)) 
+    install.packages(new.pkg, dependencies = TRUE)
+  sapply(pkg, require, character.only = TRUE)
+}
+#need a way to autoupdate or not each package - nice idea but not working
+
+packages <- c('vip', 'mice', 'tidymodels', 'tidyverse', 'pdp', 'randomForest', 'caret', 'missForests', 'gbm', 'xgboost',
+              'iml', 'doParallel',  'themis', 'viridis','janitor', 'hrbrthemes', 'ggrepel')
+
+ipak(packages)
+#--------------------------------------------------------------------------------------------------------------
+
+
+
 #load packages. Reduce this list.
 library(vip)
 library(mice)
-library(VIM)
-library(imputeTS)
-library(fastshap)
+#library(VIM)
+#library(imputeTS)
+#library(fastshap)
 library(tidymodels)
 library(pdp)
 library(randomForest)
 library(caret)
-library(pROC)
-library(ROCR)
-library(plyr)
+#library(pROC)
+#library(ROCR)
 library(missForest)
-library(tidyverse)
 library(gbm)
 library(iml)
 library(tidyverse)
-library(parallel)
+#library(parallel)
 library(doParallel)
 library(themis)
 library(viridis)
@@ -48,6 +67,12 @@ library(xgboost)
 library(vegan)
 library(ggrepel)
 library(LEA) 
+library(ape)
+#if (!requireNamespace("BiocManager", quietly = TRUE))
+ # install.packages("BiocManager")
+
+#BiocManager::install("LEA")
+
 
 # load all function codes. This will disappear when we formally make this a function
 source("./R/filterRareCommon.R")
@@ -88,7 +113,7 @@ X <- X[-c(279:281),] #these didnt match
 #load resistance matrix generated using circuitscape. Add any matrix to a sub file in the working directory
 #and provide that name to the function below. This will create a resistance component dataframe. Could add Mems here too
 
-Y <- resist_components(data_resist,siteData, p_val=0.001,  filename = 'Bobcat_cs_matrices')
+Y <- resist_components(data_resist, p_val=0.001,  filename = 'Bobcat_cs_matrices')
 
 df1 <- mutate_all(Y, function(x) as.numeric(as.character(x))) #this is now in the function
 
@@ -216,8 +241,10 @@ boost_tree() %>%
 #parallell processing
 all_cores <- parallel::detectCores(logical = FALSE)
 
+
 #this can speed it up
 library(doParallel)
+
 cl <- makePSOCKcluster(all_cores)
 registerDoParallel(cl)
   
