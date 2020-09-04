@@ -16,7 +16,7 @@ response_covariance = function(yhats, covariance_mod){
   
   rhats <- lapply(seq(1, n_variables), function(response){
     
-    outcome <- yhats[[response]]$resid #response 
+    outcome <- yhats[[1]]$resid ### response 
     predictors <- do.call(cbind, purrr::map(yhats, 'yhat'))[, -response ]#response
     colnames(predictors) <- paste0('pred_', seq(1, ncol(predictors)))
     

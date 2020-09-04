@@ -124,15 +124,19 @@ X <-  X[,-c(hc)] #reduced set of Y features. Labelled Y for simplicity
 
 Y <- resist_components(data_resist, p_val=0.001,  filename = 'Bobcat_cs_matrices')
 
-df1 <- mutate_all(Y, function(x) as.numeric(as.character(x))) #this is now in the function
-
-
 #check for correlations and remove
 df2 <- cor(df1) #find correlations
 hc <-  findCorrelation(df2, cutoff=0.9) # put any value as a "cutoff". This is quite high
 hc <-  sort(hc)
 
 Y <-  df1[,-c(hc)] #reduced set of Y features. Labelled Y for simplicity
+
+#---------------------------------------------------------------------------------
+#Example: Puma SNP data
+#--------------------------------------------------------------------------------
+
+snps <- readSnpsPed("ws.ped", "ws.map") #NAs in data and interpolated as the mode. 
+X <- filterRareCommon (snps, lower=0.4, higher=0.75) #these are harsh
 
 #---------------------------------------------------------------------------------
 #Example: Bobcat FIV data  - read  viral data already curated
@@ -203,7 +207,9 @@ X <-  X[,-c(hc)]
 Y <- read.csv('simple_sims_env.csv')
 
 #note that for multinomial models we do not have a great solution yet to calculate model deivance
-#this means that model stacking currently is unavialable for this class of models
+#this means that model stacking currently is unavialable for this class of models.
+
+#multinominal models arent working either...
 
 #--------------------------------------------------------------------------------------------------------------------------------------
 #creating the models
@@ -234,37 +240,30 @@ model1 <-
   set_engine("ranger", importance = c("impurity","impurity_corrected")) %>%
   set_mode("classification")
 
-#model 1 with tuning. The user has to supply this too
-model1tune<- rand_forest(
-  mtry = tune(),
-  trees = 100,
-  min_n = tune()
-) %>%
-  set_mode("classification") %>%
-  set_engine("ranger")
-
 #Boosted model (xgboost). Not tuned either currently. This doesn't work with the small bobcat dataset. Much too small
 
 model1 <- 
 boost_tree() %>%
   set_engine("xgboost") %>%
   set_mode("classification")
+
+#for SVM need different tuning paramters. Currently tuning works best for tree-based algorithms.
   
 #---------------------------------------------------------------------
 #Perform the analysis
 #---------------------------------------------------------------------  
 #parallell processing
-all_cores <- parallel::detectCores(logical = FALSE)
+#all_cores <- parallel::detectCores(logical = FALSE)
 
 
 #this can speed it up
-library(doParallel)
+#library(doParallel)
 
-cl <- makePSOCKcluster(all_cores)
-registerDoParallel(cl)
+#cl <- makePSOCKcluster(all_cores)
+#registerDoParallel(cl)
   
 #models just using features/predictor variables.
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', calculate.resid = 'no') ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set
 
 #-------------------------------------------------------------------
 # Visualization for model tunning and performance
@@ -325,7 +324,7 @@ plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0.5) #mcc cutoff not worki
 #warning are about x axis labels so can ignore 
 
 #plot partial dependencies. Strange results
-testPdp <- mrPdP(yhats, X=X,Y=Y, Feature='broad60evi3_resistances_Axis.2') 
+testPdp <- mrPdP(yhats, X=X,Y=Y, Feature='scale.prop.zos') 
 #when there are many responses the first plot will be very hard/impossible to read
 
 ## make one plot for each 

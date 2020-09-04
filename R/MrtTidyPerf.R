@@ -24,14 +24,14 @@ mrIMLperformance <- function(yhats, model1, X){ #should be able to extract model
   for( i in 1:n_response) {
    
     #get already calculated ROC and accuracy
-   met1 <- as.data.frame(bList[[i]]$.metrics) ####
+   met1 <- as.data.frame(bList[[1]]$.metrics) ####
    
    roc <- met1$.estimate[2]
    #accuracy <-  met1$.estimate[1]
    
    #data from best model to get MCC, specificity and sensivity using yardstick
    
-   yd <- as.data.frame(bList[[i]]$.predictions) ###
+   yd <- as.data.frame(bList[[1]]$.predictions) ###
     
      mathews <-  yardstick::mcc(yd,class, .pred_class) #yardstick is the tidymodels performance package.
      mathews <- mathews$.estimate #extract mcc

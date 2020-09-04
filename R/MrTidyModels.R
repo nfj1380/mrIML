@@ -25,7 +25,7 @@
 #'or 'no' (no balancing of classes).
 
 
-mrIMLpredicts<- function(X, Y, model1, balance_data ='up', calculate.resid ='yes') { 
+mrIMLpredicts<- function(X, Y, model1, balance_data ='no', calculate.resid ='yes') { 
   
   n_response<- length(X)
   # Run model 1 for each parasite; a simple logistic regression with a single covariate
@@ -45,7 +45,7 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up', calculate.resid ='yes
     #OtherSNPs[OtherSNPs== 'Positive'] <- 1 #could do a PCA/PCoA?
     #OtherSNPsa <-apply(OtherSNPs, 2, as.numeric) 
     
-    data <- cbind(X[i], Y) 
+    data <- cbind(X[i], Y) ###
     colnames(data)[1] <- c('class') #define response variable
     
     data$class<- as.factor(data$class)
@@ -102,7 +102,7 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up', calculate.resid ='yes
     
     tune_m<-tune::tune_grid(mod_workflow,
                             resamples = data_cv,
-                            grid = 10)
+                            grid = 10) # 10 paramters
     
     # select the best model
     best_m <- tune_m %>%
@@ -141,18 +141,18 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='up', calculate.resid ='yes
     yhatT <- predict(mod1_k, new_data = data_test, type='class' ) %>% 
       bind_cols(data_test %>% select(class))
     
-    if (calculate.resid =='yes'){
+    #if (calculate.resid =='yes'){
     
     #' Calculate deviance residuals 
 
     resid <- devianceResids(yhatO, data_train$class) 
     
-    list(mod1_k = mod1_k, last_mod_fit=last_mod_fit,tune_m=tune_m, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT)
-    }
+    list(mod1_k = mod1_k, last_mod_fit=last_mod_fit,tune_m=tune_m, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid)
+    #}
     
-    if (calculate.resid =='no'){
-      list(mod1_k = mod1_k, last_mod_fit=last_mod_fit,tune_m=tune_m, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid)
-    }
+    #if (calculate.resid =='no'){
+     # list(mod1_k = mod1_k, last_mod_fit=last_mod_fit,tune_m=tune_m, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid)
+    #}
       
   })
 }

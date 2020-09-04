@@ -54,7 +54,8 @@ mrPdP <- function(yhats, X, Y, Feature=Feature){
   pdPlot <- ggplot(PdpGlobal, aes_string(Feature, 'yhat', color='response.id'))+
     geom_line() +
     theme_bw()+
-    theme(legend.title = element_blank())
+    theme(legend.title = element_blank())+
+    geom_smooth(method='loess')
   print(pdPlot)
   
  readline(prompt="All responses plot. Press [enter] to continue to the global summary plot")
@@ -66,7 +67,8 @@ mrPdP <- function(yhats, X, Y, Feature=Feature){
   
   GlobalPD <- ggplot(turnover, aes_string(Feature, 'avgYhat'))+
     geom_line(size=1.2, color='red') +
-    theme_bw()
+    theme_bw()+
+    geom_smooth(method='loess')
   print( GlobalPD)
   
   return(PdpGlobal)
