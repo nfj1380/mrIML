@@ -68,7 +68,7 @@ library(vegan)
 library(ggrepel)
 library(LEA) 
 library(ape)
-library(ALEPlot)
+library(flashlight)
 #if (!requireNamespace("BiocManager", quietly = TRUE))
  # install.packages("BiocManager")
 
@@ -164,9 +164,6 @@ Y <- FeaturesnoNA #for simplicity
 Y <- FeaturesnoNA[c(1:3)]
 #Optional: Filter rare/common SNPs or species. Retaining minor allelle frequncies >0.1 and removing common allelles (occur>0.9)
 fData <- filterRareCommon (Responsedata, lower=0.4, higher=0.75) 
-#for the snps data
-fData <- filterRareCommon (snps, lower=0.4, higher=0.75) 
-
 X <- fData #for simplicity when comparing
 
 #that occur in less than 35% of individuals and > 75% of individuals
@@ -323,26 +320,84 @@ plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0.5) #mcc cutoff not worki
 #First plot is overall importance, the second a pca showing responses with similar importance scores and the third is individual SNP models.
 #warning are about x axis labels so can ignore 
 
-#plot partial dependencies. Strange results
-testPdp <- mrPdP(yhats, X=X,Y=Y, Feature='scale.prop.zos') 
-#when there are many responses the first plot will be very hard/impossible to read
 
-## make one plot for each 
-## pre plot for each
-#Need a way to plot only predictors with a response
+# can build a flaslight object for individual responses 
 
-#indiv SNPs
-testPdp %>% 
-  filter(response.id=="env_212")%>%
-  ggplot(aes(Grassland , yhat, group = yhat.id))+
-  geom_line()+
-  theme_bw()
+#can choose any metric from the metrucsWeighted package
+metrics = list(
+  
+  logloss = MetricsWeighted::logLoss,
+  
+  `ROC AUC` = MetricsWeighted::AUC,
+  
+  `% Dev Red` = MetricsWeighted::r_squared_bernoulli
+  
+)
+
+#any predict function
+
+
+fl <- flashlight(
+  
+  model = yhats[[1]]$mod1_k, #change the index to focus on other SNPs
+  
+  label = colnames(X)[1],
+  
+  data = cbind(Y, X),
+  
+  y = colnames(X)[1],
+  
+  predict_function = pred_fun,
+  
+  metrics = metrics
+)
+
+
+
+#------------------------------------------------------------
+#Multiple response
+
+flashlightObj <- mrFlashlight(yhats, X, Y)
+
+#plots
+
+plot(light_performance(fl), fill = "orange") +
+  
+  labs(x = element_blank())
+
+
+plot(light_profile(flashlightObj, v = "Grassland", type = "ale"))
+
+plot(light_performance(multifl), rotate_x = TRUE, fill = "orange") +
+  
+  labs(x = element_blank())
+
+
+plot(light_global_surrogate(multifl))
+
+plot(light_breakdown(fl, new_obs = cbind(Y,X)[2, ]))
+
+plot(light_scatter(multifl, v = "Grassland", type = "predicted"))
+
+plot(light_effects(multifl, v = "Grassland"), use = "all")
+
+p <- light_profile(multifl, v = "Grassland", type = "ale")
+
+plot(p) + theme_bw() +
+  
+  geom_smooth(method='loess') #does average?
+
+#-------------------------------------------------------------------------------------------------
 
 #calculate interactions  -this is qute slow and memory intensive
 
 interactions <-mrInteractions(yhats, X, Y) 
 
 mrPlot_interactions(Interact, X,Y, top_ranking = 3, top_response=3)
+
+
+#-------------------------------------------------------------------------------------------------
+
 
 #adding other response varables to see if this improves predictions. wecould say that it only has been tested 
 #on 3 algorithms (GAMs, Xgboost which is an improved GBM and liner models) and user beware otherwise.

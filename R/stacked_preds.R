@@ -11,17 +11,16 @@ stacked_preds<- function(rhats, yhats){
   # Now to generate the stacked predictions
   combiner_preds <- lapply(seq(1, n_variables), function(i){
     
-    
-    mod1_test_preds <- yhats %>%  purrr::map(pluck('yhatT')) #select test data
-    
+   mod1_test <- yhats %>%  purrr::map(pluck('yhatT')) #select test data
+   mod1_test<- do.call(cbind,  mod1_test)
+   m1 <- mod1_test[, grep("class", names( mod1_test))] #matching colnames was an issue
+   mod1_test<-  m1 %>% select(contains("_"))# %>% as.matrix() %>% as.numeric()#matrix makes it not a factor anymore but may lead to other issues
+   mod1_test <- mutate_all( mod1_test  , function(x) as.numeric(as.character(x)))
+  
+    mod1_test_preds <- yhats %>%  purrr::map(pluck('yhat'))
     mod1_test_preds <- do.call(cbind,  mod1_test_preds)
+    colnames(mod1_test_preds) <- colnames(mod1_test)
     
-    m <- mod1_test_preds[, grep("class", names( mod1_test_preds))] #matching colnames was an issue
-    
-    # mod1_test_preds<-  m %>% select(!contains("_")) #original data
-    mod1_test_preds<-  m %>% select(contains("_"))# %>% as.matrix() %>% as.numeric()#matrix makes it not a factor anymore but may lead to other issues
-    mod1_test_preds <- mutate_all( mod1_test_preds  , function(x) as.numeric(as.character(x)))
-   
     
     # Predict mod 2 'adjustments' using the test mod 1's predictions
     mod2_test_preds <- do.call(cbind, lapply(seq(1, n_variables), function(y){
