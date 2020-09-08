@@ -5,6 +5,8 @@
 #'@param Y  A \code{dataframe} #is the feature dataset
 #'@param Model 1 A \code{list} can be any model from the tidy model package. See examples.
 #'@param 'Feature' \code{character} Feature from the Y set to plot the partial dependency.
+#'@param 'cl \code{character} A cluster object created by makeCluster, or an integer to indicate number of
+#'child-processes (integer values are ignored on Windows) for parallel evaluations
 #'
 #'@details The aim of this function is to enable users to calculate partial dependencies for the response variables for each model (i.e. species/SNPs)
 #' and then use plot_mrpd (a plotting function) to create a pd plot for all species/SNPs for each feature. 
@@ -19,7 +21,8 @@ mrInteractions <- function(yhats, X, Y){
   l_response<- length(yhats)
   n_features <- names(Y)
   n_response <- names(X)
-  
+ # p <- progressr::progressor(along = yhats)
+
   #unpack everything from yhats
   tList <- yhats %>% purrr::map(pluck('data_train')) #get together training data.
   modList <- yhats %>% purrr::map(pluck('mod1_k'))
@@ -28,15 +31,21 @@ mrInteractions <- function(yhats, X, Y){
   
   imInt <- lapply(seq(1:l_response), function(i){ #uses monte carlo CV
     imp <- modList[[i]] %>% 
-     vintTidy(feature_names = n_features, train = dataAll[[i]])
+     vintTidy(feature_names = n_features, train = dataAll[[i]], parallel = TRUE)
     #modified vint function - very slow over171 combinations
     
     impD <- imp$Interaction
     
     #var <-impD %>%
      # purrr::pluck("Variables")
+   # p(message = sprintf("Added %g", yhats[i]))
     
   })
+  
+  #progress bar
+  #op <- pboptions(type="timer") # default
+  #system.time(res1pb <- pblapply(1:l_response, function(i) fun(imInt[,i])))
+  #pboptions(op)
   
   ImpGlobal <- do.call(cbind, imInt) 
   #ImpGlobalnames <- cbind(ImpGlobal, var)

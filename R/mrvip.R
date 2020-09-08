@@ -27,8 +27,8 @@ mrVip <- function (yhats, Y){
      
     #imp$fit$coefficients[is.na( imp$fit$coefficients)]=0 #for GLMs on the bocat data I get 0 coefficents/residuals etc which are problematic. This still doesn't work. Brandon any ideas how to make VIP work on all features even those with 0 coefficents?
     
-     impVI <- vip(imp,plot=FALSE, num_features=length(Y)) 
-   
+     #impVI <- vip(imp,plot=FALSE, num_features=length(Y)) 
+     impVI <- vip(imp, num_features=length(Y)) 
     impD <- impVI$data %>% 
       arrange(Variable)%>% 
       purrr::pluck("Importance")

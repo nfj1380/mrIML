@@ -69,6 +69,7 @@ library(ggrepel)
 library(LEA) 
 library(ape)
 library(flashlight)
+library(pbapply)
 #if (!requireNamespace("BiocManager", quietly = TRUE))
  # install.packages("BiocManager")
 
@@ -97,6 +98,8 @@ source("./R/response_covariance") #this should create the covatiance matrix #not
 
 source("./R/readSnpsPed.R") #function for reading SNP data from plink .ped file
 source("./R/ResistanceComponents.R") #function for generating resistance component data from resistance matrices
+
+source(("./R/mrFlashlight.R"))
 
 #----------------------------------------------------------------------------------------------------------------------
 
@@ -163,7 +166,7 @@ Y <- FeaturesnoNA #for simplicity
 #for more efficent testing for interactions (more variables more interacting pairs)
 Y <- FeaturesnoNA[c(1:3)]
 #Optional: Filter rare/common SNPs or species. Retaining minor allelle frequncies >0.1 and removing common allelles (occur>0.9)
-fData <- filterRareCommon (Responsedata, lower=0.4, higher=0.75) 
+fData <- filterRareCommon (Responsedata, lower=0.1, higher=0.8) 
 X <- fData #for simplicity when comparing
 
 #that occur in less than 35% of individuals and > 75% of individuals
@@ -250,15 +253,11 @@ boost_tree() %>%
 #Perform the analysis
 #---------------------------------------------------------------------  
 #parallell processing
-#all_cores <- parallel::detectCores(logical = FALSE)
+all_cores <- parallel::detectCores(logical = FALSE)
 
+cl <- makePSOCKcluster(all_cores)
+registerDoParallel(cl)
 
-#this can speed it up
-#library(doParallel)
-
-#cl <- makePSOCKcluster(all_cores)
-#registerDoParallel(cl)
-  
 #models just using features/predictor variables.
 yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set
 
@@ -311,7 +310,7 @@ groupCov <- c(rep ("Host_characteristics", 1),rep("Urbanisation", 3), rep("Veget
 #not that GLMs in particular wont produce coefficents for features that are strongly colinear and will drop them from the model.
 #in this case group cov will have to be changed to reflect features included in the model. 
 
-plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, groupCov=groupCov, cutoff= 0.5)#note there are two plots here. 
+plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, groupCov=groupCov, cutoff= 0.5, plot.pca='no')#note there are two plots here. PCA is hard to read with > 50 response varianbles
 
 #if you dont want/need to group covariates:
 
@@ -352,7 +351,9 @@ fl <- flashlight(
   metrics = metrics
 )
 
-
+plot(light_performance(fl), fill = "orange") +
+  
+  labs(x = element_blank())
 
 #------------------------------------------------------------
 #Multiple response
@@ -360,10 +361,6 @@ fl <- flashlight(
 flashlightObj <- mrFlashlight(yhats, X, Y)
 
 #plots
-
-plot(light_performance(fl), fill = "orange") +
-  
-  labs(x = element_blank())
 
 
 plot(light_profile(flashlightObj, v = "Grassland", type = "ale"))
@@ -375,13 +372,13 @@ plot(light_performance(multifl), rotate_x = TRUE, fill = "orange") +
 
 plot(light_global_surrogate(multifl))
 
-plot(light_breakdown(fl, new_obs = cbind(Y,X)[2, ]))
+plot(light_breakdown(flashlightObj, new_obs = cbind(Y,X)[2, ]))
 
-plot(light_scatter(multifl, v = "Grassland", type = "predicted"))
+plot(light_scatter(flashlightObj, v = "Grassland", type = "predicted"))
 
-plot(light_effects(multifl, v = "Grassland"), use = "all")
+plot(light_effects(flashlightObj, v = "Grassland"), use = "all")
 
-p <- light_profile(multifl, v = "Grassland", type = "ale")
+p <- light_profile(flashlightObj, v = "Grassland", type = "ale")
 
 plot(p) + theme_bw() +
   
@@ -391,7 +388,7 @@ plot(p) + theme_bw() +
 
 #calculate interactions  -this is qute slow and memory intensive
 
-interactions <-mrInteractions(yhats, X, Y) 
+interactions <-mrInteractions(yhats, X, Y) #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
 
 mrPlot_interactions(Interact, X,Y, top_ranking = 3, top_response=3)
 
