@@ -2,7 +2,7 @@
 #-----------------------------------------------------------
  #sig_pcoa <- function (data_resist, SiteData, spatial){ #GDM version
 
-resist_components <- function (data_resist, p_val=p_val, filename = filename){
+resist_components <- function (filename = filename, p_val=p_val){
   
   files <- list.files(paste(filename))
 

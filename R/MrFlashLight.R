@@ -14,7 +14,7 @@
 #' testPdp <- mrPdP(yhats, model1,X=X,Y=Y)
 
 
-mrFlashlight <- function (yhats, X, Y){
+mrFlashlight <- function (yhats, X, Y, response = "multi", index=1){
     
     
     # Prediction function
@@ -47,8 +47,32 @@ mrFlashlight <- function (yhats, X, Y){
       
     )
     
+ 
+    #any predict function
+    
+    if(response == 'single'){
+    
+    
+    
+    mfl <- flashlight(
+      
+      model = yhats[[index]]$mod1_k, #change the index to focus on other SNPs
+      
+      label = colnames(X)[index],
+      
+      data = cbind(Y, X),
+      
+      y = colnames(X)[index],
+      
+      predict_function = pred_fun,
+      
+      metrics = metrics
+    )
 
-  
+    }
+    
+
+  if(response == 'multi'){
 
     # Multiple responses
     
@@ -74,7 +98,7 @@ mrFlashlight <- function (yhats, X, Y){
     
     
     
-    multifl <- multiflashlight(
+    mfl <- multiflashlight(
       
       fl_list,
       
@@ -85,7 +109,9 @@ mrFlashlight <- function (yhats, X, Y){
       metrics = metrics
       
     )
-    return(multifl)
+    
+  }
+    return( mfl)
 }
     
     

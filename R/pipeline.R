@@ -54,7 +54,7 @@ library(caret)
 #library(ROCR)
 library(missForest)
 library(gbm)
-library(iml)
+#library(iml)
 library(tidyverse)
 #library(parallel)
 library(doParallel)
@@ -67,14 +67,15 @@ library(xgboost)
 library(vegan)
 library(ggrepel)
 library(LEA) 
-library(ape)
-library(flashlight)
-library(pbapply)
 #if (!requireNamespace("BiocManager", quietly = TRUE))
- # install.packages("BiocManager")
+# install.packages("BiocManager")
 
 #BiocManager::install("LEA")
-
+library(ape)
+library(flashlight)
+library(devtools)
+install_github("mayer79/flashlight") 
+#library(pbapply)
 
 # load all function codes. This will disappear when we formally make this a function
 source("./R/filterRareCommon.R")
@@ -85,7 +86,7 @@ source("./R/filterRareCommon.R")
 source("./R/MrtTidyPerf.R")
 source("./R/mrvip.R")
 source("./R/plot_vi.R")
-source("./R/mrPdP.R")
+#source("./R/mrPdP.R")
 
 #new interaction code
 source("./R/mrInteractions.R")
@@ -94,13 +95,13 @@ source("./R/vintTidy.R")
 
 #Nick C - this and the function below are the functions with tidy model code I made from your original
 source("./R/stacked_preds.R") #this does the stacking
-source("./R/response_covariance") #this should create the covatiance matrix #not working
+source("./R/response_covariance") #this should create the covatiance matrix #not working?
 
 source("./R/readSnpsPed.R") #function for reading SNP data from plink .ped file
 source("./R/ResistanceComponents.R") #function for generating resistance component data from resistance matrices
 
 source(("./R/mrFlashlight.R"))
-
+source("./R/mrALEplots.R")
 #----------------------------------------------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------
@@ -108,9 +109,11 @@ source(("./R/mrFlashlight.R"))
 #---------------------------------------------------------------------------------
 
 snps <- readSnpsPed("bobcat.plink.ped", "bobcat.plink.map.map") #NAs in data and interpolated as the mode. 
-X <- filterRareCommon (snps, lower=0.4, higher=0.75) #these are harsh
+X <- filterRareCommon (snps, lower=0.4, higher=0.7) #these are harsh
 
 X <- X[-c(279:281),] #these didnt match
+
+#whatever individual X128 is it needs to go as it is a crazy outlier!
 
 #filter correlated SNPS
 
@@ -118,21 +121,21 @@ df2 <- cor(X) #find correlations
 hc <-  findCorrelation(df2, cutoff=0.5) # put any value as a "cutoff". This is quite high
 hc <-  sort(hc)
 
-X <-  X[,-c(hc)] #reduced set of Y features. Labelled Y for simplicity
+ Labelled Y for simplicity
 
 #Create resistance components for features using PCoA
 
 #load resistance matrix generated using circuitscape. Add any matrix to a sub file in the working directory
 #and provide that name to the function below. This will create a resistance component dataframe. Could add Mems here too
 
-Y <- resist_components(data_resist, p_val=0.001,  filename = 'Bobcat_cs_matrices')
+Y <- resist_components(data_resist, p_val=0.01,  filename = 'Bobcat_cs_matrices')
 
 #check for correlations and remove
-df2 <- cor(df1) #find correlations
+df2 <- cor(Y) #find correlations
 hc <-  findCorrelation(df2, cutoff=0.9) # put any value as a "cutoff". This is quite high
 hc <-  sort(hc)
 
-Y <-  df1[,-c(hc)] #reduced set of Y features. Labelled Y for simplicity
+Y <-  Y[,-c(hc)] #reduced set of Y features. Labelled Y for simplicity
 
 #---------------------------------------------------------------------------------
 #Example: Puma SNP data
@@ -269,27 +272,8 @@ yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') ## in MrTidymo
 #we can now assess model performance from the best tuned model
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) # MCC is useful (higher numbers = better fit) 
 
+ModelPerf[[1]] #predictive performance for individual responses 
 ModelPerf[[2]]#overall predictive performance
-
-#another way to look at it
-ModelPerf_p<-do.call(rbind.data.frame, ModelPerf)
-
-## perfromance by outcome
-ModelPerf_p%>%
-  drop_na()%>%
-  ggplot(aes(sensitivity, specificity, shape=response, colour=response  , fill=response)) +
-  geom_smooth(method="lm") +
-  geom_point(size=3)
-
-## also
-ModelPerf_p%>%
-  drop_na()%>%
-  ggplot(aes(mcc, specificity, shape=response, colour=response, fill=response   )) +
-  geom_smooth(method="lm") +
-  geom_point(size=3)
-
-### Not sure we want to have this
-ModelPerf_p[3] #summary mcc for all response variables
 
 
 #-------------------------------------------------------------------
@@ -314,7 +298,7 @@ plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, groupCov=groupCov, cutoff= 0.5, pl
 
 #if you dont want/need to group covariates:
 
-plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0.5) #mcc cutoff not working right
+plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0.3, plot.pca='no') #mcc cutoff not working right
 
 #First plot is overall importance, the second a pca showing responses with similar importance scores and the third is individual SNP models.
 #warning are about x axis labels so can ignore 
@@ -322,67 +306,46 @@ plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0.5) #mcc cutoff not worki
 
 # can build a flaslight object for individual responses 
 
-#can choose any metric from the metrucsWeighted package
-metrics = list(
-  
-  logloss = MetricsWeighted::logLoss,
-  
-  `ROC AUC` = MetricsWeighted::AUC,
-  
-  `% Dev Red` = MetricsWeighted::r_squared_bernoulli
-  
-)
-
-#any predict function
-
-
-fl <- flashlight(
-  
-  model = yhats[[1]]$mod1_k, #change the index to focus on other SNPs
-  
-  label = colnames(X)[1],
-  
-  data = cbind(Y, X),
-  
-  y = colnames(X)[1],
-  
-  predict_function = pred_fun,
-  
-  metrics = metrics
-)
+fl <- mrFlashlight(yhats, X, Y, response = "single", index=1)
 
 plot(light_performance(fl), fill = "orange") +
   
   labs(x = element_blank())
 
+str(fl)
+
+#plot(light_breakdown(fl , new_obs = cbind(X, Y)[1, ]),by = X, v=Y) #prints all responses - need to fix but could be quite handy.
+
+#int <- light_interaction(fl, pairwise=TRUE) #not working, but possible!
+
 #------------------------------------------------------------
 #Multiple response
 
-flashlightObj <- mrFlashlight(yhats, X, Y)
+flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi")
 
 #plots
 
 
-plot(light_profile(flashlightObj, v = "Grassland", type = "ale"))
+plot(light_profile(flashlightObj, v = "broad60ibd_resistances_Axis.1", type = "ale"))
+#this will plot all responses. See mrALEplots below
 
+#another way to assess performance for each response. Lots of response make it hard to read
 plot(light_performance(multifl), rotate_x = TRUE, fill = "orange") +
   
   labs(x = element_blank())
 
 
-plot(light_global_surrogate(multifl))
-
-plot(light_breakdown(flashlightObj, new_obs = cbind(Y,X)[2, ]))
-
+#plot prediction scatter for all responses. Gets busy with 
 plot(light_scatter(flashlightObj, v = "Grassland", type = "predicted"))
 
+#plots everything on one plot (partial dependency, ALE, scatter)
 plot(light_effects(flashlightObj, v = "Grassland"), use = "all")
 
-p <- light_profile(flashlightObj, v = "Grassland", type = "ale")
+aleData <- light_profile(flashlightObj, v = "broad60imp_resistances_Axis.2", type = "ale")
 
-plot(p) + theme_bw() +
-  
-  geom_smooth(method='loess') #does average?
+#Plot global ALE plot. This the plots the smoothed average ALE value. Have to remove responses that don't respond.
+
+mrALEplot(aleData, sdthresh =0.1)
 
 #-------------------------------------------------------------------------------------------------
 
@@ -424,3 +387,25 @@ finalPred <- stacked_preds(rhats_2, yhats)
 #at some point it would be good to add interactions/Shapely here too. 
 
 #---------------------------------------------------------------------------------------------------------------
+
+#Extra importance plots:
+
+#another way to look at it
+ModelPerf_p<-do.call(rbind.data.frame, ModelPerf)
+
+## perfromance by outcome
+ModelPerf_p%>%
+  drop_na()%>%
+  ggplot(aes(sensitivity, specificity, shape=response, colour=response  , fill=response)) +
+  geom_smooth(method="lm") +
+  geom_point(size=3)
+
+## also
+ModelPerf_p%>%
+  drop_na()%>%
+  ggplot(aes(mcc, specificity, shape=response, colour=response, fill=response   )) +
+  geom_smooth(method="lm") +
+  geom_point(size=3)
+
+### Not sure we want to have this
+ModelPerf_p[3] #summary mcc for all response variables
