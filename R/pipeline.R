@@ -169,7 +169,7 @@ Y <- FeaturesnoNA #for simplicity
 #for more efficent testing for interactions (more variables more interacting pairs)
 Y <- FeaturesnoNA[c(1:3)]
 #Optional: Filter rare/common SNPs or species. Retaining minor allelle frequncies >0.1 and removing common allelles (occur>0.9)
-fData <- filterRareCommon (Responsedata, lower=0.1, higher=0.8) 
+fData <- filterRareCommon (Responsedata, lower=0.4, higher=0.7) 
 X <- fData #for simplicity when comparing
 
 #that occur in less than 35% of individuals and > 75% of individuals
@@ -298,7 +298,7 @@ plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, groupCov=groupCov, cutoff= 0.5, pl
 
 #if you dont want/need to group covariates:
 
-plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0.3, plot.pca='no') #mcc cutoff not working right
+plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes') #mcc cutoff not working right
 
 #First plot is overall importance, the second a pca showing responses with similar importance scores and the third is individual SNP models.
 #warning are about x axis labels so can ignore 
@@ -341,11 +341,15 @@ plot(light_scatter(flashlightObj, v = "Grassland", type = "predicted"))
 #plots everything on one plot (partial dependency, ALE, scatter)
 plot(light_effects(flashlightObj, v = "Grassland"), use = "all")
 
-aleData <- light_profile(flashlightObj, v = "broad60imp_resistances_Axis.2", type = "ale")
+
+profileData_pd <- light_profile(flashlightObj, v = "Grassland") #partial dependencies
+profileData_ale <- light_profile(flashlightObj, v = "Grassland", type = "ale") #acumulated local effects
 
 #Plot global ALE plot. This the plots the smoothed average ALE value. Have to remove responses that don't respond.
 
-mrALEplot(aleData, sdthresh =0.1)
+mrProfileplot(profileData_pd , sdthresh =0.05)
+mrProfileplot(profileData_ale , sdthresh =0.05)
+
 
 #-------------------------------------------------------------------------------------------------
 

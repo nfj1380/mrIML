@@ -20,7 +20,7 @@
 #'
 #plot_vi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov, cutoff= 0.5)
 
-plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.5, plot.pca='no' ){
+plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.3, plot.pca='no' ){
 
   colnames(VI) <- names(X)
   #n_features <- sort(names(Y))
@@ -79,33 +79,7 @@ plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.5, plot.pca='
   
   combiFT <- as.data.frame(t(combiF)) %>%  row_to_names(row_number = 1) 
   
-#------------------------------------------------------------------  
-  #Importance PCA plot. Responses with similar importance scores group together. No filtering
-#------------------------------------------------------------------    
-  if (plot.pca=='yes'){ # impossible to read with many responses
-  
-  readline(prompt="Press [enter] to plot the importance PCA plot")  
- 
- # a1 <- a[,-1] %>%  mutate_if( is.factor, ~ as.numeric(as.character(.x))) #this is a handy function
-  #row.names(a1) <- a$rowname
-  
-  a.pca <- rda(trans) #this includes all respoinses
-  
-    uscores <- data.frame(a.pca$CA$u)
-    uscores <- data.frame(test$CA$u)
-  
-   p2 <- ggplot(uscores  , aes(x = PC1, y = PC2)) + 
-    geom_point() + 
-    geom_label_repel(aes(label = rownames(trans)),
-                     box.padding   = 0.35, 
-                     point.padding = 0.5,
-                     segment.color = 'grey50') +
-    theme_bw()
-  #  geom_text(data = vscores, aes(x = PC1, y = PC2, label = rownames(vscores)), col = 'red')
- # geom_text(data = vscores, aes(x = PC1, y = PC2, label = rownames(vscores)), col = 'red')
-   print(p2)
-  
-  
+
   #------------------------------------------------------------------  
   
   data_long <- gather(combiFT,  key ='response', value = importance) #turns this wide frame into something more suitable to plot
@@ -122,7 +96,7 @@ plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.5, plot.pca='
 
   #not the biggest fan of barplots  - but they are the easiest to see in this case.
   
-  p3 <- ggplot(finaldfg, aes(fill=charvecGroup  , y=importance, x=charvecGroup )) + 
+  p2 <- ggplot(finaldfg, aes(fill=charvecGroup  , y=importance, x=charvecGroup )) + 
     geom_bar(position="dodge", stat="identity") +
     scale_fill_viridis(discrete = T, option = "E") +
     ggtitle("Individual response models") +
@@ -135,39 +109,9 @@ plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.5, plot.pca='
 #theme(legend.position="none") + #I like the legend personally rather than lots of x axis text.
   
 readline(prompt="Press [enter] to plot individual variable importance summaries")  
-  print(p3)
+  print(p2)
   }
-  if (plot.pca=='no'){
     
-    data_long <- gather(combiFT,  key ='response', value = importance) #turns this wide frame into something more suitable to plot
-    
-    charvec <- rep(n_features, length(combiFT)) #create a vector of feature names
-    
-    charvecGroup <- rep(groupCov, length(combiFT)) #make it easier to read 
-    
-    finaldf <- as.data.frame(cbind(data_long, charvec)) #if we want ungrouped features. COuld add this functionality
-    finaldfg <- as.data.frame(cbind(data_long, charvecGroup))
-    
-    finaldf$importance <- as.numeric(finaldf$importance) 
-    finaldfg$importance <- as.numeric(finaldfg$importance)
-    
-    #not the biggest fan of barplots  - but they are the easiest to see in this case.
-    
-    p2 <- ggplot(finaldfg, aes(fill=charvecGroup  , y=importance, x=charvecGroup )) + 
-      geom_bar(position="dodge", stat="identity") +
-      scale_fill_viridis(discrete = T, option = "E") +
-      ggtitle("Individual response models") +
-      facet_wrap(~response) +
-      theme_ipsum() +
-      theme(axis.title.x=element_blank(),
-            axis.text.x=element_blank(),
-            axis.ticks.x=element_blank())+
-      labs(fill='Feature set') #could be a nice extension to add mcc/spec/sens to the model
-    #theme(legend.position="none") + #I like the legend personally rather than lots of x axis text.
-    
-    readline(prompt="Press [enter] to plot individual variable importance summaries")  
-    print(p2)}
-  }
     
 #-----------------------------------------------------------------------------------------------------------  
   if (is.null(groupCov)) {
@@ -187,10 +131,7 @@ readline(prompt="Press [enter] to plot individual variable importance summaries"
       labs(y= "Feature", x='Cumulative importance')
     print(p1)
     
-    readline(prompt="Press [enter] to plot the importance PCA plot") 
-    
-    
-    
+    readline(prompt="Press [enter] to plot individual variable importance summaries") 
 #----------------------------------------------------------------
     #Individual response importance
 #----------------------------------------------------------------
@@ -214,52 +155,23 @@ readline(prompt="Press [enter] to plot individual variable importance summaries"
     
     combiFT <- as.data.frame(t(combiF)) %>%  row_to_names(row_number = 1) 
     
-#------------------------------------------------------------------  
-#Importance PCA plot. Responses with similar importance scores group together
-#------------------------------------------------------------------    
-    
-    
-    if (plot.pca=='yes'){ # impossible to read with many responses
-      
-      readline(prompt="Press [enter] to plot the importance PCA plot")  
-      
-      # a1 <- a[,-1] %>%  mutate_if( is.factor, ~ as.numeric(as.character(.x))) #this is a handy function
-      #row.names(a1) <- a$rowname
-      
-      a.pca <- rda(trans) #this includes all respoinses
-      
-      uscores <- data.frame(a.pca$CA$u)
-      uscores <- data.frame(test$CA$u)
-      
-      p2 <- ggplot(uscores  , aes(x = PC1, y = PC2)) + 
-        geom_point() + 
-        geom_label_repel(aes(label = rownames(trans)),
-                         box.padding   = 0.35, 
-                         point.padding = 0.5,
-                         segment.color = 'grey50') +
-        theme_bw()
-      #  geom_text(data = vscores, aes(x = PC1, y = PC2, label = rownames(vscores)), col = 'red')
-      # geom_text(data = vscores, aes(x = PC1, y = PC2, label = rownames(vscores)), col = 'red')
-      print(p2)
-      
-      
       #------------------------------------------------------------------  
       
       data_long <- gather(combiFT,  key ='response', value = importance) #turns this wide frame into something more suitable to plot
       
       charvec <- rep(n_features, length(combiFT)) #create a vector of feature names
       
-      charvecGroup <- rep(groupCov, length(combiFT)) #make it easier to read 
+      #charvecGroup <- rep(groupCov, length(combiFT)) #make it easier to read 
       
       finaldf <- as.data.frame(cbind(data_long, charvec)) #if we want ungrouped features. COuld add this functionality
-      finaldfg <- as.data.frame(cbind(data_long, charvecGroup))
+      #finaldfg <- as.data.frame(cbind(data_long, charvecGroup))
       
       finaldf$importance <- as.numeric(finaldf$importance) 
-      finaldfg$importance <- as.numeric(finaldfg$importance)
+     # finaldfg$importance <- as.numeric(finaldfg$importance)
       
       #not the biggest fan of barplots  - but they are the easiest to see in this case.
       
-      p3 <- ggplot(finaldfg, aes(fill=charvecGroup  , y=importance, x=charvecGroup )) + 
+      p2 <- ggplot(finaldf, aes(fill=charvec  , y=importance, x=charvec )) + 
         geom_bar(position="dodge", stat="identity") +
         scale_fill_viridis(discrete = T, option = "E") +
         ggtitle("Individual response models") +
@@ -271,40 +183,38 @@ readline(prompt="Press [enter] to plot individual variable importance summaries"
         labs(fill='Feature set') #could be a nice extension to add mcc/spec/sens to the model
       #theme(legend.position="none") + #I like the legend personally rather than lots of x axis text.
       
-      readline(prompt="Press [enter] to plot individual variable importance summaries")  
-      print(p3)
+      print(p2)
     }
-    if (plot.pca=='no'){
+      #------------------------------------------------------------------  
+      #Importance PCA plot. Responses with similar importance scores group together
+      #------------------------------------------------------------------    
       
-      data_long <- gather(combiFT,  key ='response', value = importance) #turns this wide frame into something more suitable to plot
       
-      charvec <- rep(n_features, length(combiFT)) #create a vector of feature names
-      
-      charvecGroup <- rep(groupCov, length(combiFT)) #make it easier to read 
-      
-      finaldf <- as.data.frame(cbind(data_long, charvec)) #if we want ungrouped features. COuld add this functionality
-      finaldfg <- as.data.frame(cbind(data_long, charvecGroup))
-      
-      finaldf$importance <- as.numeric(finaldf$importance) 
-      finaldfg$importance <- as.numeric(finaldfg$importance)
-      
-      #not the biggest fan of barplots  - but they are the easiest to see in this case.
-      
-      p2 <- ggplot(finaldfg, aes(fill=charvecGroup  , y=importance, x=charvecGroup )) + 
-        geom_bar(position="dodge", stat="identity") +
-        scale_fill_viridis(discrete = T, option = "E") +
-        ggtitle("Individual response models") +
-        facet_wrap(~response) +
-        theme_ipsum() +
-        theme(axis.title.x=element_blank(),
-              axis.text.x=element_blank(),
-              axis.ticks.x=element_blank())+
-        labs(fill='Feature set') #could be a nice extension to add mcc/spec/sens to the model
-      #theme(legend.position="none") + #I like the legend personally rather than lots of x axis text.
-      
-      readline(prompt="Press [enter] to plot individual variable importance summaries")  
-      print(p2)}
-  }
-  }
-
-#---------------------------------------------------------------------------------------------------------------
+      if (plot.pca=='yes'){ # impossible to read with many responses
+        
+        readline(prompt="Press [enter] to plot the importance PCA plot")  
+        
+        # a1 <- a[,-1] %>%  mutate_if( is.factor, ~ as.numeric(as.character(.x))) #this is a handy function
+        #row.names(a1) <- a$rowname
+        #trans <- as.data.frame(t(VI) )
+        
+        a.pca <- rda(trans) #this includes all respoinses
+        
+        uscores <- data.frame(a.pca$CA$u)
+       # uscores <- data.frame(test$CA$u)
+        
+        p3 <- ggplot(uscores  , aes(x = PC1, y = PC2)) + 
+          geom_point() + 
+          geom_label_repel(aes(label = rownames(trans)),
+                           box.padding   = 0.35, 
+                           point.padding = 0.5,
+                           segment.color = 'grey50') +
+          theme_bw()
+        #  geom_text(data = vscores, aes(x = PC1, y = PC2, label = rownames(vscores)), col = 'red')
+        # geom_text(data = vscores, aes(x = PC1, y = PC2, label = rownames(vscores)), col = 'red')
+        print(p3)
+        }
+        
+   
+       if(plot.pca=='no'){plotpc=0}
+      }
