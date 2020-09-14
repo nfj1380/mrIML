@@ -1,6 +1,10 @@
+#'Resist_components :  Calculates resistance components from a list of pairwise resistance surfaces.
+#'@param fileneame A \code{character} this is the location where the resistance surfaces are stored.
+#'@param p_val A \code{numeric} this sets the significance threshold for axes in explaining variance in the original resistance matrix based on redundancy analysis. In effect this filters out axes that dont explain variance.
+#'@example
+#Y <- resist_components(filename = 'Bobcat_cs_matrices', p_val=0.01)
+#'@details Outputs a data frame of significant resistance components for each matrix in the target folder. These data can be combined with non-pairwise matrix data.
 
-#-----------------------------------------------------------
- #sig_pcoa <- function (data_resist, SiteData, spatial){ #GDM version
 
 resist_components <- function (filename = filename, p_val=p_val){
   
@@ -35,9 +39,7 @@ final_d <- sapply(seq(1, n_matrix), function(i) {
    sigPCs <- NULL
    
 #------------------------------------------   
-   #sigPC <- sapply(seq(1,n_axes), function(i){
-    
-     #data_ws<- cbind(SiteData, data_resist )
+
    
     for(j in 1:n_axes){
 
@@ -57,17 +59,6 @@ final_d <- sapply(seq(1, n_matrix), function(i) {
     # list(axisName = axisName, pval= pval[1])  
      sigPCs[[j]] <- c(axisName, pval[1])  ####
      
-     #ideally this would work with GDM but I get an error with the varImp function for some reason
-     
-     #pred <- cbind(SiteData,pcdat[i], spatial ) ###
-     #gdmTab <- gdm::formatsitepair(data_ws, bioFormat=3,XColumn="Lat", YColumn="Long",
-     # siteColumn="Site", predData=pred)
-     
-     # gdmRes <-  gdm::gdm(gdmTab, geo=F) #dont need geo for now
-     
-     #mod.test<- gdm::gdm.varImp(gdmTab, geo=FALSE, splines = NULL, knots = NULL, 
-     #fullModelOnly = FALSE, nPerm = 100, parallel = TRUE, cores = 2,
-     #outFile = NULL)
    }
    #------------------------------------------
    
@@ -115,13 +106,7 @@ final_d <- sapply(seq(1, n_matrix), function(i) {
     
     ReducedAxisT %>% 
       cbind(siteData)
-    
-    #final_d[[i]] <- ReducedAxisT ###
-    
-    #cbind(siteData)
 
-   
-   #return(list(sigPC,ReducedAxisT ))
    
 })
 
@@ -131,13 +116,7 @@ final_d$Site <- NULL
 final_d <- mutate_all(final_d, function(x) as.numeric(as.character(x)))
 final_d
 
-  #combinedPC <- as.data.frame(do.call(cbind, all_d ))
-#combinedPCRed <- as.data.frame(do.call(cbind, final_d))
-#combinedPCRed <- do.call(cbind, final_d)  
-    #matrixFeatureSet <-  cbind(combinedPCRed, siteData)
-  
- # return(list( combinedPC ,matrixFeatureSet ))
-   # return(combinedPCRed)
+
 }
 
 

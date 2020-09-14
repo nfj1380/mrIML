@@ -1,20 +1,16 @@
-#'mrPlot_interactions: Plots global interactions as well as  
-#'and individual repsonse importance.
-#' 
+#'mrPlot_interactions: Plots global interactions as well as individual repsonse interaction importance.
 #'@param interactions A \code{dataframe} dataframe generated from mrInteractioms function 
 #'@param X A \code{dataframe} response dataset
 #'@param Y A \code{dataframe} feature dataset
 #'@param top_ranking A \code{numeric} determines how maany of the strongest feature interacions to view/include
-'@param top_response A \code{numeric} how many of the response variables with the strongest interactions to view
-
+#'@param top_response A \code{numeric} how many of the response variables with the strongest interactions to view
 #'@details
 #'1st plot: Barplots showing the mean and cumulative importance of each of the top pairs of interactions in the model.
 #'2nd plot: Barplot of the responses with the strongest interactions
 #'3rd plot: Barplots of the strongest interactions for each of the top response variables.
-#'
 #'@example
-#'
-#
+#'interactions <-mrInteractions(yhats, X, Y) #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
+#'mrPlot_interactions(Interact, X,Y, top_ranking = 3, top_response=3)
 
 mrPlot_interactions <- function(interactions, X,Y, top_ranking = 3, top_response=10 ){
   
@@ -91,8 +87,6 @@ mrPlot_interactions <- function(interactions, X,Y, top_ranking = 3, top_response
         janitor::row_to_names(row_number = 1) %>% 
         rownames_to_column()
       
-      
-     
   topIntC <- filter( t_inDataOrered_top, rowname %in%  top_int_response$rowname)
   
    charvec <- as.data.frame(rep(topIntC$rowname, top_ranking))

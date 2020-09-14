@@ -1,4 +1,17 @@
-#Conversion to single column per locus from plink file via LEA function
+#'readSnpsPed : Conversion to single column per locus from plink file via LEA function
+#' 
+#'@param pedfile A \code{dataframe} dataframe generated from mrvip function 
+#'@param mapfile A \code{dataframe} response dataset
+
+#'@details
+#' Function to import SNP data from a plink format into a format suitable for MrIML predicts 
+#' (presence/absence of an alelle for each locus).
+#'Currently if there is missing data (NAs) it either imputes them as the mode or leaves them. A histogram is also produced of the missing data.
+#'@example
+#'snps <- readSnpsPed("bobcat.plink.ped", "bobcat.plink.map.map") #NAs in data and interpolated as the mode. 
+#'X <- filterRareCommon (snps, lower=0.4, higher=0.7) #these are harsh
+
+#
 # readSnpsPed <- function (infile, inames, lnames){
 #   if (missing(inames))
 #     stop("missing 'inames' file")

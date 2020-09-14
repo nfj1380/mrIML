@@ -4,7 +4,7 @@
 \alias{filterRareCommon}
 \title{Filter rare or common OTUs or SNPs or species from your response data}
 \usage{
-filterRareCommon(X, lower = 0.25, higher = 0.75)
+filterRareCommon(X, lower = lower, higher = higher)
 }
 \arguments{
 \item{X}{is a data.frame with rows as sites or individuals or populations and columns as loci or species OTUs.}

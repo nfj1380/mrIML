@@ -1,14 +1,15 @@
-Package: mcaret
-Title: Multivariate ensemble learning with caret
+Package: mrIML
+Title: Multi Response Interpretable Machine Learning
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Nick",
            family = "Fountain-Jones",
            role = c("aut", "cre"),
-           email = "nfountainjones@gmail.com.com",
-           comment = c(ORCID = "https://orcid.org/0000-0001-9248-8493"))
-Description: What the package does (one paragraph).
+           email = "nfountainjones@gmail.com",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: This package aims to enable users to build and interpret multivariate machine learning models harnessing the tidyverse (tidy model syntax in particular). This package builds off ideas from Gradient Forests (Ellis et al 2012), ecological genomic approaches (Fitzpatrick and Keller, 2014) and multi-response stacking algorithms (Xing et al 2019).
+This package can be of use for any multi-response machine learning problem, but was designed to handle data common to community ecology (site by species data) and ecological genomics (individual or population by SNP loci).
 License: What license it uses
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
