@@ -1,7 +1,6 @@
 #'mrProfileplot:  Wrapper to plot mutlti-response model agnostic profile plots (partial dependences and accumulated local effects). 
 #.
 #'@param profileData \code{dataframe} is the data generated from the flashlight packages 'light_profile' function. 
-
 #'@param 'sdthresh' \code{numeric} value used to filter responses that are not changing across the values of the feature (based on standard deviation)
 #'
 #'@details The aim of this function is to plot (1) a reduced set of response variables that are responding to the feature of choice (plot 1)
@@ -12,9 +11,9 @@
 #' 
 #'profileData_pd <- light_profile(flashlightObj, v = "Grassland") #partial dependencies
 #'profileData_ale <- light_profile(flashlightObj, v = "Grassland", type = "ale") #acumulated local effects
-
 #'mrProfileplot(profileData_pd , sdthresh =0.05)
 #'mrProfileplot(profileData_ale , sdthresh =0.05)
+#'@export
 
 mrProfileplot <- function(profileData , sdthresh =0.05){ #from mrFlashlight
 

@@ -6,7 +6,6 @@
 #'@details Outputs a data frame of significant resistance components for each matrix in the target folder. These data can be combined with non-pairwise matrix data.
 #'@export 
 
-
 resist_components <- function (filename = filename, p_val=p_val){
   
   files <- list.files(paste(filename))
