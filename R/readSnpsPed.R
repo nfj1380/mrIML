@@ -9,6 +9,7 @@
 #'snps <- readSnpsPed("bobcat.plink.ped", "bobcat.plink.map.map") #NAs in data and interpolated as the mode. 
 #'X <- filterRareCommon (snps, lower=0.4, higher=0.7) #these are harsh
 #'@import LEA
+#'@export readSnpsPed
 
 #
 # readSnpsPed <- function (infile, inames, lnames){

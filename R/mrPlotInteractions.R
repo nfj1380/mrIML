@@ -11,6 +11,7 @@
 #'@example
 #'interactions <-mrInteractions(yhats, X, Y) #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
 #'mrPlot_interactions(Interact, X,Y, top_ranking = 3, top_response=3)
+#'@export mrPlot_interactions
 
 mrPlot_interactions <- function(interactions, X,Y, top_ranking = 3, top_response=10 ){
   

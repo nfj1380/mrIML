@@ -4,6 +4,7 @@
 #'@example
 #Y <- resist_components(filename = 'Bobcat_cs_matrices', p_val=0.01)
 #'@details Outputs a data frame of significant resistance components for each matrix in the target folder. These data can be combined with non-pairwise matrix data.
+#'@export resist_components
 
 
 resist_components <- function (filename = filename, p_val=p_val){

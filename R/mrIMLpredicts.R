@@ -21,6 +21,7 @@
 #'  as Y. Class imblanace can be a real issue for classification analyses. Class imbalance can be addressed for each
 #' response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling) 
 #'or 'no' (no balancing of classes).
+#'@export mrIMLpredicts
 
 
 mrIMLpredicts<- function(X, Y, model1, balance_data ='no', calculate.resid ='yes') { 
