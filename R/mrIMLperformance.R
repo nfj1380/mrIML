@@ -10,7 +10,8 @@
 #'
 #'@details Outputs a dataframe of commonly used metric that can be used to compare model
 #'performance of classification models. Performance metrics are based on testing data. But MCC is useful (higher numbers = better fit)
-
+#'@export
+#'
 mrIMLperformance <- function(yhats, model1, X){ #should be able to extract model info from yhats
   
   n_response<- length(yhats)

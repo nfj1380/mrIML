@@ -5,7 +5,7 @@
 #' @param lower is the lower threshold value  in which response varialkes are removed from the data.frame.
 #' @param higher is the upper threshold value  in which response varialkes are removed from the data.frame.
 #' @example 
-#' @export filterRareCommon
+#' @export
 
 filterRareCommon <- function(X, lower=lower, higher=higher){
   n = ncol(X)

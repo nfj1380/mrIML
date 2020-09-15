@@ -8,10 +8,9 @@
 #'1st plot: Barplots showing the mean and cumulative importance of each of the top pairs of interactions in the model.
 #'2nd plot: Barplot of the responses with the strongest interactions
 #'3rd plot: Barplots of the strongest interactions for each of the top response variables.
-#'@example
 #'interactions <-mrInteractions(yhats, X, Y) #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
 #'mrPlot_interactions(Interact, X,Y, top_ranking = 3, top_response=3)
-#'@export mrPlot_interactions
+#'@export 
 
 mrPlot_interactions <- function(interactions, X,Y, top_ranking = 3, top_response=10 ){
   

@@ -22,7 +22,7 @@
 #'
 #'Multiple response
 #' flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi")
-
+#'@export
 
 mrFlashlight <- function (yhats, X, Y, response = "multi", index=1){
     

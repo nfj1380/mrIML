@@ -12,7 +12,7 @@
 #'groupCov <- c(rep ("Host_characteristics", 1),rep("Urbanisation", 3), rep("Vegetation", 2), rep("Urbanisation",1), rep("Spatial", 2), 
 #'rep('Host_relatedness', 6),rep ("Host_characteristics", 1),rep("Vegetation", 2), rep("Urbanisation",1))
 #'plot_vi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov, cutoff= 0.5)
-#'@export plot_vi
+#'@export 
 
 plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.3, plot.pca='no' ){
 
