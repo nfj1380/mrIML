@@ -2,7 +2,7 @@
 % Please edit documentation in R/mrPlotInteractions.R
 \name{mrPlot_interactions}
 \alias{mrPlot_interactions}
-\title{mrPlot_interactions: Plots global interactions as well as individual repsonse interaction importance.}
+\title{Plots global interactions as well as individual repsonse interaction importance.}
 \usage{
 mrPlot_interactions(interactions, X, Y, top_ranking = 3, top_response = 10)
 }
@@ -18,7 +18,7 @@ mrPlot_interactions(interactions, X, Y, top_ranking = 3, top_response = 10)
 \item{top_response}{A \code{numeric} how many of the response variables with the strongest interactions to view}
 }
 \description{
-mrPlot_interactions: Plots global interactions as well as individual repsonse interaction importance.
+Plots global interactions as well as individual repsonse interaction importance.
 }
 \details{
 1st plot: Barplots showing the mean and cumulative importance of each of the top pairs of interactions in the model.

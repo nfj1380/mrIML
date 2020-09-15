@@ -3,7 +3,7 @@
 \docType{data}
 \name{Responsedata}
 \alias{Responsedata}
-\title{Viral single nucleuotide data.}
+\title{Viral single nucleuotide polymorphism (SNP) data.}
 \format{
 
 }
@@ -14,7 +14,7 @@ Fountain‐Jones, NM, Craft, ME, Funk, WC, et al. Urban landscapes can change vi
 Responsedata
 }
 \description{
-Viral single nucleuotide data.
+Viral single nucleuotide polymorphism (SNP) data.
 }
 \examples{
 \dontrun{

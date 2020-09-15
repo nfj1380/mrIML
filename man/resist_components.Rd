@@ -2,7 +2,7 @@
 % Please edit documentation in R/ResistanceComponents.R
 \name{resist_components}
 \alias{resist_components}
-\title{Resist_components :  Calculates resistance components from a list of pairwise resistance surfaces.}
+\title{Calculates resistance components from a list of pairwise resistance surfaces.}
 \usage{
 resist_components(filename = filename, p_val = p_val)
 }
@@ -12,7 +12,7 @@ resist_components(filename = filename, p_val = p_val)
 \item{fileneame}{A \code{character} this is the location where the resistance surfaces are stored.}
 }
 \description{
-Resist_components :  Calculates resistance components from a list of pairwise resistance surfaces.
+Calculates resistance components from a list of pairwise resistance surfaces.
 }
 \details{
 Outputs a data frame of significant resistance components for each matrix in the target folder. These data can be combined with non-pairwise matrix data.

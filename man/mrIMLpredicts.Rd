@@ -2,8 +2,7 @@
 % Please edit documentation in R/mrIMLpredicts.R
 \name{mrIMLpredicts}
 \alias{mrIMLpredicts}
-\title{mrIMLpredicts:  Wrapper to generate multi-response tidy models.This function produces yhats that are used in the stack function as well 
-as saving all model characteristics for subsequent functions.}
+\title{Wrapper to generate multi-response predictive models.}
 \usage{
 mrIMLpredicts(X, Y, model1, balance_data = "no", calculate.resid = "yes")
 }
@@ -20,13 +19,13 @@ currently.}
 \item{Model}{1 A \code{list} can be any model from the tidy model package. See examples.}
 }
 \description{
-This function fits separate classication models for each response variable in a dataset.
+Wrapper to generate multi-response predictive models.
 }
 \details{
-Y (response variables) should be binary (0/1). Rows in X (features) have the same id (host/site/population)
- as Y. 
- Class imblanace can be a real issue for classification analyses. Class imbalance can be addressed for each
-  response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling) 
+This function produces yhats that used in all model characteristics for subsequent functions.
+This function fits separate classication models for each response variable in a dataset. Y (response variables) should be binary (0/1). Rows in X (features) have the same id (host/site/population)
+ as Y. Class imblanace can be a real issue for classification analyses. Class imbalance can be addressed for each
+response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling) 
 or 'no' (no balancing of classes).
 Calculate deviance residuals
 }
@@ -38,5 +37,4 @@ logistic_reg() \%>\%
 set_engine("glm") \%>\%
  # choose either the continuous regression or binary classification mode
  set_mode("classification")
- 
 }

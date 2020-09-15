@@ -2,7 +2,7 @@
 % Please edit documentation in R/mrInteractions.R
 \name{mrInteractions}
 \alias{mrInteractions}
-\title{mrInteractions:  Wrapper to calculate and plot summed interactions of features across response variables. Bases on Greenwell et al 2018}
+\title{Wrapper to calculate and plot summed interactions of features across response variables. Bases on Greenwell et al 2018}
 \usage{
 mrInteractions(yhats, X, Y)
 }
@@ -14,7 +14,7 @@ mrInteractions(yhats, X, Y)
 \item{Y}{A \code{dataframe} #is the feature dataset}
 }
 \description{
-mrInteractions:  Wrapper to calculate and plot summed interactions of features across response variables. Bases on Greenwell et al 2018
+Wrapper to calculate and plot summed interactions of features across response variables. Bases on Greenwell et al 2018
 }
 \details{
 The aim of this function is to enable users to calculate interaction importance for all fatures in a data set.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_vi.R
 \name{plot_vi}
 \alias{plot_vi}
-\title{plot_vi: Plots global importance (i.e. cumulative importance of all features for all response variables) and individual repsonse importance.}
+\title{Plots global importance (i.e. cumulative importance of all features for all response variables) and individual repsonse importance.}
 \usage{
 plot_vi(VI, modelPerf, Y, X, groupCov = NULL, cutoff = 0.3, plot.pca = "no")
 }
@@ -18,7 +18,7 @@ plot_vi(VI, modelPerf, Y, X, groupCov = NULL, cutoff = 0.3, plot.pca = "no")
 \item{cutoff}{A \code{numeric} determines  mathews correlation coefifcent (mcc) threshold for displaying individual reponse model. Default is 0.5}
 }
 \description{
-plot_vi: Plots global importance (i.e. cumulative importance of all features for all response variables) and individual repsonse importance.
+Plots global importance (i.e. cumulative importance of all features for all response variables) and individual repsonse importance.
 }
 \details{
 1st plot: 

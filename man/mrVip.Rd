@@ -2,7 +2,7 @@
 % Please edit documentation in R/mrvip.R
 \name{mrVip}
 \alias{mrVip}
-\title{mrVip:  Wrapper to estimate model-agnostic variable importance for multi-response models.}
+\title{Wrapper to estimate model-agnostic variable importance for multi-response models.}
 \usage{
 mrVip(yhats, Y)
 }
@@ -12,7 +12,7 @@ mrVip(yhats, Y)
 \item{Y}{A \code{dataframe} #is the feature dataset}
 }
 \description{
-mrVip:  Wrapper to estimate model-agnostic variable importance for multi-response models.
+Wrapper to estimate model-agnostic variable importance for multi-response models.
 }
 \details{
 Calculates variabie importance using based on partial dependencies but could do permutation as well (mor memory intensive).
