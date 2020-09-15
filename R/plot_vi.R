@@ -1,4 +1,4 @@
-#'plot_vi: Plots global importance (i.e. cumulative importance of all features for all response variables) and individual repsonse importance.
+#'Plots global importance (i.e. cumulative importance of all features for all response variables) and individual repsonse importance.
 #'@param VI A \code{dataframe} dataframe generated from mrvip function 
 #'@param X A \code{dataframe} response dataset
 #'@param Y A \code{dataframe} feature dataset

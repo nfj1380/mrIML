@@ -1,4 +1,4 @@
-#'mrPlot_interactions: Plots global interactions as well as individual repsonse interaction importance.
+#'Plots global interactions as well as individual repsonse interaction importance.
 #'@param interactions A \code{dataframe} dataframe generated from mrInteractioms function 
 #'@param X A \code{dataframe} response dataset
 #'@param Y A \code{dataframe} feature dataset

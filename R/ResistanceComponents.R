@@ -1,4 +1,4 @@
-#'Resist_components :  Calculates resistance components from a list of pairwise resistance surfaces.
+#'Calculates resistance components from a list of pairwise resistance surfaces.
 #'@param fileneame A \code{character} this is the location where the resistance surfaces are stored.
 #'@param p_val A \code{numeric} this sets the significance threshold for axes in explaining variance in the original resistance matrix based on redundancy analysis. In effect this filters out axes that dont explain variance.
 #'@example
