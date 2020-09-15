@@ -27,7 +27,6 @@ This function fits separate classication models for each response variable in a 
  as Y. Class imblanace can be a real issue for classification analyses. Class imbalance can be addressed for each
 response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling) 
 or 'no' (no balancing of classes).
-Calculate deviance residuals
 }
 \examples{
 model1 <- #model used to generate yhat
