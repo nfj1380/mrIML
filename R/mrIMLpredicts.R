@@ -6,7 +6,7 @@
 #' currently. 
 #'@param Model 1 A \code{list} can be any model from the tidy model package. See examples.
 #'
-#'@import vip, tidymodels, randomForest, caret, gbm, tidyverse, parallel, doParallel, themis, viridis, janitor, hrbrthemes, xgboost, vegan, ggrepel
+#'@import vip tidymodels randomForest caret gbm tidyverse parallel doParallel themis viridis janitor hrbrthemes xgboost vegan ggrepel
 #'
 #'@examples
 #'model1 <- #model used to generate yhat

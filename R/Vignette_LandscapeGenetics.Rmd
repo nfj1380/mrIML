@@ -14,28 +14,10 @@ Let's start by loading  the required packages and data. The data we are going to
 Features (a.k.a predictor varables) with missing data can be removed or interpolated depending on the nature of the missing data. Here we remove them.
 
 ```{r cache=TRUE}
-#load packages. 
-library(vip)
-library(tidymodels)
-library(pdp)
-library(randomForest)
-library(caret)
-library(missForest)
-library(gbm)
-library(tidyverse)
-library(parallel)
-library(doParallel)
-library(themis)
-library(viridis)
-library(janitor)
-library(hrbrthemes)
-library(xgboost)
-library(vegan)
-library(ggrepel)
-library(LEA) 
 
 #make sure you have installed devtools previously
-devtools:: install_github('nfj1380/mrIML')
+#devtools:: install_github('nfj1380/mrIML')
+library(mrIML)
 
 #load SNP data
 Responsedata
@@ -47,7 +29,7 @@ Responsedata
 Features 
 
 # # remove NAs from the feature/predictor data.
-FeaturesnoNA<-Features[complete.cases(Features), ];str(Features) #dropping NAs
+FeaturesnoNA<-Features[complete.cases(Features), ]
 
 Y <- FeaturesnoNA #for simplicity
 
@@ -58,7 +40,7 @@ Y <- FeaturesnoNA[c(1:3)] #three features only
  
 When constructing these type of models, SNPs that are common (occur say >80% of samples) or rare (< 10% of samples) are dififcult to model. We provide downsampling or upsampling strategies for dealing with unbalanced data (see below) but filtering out common and rare loci is another option. The more response variables (SNPs) you include the longer the computational time, so for this  example we will trim SNPs occurring in < 40%  and > 70% of individuals. This leaves 29 SNPs remaining. In practice, these filtering steps are stringent so < 20 and > 80 maybe more appropriate.  
  
-```{r pressure, echo=FALSE}
+```{r pressure, eval = FALSE}
 #Optional: Filter rare/common SNPs or species. Retaining minor allelle frequncies >0.1 and removing common allelles (occur>0.9)
 fData <- filterRareCommon (Responsedata, lower=0.4, higher=0.7) 
 X <- fData #for simplicity when comparing

@@ -2,7 +2,7 @@
 % Please edit documentation in R/filterRareCommon.R
 \name{filterRareCommon}
 \alias{filterRareCommon}
-\title{Filter rare or common OTUs or SNPs or species from your response data}
+\title{Filter rare response variables from the data}
 \usage{
 filterRareCommon(X, lower = lower, higher = higher)
 }
@@ -14,6 +14,8 @@ filterRareCommon(X, lower = lower, higher = higher)
 \item{higher}{is the upper threshold value  in which response varialkes are removed from the data.frame.}
 }
 \description{
-This function allows you to remove OTUs or SNPs or species from your response data as a preprocessing step. Suitable when the response is a binary outcome.
+Filter rare response variables from the data
 }
-\keyword{filter}
+\details{
+This function allows you to remove response units (OTUs or SNPs or species) from your response data as a preprocessing step. Suitable when the response is a binary outcome.
+}
