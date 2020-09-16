@@ -12,6 +12,9 @@ devianceResids(yhat, truth)
 \item{truth}{A \code{vector} of true binary observations in the same order as \code{yhat}}
 }
 \description{
+Calculate binary outcome deviance residuals using probability predictions
+}
+\details{
 This function uses the predictions from a model applied to binary outcomes to
 calculate deviance residuals. Predictions must be on the probability scale.
 }

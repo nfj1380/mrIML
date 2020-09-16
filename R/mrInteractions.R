@@ -5,7 +5,7 @@
 #'@details The aim of this function is to enable users to calculate interaction importance for all fatures in a data set.
 #' and then use plot_mrpd (a plotting function) to create a pd plot for all species/SNPs for each feature. 
 #' Could build functionality for ICE plots but that would be messy for multiple repsonse variables.
-#' @example 
+#'@example 
 #'interactions <-mrInteractions(yhats, X, Y) #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
 #'mrPlot_interactions(Interact, X,Y, top_ranking = 3, top_response=3)
 #'@export

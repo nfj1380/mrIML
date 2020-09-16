@@ -3,8 +3,9 @@
 #'@param model1 A \code{list}  #the model used to generate the yhats object 
 #'@param X  A \code{dataframe} #is a response variable data set (specie, SNPs etc).
 #'
-#'@example
-#'ModelPerf <- mrIMLperformance(yhats, model1, X=X) 
+#'@example 
+#' \dontrun{
+#' ModelPerf <- mrIMLperformance(yhats, model1, X=X) }
 #'
 #'@details Outputs a dataframe of commonly used metric that can be used to compare model performance of classification models. Performance metrics are based on testing data. But MCC is useful (higher numbers = better fit)
 #'

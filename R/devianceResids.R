@@ -1,14 +1,14 @@
 #'Calculate binary outcome deviance residuals using probability predictions
 #'
-#'
-#'This function uses the predictions from a model applied to binary outcomes to
-#'calculate deviance residuals. Predictions must be on the probability scale.
+#'@details 
+#' This function uses the predictions from a model applied to binary outcomes to
+#' calculate deviance residuals. Predictions must be on the probability scale.
 #'
 #'@param yhat A \code{vector} of predictions on the probability scale.
 #'@param truth A \code{vector} of true binary observations in the same order as \code{yhat}
-#'@export
-#'
-devianceResids = function(yhat, truth){
+#'@export  
+
+devianceResids <-  function(yhat, truth){
   # Check for appropriate data structures
   if(any(class(truth) %in% 'tbl')){
     truth <- dplyr::pull(truth, 1)

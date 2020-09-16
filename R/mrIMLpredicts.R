@@ -2,8 +2,6 @@
 #'@param Y A \code{dataframe} is a response variable data set (species, OTUs, SNPs etc).
 #'@param X A \code{dataframe} represents predictor or feature data.
 #'@param balance_data A \code{character} 'up', 'down' or 'no'. 
-#'@param calculate.resid A \code{character} 'yes',or 'no'. We can't calculate deviance residuals for multinomial models
-#' currently. 
 #'@param Model 1 A \code{list} can be any model from the tidy model package. See examples.
 #'
 #'@examples
@@ -15,14 +13,14 @@
 #'  # choose either the continuous regression or binary classification mode
 #'  set_mode("classification")
 #'@details This function produces yhats that used in all model characteristics for subsequent functions.
-#'This function fits separate classication models for each response variable in a dataset. Y (response variables) should be binary (0/1). Rows in X (features) have the same id (host/site/population)
+#' This function fits separate classication models for each response variable in a dataset. Y (response variables) should be binary (0/1). Rows in X (features) have the same id (host/site/population)
 #'  as Y. Class imblanace can be a real issue for classification analyses. Class imbalance can be addressed for each
 #' response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling) 
 #'or 'no' (no balancing of classes).
 #'@export
 
 
-mrIMLpredicts<- function(X, Y, model1, balance_data ='no', calculate.resid ='yes') { 
+mrIMLpredicts<- function(X, Y, model1, balance_data ='no') { 
   
   n_response<- length(X)
   # Run model 1 for each parasite; a simple logistic regression with a single covariate
@@ -138,18 +136,13 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no', calculate.resid ='yes
     yhatT <- predict(mod1_k, new_data = data_test, type='class' ) %>% 
       bind_cols(data_test %>% select(class))
     
-    #if (calculate.resid =='yes'){
     
-    #' Calculate deviance residuals 
+    # Calculate deviance residuals 
 
     resid <- devianceResids(yhatO, data_train$class) 
     
     list(mod1_k = mod1_k, last_mod_fit=last_mod_fit,tune_m=tune_m, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid)
-    #}
-    
-    #if (calculate.resid =='no'){
-     # list(mod1_k = mod1_k, last_mod_fit=last_mod_fit,tune_m=tune_m, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid)
-    #}
+
       
   })
 }

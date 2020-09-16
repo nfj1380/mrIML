@@ -4,7 +4,7 @@
 \alias{mrIMLpredicts}
 \title{Wrapper to generate multi-response predictive models.}
 \usage{
-mrIMLpredicts(X, Y, model1, balance_data = "no", calculate.resid = "yes")
+mrIMLpredicts(X, Y, model1, balance_data = "no")
 }
 \arguments{
 \item{X}{A \code{dataframe} represents predictor or feature data.}
@@ -12,9 +12,6 @@ mrIMLpredicts(X, Y, model1, balance_data = "no", calculate.resid = "yes")
 \item{Y}{A \code{dataframe} is a response variable data set (species, OTUs, SNPs etc).}
 
 \item{balance_data}{A \code{character} 'up', 'down' or 'no'.}
-
-\item{calculate.resid}{A \code{character} 'yes',or 'no'. We can't calculate deviance residuals for multinomial models
-currently.}
 
 \item{Model}{1 A \code{list} can be any model from the tidy model package. See examples.}
 }

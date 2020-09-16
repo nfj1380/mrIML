@@ -2,7 +2,7 @@
 #'@param fileneame A \code{character} this is the location where the resistance surfaces are stored.
 #'@param p_val A \code{numeric} this sets the significance threshold for axes in explaining variance in the original resistance matrix based on redundancy analysis. In effect this filters out axes that dont explain variance.
 #'@example
-#Y <- resist_components(filename = 'Bobcat_cs_matrices', p_val=0.01)
+# Y <- resist_components(filename = 'Bobcat_cs_matrices', p_val=0.01)
 #'@details Outputs a data frame of significant resistance components for each matrix in the target folder. These data can be combined with non-pairwise matrix data.
 #'@export 
 

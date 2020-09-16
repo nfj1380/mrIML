@@ -9,9 +9,10 @@
 #'and individual reponse feature plots (2nd plot). Requires object generated from the R function mrvip as well as feature data (Y).
 #'Variables also need to be grouped to allow for easier interpretation. 
 #'@example
+#'\dontrun{
 #'groupCov <- c(rep ("Host_characteristics", 1),rep("Urbanisation", 3), rep("Vegetation", 2), rep("Urbanisation",1), rep("Spatial", 2), 
 #'rep('Host_relatedness', 6),rep ("Host_characteristics", 1),rep("Vegetation", 2), rep("Urbanisation",1))
-#'plot_vi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov, cutoff= 0.5)
+#'plot_vi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov, cutoff= 0.5)}
 #'@export 
 
 plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.3, plot.pca='no' ){

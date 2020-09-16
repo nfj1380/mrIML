@@ -2,7 +2,7 @@
 % Please edit documentation in R/readSnpsPed.R
 \name{readSnpsPed}
 \alias{readSnpsPed}
-\title{Conversion to single column per locus from plink file via LEA function}
+\title{Conversion to single column per locus from plink file via LEA functionality}
 \usage{
 readSnpsPed(pedfile, mapfile)
 }
@@ -12,7 +12,7 @@ readSnpsPed(pedfile, mapfile)
 \item{mapfile}{A \code{dataframe} response dataset}
 }
 \description{
-Conversion to single column per locus from plink file via LEA function
+Conversion to single column per locus from plink file via LEA functionality
 }
 \details{
 Function to import SNP data from a plink format into a format suitable for MrIML predicts 
