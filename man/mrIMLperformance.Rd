@@ -2,8 +2,7 @@
 % Please edit documentation in R/mrIMLperformance.R
 \name{mrIMLperformance}
 \alias{mrIMLperformance}
-\title{Wrapper to calculate performance metrics (Mathews correlation coefficent, sensitivity
-and specificity) for each model for each response variable.}
+\title{Wrapper to calculate performance metrics (Mathews correlation coefficent, sensitivity and specificity) for each model for each response variable.}
 \usage{
 mrIMLperformance(yhats, model1, X)
 }
@@ -15,8 +14,7 @@ mrIMLperformance(yhats, model1, X)
 \item{X}{A \code{dataframe} #is a response variable data set (specie, SNPs etc).}
 }
 \description{
-Wrapper to calculate performance metrics (Mathews correlation coefficent, sensitivity
-and specificity) for each model for each response variable.
+Wrapper to calculate performance metrics (Mathews correlation coefficent, sensitivity and specificity) for each model for each response variable.
 }
 \details{
 Outputs a dataframe of commonly used metric that can be used to compare model
