@@ -7,9 +7,11 @@ This package aims to enable users to build and interpret multivariate machine le
 
 This package can be of use for any multi-response machine learning problem, but was designed to handle data common to community ecology (site by species data) and ecological genomics (individual or population by SNP loci).
 
+# Package vignettes
+Vignette for using MrIML for landscape genetic studies  [here](Vignette_LandscapeGenetics.html)
+
 ## References
-Xing, L, Lesperance, ML and Zhang, X (2020). Simultaneous prediction of multiple outcomes 
-#'using revised stacking algorithms. Bioinformatics, 36, 65-72.
+Xing, L, Lesperance, ML and Zhang, X (2020). Simultaneous prediction of multiple outcomes using revised stacking algorithms. Bioinformatics, 36, 65-72.
 
 Fitzpatrick, M.C. & Keller, S.R. (2015) Ecological genomics meets community-level modelling of biodiversity: mapping the genomic landscape of current and future environmental adaptation. Ecology Letters 18, 1–16.
 
