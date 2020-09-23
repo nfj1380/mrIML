@@ -10,7 +10,7 @@
 #'mrPlot_interactions(Interact, X,Y, top_ranking = 3, top_response=3)
 #'@export
 
-mrInteractions <- function(yhats, X, Y){
+mrInteractions <- function(yhats, X, Y, mod='regression'){
   
   l_response<- length(yhats)
   n_features <- names(Y)
@@ -25,7 +25,7 @@ mrInteractions <- function(yhats, X, Y){
   
   imInt <- lapply(seq(1:l_response), function(i){ #uses monte carlo CV
     imp <- modList[[i]] %>% 
-     vintTidy(feature_names = n_features, train = dataAll[[i]], parallel = TRUE)
+     vintTidy(feature_names = n_features, train = dataAll[[i]], parallel = TRUE, mod=mod)
     #modified vint function - very slow over171 combinations
     
     impD <- imp$Interaction

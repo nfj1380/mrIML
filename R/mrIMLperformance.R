@@ -11,19 +11,21 @@
 #'
 #'@export
 
-mrIMLperformance <- function(yhats, model1, X){ 
+mrIMLperformance <- function(yhats, model1, X, model='regression'){ 
   
   n_response<- length(yhats)
   mod_perf <- NULL
 
 #  yList <- yhats %>% purrr::map(pluck('yhatT')) #get the training yhats all together
   bList <- yhats %>% purrr::map(pluck('last_mod_fit')) ## fix the model ID
-    
-    #modelperf <- map(seq(1,n_response), function(i){
+  
+  if (model=='classification'){
+
   for( i in 1:n_response) {
    
     #get already calculated ROC and accuracy
    met1 <- as.data.frame(bList[[i]]$.metrics) ####
+   
    
    roc <- met1$.estimate[2]
    #accuracy <-  met1$.estimate[1]
@@ -54,18 +56,50 @@ mrIMLperformance <- function(yhats, model1, X){
   mod1_perf<- do.call(rbind, mod_perf)
   mod1_perf <- as.data.frame( mod1_perf)
   colnames(mod1_perf) <- c('response', 'model_name', 'roc_AUC', 'mcc', 'sensitivity', 'specificity', 'prevalence')
+
+  Global_summary<- as.numeric(as.character(unlist(mod1_perf$roc_AUC))) #cant be mcc as it goes negative
+  Global_summary[is.na(Global_summary)] <- 0
+  Global_summary <-  mean(Global_summary)
   
+  }
   
-Global_summary_roc<- as.numeric(as.character(unlist(mod1_perf$roc_AUC))) #cant be mcc as it goes negative
+  if (model=='regression'){
+    
+    for( i in 1:n_response) {
+      
+    met1 <- as.data.frame(bList[[i]]$.metrics) ####
+    
+    
+    rmse <- met1$.estimate[1]
+    
+    rsq  <- met1$.estimate[2]
+    
+    #add some identifiers
+    mod_name <- class(model1)[1] #extracts model name
+
+    sp <- names(X[i])
+    
+    #save all the metrics
+    mod_perf[[i]] <- c( sp, mod_name, rmse, rsq)
+    
+  }
   
-Global_summary_roc [is.na(Global_summary_roc)] <- 0
-Global_summary_roc <-  mean(Global_summary_roc )
+  mod1_perf<- do.call(rbind, mod_perf)
+  mod1_perf <- as.data.frame( mod1_perf)
+  colnames(mod1_perf) <- c('response', 'model_name', 'rmse', 'rsquared')
+
   
+Global_summary<- as.numeric(as.character(unlist(mod1_perf$rmse))) 
+  
+  Global_summary[is.na(Global_summary)] <- 0
+  Global_summary <-  mean(Global_summary)
+
+}  
   #calculate mean for all response variables
   #Global_summary <- mean(as.numeric(as.character(unlist( mod1_perf[[5]]))), na.rm = FALSE) #mean testing mcc
   #Global_summary <- mean(as.numeric(as.character(unlist( ModelPerf[[1]]$mcc)))) #mean testing
   
   #
-  return (list(mod1_perf, Global_summary_roc))
+  return (list(mod1_perf, Global_summary))
   
 }
