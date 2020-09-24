@@ -1,0 +1,36 @@
+home:
+  title: mrIML
+  links:
+    
+development:
+  mode: auto
+
+articles:
+- title: Customise your site
+  navbar: ~
+  contents:
+  - pkgdown
+  - linking
+  - search
+  - metadata
+- title: Testing
+  desc: >
+    These articles are used to test various pkgdown features that can not
+    easily be tested automatically.
+  contents:
+  - starts_with("test")
+
+- contents:
+  - build_site
+  - init_site
+  - starts_with("build_")
+  - starts_with("deploy_")
+  - preview_site
+- title: Templates
+- contents:
+  - template_navbar
+  - render_page
+news:
+  releases:
+  - text: "Version 0.01"
+    href:
