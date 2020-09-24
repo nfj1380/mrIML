@@ -89,13 +89,9 @@ model1 <-
 Now we can run the model. Hyper parameter tuning (for algorithms that have hyper parameters) is done automatically by testing how model performance changes across a random grid of 10 parameters and the best performing combination is kept. The only choice to make is to either down/up sample data or leave it as is. As our viral data set is small, we will not do any up or down-sampling (option 'no'). We could also implement parallel processing for larger data sets. 
 
 ```{r, message = FALSE, warning = FALSE, results='hide'}
-#parallell processing for larger datasets
-#all_cores <- parallel::detectCores(logical = FALSE)
-#cl <- makePSOCKcluster(all_cores)
-#registerDoParallel(cl)
 
-#models just using features/predictor variables.
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set
+
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classification', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set
 
 # save the model
 #save(yhats, file='rf_model')
@@ -119,7 +115,7 @@ model1 <- #model used to generate yhat
   set_engine("glm") %>%
   set_mode("classification") 
 
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no')
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classification', parallel = TRUE)
 #save(yhats, file='logreg_model')
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) #
 ModelPerf[[2]]
@@ -156,6 +152,8 @@ plot(light_scatter(mfl, v = "Grassland", type = "predicted"))
 ```
 
 We also wrap some flashlight functionality to visualize the marginal (i.e. partial dependencies) or conditional (accumulated local effects) effect of a feature on genetic change. Partial dependencies take longer to calculate and are more sensitive to correlated features. The first plot You can see here that they can get different results based on which plot you use. ALE plots are a better option if your feature set is even moderately impacted by collinearity ( e.g., ., rho = 0.6). The second plot is the overall smoothed genetic-turnover function. 
+
+When running this code yourself, you need to change 'v' to the variable of interest within your Y dataset.In this case we are looking at how grassland shapes genetic turnover.
 
 ```{r, message = FALSE, warning = FALSE}
 profileData_pd <- light_profile(mfl, v = "Grassland") #partial dependencies

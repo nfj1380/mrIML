@@ -20,8 +20,15 @@
 #'@export
 
 
-mrIMLpredicts<- function(X, Y, model1, balance_data ='no') { 
+mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', parallel = TRUE) { 
   
+  if(parallel==TRUE){
+    
+  all_cores <- parallel::detectCores(logical = FALSE)
+  cl <- makePSOCKcluster(all_cores)
+  registerDoParallel(cl)
+  }
+
   n_response<- length(X)
   # Run model 1 for each parasite; a simple logistic regression with a single covariate
   # in this case but note that model 1 can be any model of the user's choice, 
@@ -43,7 +50,8 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no') {
     data <- cbind(X[i], Y) ###
     colnames(data)[1] <- c('class') #define response variable
     
-    data$class<- as.factor(data$class)
+    if (model=='classification'){
+    data$class<- as.factor(data$class)}
     
     #data<-data[complete.cases(data)] #removes NAs but there must be a conflict somewhere
     set.seed(100)
@@ -59,7 +67,7 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no') {
     #data_testalt <- testing(data_splitalt)
     
     #10 fold cross validation
-    data_cv <- vfold_cv(data_train, v= 10) #not used yet.
+    data_cv <- vfold_cv(data_train, v= 10) 
     
     if(balance_data == 'down'){ 
       data_recipe <- training(data_split) %>%
@@ -75,7 +83,7 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no') {
     
     
     if(balance_data == 'no'){ 
-      data_recipe <- training(data_split) %>% #data imbalance not corrected 
+      data_recipe <- training(data_split) %>% #data imbalance not corrected. This has to be the option for regression problems
         recipe(class ~., data= data_train)
     }
     
@@ -95,6 +103,8 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no') {
     
     ## full tunning 
     
+    if (model=='classification'){
+      
     tune_m<-tune::tune_grid(mod_workflow,
                             resamples = data_cv,
                             grid = 10) # 10 paramters
@@ -140,7 +150,55 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no') {
     # Calculate deviance residuals 
 
     resid <- devianceResids(yhatO, data_train$class) 
+    }
     
+    if (model=='regression'){
+      tune_m<-tune::tune_grid(mod_workflow,
+                              resamples = data_cv,
+                              grid = 10) # 10 paramters
+      
+      # select the best model
+      best_m <- tune_m %>%
+        select_best("rmse") #
+      
+      # final
+      final_model <- finalize_workflow(mod_workflow,
+                                       best_m )
+      
+      # Fit model one for each parasite; can easily modify this so that the user
+      # can specify the formula necessary for each species as a list of formulas
+      mod1_k <- final_model %>%
+        fit(data = data_train)
+      
+      #mod1_k %>%
+      #fit_resamples(resamples = data_cv)
+      
+      # keep the tune all list 
+      
+      # the last fit
+      set.seed(345)
+      last_mod_fit <- 
+        final_model %>% 
+        last_fit(data_split)
+      
+      #fit on the training set and evaluate on test set. Not needed 
+      #last_fit(data_split) 
+      
+      # Calculate probability predictions for the fitted training data. 
+      
+      yhatO <- predict(mod1_k, new_data = data_train ) 
+      
+      yhat <- yhatO$.pred
+      
+      #predictions based on testing data
+      yhatT <- predict(mod1_k, new_data = data_test) # %>% 
+      #bind_cols(data_test %>% select(class))
+      
+     # resid <- devianceResids(yhatO, data_train$class)
+      resid <- NA
+      
+      } 
+      
     list(mod1_k = mod1_k, last_mod_fit=last_mod_fit,tune_m=tune_m, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid)
 
       

@@ -63,14 +63,13 @@ install_github("mayer79/flashlight")
 
 # load all function codes. This will disappear when we formally make this a function
 source("./R/filterRareCommon.R")
-source("./R/MrTidyModels.R")
+source("./R/MrIMLpredicts.R")
 source("./R/StackPredictions.R")
 source("./R/devianceResids.R")
 source("./R/filterRareCommon.R")
-source("./R/MrtTidyPerf.R")
+source("./R/MrIMLperformance.R")
 source("./R/mrvip.R")
 source("./R/plot_vi.R")
-#source("./R/mrPdP.R")
 
 #new interaction code
 source("./R/mrInteractions.R")
@@ -85,7 +84,7 @@ source("./R/readSnpsPed.R") #function for reading SNP data from plink .ped file
 source("./R/ResistanceComponents.R") #function for generating resistance component data from resistance matrices
 
 source(("./R/mrFlashlight.R"))
-source("./R/mrALEplots.R")
+source("./R/mrProfileplots.R")
 #----------------------------------------------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------
@@ -170,26 +169,10 @@ Y <- select(Bird.parasites, scale.prop.zos) # feature set
 #---------------------------------------------------------------------------------
 #Simulated data
 #---------------------------------------------------------------------------------
-X <- read.csv('grid101.csv', row.names = NULL, head=T)
-X[1:3] <- NULL
-X[2:6] <- NULL; X[1:2] <- NULL #removing these for the moment.
-
-#X[X==2] <- 1 #'cough' this is terrible  - it would be easier to have each loci as two columns to make this properly 
- #a classification model (rather than dealing with nominal data but i need to rethink probability)
-
-#remove NAs
-X[is.na(X)] <- 0 #not optimal. Will fix
-
+X <- read.csv('grid101_binary.csv', row.names = NULL, head=T)
+X[1:9] <- NULL
 #heavy filtering
-#Xsim <- filterRareCommon (X, lower=0.2, higher=0.7)  #this isnt working for mutinomial
-
-#check for correlations and remove. In this case all independent which makes sene
-df2 <- cor(X, method = c('spearman')) #find correlations
-df2[is.na(df2)] <- 0 #weird NAs in the last row
-hc <-  findCorrelation(df2, cutoff=0.3) # put any value as a "cutoff".  removes half the SNPs. Aim for 50%
-hc <-  sort(hc)
-
-X <-  X[,-c(hc)] 
+Xsim <- filterRareCommon (X, lower=0, higher=1)  #this isnt working for mutinomial
 
 Y <- read.csv('simple_sims_env.csv')
 
@@ -198,6 +181,22 @@ Y <- read.csv('simple_sims_env.csv')
 
 #multinominal models arent working either...
 
+
+#---------------------------------------------------------------------------------
+#REGRESSION DATA FROM FITZPATRICK ET AL Poplar SNP. Proportion of individuals in a population with that SNP
+#---------------------------------------------------------------------------------
+
+# read in data file with minor allele freqs & env/space variables
+gfData <- read.csv("poplarSNP.ENV.data.4.GF.csv")
+envGF <- gfData[,3:13] # get climate & MEM variables
+Y <- envGF #for simplicity
+
+# build individual SNP datasets
+SNPs_ref <- gfData[,grep("REFERENCE",colnames(gfData))] # reference
+GI5 <- gfData[,grep("GI5",colnames(gfData))] # GIGANTEA-5 (GI5)
+
+X <- GI5 #for this example
+###############################################################################
 #--------------------------------------------------------------------------------------------------------------------------------------
 #creating the models
 
@@ -234,19 +233,23 @@ boost_tree() %>%
   set_engine("xgboost") %>%
   set_mode("classification")
 
+#regression model
+model1 <- 
+  rand_forest(trees = 100, mode = "regression") %>% 
+  set_engine("ranger", importance = c("impurity","impurity_corrected")) %>%
+  set_mode("regression")
+
 #for SVM need different tuning paramters. Currently tuning works best for tree-based algorithms.
   
 #---------------------------------------------------------------------
 #Perform the analysis
 #---------------------------------------------------------------------  
 #parallell processing
-all_cores <- parallel::detectCores(logical = FALSE)
-
-cl <- makePSOCKcluster(all_cores)
-registerDoParallel(cl)
 
 #models just using features/predictor variables.
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='classification', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set. For regression there no has to be selected.
+
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='regression', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set. For regression there no has to be selected.
 
 #-------------------------------------------------------------------
 # Visualization for model tunning and performance
@@ -254,10 +257,13 @@ yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no') ## in MrTidymo
 ## GM add here
 
 #we can now assess model performance from the best tuned model
-ModelPerf <- mrIMLperformance(yhats, model1, X=X) # MCC is useful (higher numbers = better fit) 
+ModelPerf <- mrIMLperformance(yhats, model1, X=X, model='regression') # MCC is useful (higher numbers = better fit)
+
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='regression', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set. For regression there no has to be selected.
+
 
 ModelPerf[[1]] #predictive performance for individual responses 
-ModelPerf[[2]]#overall predictive performance
+ModelPerf[[2]]#overall predictive performance. r2 for regression and MCC for classification
 
 
 #-------------------------------------------------------------------
@@ -282,7 +288,7 @@ plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, groupCov=groupCov, cutoff= 0.5, pl
 
 #if you dont want/need to group covariates:
 
-plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes') #mcc cutoff not working right
+plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes', model='regression') #mcc cutoff not working right
 
 #First plot is overall importance, the second a pca showing responses with similar importance scores and the third is individual SNP models.
 #warning are about x axis labels so can ignore 
@@ -290,11 +296,13 @@ plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes') #mcc cu
 
 # can build a flaslight object for individual responses 
 
-fl <- mrFlashlight(yhats, X, Y, response = "single", index=1)
+fl <- mrFlashlight(yhats, X, Y, response = "single", index=1, mod='regression')
 
-plot(light_performance(fl), fill = "orange") +
+plot(light_performance(fl), fill = "orange", rotate_x = TRUE) +
   
-  labs(x = element_blank())
+  labs(x = element_blank()) +
+  
+  theme(axis.text.x = element_text(size = 8))
 
 str(fl)
 
@@ -305,12 +313,13 @@ str(fl)
 #------------------------------------------------------------
 #Multiple response
 
-flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi")
+flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='regression')
 
 #plots
 
 
-plot(light_profile(flashlightObj, v = "broad60ibd_resistances_Axis.1", type = "ale"))
+plot(light_profile(flashlightObj, v = "bio_1", type = "ale"))
+plot(light_profile(mfl, v = "bio_1", type = "ale"))
 #this will plot all responses. See mrALEplots below
 
 #another way to assess performance for each response. Lots of response make it hard to read
@@ -339,10 +348,13 @@ mrProfileplot(profileData_ale , sdthresh =0.05)
 
 #calculate interactions  -this is qute slow and memory intensive
 
-interactions <-mrInteractions(yhats, X, Y) #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
+interactions <-mrInteractions(yhats, X, Y,  mod='regression') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
 
-mrPlot_interactions(Interact, X,Y, top_ranking = 3, top_response=3)
+mrPlot_interactions(interactions, X,Y, top_ranking = 5, top_response=5)
 
+save(interactions, 'Fitzpatrick2016interactions')
+
+save(interactions, file='Fitzpatrick2016interactions')
 
 #-------------------------------------------------------------------------------------------------
 

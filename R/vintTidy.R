@@ -79,14 +79,21 @@
 #'   xlab("") +
 #'   ylab("Interaction strength")
 #' }
-vintTidy <- function(object, feature_names, progress = "none", parallel = FALSE,
-                 paropts = NULL, ...) {
+vintTidy <- function(object, feature_names, progress = "none", parallel = TRUE,
+                 paropts = NULL, ..., mod='classication') {
   # warning("This function is experimental, use at your own risk!", call. = FALSE)
   # FIXME: Should we force `chull = FALSE` in the call to `pdp::partial()`?
   all.pairs <- utils::combn(feature_names, m = 2)
   
+  if (mod == 'classification'){
   pdp_pred_fun <- function(object, newdata) { #pd funtion
     predict(object, newdata, type = "prob")$.pred_1 #predict positive class. couldn't get colMeans to work. Werid results for the FIV dataset
+  }
+  }
+  if  (mod == 'regression'){
+    pdp_pred_fun <- function(object, newdata) { #pd funtion
+      predict(object, newdata)$.pred }
+     
   }
   
   ints <- plyr::aaply(
