@@ -169,26 +169,10 @@ Y <- select(Bird.parasites, scale.prop.zos) # feature set
 #---------------------------------------------------------------------------------
 #Simulated data
 #---------------------------------------------------------------------------------
-X <- read.csv('grid101.csv', row.names = NULL, head=T)
-X[1:3] <- NULL
-X[2:6] <- NULL; X[1:2] <- NULL #removing these for the moment.
-
-#X[X==2] <- 1 #'cough' this is terrible  - it would be easier to have each loci as two columns to make this properly 
- #a classification model (rather than dealing with nominal data but i need to rethink probability)
-
-#remove NAs
-X[is.na(X)] <- 0 #not optimal. Will fix
-
+X <- read.csv('grid101_binary.csv', row.names = NULL, head=T)
+X[1:9] <- NULL
 #heavy filtering
-#Xsim <- filterRareCommon (X, lower=0.2, higher=0.7)  #this isnt working for mutinomial
-
-#check for correlations and remove. In this case all independent which makes sene
-df2 <- cor(X, method = c('spearman')) #find correlations
-df2[is.na(df2)] <- 0 #weird NAs in the last row
-hc <-  findCorrelation(df2, cutoff=0.3) # put any value as a "cutoff".  removes half the SNPs. Aim for 50%
-hc <-  sort(hc)
-
-X <-  X[,-c(hc)] 
+Xsim <- filterRareCommon (X, lower=0, higher=1)  #this isnt working for mutinomial
 
 Y <- read.csv('simple_sims_env.csv')
 
