@@ -1,6 +1,6 @@
 ---
 title: "A MrIML vignette: Landscape genetics "
-author: "Nick Fountain-Jones"
+author: "Nick Fountain-Jones, Gustavo Machado"
 date: "10 September 2020"
 output: html_document
 ---
