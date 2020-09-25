@@ -27,8 +27,9 @@ library(mrIML)
 
 #other package we need:
 library(vip); library(tidymodels); library(randomForest);  library(caret); library(gbm);
-library(tidyverse);library(parallel); library(doParallel); library(themis); library(viridis); library(janitor); library(hrbrthemes); library(xgboost); library(vegan);library(flashlight);
-library(ggrepel)
+library(tidyverse);library(parallel); library(doParallel); library(themis); library(viridis);
+library(janitor); library(hrbrthemes); library(xgboost); library(vegan);library(flashlight);
+library(ggrepel); library(parsnip);library(rsample); library(workflows)
 
 library(LEA) 
 #if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -91,7 +92,7 @@ Now we can run the model. Hyper parameter tuning (for algorithms that have hyper
 ```{r, message = FALSE, warning = FALSE, results='hide'}
 
 
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classification', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no')#, mod='classification', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set
 
 # save the model
 #save(yhats, file='rf_model')
