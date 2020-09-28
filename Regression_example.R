@@ -38,9 +38,9 @@ library(LEA)
 library(ape)
 library(flashlight)
 library(devtools)
-install_github("mayer79/flashlight") 
+#install_github("mayer79/flashlight") 
 #library(pbapply)
-
+library(flashlight)
 # load all function codes. This will disappear when we formally make this a function
 source("./R/MrIMLpredicts.R")
 
@@ -73,13 +73,21 @@ X <- GI5 #for this example
 
 #user provides the models they would like for each component (model1)
 
+model1 <- #model used to generate yhat
+  # specify that the model is a random forest
+  linear_reg() %>%
+  # select the engine/package that underlies the model
+  set_engine("lm") %>%
+  # choose either the continuous regression or binary classification mode
+  set_mode("regression")
+
 #regression model
 model1 <- 
   rand_forest(trees = 100, mode = "regression") %>% 
   set_engine("ranger", importance = c("impurity","impurity_corrected")) %>%
   set_mode("regression")
 
-#for SVM need different tuning paramters. Currently tuning works best for tree-based algorithms.
+#for SVM need different tuning paramters. Currently tuning works best for tree-based algorithms. XGR boost wont work on a small dataset like this
 
 #---------------------------------------------------------------------
 #Perform the analysis
@@ -88,9 +96,31 @@ model1 <-
 #models just using features/predictor variables.
 yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='regression', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set. For regression there no has to be selected.
 
+#model performance
+ModelPerf <- mrIMLperformance(yhats, model1, X=X, model='regression')
+ModelPerf[[1]] #predictive performance for individual responses 
+ModelPerf[[2]]#overall predictive performance. r2 for regression and MCC for classification
+
+p1 <- as.data.frame(ModelPerf[[1]])
+
+VI <- mrVip(yhats, Y=Y) 
+#plot model similarity
+
+#plot variable importance
+
+
+#not that GLMs in particular wont produce coefficents for features that are strongly colinear and will drop them from the model.
+#in this case group cov will have to be changed to reflect features included in the model. 
+
+plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf,  cutoff= 0.1, plot.pca='yes', model='regression')#note there are two plots here. PCA is hard to read with > 50 response varianbles
+
+
+
+
+
 # can build a flaslight object for individual responses 
 
-fl <- mrFlashlight(yhats, X, Y, response = "single", index=1, mod='regression')
+fl <- mrFlashlight(yhats, X, Y, response = "single", index=2, model='regression')
 
 plot(light_performance(fl), fill = "orange") +
   
@@ -105,9 +135,26 @@ str(fl)
 #------------------------------------------------------------
 #Multiple response
 
-flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", mod='regression')
+flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='regression')
 
-plot(light_profile(flashlightObj, v = "bio_1", type = "ale"))
-plot(light_profile(mfl, v = "bio_1", type = "ale"))
 
-#plots
+plot(light_scatter(flashlightObj, v = "bio_2", type = "predicted"))
+
+profileData_pd <- light_profile(flashlightObj, v = "bio_2") #partial dependencies
+profileData_ale <- light_profile(flashlightObj, v = "bio_2", type = "ale") #acumulated local effects
+
+#Plot global ALE plot. This the plots the smoothed average ALE value. Have to remove responses that don't respond.
+
+mrProfileplot(profileData_pd , sdthresh =0.01)
+mrProfileplot(profileData_ale , sdthresh =0.01)
+
+#------------------------------------------------------------
+#Interactions
+
+interactions <-mrInteractions(yhats, X, Y,  model='regression') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
+
+mrPlot_interactions(interactions, X,Y, top_ranking = 5, top_response=5)
+
+save(interactions, 'Fitzpatrick2016interactions')
+
+save(interactions, file='Fitzpatrick2016interactions')

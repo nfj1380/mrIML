@@ -16,7 +16,7 @@
 #'plot_vi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov, cutoff= 0.5)}
 #'@export 
 
-plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.3, plot.pca='no', mod='regression' ){
+plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.3, plot.pca='no', model='regression' ){
 
   colnames(VI) <- names(X)
   #n_features <- sort(names(Y))
@@ -61,7 +61,7 @@ plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.3, plot.pca='
   combi <- bind_cols(ModelPerf[1], trans ) %>% 
   na.omit() #nas mean the model didn't work properly remove. Should provide a warning perhaps?
 
-  if (mod=='classification'){
+  if (model=='classification'){
     
   combi$mcc<- as.numeric(as.character(combi$mcc)) #have to make mcc numeric again.
   combiF <- filter(combi, mcc > cutoff) 
@@ -76,7 +76,7 @@ plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.3, plot.pca='
   combiF$prevalence <- NULL
   
   }
-  if (mod=='regression'){
+  if (model=='regression'){
     
     combi$rsquared<- as.numeric(as.character(combi$rsquared)) #have to make mcc numeric again.
     combiF <- filter(combi, rsquared > cutoff)  
@@ -151,7 +151,7 @@ readline(prompt="Press [enter] to plot individual variable importance summaries"
     combi <- bind_cols(ModelPerf[1], trans ) %>% 
       na.omit() #nas mean the model didn't work properly remove. Should provide a warning perhaps?
     
-    if (mod=='classification'){
+    if (model=='classification'){
       
       combi$mcc<- as.numeric(as.character(combi$mcc)) #have to make mcc numeric again.
       combiF <- filter(combi, mcc > cutoff) 
@@ -166,7 +166,7 @@ readline(prompt="Press [enter] to plot individual variable importance summaries"
       combiF$prevalence <- NULL
       
     }
-    if (mod=='regression'){
+    if (model=='regression'){
     
       
       combi$rsquared<- as.numeric(as.character(combi$rsquared)) #have to make mcc numeric again.

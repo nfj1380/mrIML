@@ -233,12 +233,6 @@ boost_tree() %>%
   set_engine("xgboost") %>%
   set_mode("classification")
 
-#regression model
-model1 <- 
-  rand_forest(trees = 100, mode = "regression") %>% 
-  set_engine("ranger", importance = c("impurity","impurity_corrected")) %>%
-  set_mode("regression")
-
 #for SVM need different tuning paramters. Currently tuning works best for tree-based algorithms.
   
 #---------------------------------------------------------------------
@@ -249,19 +243,17 @@ model1 <-
 #models just using features/predictor variables.
 yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='classification', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set. For regression there no has to be selected.
 
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='regression', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set. For regression there no has to be selected.
-
 #-------------------------------------------------------------------
 # Visualization for model tunning and performance
 #-------------------------------------------------------------------
 ## GM add here
 
 #we can now assess model performance from the best tuned model
-ModelPerf <- mrIMLperformance(yhats, model1, X=X, model='regression') # MCC is useful (higher numbers = better fit)
+ # MCC is useful (higher numbers = better fit)
 
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='regression', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set. For regression there no has to be selected.
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='classification', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set. For regression there no has to be selected.
 
-
+ModelPerf <- mrIMLperformance(yhats, model1, X=X, model='regression')
 ModelPerf[[1]] #predictive performance for individual responses 
 ModelPerf[[2]]#overall predictive performance. r2 for regression and MCC for classification
 
@@ -296,7 +288,7 @@ plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes', model='
 
 # can build a flaslight object for individual responses 
 
-fl <- mrFlashlight(yhats, X, Y, response = "single", index=1, mod='regression')
+fl <- mrFlashlight(yhats, X, Y, response = "single", index=1, model='classification')
 
 plot(light_performance(fl), fill = "orange", rotate_x = TRUE) +
   
@@ -335,13 +327,13 @@ plot(light_scatter(flashlightObj, v = "Grassland", type = "predicted"))
 plot(light_effects(flashlightObj, v = "Grassland"), use = "all")
 
 
-profileData_pd <- light_profile(flashlightObj, v = "Grassland") #partial dependencies
-profileData_ale <- light_profile(flashlightObj, v = "Grassland", type = "ale") #acumulated local effects
+profileData_pd <- light_profile(flashlightObj, v = "bio_1") #partial dependencies
+profileData_ale <- light_profile(flashlightObj, v = "bio_1", type = "ale") #acumulated local effects
 
 #Plot global ALE plot. This the plots the smoothed average ALE value. Have to remove responses that don't respond.
 
-mrProfileplot(profileData_pd , sdthresh =0.05)
-mrProfileplot(profileData_ale , sdthresh =0.05)
+mrProfileplot(profileData_pd , sdthresh =0.01)
+mrProfileplot(profileData_ale , sdthresh =0.01)
 
 
 #-------------------------------------------------------------------------------------------------
