@@ -253,6 +253,11 @@ yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='classif
 
 yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='classification', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set. For regression there no has to be selected.
 
+#save(yhats, file='rf_yhats')
+
+load('rf_model_sim')
+
+
 ModelPerf <- mrIMLperformance(yhats, model1, X=X, model='regression')
 ModelPerf[[1]] #predictive performance for individual responses 
 ModelPerf[[2]]#overall predictive performance. r2 for regression and MCC for classification
@@ -340,11 +345,9 @@ mrProfileplot(profileData_ale , sdthresh =0.01)
 
 #calculate interactions  -this is qute slow and memory intensive
 
-interactions <-mrInteractions(yhats, X, Y,  mod='regression') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
+interactions <-mrInteractions(yhats, X, Y,  mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
 
 mrPlot_interactions(interactions, X,Y, top_ranking = 5, top_response=5)
-
-save(interactions, 'Fitzpatrick2016interactions')
 
 save(interactions, file='Fitzpatrick2016interactions')
 
