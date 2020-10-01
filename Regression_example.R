@@ -120,7 +120,7 @@ plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf,  cutoff= 0.1, plot.pca='yes', mode
 
 # can build a flaslight object for individual responses 
 
-fl <- mrFlashlight(yhats, X, Y, response = "single", index=2, model='regression')
+fl <- mrFlashlight(yhats, X, Y, response = "multi", index=1, model='regression')
 
 plot(light_performance(fl), fill = "orange") +
   
@@ -140,8 +140,8 @@ flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='regression
 
 plot(light_scatter(flashlightObj, v = "bio_2", type = "predicted"))
 
-profileData_pd <- light_profile(flashlightObj, v = "bio_2") #partial dependencies
-profileData_ale <- light_profile(flashlightObj, v = "bio_2", type = "ale") #acumulated local effects
+profileData_pd <- light_profile(flashlightObj, v = "bio_1") #partial dependencies
+profileData_ale <- light_profile(flashlightObj, v = "bio_1", type = "ale") #acumulated local effects
 
 #Plot global ALE plot. This the plots the smoothed average ALE value. Have to remove responses that don't respond.
 

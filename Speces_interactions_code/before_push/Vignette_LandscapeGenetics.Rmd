@@ -71,6 +71,7 @@ X <- fData #for simplicity when comparing
 If your feature data consists of landscape resistance data generated from Circuitscape or similar, we provide functionality that can extract each surface from a folder and generate resistance components that can be used in these models (using principal coordinate analysis). This data can be easily merged if needs be with other non-matrix data (e.g., age/sex). There was no resistance surfaces here, but this is what the code looks like:
 
 ```{r, eval = FALSE, warning = FALSE}
+
 #R <- resist_components(filename = 'location of pairwise matrices', p_val=0.01 ) # p values are used here to filter resistance components that aren't correlated with th original pairwise matrix.
 #Y <- cbind(R,Y)
 ```
@@ -115,7 +116,7 @@ model1 <- #model used to generate yhat
   set_engine("glm") %>%
   set_mode("classification") 
 
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classification', parallel = TRUE)
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no')#, mod='classification', parallel = TRUE)
 #save(yhats, file='logreg_model')
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) #
 ModelPerf[[2]]
