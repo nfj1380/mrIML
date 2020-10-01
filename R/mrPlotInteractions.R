@@ -12,6 +12,7 @@
 #'mrPlot_interactions(Interact, X,Y, top_ranking = 3, top_response=3)
 #'@export 
 
+
 mrPlot_interactions <- function(interactions, X,Y, top_ranking = 3, top_response=10 ){
   
   n_features <- names(Y)
@@ -111,4 +112,4 @@ mrPlot_interactions <- function(interactions, X,Y, top_ranking = 3, top_response
      labs(fill='Feature set') 
    
   print(p4)
-   }
+}
