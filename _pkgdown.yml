@@ -2,6 +2,11 @@ home:
   title: mrIML
   links:
     
+#     
+# template:
+#   params:
+#     bootswatch: cerulean
+    
 development:
   mode: auto
 
