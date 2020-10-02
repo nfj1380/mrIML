@@ -120,12 +120,6 @@ hc <-  sort(hc)
 
 Y <-  Y[,-c(hc)] #reduced set of Y features. Labelled Y for simplicity
 
-#---------------------------------------------------------------------------------
-#Example: Puma SNP data
-#--------------------------------------------------------------------------------
-
-snps <- readSnpsPed("ws.ped", "ws.map") #NAs in data and interpolated as the mode. 
-X <- filterRareCommon (snps, lower=0.4, higher=0.75) #these are harsh
 
 #---------------------------------------------------------------------------------
 #Example: Bobcat FIV data  - read  viral data already curated
@@ -171,8 +165,6 @@ Y <- select(Bird.parasites, scale.prop.zos) # feature set
 #---------------------------------------------------------------------------------
 X <- read.csv('grid101_binary.csv', row.names = NULL, head=T)
 X[1:9] <- NULL
-#heavy filtering
-Xsim <- filterRareCommon (X, lower=0, higher=1)  #this isnt working for mutinomial
 
 Y <- read.csv('simple_sims_env.csv')
 
@@ -182,20 +174,6 @@ Y <- read.csv('simple_sims_env.csv')
 #multinominal models arent working either...
 
 
-#---------------------------------------------------------------------------------
-#REGRESSION DATA FROM FITZPATRICK ET AL Poplar SNP. Proportion of individuals in a population with that SNP
-#---------------------------------------------------------------------------------
-
-# read in data file with minor allele freqs & env/space variables
-gfData <- read.csv("poplarSNP.ENV.data.4.GF.csv")
-envGF <- gfData[,3:13] # get climate & MEM variables
-Y <- envGF #for simplicity
-
-# build individual SNP datasets
-SNPs_ref <- gfData[,grep("REFERENCE",colnames(gfData))] # reference
-GI5 <- gfData[,grep("GI5",colnames(gfData))] # GIGANTEA-5 (GI5)
-
-X <- GI5 #for this example
 ###############################################################################
 #--------------------------------------------------------------------------------------------------------------------------------------
 #creating the models
@@ -258,11 +236,13 @@ yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='classif
 load('rf_model_sim')
 
 
-ModelPerf <- mrIMLperformance(yhats, model1, X=X, model='regression')
+ModelPerf <- mrIMLperformance(yhats, model1, X=X, model='classification')
 ModelPerf[[1]] #predictive performance for individual responses 
 ModelPerf[[2]]#overall predictive performance. r2 for regression and MCC for classification
 
+modelPerfD <- ModelPerf[[1]]
 
+save(modelPerfD, file = 'simRF_performance')
 #-------------------------------------------------------------------
 # Visualization individual and global feature importance
 #-------------------------------------------------------------------
@@ -281,11 +261,9 @@ groupCov <- c(rep ("Host_characteristics", 1),rep("Urbanisation", 3), rep("Veget
 #not that GLMs in particular wont produce coefficents for features that are strongly colinear and will drop them from the model.
 #in this case group cov will have to be changed to reflect features included in the model. 
 
-plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, groupCov=groupCov, cutoff= 0.5, plot.pca='no')#note there are two plots here. PCA is hard to read with > 50 response varianbles
+plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0.6, plot.pca='no')#note there are two plots here. PCA is hard to read with > 50 response varianbles
 
 #if you dont want/need to group covariates:
-
-plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes', model='regression') #mcc cutoff not working right
 
 #First plot is overall importance, the second a pca showing responses with similar importance scores and the third is individual SNP models.
 #warning are about x axis labels so can ignore 
@@ -310,12 +288,12 @@ str(fl)
 #------------------------------------------------------------
 #Multiple response
 
-flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='regression')
+flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='classification')
 
 #plots
 
 
-plot(light_profile(flashlightObj, v = "bio_1", type = "ale"))
+plot(light_profile(flashlightObj, v = "simple", type = "ale"))
 plot(light_profile(mfl, v = "bio_1", type = "ale"))
 #this will plot all responses. See mrALEplots below
 
@@ -332,13 +310,13 @@ plot(light_scatter(flashlightObj, v = "Grassland", type = "predicted"))
 plot(light_effects(flashlightObj, v = "Grassland"), use = "all")
 
 
-profileData_pd <- light_profile(flashlightObj, v = "bio_1") #partial dependencies
-profileData_ale <- light_profile(flashlightObj, v = "bio_1", type = "ale") #acumulated local effects
+profileData_pd <- light_profile(flashlightObj, v = "simple") #partial dependencies
+profileData_ale <- light_profile(flashlightObj, v = "simple", type = "ale") #acumulated local effects
 
 #Plot global ALE plot. This the plots the smoothed average ALE value. Have to remove responses that don't respond.
 
-mrProfileplot(profileData_pd , sdthresh =0.01)
-mrProfileplot(profileData_ale , sdthresh =0.01)
+mrProfileplot(profileData_pd , sdthresh =0.07)
+mrProfileplot(profileData_ale , sdthresh =0.07)
 
 
 #-------------------------------------------------------------------------------------------------

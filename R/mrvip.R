@@ -18,21 +18,21 @@ mrVip <- function (yhats, Y){
   modList <- yhats %>% purrr::map(pluck('mod1_k')) #extracts model
   
    im <- lapply(seq(1:n_response), function(i){ #uses monte carlo CV
-     imp <- modList[[i]]%>% 
+     imp <- modList[[i]]%>% ### 
      
      pull_workflow_fit()
      
     #imp$fit$coefficients[is.na( imp$fit$coefficients)]=0 #for GLMs on the bocat data I get 0 coefficents/residuals etc which are problematic. This still doesn't work. Brandon any ideas how to make VIP work on all features even those with 0 coefficents?
     
-     #impVI <- vip(imp,plot=FALSE, num_features=length(Y)) 
-     impVI <- vip(imp, num_features=length(Y)) 
-    impD <- impVI$data %>% 
-      arrange(Variable)%>% 
-      purrr::pluck("Importance")
+      impVI <- vip(imp, num_features=length(Y)) 
+      impD <- impVI$data %>% 
+       arrange(Variable)%>% 
+       purrr::pluck("Importance")
+      names(impD) <- n_features
+      impD
  })
  
-  ImpGlobal <- do.call(cbind, im) 
-  
- 
- #return(ImpGlobal)
+  ImpGlobal <- as.data.frame(do.call(rbind, im)) #from cbind
+
+
 }
