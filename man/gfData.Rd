@@ -18,7 +18,7 @@ Regression data from Fitzpatrick et al 2014
 }
 \examples{
 \dontrun{
- Responsedata
+ gfdata
 }
 }
 \keyword{datasets}

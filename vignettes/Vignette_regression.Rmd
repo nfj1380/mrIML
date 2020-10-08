@@ -14,23 +14,55 @@ genetic variation in relation to geography and climate adaptation (current and f
 
 We focus on the adaptive SNP loci from GIGANTEA-5 (GI5) gene that has known links to stem development, plant circadian clock and light perception pathway. The data is the proportion of individuals in that population with that SNP loci. Lets load that data.
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r load-packages, include=FALSE}
+
+#make sure you have installed devtools previously.
+#Install the most uptodate version from github
+
+#if (!requireNamespace("devtools", quietly = TRUE))
+# install.packages("devtools")
+#   devtools:: install_github('nfj1380/mrIML')
+
+library(mrIML)
+
+#other package we need:
+library(vip); library(tidymodels); library(randomForest);  library(caret); library(gbm);
+library(tidyverse);library(parallel); library(doParallel); library(themis); library(viridis); library(janitor); library(hrbrthemes); library(xgboost); library(vegan);library(flashlight);
+library(ggrepel)
+
+library(LEA) 
+# read in data file with minor allele freqs & env/space variables
+gfData; str(gfData)
+envGF <- gfData[,3:13] # get climate & MEM variables
+Y <- envGF #for simplicity
+
+# build individual SNP datasets
+SNPs_ref <- gfData[,grep("REFERENCE",colnames(gfData))] # reference
+GI5 <- gfData[,grep("GI5",colnames(gfData))] # GIGANTEA-5 (GI5)
+
+X <- GI5 #for this example we are going to focus on the adaptive SNPs in the GI5 region.
 ```
 
-## R Markdown
+## Running the analyis
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Performing the analysis is very similar to our classification example. Lets start with a constructing a linear model for this dataset. We set Model 1 to a linear regression. See https://www.tidymodels.org/find/ for other regression model options Note that 'mode' must be regression and in MrIMLpredicts, model has to be set to 'regression'. 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+```{r }
 
-```{r cars}
-summary(cars)
+model1 <- #model used to generate yhat
+  # specify that the model is a random forest
+  linear_reg() %>%
+  # select the engine/package that underlies the model
+  set_engine("lm") %>%
+  # choose either the continuous regression or binary classification mode
+  set_mode("regression")
+
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='regression', parallel = TRUE) ## Balanced data= up updamples and down downsampled to create a balanced set. For regression 'no' has to be selected.
+
+
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
+Model performance can be examined the same way as in the classication example, however the metrics are different. 
 
 ```{r pressure, echo=FALSE}
 plot(pressure)

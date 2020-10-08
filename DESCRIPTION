@@ -1,7 +1,7 @@
 Package: mrIML
 Title: Multi Response Interpretable Machine Learning
 Version: 0.1
-Authors@R: c(person("Nick","Fountain-Jones", role = c("aut", "cre"),
+Authors@R: c(person("Nick","Fountain-Jones", email = "nfountainjones@email.com", role = c("aut", "cre"),
                      comment = c(ORCID = "0000-0001-9248-8493")),
              person("Nicholas","Clark", role = c("aut", "cre")),
              person("Chris","Kozakiewicz", role = c("aut", "cre")),

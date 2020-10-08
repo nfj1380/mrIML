@@ -5,6 +5,6 @@
 #'  \item{gfData} Propotion of individuals in each population with each SNP and bioclim data (bio_1, bio_2, bio_7. bio_10, bio_15, bio_18 as well as spatial MEMs)
 #' @examples
 #' \dontrun{
-#'  Responsedata
+#'  gfdata
 #' }
 "gfData"
