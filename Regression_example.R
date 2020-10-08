@@ -138,7 +138,7 @@ str(fl)
 flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='regression')
 
 
-plot(light_scatter(flashlightObj, v = "bio_2", type = "predicted"))
+plot(light_scatter(flashlightObj, v = "bio_1", type = "predicted"))
 
 profileData_pd <- light_profile(flashlightObj, v = "bio_1") #partial dependencies
 profileData_ale <- light_profile(flashlightObj, v = "bio_1", type = "ale") #acumulated local effects
@@ -153,8 +153,8 @@ mrProfileplot(profileData_ale , sdthresh =0.01)
 
 interactions <-mrInteractions(yhats, X, Y,  model='regression') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
 
-mrPlot_interactions(interactions, X,Y, top_ranking = 5, top_response=5)
+mrPlot_interactions(interactions, X,Y, top_ranking = 20, top_response=5)
 
 save(interactions, 'Fitzpatrick2016interactions')
 
-save(interactions, file='Fitzpatrick2016interactions')
+load('Fitzpatrick2016interactions')

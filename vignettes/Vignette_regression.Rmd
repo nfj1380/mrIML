@@ -8,11 +8,13 @@ output: html_document
 
 ## Introduction to mrIML 
 
-MrIML is a R package allows users to generate and interpret multi-response models (i.e., joint species distribution models) leveraging advances in data science and machine learning. MrIML couples the tidymodel infrastructure developed by Max Kuhn and colleagues with model agnostic interpretable machine learning tools to gain insights into multiple response data such as. As such mrIML is flexible and easily extendable allowing users to construct everything from simple linear models to tree-based methods for each response using the same syntax and same way to compare predictive performance. In this vignette we will guide you through how to apply this package to ecological genomics problems using the regression functionality of the package. This dataset comes from Fitzpatrick et al 2014 who were examining adaptive
-genetic variation in relation to geography and climate adaptation (current and future) in balsam poplar(Populus balsamifera). See Ecology Letters, (2014) doi: 10.1111/ele.12376. In this paper they used gradient forestsroutine and we show that MrIML provides can not only provide similar results can can derrive new insights into the relationship between climate and genetic variation. Further, we show that linear models of each loci have slightly greater predictive performance. 
+MrIML is a R package allows users to generate and interpret multi-response models (i.e., joint species distribution models) leveraging advances in data science and machine learning. MrIML couples the tidymodel infrastructure developed by Max Kuhn and colleagues with model agnostic interpretable machine learning tools to gain insights into multiple response data such as. As such mrIML is flexible and easily extendable allowing users to construct everything from simple linear models to tree-based methods for each response using the same syntax and same way to compare predictive performance. In this vignette we will guide you through how to apply this package to ecological genomics problems using the regression functionality of the package. This data set comes from Fitzpatrick et al 2014 who were examining adaptive
+genetic variation in relation to geography and climate adaptation (current and future) in balsam poplar(Populus balsamifera). See Ecology Letters, (2014) doi: 10.1111/ele.12376. In this paper they used the similar gradient forests routine (see Ellis et al 2012 Ecology), and we show that MrIML can not only provide more flexible model choice and interpretive capabilities, but can derive new insights into the relationship between climate and genetic variation. Further, we show that linear models of each loci have slightly greater predictive performance. 
 
 
-We focus on the adaptive SNP loci from GIGANTEA-5 (GI5) gene that has known links to stem development, plant circadian clock and light perception pathway. The data is the proportion of individuals in that population with that SNP loci. Lets load that data.
+We focus on the adaptive SNP loci from GIGANTEA-5 (GI5) gene that has known links to stem development, plant circadian clock and light perception pathway. The data is the proportion of individuals in that population with that SNP loci. 
+
+Lets load that data.
 
 ```{r load-packages, include=FALSE}
 
@@ -45,7 +47,7 @@ X <- GI5 #for this example we are going to focus on the adaptive SNPs in the GI5
 
 ## Running the analyis
 
-Performing the analysis is very similar to our classification example. Lets start with a constructing a linear model for this dataset. We set Model 1 to a linear regression. See https://www.tidymodels.org/find/ for other regression model options Note that 'mode' must be regression and in MrIMLpredicts, model has to be set to 'regression'. 
+Performing the analysis is very similar to our classification example. Lets start with a constructing a linear model for this data set. We set Model 1 to a linear regression. See https://www.tidymodels.org/find/ for other regression model options Note that 'mode' must be regression and in MrIMLpredicts, model has to be set to 'regression'. 
 
 ```{r }
 
@@ -59,13 +61,89 @@ model1 <- #model used to generate yhat
 
 yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='regression', parallel = TRUE) ## Balanced data= up updamples and down downsampled to create a balanced set. For regression 'no' has to be selected.
 
+save(yhats, file='Regression_lm') #always a good idea
+```
+
+Model performance can be examined the same way as in the classification example, however the metrics are different. We provide root mean square error (rmse) and R2. You can see that the overall R2 is 0.13 but there is substantial variation across loci in predictive performance.
+
+```{r}
+
+
+ModelPerf <- mrIMLperformance(yhats, model1, X=X, model='regression')
+ModelPerf[[1]] #predictive performance for individual responses. 
+ModelPerf[[2]]#overall average r2 
+
+p1 <- as.data.frame(ModelPerf[[1]]) #save as a datframe to compare to other models.
+```
+
+Lets compare the performance of linear models to that of random forests. Random forests is the computational engine in gradient forests.
+
+```{r}
+model1 <- 
+  rand_forest(trees = 100, mode = "regression") %>% 
+  set_engine("ranger", importance = c("impurity","impurity_corrected")) %>%
+  set_mode("regression")
+
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='regression', parallel = TRUE)
+
+save(yhats, file='Regression_rf')
+
+ModelPerf <- mrIMLperformance(yhats, model1, X=X, model='regression')
+ModelPerf[[1]] #predictive performance for individual responses. 
+ModelPerf[[2]]#overall average r2 
+
+p2 <- as.data.frame(ModelPerf[[1]]
+```
+
+You can see that predictive performance is actually slightly less using random forests (overall R2 = 0.12) but for some loci random forests does better than our linear models and sometimes worse. Which to choose? Generally simpler models are preferred (the linear model in this case) but it depends on how important to think non-linear response are. In future versions of MrIML we will implement ensemble models that will overcome this issue. For the time-being we will have a look at variable importance for the random forest based model.
+
+```{r}
+VI <- mrVip(yhats, Y=Y) 
+
+plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf,  cutoff= 0.1, plot.pca='yes', model='regression')
 
 ```
 
-Model performance can be examined the same way as in the classication example, however the metrics are different. 
+Cutoff reduces the number of individual SNP plots presented in the second plot and 'plot.pca='yes'' enables the variable importance scores to be analysed using principal component analysis (PCA) where SNPs closer in PCA space are shaped by similar combinations of features. You can see that bio_18 (summer precipitation), bio_1 (mean annual temperature) and bio_10 (mean summer temperature) are the most important features overall. Summer precipitation was not as important in Fitzpatrick et al but otherwise these results are similar. The second plot shows the individual models (with an r2 > 0.1, for your data you will need to play around with this threshold) and you can see for some SNPs bio_1 is more important whereas for another MEM.1 is more prominent.The PCA shows that candidate 5119, 9287, 5033 and 108  are shaped similarly by the features we included and may, for example, be product of linked selection.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+Now we can explore the model further my plotting the relationships between our SNPs and a feature in our set. Lets choose bio_1 (mean annual temperature) and plot the individual and global (average of all SNPs) partial dependency (PD) plots. 
+
+```{r}
+flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='regression')
+
+profileData_pd <- light_profile(flashlightObj, v = "bio_1") #partial dependencies
+
+mrProfileplot(profileData_pd , sdthresh =0.01)
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+The first plot is a partial dependency for all SNPs that respond to mean annual temperature. What we mean by respond here is that the prediction surface (the line) deviates across the Y axis of the PD plots. We measure this deviation by calculating the standard deviation and use that as a threshold ('sd thresh=0.01' in this case and this will differ by data set) to ease visualization of these relationships.  The second plot is the smoothed average partial dependency of SNPs across a annual temperature gradient. This is very similar to the pattern observed by Fitzpatrick et al except with a slight decline in SNP turnover with mean annual temperatures > 0. Combined,you can see here only  few candidate SNPs are driving this pattern and these may warrant further interrogation. 
+
+Lets compare the PDs to accumulated local effect plots that are less sensitive to correlations among features (see Molnar 2019).
+
+```{r}
+profileData_ale <- light_profile(flashlightObj, v = "bio_1", type = "ale") #acumulated local effects
+
+mrProfileplot(profileData_ale , sdthresh =0.01)
+```
+
+The effect of mean annual temperature on SNP turnover is not as distinct in the global ALE plot. This may mean that correlations between features may be important for the predictions.
+
+MrIML has easy to use functionality that can can quantify interactions between features. Note that this can take a while to compute.
+
+```{r}
+interactions <-mrInteractions(yhats, X, Y,  model='regression') #this is computationally intensive so multicores are needed.
+
+mrPlot_interactions(interactions, X,Y, top_ranking = 10, top_response=5) #can increase the number of interactions/SNPs ('responses') shown
+
+#Make sure you save your results
+#save(interactions, 'Fitzpatrick2016interactions')
+
+#load('Fitzpatrick2016interactions')
+
+```
+
+The first plot reveals that the strongest global interaction is between mean annual (bio_1) temperature and summer precipitation (bio_10) but the interactions between other bioclim features are also relatively strong. Mean temperature interacts to some degree with spatial patterns as well (MEMs) to shape SNP turnover. Note that importance is all relative. the second plot shows that the predictions of candidate 33 are most effected by interacting features and the third plot shows that the interaction is between mean annual temperature and altitude.
+
+This is touching only the surface of what is possible in terms of interrogating this model. See https://cran.r-project.org/web/packages/flashlight/vignettes/flashlight.html for other options.
+
