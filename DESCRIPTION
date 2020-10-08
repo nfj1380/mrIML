@@ -3,9 +3,9 @@ Title: Multi Response Interpretable Machine Learning
 Version: 0.1
 Authors@R: c(person("Nick","Fountain-Jones", email = "nfountainjones@email.com", role = c("aut", "cre"),
                      comment = c(ORCID = "0000-0001-9248-8493")),
-             person("Nicholas","Clark", role = c("aut", "cre")),
-             person("Chris","Kozakiewicz", role = c("aut", "cre")),
-             person("Gustavo","Machado", role = c("aut", "cre"),
+             person("Nicholas","Clark", role = c("aut")),
+             person("Chris","Kozakiewicz", role = c("aut")),
+             person("Gustavo","Machado", role = c("aut"),
                      comment = c(ORCID = "0000-0001-7552-6144")))
 Description: This package aims to enable users to build and interpret multivariate machine learning models harnessing the tidyverse (tidy model syntax in particular). This package builds off ideas from Gradient Forests (Ellis et al 2012), ecological genomic approaches (Fitzpatrick and Keller, 2014) and multi-response stacking algorithms (Xing et al 2019).
 Depends: 
