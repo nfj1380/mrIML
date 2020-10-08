@@ -2,9 +2,18 @@
 % Please edit documentation in R/plot_vi.R
 \name{plot_vi}
 \alias{plot_vi}
-\title{Plots global importance (i.e. cumulative importance of all features for all response variables) and individual repsonse importance.}
+\title{Plots global importance (i.e. cumulative importance of all features for all response variables) and individual response importance.}
 \usage{
-plot_vi(VI, modelPerf, Y, X, groupCov = NULL, cutoff = 0.3, plot.pca = "no")
+plot_vi(
+  VI,
+  modelPerf,
+  Y,
+  X,
+  groupCov = NULL,
+  cutoff = 0.65,
+  plot.pca = "no",
+  model = "regression"
+)
 }
 \arguments{
 \item{VI}{A \code{dataframe} dataframe generated from mrvip function}
@@ -16,9 +25,11 @@ plot_vi(VI, modelPerf, Y, X, groupCov = NULL, cutoff = 0.3, plot.pca = "no")
 \item{X}{A \code{dataframe} response dataset}
 
 \item{cutoff}{A \code{numeric} determines  mathews correlation coefifcent (mcc) threshold for displaying individual reponse model. Default is 0.5}
+
+\item{mod}{\code{character}'classification' or 'regression' i.e., is the generative model a regression or classification?}
 }
 \description{
-Plots global importance (i.e. cumulative importance of all features for all response variables) and individual repsonse importance.
+Plots global importance (i.e. cumulative importance of all features for all response variables) and individual response importance.
 }
 \details{
 1st plot: 

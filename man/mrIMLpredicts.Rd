@@ -4,7 +4,14 @@
 \alias{mrIMLpredicts}
 \title{Wrapper to generate multi-response predictive models.}
 \usage{
-mrIMLpredicts(X, Y, model1, balance_data = "no")
+mrIMLpredicts(
+  X,
+  Y,
+  model1,
+  balance_data = "no",
+  model = "regression",
+  parallel = TRUE
+)
 }
 \arguments{
 \item{X}{A \code{dataframe} represents predictor or feature data.}

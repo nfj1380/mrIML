@@ -8,9 +8,10 @@ vintTidy(
   object,
   feature_names,
   progress = "none",
-  parallel = FALSE,
+  parallel = TRUE,
   paropts = NULL,
-  ...
+  ...,
+  model = "classication"
 )
 }
 \arguments{
