@@ -16,12 +16,12 @@
 #'plot_vi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov, cutoff= 0.5)}
 #'@export 
 
-plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.65, plot.pca='no', model='regression' ){
+plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.2, plot.pca='no', model='regression' ){
 
   colnames(VI) <- names(X)
   #row.names(VI) <- names(X)
   #n_features <- sort(names(Y))
-  #n_features <-  row.names(VI)
+  n_features <-  row.names(VI)
   VIa <-  as.data.frame(t(VI))
   #----------------------------------------------------------------
   #Global importance
