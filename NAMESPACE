@@ -2,6 +2,7 @@
 
 export(devianceResids)
 export(filterRareCommon)
+export(mrFlashlight)
 export(mrIMLperformance)
 export(mrIMLpredicts)
 export(mrInteractions)
