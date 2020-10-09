@@ -10,7 +10,7 @@ plot_vi(
   Y,
   X,
   groupCov = NULL,
-  cutoff = 0.65,
+  cutoff = 0.2,
   plot.pca = "no",
   model = "regression"
 )

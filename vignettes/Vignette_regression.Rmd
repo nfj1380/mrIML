@@ -49,7 +49,7 @@ X <- GI5 #for this example we are going to focus on the adaptive SNPs in the GI5
 
 Performing the analysis is very similar to our classification example. Lets start with a constructing a linear model for this data set. We set Model 1 to a linear regression. See https://www.tidymodels.org/find/ for other regression model options Note that 'mode' must be regression and in MrIMLpredicts, model has to be set to 'regression'. 
 
-```{r }
+```{r, message = FALSE, warning = FALSE, results='hide' }
 
 model1 <- #model used to generate yhat
   # specify that the model is a random forest
@@ -61,7 +61,7 @@ model1 <- #model used to generate yhat
 
 yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='regression', parallel = TRUE) ## Balanced data= up updamples and down downsampled to create a balanced set. For regression 'no' has to be selected.
 
-save(yhats, file='Regression_lm') #always a good idea
+#save(yhats, file='Regression_lm') #always a good idea
 ```
 
 Model performance can be examined the same way as in the classification example, however the metrics are different. We provide root mean square error (rmse) and R2. You can see that the overall R2 is 0.13 but there is substantial variation across loci in predictive performance.
