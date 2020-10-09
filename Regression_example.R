@@ -1,7 +1,9 @@
 
 #--------------------------------------------------------------------------------------------------------------
-# Use the ipak function to install and load multiple R packages. Thanks to Steven Worthington for this code.
-# checks to see if packages are installed. Install them if they are not, then load them into the R session. Only work for CRAN 
+# Use the "ipak" function to install and load multiple R packages. 
+# Thanks to Steven Worthington for this code.
+# checks to see if packages are installed. Install them if they are not,
+# then load them into the R session. Only work for CRAN 
 #packages. Details are provided for the others required.
 
 #load packages. Reduce this list.
