@@ -18,10 +18,10 @@
 
 plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.2, plot.pca='no', model='regression' ){
 
-  colnames(VI) <- names(X)
-  #row.names(VI) <- names(X)
+  #colnames(VI) <- names(X)
+  row.names(VI) <- names(X)
   #n_features <- sort(names(Y))
-  n_features <-  row.names(VI)
+  n_features <-  names(VI)
   VIa <-  as.data.frame(t(VI))
   #----------------------------------------------------------------
   #Global importance
@@ -29,7 +29,7 @@ plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.2, plot.pca='
 
   #for interpretation of group features.
   
-    rs <- as.data.frame( rowSums(VI)/sum(VI) ) #make it a proportion
+    rs <- as.data.frame( rowSums(VIa)/sum(VIa) ) #make it a proportion
       rsA <- rownames_to_column(rs)
       
   if (!is.null(groupCov)) { 
@@ -56,7 +56,7 @@ plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.2, plot.pca='
     #Individual response importance
     #----------------------------------------------------------------
   
-  trans <- as.data.frame(t(VI) )
+  trans <- as.data.frame(VI)
   features <-  colnames(trans) 
 
   combi <- bind_cols(ModelPerf[1], trans ) %>% 
@@ -146,7 +146,7 @@ readline(prompt="Press [enter] to plot individual variable importance summaries"
     #Individual response importance
 #----------------------------------------------------------------
     
-    trans <- as.data.frame(VIa)
+    trans <- as.data.frame(VI)
    # colnames(trans) <- n_features
     
     combi <- bind_cols(ModelPerf[1], trans ) #%>% 
