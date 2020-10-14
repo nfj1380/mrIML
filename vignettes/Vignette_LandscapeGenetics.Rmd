@@ -1,10 +1,11 @@
 ---
-title: "A MrIML vignette: Landscape genetics "
+title: 'A MrIML vignette: Landscape genetics '
 author: "Nick Fountain-Jones, Gustavo Machado"
-date: "10 September 2020"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
-![](C:/Users/Nick FJ/Documents/MrIML_final/mrIML/Logo_mrIML.png){width=25%}
+![](C:/Users/gmachad/Desktop/mrIML_package/Logo_mrIML.png){width=25%}
 
 ## Introduction to mrIML 
 
@@ -14,7 +15,7 @@ Let's start by loading  the required packages and data. The data we are going to
 
 Features (a.k.a predictor variables) with missing data can be removed or interpolated depending on the nature of the missing data. Here we remove them.
 
-```{r load-packages, include=FALSE}
+```{r  include=FALSE}
 
 #make sure you have installed devtools previously.
 #Install the most uptodate version from github
@@ -77,7 +78,7 @@ If your feature data consists of landscape resistance data generated from Circui
 
 Now all the data is loaded and ready to go we can formulate the model using tidymodel syntax. In this case we have binary data (SNP presence/absence at each loci) but the data could also be counts or continuous (the set_model argument would be "regression" instead of "classification"). The user can specify any model from the tidymodel universe as 'model 1' (see https://www.tidymodels.org/find/ for details). However, we have done most of our testing on random forests (rf), xgr boost and glms (generalized linear models). Here we will specify a random forest classification model as the model applied to each response.
 
-```{r}
+```{r }
 model1 <- 
   rand_forest(trees = 100, mode = "classification") %>% #100 trees are set for brevity
   # select the engine/package that underlies the model
@@ -88,7 +89,7 @@ model1 <-
 
 Now we can run the model. Hyper parameter tuning (for algorithms that have hyper parameters) is done automatically by testing how model performance changes across a random grid of 10 parameters and the best performing combination is kept. The only choice to make is to either down/up sample data or leave it as is. As our viral data set is small, we will not do any up or down-sampling (option 'no'). We could also implement parallel processing for larger data sets. 
 
-```{r, message = FALSE, warning = FALSE, results='hide'}
+```{r message = FALSE, warning = FALSE, results='hide'}
 
 
 yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classification', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set
@@ -123,9 +124,9 @@ ModelPerf[[2]]
 
 You can see that the random forests model outperforms the logistic regression in this case.  Once we are happy with the underlying model we can then dive in to see how this model predicts the SNPs. First we can check out variable importance.The first plot is the global importance (what features shape genetic change overall), the second shows the individual models (with an optional importance MCC threshold 'cutoff' value ) and the third plots the importances of all models as a PCA. SNPs or responses closer together in PCA space are shaped more similarly by landscape variables (or in other words have similar feature variable importance scores).
 
-```{r, message = FALSE, warning = FALSE}
+```{r message = FALSE, warning = FALSE}
 VI <- mrVip(yhats, Y=Y) 
-plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes') #the cutoff reduces the number of individual models printed in the second plot. 
+#plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes') #the cutoff reduces the number of individual models printed in the second plot. 
 
 ```
 
@@ -134,7 +135,7 @@ If your features can be grouped together this can make it easier to interpret va
 ```{r, eval = FALSE}
 groupCov <- c(rep ("Host_characteristics", 1),rep("Urbanisation", 3), rep("Vegetation", 2), rep("Urbanisation",1), rep("Spatial", 2), rep('Host_relatedness', 6),rep ("Host_characteristics", 1),rep("Vegetation", 2), rep("Urbanisation",1))
 
-plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, groupCov=groupCov, cutoff= 0.5, plot.pca='no')
+#plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, groupCov=groupCov, cutoff= 0.5, plot.pca='no')
 
 ```
 
@@ -143,12 +144,14 @@ MrIML allows a full suite of model agnostic interpretable machine learning tools
 
 For example, once we create the flashlight objects, we can plot the predicted values of a feature for each response.
 
-```{r, message = FALSE, warning = FALSE}
-fl <- mrFlashlight(yhats, X, Y, response = "single", index=1) #index pointing to the SNP of interest (i.e. the first column)
+```{r message = FALSE, warning = FALSE}
 
-mfl <- mrFlashlight(yhats, X, Y, response = "multi") #the global set
+fl <- mrFlashlight(yhats, X, Y, response = "single", index=1, model='classification') #index pointing to the SNP of interest (i.e. the first column)
 
-plot(light_scatter(mfl, v = "Grassland", type = "predicted"))
+plot(light_performance(fl), fill = "orange", rotate_x = TRUE) +
+  labs(x = element_blank()) +
+  theme(axis.text.x = element_text(size = 8))
+
 ```
 
 We also wrap some flashlight functionality to visualize the marginal (i.e. partial dependencies) or conditional (accumulated local effects) effect of a feature on genetic change. Partial dependencies take longer to calculate and are more sensitive to correlated features. The first plot You can see here that they can get different results based on which plot you use. ALE plots are a better option if your feature set is even moderately impacted by collinearity ( e.g., ., rho = 0.6). The second plot is the overall smoothed genetic-turnover function. 
@@ -156,8 +159,12 @@ We also wrap some flashlight functionality to visualize the marginal (i.e. parti
 When running this code yourself, you need to change 'v' to the variable of interest within your Y dataset.In this case we are looking at how grassland shapes genetic turnover.
 
 ```{r, message = FALSE, warning = FALSE}
-profileData_pd <- light_profile(mfl, v = "Grassland") #partial dependencies
-profileData_ale <- light_profile(mfl, v = "Grassland", type = "ale") #acumulated local effects
+
+#plot prediction scatter for all responses. Gets busy with 
+plot(light_scatter(flashlightObj, v = "Grassland", type = "predicted"))
+
+#plots everything on one plot (partial dependency, ALE, scatter)
+plot(light_effects(flashlightObj, v = "Grassland"), use = "all")
 
 mrProfileplot(profileData_pd , sdthresh =0.05) #sdthresh removes responses from the first plot that do not vary with the feature
 mrProfileplot(profileData_ale , sdthresh =0.05)
@@ -167,11 +174,13 @@ mrProfileplot(profileData_ale , sdthresh =0.05)
 
 Finally, we can assess how features interact overall to shape genetic change. Be warned this is memory intensive. Future updates to this package will enable users to visualize these interactions and explore them in more detail using 2D ALE plots for example.
 
-```{r, message = FALSE, warning = FALSE}
+```{r message = FALSE, warning = FALSE}
 
-interactions <-mrInteractions(yhats, X, Y) #this is computationally intensive so multicores are needed. 
+interactions <-mrInteractions(yhats, X, Y,  mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
 
-mrPlot_interactions(interactions, X,Y, top_ranking = 3, top_response=3)
+mrPlot_interactions(interactions, X,Y, top_ranking = 5, top_response=5)
+
+save(interactions, file='Fitzpatrick2016interactions')
 
 ```
 

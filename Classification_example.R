@@ -291,7 +291,6 @@ plot(light_performance(fl), fill = "orange", rotate_x = TRUE) +
   
   theme(axis.text.x = element_text(size = 8))
 
-str(fl)
 
 #plot(light_breakdown(fl , new_obs = cbind(X, Y)[1, ]),by = X, v=Y) #prints all responses - need to fix but could be quite handy.
 
