@@ -59,11 +59,11 @@ install_github("mayer79/flashlight")
 
 # load all function codes. This will disappear when we formally make this a function
 source("./R/filterRareCommon.R")
-source("./R/MrIMLpredicts.R")
+source("./R/mrIMLpredicts.R")
 source("./R/StackPredictions.R")
 source("./R/devianceResids.R")
 source("./R/filterRareCommon.R")
-source("./R/MrIMLperformance.R")
+source("./R/mrIMLperformance.R")
 source("./R/mrvip.R")
 source("./R/plot_vi.R")
 
@@ -79,8 +79,8 @@ source("./R/response_covariance") #this should create the covatiance matrix #not
 source("./R/readSnpsPed.R") #function for reading SNP data from plink .ped file
 source("./R/ResistanceComponents.R") #function for generating resistance component data from resistance matrices
 
-source(("./R/mrFlashlight.R"))
-source("./R/mrProfileplots.R")
+source(("./R/MrFlashLight.R"))
+source("./R/MrProfilePlots.R")
 #----------------------------------------------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------
@@ -88,6 +88,23 @@ source("./R/mrProfileplots.R")
 #---------------------------------------------------------------------------------
 X <- read.csv('grid101_binary.csv', row.names = NULL, head=T)
 X[1:9] <- NULL
+
+#Replace NAs with major allele
+Mode <- function(x, na.rm = FALSE) {
+  if(na.rm){
+    x = x[!is.na(x)]
+  }
+  
+  ux <- unique(x)
+  return(ux[which.max(tabulate(match(x, ux)))])
+}
+
+for(i in 1:ncol(X)){
+  X[i] <- na.replace(X[i], Mode(X[i], na.rm=TRUE)) #replace NAs with the major allele at a given locus
+}
+
+
+
 
 Y <- resist_components( p_val=0.01,  filename = 'Sim_matrices')
 
@@ -120,15 +137,14 @@ model1 <-
   set_engine("ranger", importance = c("impurity","impurity_corrected")) %>%
   set_mode("classification")
 
-
-model1 <- 
+model2 <- 
   boost_tree() %>%
   set_engine("xgboost") %>%
   set_mode("classification")
 
-model1 <- #model used to generate yhat
-  logistic_reg() %>%l
-set_engine("glm") %>%
+model3 <- #model used to generate yhat
+  logistic_reg() %>%
+  set_engine("glm") %>%
   set_mode("classification") #just for your response
 
 
@@ -137,7 +153,23 @@ set_engine("glm") %>%
 #---------------------------------------------------------------------  
 
 #models just using features/predictor variables.
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='classification', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set. For regression there no has to be selected.
+yhats_rf <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='classification', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set. For regression there no has to be selected.
+save(yhats_rf, file='./rf_model_sim_matrices')
+ModelPerf <- mrIMLperformance(yhats_rf, model1, X=X, model='classification')
+ModelPerf[[2]]
+rm(yhats_rf)
+
+yhats_xg <- mrIMLpredicts(X=X,Y=Y, model1=model2, balance_data='no', model='classification', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set. For regression there no has to be selected.
+save(yhats_xg, file='./xg_model_sim_matrices')
+ModelPerf <- mrIMLperformance(yhats_xg, model2, X=X, model='classification')
+ModelPerf[[2]]
+rm(yhats_xg)
+
+yhats_lr <- mrIMLpredicts(X=X,Y=Y, model1=model3, balance_data='no', model='classification', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set. For regression there no has to be selected.
+save(yhats_lr, file='./lr_model_sim_matrices')
+ModelPerf <- mrIMLperformance(yhats_lr, model3, X=X, model='classification')
+ModelPerf[[2]]
+rm(yhats_lr)
 
 #-------------------------------------------------------------------
 # Visualization for model tunning and performance
