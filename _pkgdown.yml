@@ -1,41 +1,60 @@
-home:
-  title: mrIML
-  links:
+template:
+  params:
+    bootswatch: minty
     
-#     
-# template:
-#   params:
-#     bootswatch: cerulean
-    
-development:
-  mode: auto
+navbar:
+  structure:
+    left:
+    - home
+    - intro
+    - articles
+    right:
+    - reference
+    - tutorials
+    - news
+    #right: github
+  components:
+    home:
+      icon: fas fa-home fa-lg
+      href: index.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    news:
+      text: Changelog
+      href: news/index.html
+    articles:
+      text: Articles
+      menu:
+      - text: Classification working example
+        href: articles/Vignette_LandscapeGenetics.html
+      - text: Regression working example
+        href: articles/Vignette_regression.html
+
+reference:
+- title: All functions
+  contents:
+  - '`devianceResids`'
+  - '`Features`'
+  - '`filterRareCommon`'
+  - '`gfData`'
+  - '`mrFlashlight`'
+  - '`mrIMLperformance`'
+  - '`mrIMLpredicts`'
+  - '`mrInteractions`'
+  - '`mrPlot_interactions`'
+  - '`mrProfileplot`'
+  - '`mrVip`'
+  - '`plot_vi`'
+  - '`readSnpsPed`'
+  - '`resist_components`'
+  - '`Responsedata`'
+  - '`vintTidy`'
 
 articles:
-- title: Customise your site
-  navbar: ~
+- title: All vignettes
+  desc: ~
   contents:
-  - pkgdown
-  - linking
-  - search
-  - metadata
-- title: Testing
-  desc: >
-    These articles are used to test various pkgdown features that can not
-    easily be tested automatically.
-  contents:
-  - starts_with("test")
+  - '`Vignette_LandscapeGenetics`'
+  - '`Vignette_regression`'
 
-- contents:
-  - build_site
-  - init_site
-  - starts_with("build_")
-  - starts_with("deploy_")
-  - preview_site
-- title: Templates
-- contents:
-  - template_navbar
-  - render_page
-news:
-  releases:
-  - text: "Version 0.01"
-    href:

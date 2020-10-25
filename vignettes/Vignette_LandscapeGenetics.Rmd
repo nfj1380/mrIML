@@ -1,13 +1,28 @@
 ---
-title: 'A MrIML vignette: Landscape genetics '
+title: 'Classification working example'
 author: "Nick Fountain-Jones, Gustavo Machado"
+date: "`r Sys.Date()`"
+opengraph:
+  image:
+    src: 
 output:
-  html_document: default
-  pdf_document: default
+  github_document: default
+  rmarkdown::html_vignette: default
+vignette: |
+  %\VignetteIndexEntry{mrIML}
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8}
 ---
-![](C:/Users/gmachad/Desktop/mrIML_package/Logo_mrIML.png){width=25%}
 
-## Introduction to mrIML 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+<img src = "https://user-images.githubusercontent.com/33707823/88988817-531ad080-d31d-11ea-8d76-f1ad0506e405.png" width="200" height="200"/>
+
+# General introduction
 
 MrIML is a R package allows users to generate and interpret multi-response models (i.e., joint species distribution models) leveraging advances in data science and machine learning. MrIML couples the tidymodel infrastructure developed by Max Kuhn and colleagues with model agnostic interpretable machine learning tools to gain insights into multiple response data such as. As such mrIML is flexible and easily extendable allowing users to construct everything from simple linear models to tree-based methods for each response using the same syntax and same way to compare predictive performance. In this vignette we will guide you through how to apply this package to landscape genetics problems but keep in mind any multiple-response data can be interrogated using this package (e.g., species or OTU presence/absence data).
 
@@ -54,7 +69,9 @@ Y <- FeaturesnoNA #for simplicity
 Y <- FeaturesnoNA[c(1:3)] #three features only
 
 ```
- 
+
+# Filter and balance your dataset
+
 When constructing these type of models, SNPs that are common (occur say in >80% of samples) or rare (< 10% of samples) are difficult to model. This cn be a problem for potentially adaptice loci which tend to be rarer We provide down-sampling or up-sampling strategies for dealing with unbalanced data (see below) but filtering out common and rare loci is another option. The more response variables (SNPs) you include the longer the computational time, so for this  example we will trim SNPs occurring in < 40%  and > 70% of individuals. This leaves 29 SNPs remaining. In practice, these filtering steps are stringent so < 20 and > 80 maybe more appropriate.  
  
 ```{r }
@@ -102,8 +119,8 @@ yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classific
 It takes a couple of minutes to run on a laptop and there are warnings that you can ignore (this data set is small). The above code constructs tuned random forest models for the features (Y) you have selected for each response (29 viral SNP in this case). We can then check the performance of each model separately and overall. The performance metrics we provide for classification models are area under curve (roc_AUC),  Mathew's correlation coefficient (MCC - a good metric when data is imbalanced i.e., unequal numbers of 0/1s in each response), specificity (proportion correctly classified not having the mutation at that loci) and sensitivity (proportion correctly classified having the mutation at that loci). We also provide 'prevalence' that tells you how common that SNP was in the population sampled.
 
 ```{r, message = FALSE, warning = FALSE}
-ModelPerf <- mrIMLperformance(yhats, model1, X=X) 
 
+ModelPerf <- mrIMLperformance(yhats, model1, X=X) 
 ModelPerf[[1]] #predictive performance for individual responses 
 ModelPerf[[2]]#overall predictive performance
 ```
@@ -126,7 +143,7 @@ You can see that the random forests model outperforms the logistic regression in
 
 ```{r message = FALSE, warning = FALSE}
 VI <- mrVip(yhats, Y=Y) 
-#plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes') #the cutoff reduces the number of individual models printed in the second plot. 
+plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes') #the cutoff reduces the number of individual models printed in the second plot. 
 
 ```
 
@@ -144,9 +161,14 @@ MrIML allows a full suite of model agnostic interpretable machine learning tools
 
 For example, once we create the flashlight objects, we can plot the predicted values of a feature for each response.
 
-```{r message = FALSE, warning = FALSE}
+```{r include=FALSE}
+source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrFlashlight.R"))
+source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrProfileplots.R"))
 
-fl <- mrFlashlight(yhats, X, Y, response = "single", index=1, model='classification') #index pointing to the SNP of interest (i.e. the first column)
+```
+
+```{r message = FALSE, warning = FALSE}
+fl <- mrFlashlight(yhats, X, Y, response = "multi", index=1, model='classification') #index pointing to the SNP of interest (i.e. the first column)
 
 plot(light_performance(fl), fill = "orange", rotate_x = TRUE) +
   labs(x = element_blank()) +
@@ -160,14 +182,22 @@ When running this code yourself, you need to change 'v' to the variable of inter
 
 ```{r, message = FALSE, warning = FALSE}
 
+flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='classification')
+
 #plot prediction scatter for all responses. Gets busy with 
-plot(light_scatter(flashlightObj, v = "Grassland", type = "predicted"))
+plot(light_scatter(flashlightObj, v = "Forest", type = "predicted"))
 
 #plots everything on one plot (partial dependency, ALE, scatter)
 plot(light_effects(flashlightObj, v = "Grassland"), use = "all")
 
-mrProfileplot(profileData_pd , sdthresh =0.05) #sdthresh removes responses from the first plot that do not vary with the feature
-mrProfileplot(profileData_ale , sdthresh =0.05)
+
+#profileData_pd <- light_profile(flashlightObj,  v = "Grassland")
+
+#mrProfileplot(profileData_pd , sdthresh =0.05) #sdthresh removes responses from the first plot that do not vary with the feature
+
+profileData_ale <- light_profile(flashlightObj, v = "Grassland", type = "ale") #acumulated local effects
+
+mrProfileplot(profileData_ale , sdthresh =0.01)
 #the second plot is the cumulative turnover function
 
 ```
@@ -180,7 +210,7 @@ interactions <-mrInteractions(yhats, X, Y,  mod='classification') #this is compu
 
 mrPlot_interactions(interactions, X,Y, top_ranking = 5, top_response=5)
 
-save(interactions, file='Fitzpatrick2016interactions')
+#save(interactions, file='Fitzpatrick2016interactions')
 
 ```
 

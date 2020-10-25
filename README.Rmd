@@ -1,17 +1,9 @@
 ---
+title: 'mrIML: Multivariate (multi-response) interpretable machine learning'
+
 output: github_document
+
 ---
-
-```{r, echo = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/",
-  eval = TRUE
-)
-```
-
-# mrIML: Multivariate (multi-response) interpretable machine learning
 
 <img src = "https://user-images.githubusercontent.com/33707823/88988817-531ad080-d31d-11ea-8d76-f1ad0506e405.png" width="200" height="200"/>
 
@@ -28,11 +20,6 @@ Install the stable version of the package:
 devtools::install_github('nfj1380/mrIML')
 ```
 
-Or 
-
-```{r, eval = FALSE}
-
-```
 ## Quick start
 
 `{mrIML}` is designed to be used with a single function call or to be used in an ad-hoc fashion via individual function calls. In the following section we give an overview of the simple use case. For more on using each function see the [function documentation](xx). The core functions for both regression and classification are: [`mrIMLpredicts`](xx),
