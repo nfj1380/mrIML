@@ -1,12 +1,22 @@
 ---
-title: "A MrIML vignette: Ecological genomics using regression  "
+title: "Regression working example"
 author: "Nick Fountain-Jones, Gustavo Machado"
-date: "10 September 2020"
-output: html_document
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Regression working example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
-![](C:/Users/Nick FJ/Documents/MrIML_final/mrIML/Logo_mrIML.png){width=25%}
 
-## Introduction to mrIML 
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+<img src = "https://user-images.githubusercontent.com/33707823/88988817-531ad080-d31d-11ea-8d76-f1ad0506e405.png" width="200" height="200"/>
 
 MrIML is a R package allows users to generate and interpret multi-response models (i.e., joint species distribution models) leveraging advances in data science and machine learning. MrIML couples the tidymodel infrastructure developed by Max Kuhn and colleagues with model agnostic interpretable machine learning tools to gain insights into multiple response data such as. As such mrIML is flexible and easily extendable allowing users to construct everything from simple linear models to tree-based methods for each response using the same syntax and same way to compare predictive performance. In this vignette we will guide you through how to apply this package to ecological genomics problems using the regression functionality of the package. This data set comes from Fitzpatrick et al 2014 who were examining adaptive
 genetic variation in relation to geography and climate adaptation (current and future) in balsam poplar(Populus balsamifera). See Ecology Letters, (2014) doi: 10.1111/ele.12376. In this paper they used the similar gradient forests routine (see Ellis et al 2012 Ecology), and we show that MrIML can not only provide more flexible model choice and interpretive capabilities, but can derive new insights into the relationship between climate and genetic variation. Further, we show that linear models of each loci have slightly greater predictive performance. 
@@ -49,8 +59,7 @@ X <- GI5 #for this example we are going to focus on the adaptive SNPs in the GI5
 
 Performing the analysis is very similar to our classification example. Lets start with a constructing a linear model for this data set. We set Model 1 to a linear regression. See https://www.tidymodels.org/find/ for other regression model options Note that 'mode' must be regression and in MrIMLpredicts, model has to be set to 'regression'. 
 
-```{r, message = FALSE, warning = FALSE }
-
+```{r,  message = FALSE, warning = FALSE  }
 model1 <- #model used to generate yhat
   # specify that the model is a random forest
   linear_reg() %>%
@@ -67,18 +76,17 @@ yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='regress
 Model performance can be examined the same way as in the classification example, however the metrics are different. We provide root mean square error (rmse) and R2. You can see that the overall R2 is 0.13 but there is substantial variation across loci in predictive performance.
 
 ```{r}
-
-
 ModelPerf <- mrIMLperformance(yhats, model1, X=X, model='regression')
 ModelPerf[[1]] #predictive performance for individual responses. 
 ModelPerf[[2]]#overall average r2 
 
-p1 <- as.data.frame(ModelPerf[[1]]) #save as a datframe to compare to other models.
+p1 <- as.data.frame(ModelPerf[[1]])#save as a datframe to compare to other models.
+p1
 ```
 
 Lets compare the performance of linear models to that of random forests. Random forests is the computational engine in gradient forests.
 
-```{r, message = FALSE, warning = FALSE }
+```{r, message = FALSE, warning = FALSE}
 model1 <- 
   rand_forest(trees = 100, mode = "regression") %>% 
   set_engine("ranger", importance = c("impurity","impurity_corrected")) %>%
@@ -93,6 +101,7 @@ ModelPerf[[1]] #predictive performance for individual responses.
 ModelPerf[[2]]#overall average r2 
 
 p2 <- as.data.frame(ModelPerf[[1]])
+p2
 ```
 
 You can see that predictive performance is actually slightly less using random forests (overall R2 = 0.12) but for some loci random forests does better than our linear models and sometimes worse. Which to choose? Generally simpler models are preferred (the linear model in this case) but it depends on how important to think non-linear response are. In future versions of MrIML we will implement ensemble models that will overcome this issue. For the time-being we will have a look at variable importance for the random forest based model.
@@ -108,7 +117,16 @@ Cutoff reduces the number of individual SNP plots presented in the second plot a
 
 Now we can explore the model further my plotting the relationships between our SNPs and a feature in our set. Lets choose bio_1 (mean annual temperature) and plot the individual and global (average of all SNPs) partial dependency (PD) plots. 
 
-```{r}
+
+```{r include=FALSE}
+source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrFlashlight.R"))
+source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrProfileplots.R"))
+
+```
+
+
+```{r warning=FALSE}
+
 flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='regression')
 
 profileData_pd <- light_profile(flashlightObj, v = "bio_1") #partial dependencies
@@ -121,8 +139,8 @@ The first plot is a partial dependency for all SNPs that respond to mean annual 
 
 Lets compare the PDs to accumulated local effect plots that are less sensitive to correlations among features (see Molnar 2019).
 
-```{r}
-profileData_ale <- light_profile(flashlightObj, v = "bio_1", type = "ale") #acumulated local effects
+```{r,warning=FALSE}
+profileData_ale <- light_profile(flashlightObj, v = "bio_1", type = "ale") #accumulated local effects
 
 mrProfileplot(profileData_ale , sdthresh =0.01)
 ```

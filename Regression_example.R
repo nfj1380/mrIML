@@ -118,8 +118,6 @@ plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf,  cutoff= 0.4, plot.pca='no', model
 
 
 
-
-
 # can build a flaslight object for individual responses 
 
 fl <- mrFlashlight(yhats, X, Y, response = "multi", index=1, model='regression')
