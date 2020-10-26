@@ -114,7 +114,7 @@ VI <- mrVip(yhats, Y=Y)
 #not that GLMs in particular wont produce coefficents for features that are strongly colinear and will drop them from the model.
 #in this case group cov will have to be changed to reflect features included in the model. 
 
-plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf,  cutoff= 0.1, plot.pca='yes', model='regression')#note there are two plots here. PCA is hard to read with > 50 response varianbles
+plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf,  cutoff= 0.4, plot.pca='no', model='regression')#note there are two plots here. PCA is hard to read with > 50 response varianbles
 
 
 
@@ -140,10 +140,10 @@ str(fl)
 flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='regression')
 
 
-plot(light_scatter(flashlightObj, v = "bio_1", type = "predicted"))
+plot(light_scatter(flashlightObj, v = "bio_2", type = "predicted"))
 
-profileData_pd <- light_profile(flashlightObj, v = "bio_1") #partial dependencies
-profileData_ale <- light_profile(flashlightObj, v = "bio_1", type = "ale") #acumulated local effects
+profileData_pd <- light_profile(flashlightObj, v = "bio_2") #partial dependencies
+profileData_ale <- light_profile(flashlightObj, v = "bio_2", type = "ale") #acumulated local effects
 
 #Plot global ALE plot. This the plots the smoothed average ALE value. Have to remove responses that don't respond.
 
