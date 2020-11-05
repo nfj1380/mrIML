@@ -8,6 +8,7 @@ opengraph:
 output:
   github_document: default
   rmarkdown::html_vignette: default
+  css: extra.css
 vignette: |
   %\VignetteIndexEntry{mrIML}
   %\VignetteEngine{knitr::rmarkdown} 
@@ -206,9 +207,9 @@ Finally, we can assess how features interact overall to shape genetic change. Be
 
 ```{r message = FALSE, warning = FALSE}
 
-interactions <-mrInteractions(yhats, X, Y,  mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
+#interactions <-mrInteractions(yhats, X, Y,  mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
 
-mrPlot_interactions(interactions, X,Y, top_ranking = 5, top_response=5)
+#mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2)
 
 #save(interactions, file='Fitzpatrick2016interactions')
 

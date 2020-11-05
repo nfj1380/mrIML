@@ -24,7 +24,7 @@ genetic variation in relation to geography and climate adaptation (current and f
 
 We focus on the adaptive SNP loci from GIGANTEA-5 (GI5) gene that has known links to stem development, plant circadian clock and light perception pathway. The data is the proportion of individuals in that population with that SNP loci. 
 
-Lets load that data.
+### Lets load that data.
 
 ```{r load-packages, include=FALSE}
 
@@ -55,7 +55,7 @@ GI5 <- gfData[,grep("GI5",colnames(gfData))] # GIGANTEA-5 (GI5)
 X <- GI5 #for this example we are going to focus on the adaptive SNPs in the GI5 region.
 ```
 
-## Running the analyis
+### Running the analyis
 
 Performing the analysis is very similar to our classification example. Lets start with a constructing a linear model for this data set. We set Model 1 to a linear regression. See https://www.tidymodels.org/find/ for other regression model options Note that 'mode' must be regression and in MrIMLpredicts, model has to be set to 'regression'. 
 
@@ -150,9 +150,9 @@ The effect of mean annual temperature on SNP turnover is not as distinct in the 
 MrIML has easy to use functionality that can can quantify interactions between features. Note that this can take a while to compute.
 
 ```{r}
-interactions <-mrInteractions(yhats, X, Y,  model='regression') #this is computationally intensive so multicores are needed.
+#interactions <-mrInteractions(yhats, X, Y,  model='regression') #this is computationally intensive so multicores are needed.
 
-mrPlot_interactions(interactions, X,Y, top_ranking = 10, top_response=5) #can increase the number of interactions/SNPs ('responses') shown
+#mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2) #can increase the number of interactions/SNPs ('responses') shown
 
 #Make sure you save your results
 #save(interactions, 'Fitzpatrick2016interactions')
