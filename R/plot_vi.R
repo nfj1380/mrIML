@@ -149,8 +149,8 @@ readline(prompt="Press [enter] to plot individual variable importance summaries"
     trans <- as.data.frame(VI)
    # colnames(trans) <- n_features
     
-    combi <- bind_cols(ModelPerf[1], trans ) #%>% 
-      #na.omit() #nas mean the model didn't work properly remove. Should provide a warning perhaps?
+    combi <- bind_cols(ModelPerf[1], trans ) 
+      combi[is.na(combi)] <- -1 #nas mean the model didn't work properly remove. Should provide a warning perhaps?
     
     if (model=='classification'){
       
@@ -236,13 +236,18 @@ readline(prompt="Press [enter] to plot individual variable importance summaries"
           geom_label_repel(aes(label = rownames(trans)),
                            box.padding   = 0.35, 
                            point.padding = 0.5,
+                           label.size = 0.1,
                            segment.color = 'grey50') +
           theme_bw()
         #  geom_text(data = vscores, aes(x = PC1, y = PC2, label = rownames(vscores)), col = 'red')
         # geom_text(data = vscores, aes(x = PC1, y = PC2, label = rownames(vscores)), col = 'red')
         print(p3)
-        }
-        
+      }
+      #for 3D plots that are interactive.
+       #adapt <- c(rep('diag', 2), rep('gradient', 2), rep('habitat', 2), rep('neutral', 94) )
+      #uscores <- as.data.frame(cbind(uscores,adapt))
+      # p4 <- plotly::plot_ly(uscores, x=~PC1, y=~PC2, z=~PC3, color = ~adapt, colors = c('#BF382A', '#0C4B8E', '#1DF20D','#B9B930' )) %>% 
+        # plotly::add_markers()
    
        if(plot.pca=='no'){plotpc=0}
       }

@@ -20,7 +20,7 @@
 #'@export
 
 
-mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', parallel = TRUE) { 
+mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', parallel = TRUE, transformY='log') { 
   
   if(parallel==TRUE){
     
@@ -73,6 +73,7 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', p
       data_recipe <- training(data_split) %>%
         recipe(class ~., data= data_train) %>% #if downsampling is needed
         themis::step_downsample(class)
+      
     }
     
     if(balance_data == 'up'){
@@ -81,11 +82,22 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', p
         themis::step_rose(class) #ROSE works better on smaller data sets. SMOTE is an option too.
     }
     
-    
     if(balance_data == 'no'){ 
       data_recipe <- training(data_split) %>% #data imbalance not corrected. This has to be the option for regression problems
         recipe(class ~., data= data_train)
     }
+    if ( class(model1)[1] == 'logistic_reg'){
+      data_recipe %>% step_dummy(all_nominal(), -all_outcomes()) #adds dummy variables if needed to any feature that is a factor
+    }
+    
+    if ( class(model1)[1] == 'linear_reg'){
+      data_recipe %>% step_dummy(all_nominal(), -all_outcomes()) #adds dummy variables if needed to any feature that is a factor
+    }
+    
+    if ( transformY == 'log'){
+      data_recipe %>% step_log(all_numeric(), -all_outcomes()) #adds dummy variables if needed to any feature that is a factor
+    }
+    
     
     #optional recipe ingredients
     #step_corr(all_predictors()) %>% # removes all corrleated features

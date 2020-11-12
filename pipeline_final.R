@@ -143,10 +143,18 @@ FeaturesnoNA<-Features[complete.cases(Features), ];str(Features) #dropping NAs
 
 Y <- FeaturesnoNA #for simplicity
 
+#for lofistic regression
+prepY <- Y
+prepY$Sex <- as.factor(prepY$Sex ) #make factors
+prepY$Age <- as.factor(prepY$Age ); str(prepY)
+
+df2 <- cor(Y) #find correlations
+hc <-  findCorrelation(df2, cutoff=0.9) # put any value as a "cutoff". This is quite high
+hc <-  sort(hc)
 #for more efficent testing for interactions (more variables more interacting pairs)
-Y <- FeaturesnoNA[c(1:3)]
+#Y <- FeaturesnoNA[c(1:3)]
 #Optional: Filter rare/common SNPs or species. Retaining minor allelle frequncies >0.1 and removing common allelles (occur>0.9)
-fData <- filterRareCommon (Responsedata, lower=0.4, higher=0.7) 
+fData <- filterRareCommon (Responsedata, lower=0.25, higher=0.75) 
 X <- fData #for simplicity when comparing
 
 #that occur in less than 35% of individuals and > 75% of individuals
@@ -176,14 +184,6 @@ Y <- read.csv('simple_sims_env.csv')
 
 ###############################################################################
 #--------------------------------------------------------------------------------------------------------------------------------------
-#creating the models
-
-#-------------------------------------------------------------------
-#Pre-training data visualization- checks for long tall distributions
-#-------------------------------------------------------------------
-## GM add here
-
-
 
 #-------------------------------------------------------------------
 #Set up the model
@@ -219,7 +219,7 @@ boost_tree() %>%
 #parallell processing
 
 #models just using features/predictor variables.
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='classification', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set. For regression there no has to be selected.
+yhats <- mrIMLpredicts(X=X,Y=prepY, model1=model1, balance_data='no', model='classification', parallel = TRUE, transformY='log') ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set. For regression there no has to be selected.
 
 #-------------------------------------------------------------------
 # Visualization for model tunning and performance
@@ -228,9 +228,6 @@ yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='classif
 
 #we can now assess model performance from the best tuned model
  # MCC is useful (higher numbers = better fit)
-
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='classification', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set. For regression there no has to be selected.
-
 #save(yhats, file='rf_yhats')
 
 load('rf_model_sim')
@@ -249,7 +246,7 @@ save(modelPerfD, file = 'simRF_performance')
 ## GM add here
 
 #we can look at variable importance. Co-infection data only has one feature so not much use there.
-VI <- mrVip(yhats, Y=Y) 
+VI <- mrVip(yhats, Y=prepY) 
 #plot model similarity
 
 #plot variable importance
@@ -261,9 +258,11 @@ groupCov <- c(rep ("Host_characteristics", 1),rep("Urbanisation", 3), rep("Veget
 #not that GLMs in particular wont produce coefficents for features that are strongly colinear and will drop them from the model.
 #in this case group cov will have to be changed to reflect features included in the model. 
 
-plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0.6, plot.pca='no')#note there are two plots here. PCA is hard to read with > 50 response varianbles
+plot_vi(VI=VI,  X=X,Y=prepY, modelPerf=ModelPerf, cutoff= 0.6, plot.pca='no', model='classification')#note there are two plots here. PCA is hard to read with > 50 response varianbles
 
 #if you dont want/need to group covariates:
+
+plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0.6, plot.pca='yes', model='classification')#note there are two plots here. PCA is hard to read with > 50 response varianbles
 
 #First plot is overall importance, the second a pca showing responses with similar importance scores and the third is individual SNP models.
 #warning are about x axis labels so can ignore 
@@ -271,7 +270,9 @@ plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0.6, plot.pca='no')#note t
 
 # can build a flaslight object for individual responses 
 
-fl <- mrFlashlight(yhats, X, Y, response = "single", index=1, model='classification')
+fl <- mrFlashlight(yhats_rf, X[5], Y, response = "single", model='classification') #note that the index must match the X[]
+
+fl <- mrFlashlight(yhats, X[4], Y, response = "single",  model='classification') 
 
 plot(light_performance(fl), fill = "orange", rotate_x = TRUE) +
   
@@ -281,10 +282,29 @@ plot(light_performance(fl), fill = "orange", rotate_x = TRUE) +
 
 str(fl)
 
-#plot(light_breakdown(fl , new_obs = cbind(X, Y)[1, ]),by = X, v=Y) #prints all responses - need to fix but could be quite handy.
+p <- plot(light_ice(fl, v = 'Relatedness.PCO1', center = "first"))+
+  theme_bw()
 
-#int <- light_interaction(fl, pairwise=TRUE) #not working, but possible!
+  plot(light_profile(fl, v = "Relatedness.PCO1", stats = "quartiles", center = "mean"))
 
+eff <- light_effects(fl, v = "Relatedness.PCO1", stats = "quartiles")
+p <- plot(eff, rotate_x = FALSE)
+plot_counts(p, eff, fill = "blue", alpha = 0.2, width = 0.3)
+  
+
+plot(light_ice(fl, v = 'Relatedness.PCO1', center = "first"))+
+  theme_bw()
+
+plot(light_global_surrogate(fl))
+
+impIndiv <- light_importance(fl)
+plot(impIndiv )
+
+plot(light_breakdown(fl , new_obs = cbind(X[4], Y)[1, ])) 
+
+
+int <- light_interaction(fl, pairwise=TRUE) 
++
 #------------------------------------------------------------
 #Multiple response
 
@@ -293,30 +313,28 @@ flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='classifica
 #plots
 
 
-plot(light_profile(flashlightObj, v = "simple", type = "ale"))
-plot(light_profile(mfl, v = "bio_1", type = "ale"))
 #this will plot all responses. See mrALEplots below
 
 #another way to assess performance for each response. Lots of response make it hard to read
-plot(light_performance(multifl), rotate_x = TRUE, fill = "orange") +
+plot(light_performance(flashlightObj), rotate_x = TRUE, fill = "orange") +
   
   labs(x = element_blank())
 
 
 #plot prediction scatter for all responses. Gets busy with 
-plot(light_scatter(flashlightObj, v = "Grassland", type = "predicted"))
+plot(light_scatter(flashlightObj, v = "Gras", type = "predicted"))
 
 #plots everything on one plot (partial dependency, ALE, scatter)
-plot(light_effects(flashlightObj, v = "Grassland"), use = "all")
+plot(light_effects(flashlightObj, v = "Forest"), use = "all")
 
 
-profileData_pd <- light_profile(flashlightObj, v = "simple") #partial dependencies
-profileData_ale <- light_profile(flashlightObj, v = "simple", type = "ale") #acumulated local effects
+profileData_pd <- light_profile(flashlightObj, v = "Distance") #partial dependencies
+profileData_ale <- light_profile(flashlightObj, v = "Distance", type = "ale") #acumulated local effects
 
 #Plot global ALE plot. This the plots the smoothed average ALE value. Have to remove responses that don't respond.
 
-mrProfileplot(profileData_pd , sdthresh =0.07)
-mrProfileplot(profileData_ale , sdthresh =0.07)
+mrProfileplot(profileData_pd , sdthresh =0.025)
+mrProfileplot(profileData_ale , sdthresh =0.01)
 
 
 #-------------------------------------------------------------------------------------------------
@@ -328,6 +346,8 @@ interactions <-mrInteractions(yhats, X, Y,  mod='classification') #this is compu
 mrPlot_interactions(interactions, X,Y, top_ranking = 5, top_response=5)
 
 save(interactions, file='Fitzpatrick2016interactions')
+
+load()
 
 #-------------------------------------------------------------------------------------------------
 
