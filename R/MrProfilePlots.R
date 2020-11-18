@@ -21,7 +21,6 @@ mrProfileplot <- function(profileData , sdthresh =0.05){ #from mrFlashlight
   
   Feature <- names(b[1])
   
-  
   #select only SNPs that are responding to this featured
   
   std <- b %>%  group_by(label) %>% 
@@ -42,22 +41,34 @@ mrProfileplot <- function(profileData , sdthresh =0.05){ #from mrFlashlight
   #-----------------------------------------------  
 #calculate global ALE
   
+  #if(is.factor(b[1])==FALSE){
   
-  b[1] <- apply(b[1], 2, as.factor)
+  if(lapply(b[1], is.factor)==FALSE){
+     b[1] <- apply(b[1], 2, as.factor)
   
-  sum <- b %>%  group_by(b[1]) %>% 
-    summarise(avgALE = mean(value))
+    sum <- b %>%  group_by(b[1]) %>% 
+          summarise(avgALE = mean(value))
 
-   sum[1] <- sapply(sum[1] , function(x) as.numeric(as.character(x)))
+      sum[1] <- sapply(sum[1] , function(x) as.numeric(as.character(x)))
    
-   sum$avgALE <- as.numeric(sum$avgALE)
+      sum$avgALE <- as.numeric(sum$avgALE)
    
    #names(sum[2]) <- c('Average_effect')
     
-   GlobalPD <- ggplot(sum, aes_string(Feature,'avgALE' ))+
+      GlobalPD <- ggplot(sum, aes_string(Feature,'avgALE' ))+
      theme_bw()+
      geom_smooth(method='loess')+
      ylab("Average effect")
-   
+  }
+  
+  if(lapply(b[1], is.factor)==TRUE){
+    
+    GlobalPD <- ggplot(b, aes_string(Feature,'value' ))+
+      theme_bw()+
+      geom_boxplot(notch=TRUE)
+    
+  }
    print( GlobalPD)
-    }
+   
+  }
+  

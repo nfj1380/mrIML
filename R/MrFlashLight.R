@@ -5,7 +5,7 @@
 #'@param Y  A \code{dataframe} #is the feature dataset
 #'@param response \code{character} 'single' selects one response, 'multi' selects all responses
 #'@param index \code{numeric} selects which response to create a flaslight object for. Only used when 'single' is selcted. The order is the same as 'X'.
-#'
+#'@param predict_function  \code{function}  user specified predict function
 #'
 #'@details The aim of this function is to enable users to ustilize interpretable machine learning methods
 #'to understand their multi-response and single response models
@@ -24,7 +24,7 @@
 #' flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi")
 #' @export 
 
-mrFlashlight <- function(yhats, X, Y, response = "multi", index = 1, model = "regression") {
+mrFlashlight <- function(yhats, X, Y, response = "multi", index = 1, model = "regression", predict_function=NULL) {
   
   if (model == "classification") {
     
@@ -32,20 +32,26 @@ mrFlashlight <- function(yhats, X, Y, response = "multi", index = 1, model = "re
     
     # Prediction function
     
+    if(is.null(predict_function)){
+      
     pred_fun <- function(m, dat) {
       
       predict(
         
-        m,
+        m, dat[, colnames(Y), drop = FALSE],
         
-        data.matrix(dat[, colnames(Y), drop = FALSE]),
+        #data.matrix(dat[, colnames(Y), drop = FALSE]),
         
         type = "prob"
         
       )[[".pred_1"]]
       
     }
-    
+    }
+    if (!is.null(predict_function)){
+      
+      pred_fun <- predict_function
+    }
     
     
     # List of metrics
@@ -128,7 +134,7 @@ mrFlashlight <- function(yhats, X, Y, response = "multi", index = 1, model = "re
     
     pred_fun <- function(m, dat) {
       
-      predict(m, data.matrix(dat[, colnames(Y), drop = FALSE]))[[".pred"]]
+      predict(m, dat[, colnames(Y), drop = FALSE])[[".pred"]]
       
     }
     
