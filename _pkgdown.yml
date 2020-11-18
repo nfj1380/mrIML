@@ -50,10 +50,10 @@ navbar:
         href: articles/Vignette_LandscapeGenetics.html
       - text: Regression working example
         href: articles/Vignette_regression.html
-        
-figures:
-  fig.width: 12
-  fig.height: 12
+              
+      figures:
+        fig.width: 12
+        fig.height: 12
   
 reference:
 - title: All functions
