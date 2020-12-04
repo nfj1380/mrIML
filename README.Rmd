@@ -88,19 +88,14 @@ plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes') #the cu
 
 ```
 
-
-
-```{r include=FALSE}
-source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrFlashlight.R"))
-source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrProfileplots.R"))
-
-````
-
 ## Effect of a feature on genetic change
 
 We also wrap some flashlight functionality to visualize the marginal (i.e. partial dependencies) or conditional (accumulated local effects) effect of a feature on genetic change. Partial dependencies take longer to calculate and are more sensitive to correlated features
 
-```{r, message = FALSE, warning = FALSE}
+
+```{r include=FALSE}
+source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrFlashlight.R")) #why is this here?
+source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrProfileplots.R"))
 
 flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='classification')
 

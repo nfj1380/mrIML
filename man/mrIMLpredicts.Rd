@@ -10,7 +10,8 @@ mrIMLpredicts(
   model1,
   balance_data = "no",
   model = "regression",
-  parallel = TRUE
+  parallel = TRUE,
+  transformY = "log"
 )
 }
 \arguments{
