@@ -1,0 +1,8 @@
+pandoc: 2.7.3
+pkgdown: 1.6.1
+pkgdown_sha: ~
+articles:
+  Vignette_LandscapeGenetics: Vignette_LandscapeGenetics.html
+  Vignette_regression: Vignette_regression.html
+last_built: 2020-12-11T01:47Z
+
