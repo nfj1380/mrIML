@@ -39,11 +39,11 @@ devtools::install_github('nfj1380/mrIML')
 **mrIML** is designed to be used with a single function call or to be
 used in an ad-hoc fashion via individual function calls. In the
 following section we give an overview of the simple use case. For more
-on using each function see the [function documentation](xx). The core
+on using each function see the [function documentation](https://nfj1380.github.io/mrIML/reference/index.html). The core
 functions for both regression and classification are:
-[`mrIMLpredicts`](xx), [`mrIMLperformance`](xx), and
-[`mrInteractions`](xx),for plotting and visualization [`mrVip`](xx),
-[`mrFlashlight`](xx), and[`plot_vi`](xx). Estimating the interactions
+[`mrIMLpredicts`](https://nfj1380.github.io/mrIML/reference/mrIMLpredicts.html), [`mrIMLperformance`](https://nfj1380.github.io/mrIML/reference/mrIMLperformance.html), and
+[`mrInteractions`](https://nfj1380.github.io/mrIML/reference/mrInteractions.html),for plotting and visualization [`mrVip`](https://nfj1380.github.io/mrIML/reference/mrVip.html),
+[`mrFlashlight`](https://nfj1380.github.io/mrIML/reference/mrFlashlight.html), and[`plot_vi`](https://nfj1380.github.io/mrIML/reference/plot_vi.html). Estimating the interactions
 alone can be substantially computationally demanding depending on the
 number of outcomes you want to test. The first step to using the package
 is to load it as follows.
@@ -51,7 +51,7 @@ is to load it as follows.
 ``` r
 library(mrIML)
 
-#other package we need:
+#other package needed:
 library(vip); library(tidymodels); library(randomForest);  library(caret); library(gbm);
 library(tidyverse);library(parallel); library(doParallel); library(themis); library(viridis);
 library(janitor); library(hrbrthemes); library(xgboost); library(vegan);library(flashlight);
@@ -66,13 +66,11 @@ Now all the data is loaded and ready to go we can formulate the model using tidy
 ```r 
 model1 <- 
   rand_forest(trees = 100, mode = "classification") %>% #100 trees are set for brevity
-  # select the engine/package that underlies the model
-  set_engine("ranger", importance = c("impurity","impurity_corrected")) %>%
-  # choose either the continuous regression or binary classification mode
-  set_mode("classification")
+  set_engine("ranger", importance = c("impurity","impurity_corrected")) %>%# select the engine/package that underlies the model
+  set_mode("classification")# choose either the continuous "regression" or binary "classification" mode
 ```
  
-### [mrIMLpredicts]
+### [mrIMLpredicts](https://nfj1380.github.io/mrIML/reference/mrIMLpredicts.html)
 
 This function represents the core functionality of the package and
 includes results reporting, plotting and optional saving.  It requires a
@@ -112,14 +110,9 @@ VI <- mrVip(yhats, Y=Y)
 plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes') #the cutoff reduces the number of individual models printed in the second plot. 
 
 ```
+<img src="docs/articles/Vignette_regression_files/figure-html/unnamed-chunk-4-1.png"/>
 
-
-
-```r 
-source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrFlashlight.R"))
-source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrProfileplots.R"))
-
-````
+![](mrIML/docs/articles/Vignette_regression_files/figure-html/unnamed-chunk-4-1.png.png)<!-- -->
 
 ## Effect of a feature on genetic change
 

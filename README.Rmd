@@ -31,7 +31,7 @@ of outcomes you want to test. The first step to using the package is to load it 
 
 ```{r, message = FALSE}
 library(mrIML)
-#other package we need:
+#other package needed:
 library(vip); library(tidymodels); library(randomForest);  library(caret); library(gbm);
 library(tidyverse);library(parallel); library(doParallel); library(themis); library(viridis);
 library(janitor); library(hrbrthemes); library(xgboost); library(vegan);library(flashlight);
@@ -46,10 +46,8 @@ Now all the data is loaded and ready to go we can formulate the model using tidy
 ```{r }
 model1 <- 
   rand_forest(trees = 100, mode = "classification") %>% #100 trees are set for brevity
-  # select the engine/package that underlies the model
-  set_engine("ranger", importance = c("impurity","impurity_corrected")) %>%
-  # choose either the continuous regression or binary classification mode
-  set_mode("classification")
+  set_engine("ranger", importance = c("impurity","impurity_corrected")) %>%# select the engine/package that underlies the model
+  set_mode("classification")# choose either the continuous "regression" or binary "classification" mode
 ```
  
 ### [mrIMLpredicts]
