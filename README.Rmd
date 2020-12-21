@@ -95,6 +95,9 @@ We also wrap some flashlight functionality to visualize the marginal (i.e. parti
 source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrFlashlight.R")) #why is this here?
 source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrProfileplots.R"))
 
+```
+
+```{r message = FALSE, warning = FALSE}
 flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='classification')
 
 #plot prediction scatter for all responses. Gets busy with 

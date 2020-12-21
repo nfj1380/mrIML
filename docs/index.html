@@ -97,9 +97,8 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="mriml-multivariatemulti-responseinterpretable-machine-learning" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#mriml-multivariatemulti-responseinterpretable-machine-learning" class="anchor"></a>mrIML: Multivariate–multi-response–interpretable machine learning</h1></div>
+
+<p>mrIML: Multivariate–multi-response–interpretable machine learning</p>
 <p>Author: <strong>Nick Fountain-Jones</strong> -affiliation: <strong>University of Tasmania</strong></p>
 <p>Author: <strong>Gustavo Machado</strong> -affiliation: <strong>North Carolina State University</strong> -Lab page: <a href="https://gustavoetal.org/" class="uri">https://gustavoetal.org/</a></p>
 <p><img src="https://user-images.githubusercontent.com/33707823/88988817-531ad080-d31d-11ea-8d76-f1ad0506e405.png" width="200" height="200"></p>
@@ -119,7 +118,7 @@
 <a href="#quick-start" class="anchor"></a>Quick start</h2>
 <p><strong>mrIML</strong> is designed to be used with a single function call or to be used in an ad-hoc fashion via individual function calls. In the following section we give an overview of the simple use case. For more on using each function see the <a href="https://nfj1380.github.io/mrIML/reference/index.html">function documentation</a>. The core functions for both regression and classification are: <a href="https://nfj1380.github.io/mrIML/reference/mrIMLpredicts.html"><code>mrIMLpredicts</code></a>, <a href="https://nfj1380.github.io/mrIML/reference/mrIMLperformance.html"><code>mrIMLperformance</code></a>, and <a href="https://nfj1380.github.io/mrIML/reference/mrInteractions.html"><code>mrInteractions</code></a>,for plotting and visualization <a href="https://nfj1380.github.io/mrIML/reference/mrVip.html"><code>mrVip</code></a>, <a href="https://nfj1380.github.io/mrIML/reference/mrFlashlight.html"><code>mrFlashlight</code></a>, and<a href="https://nfj1380.github.io/mrIML/reference/plot_vi.html"><code>plot_vi</code></a>. Estimating the interactions alone can be substantially computationally demanding depending on the number of outcomes you want to test. The first step to using the package is to load it as follows.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://nfj1380.github.io/mrIML/index.html">mrIML</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">mrIML</span><span class="op">)</span>
 
 <span class="co">#other package needed:</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/koalaverse/vip/">vip</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidymodels.tidymodels.org">tidymodels</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/">randomForest</a></span><span class="op">)</span>;  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/topepo/caret/">caret</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/gbm-developers/gbm">gbm</a></span><span class="op">)</span>;
@@ -141,7 +140,7 @@
 <a href="#mrimlpredicts" class="anchor"></a><a href="https://nfj1380.github.io/mrIML/reference/mrIMLpredicts.html">mrIMLpredicts</a>
 </h3>
 <p>This function represents the core functionality of the package and includes results reporting, plotting and optional saving. It requires a data frame of X the loci or snip data for exampel and Y represented by the covariates</p>
-<p>Load example data (cite) data from <a href="https://nfj1380.github.io/mrIML/index.html">mrIML</a>.</p>
+<p>Load example data (cite) data from <code>{mrIML}</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>data &lt;-<span class="st"> </span>gfData[<span class="dv">1</span><span class="op">:</span><span class="dv">80</span>]</span>
 <span id="cb4-2"><a href="#cb4-2"></a><span class="kw">head</span>(data)</span>
 <span id="cb4-3"><a href="#cb4-3"></a>        x     y bio_<span class="dv">1</span> bio_<span class="dv">10</span> bio_<span class="dv">15</span> bio_<span class="dv">18</span> bio_<span class="dv">2</span> bio_<span class="dv">7</span> elevation     MEM<span class="fl">.1</span>      MEM<span class="fl">.2</span>      MEM<span class="fl">.3</span>       MEM<span class="fl">.4</span></span>
@@ -169,8 +168,7 @@
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">VI</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrVip.html">mrVip</a></span><span class="op">(</span><span class="va">yhats</span>, Y<span class="op">=</span><span class="va">Y</span><span class="op">)</span> 
 <span class="fu"><a href="reference/plot_vi.html">plot_vi</a></span><span class="op">(</span>VI<span class="op">=</span><span class="va">VI</span>,  X<span class="op">=</span><span class="va">X</span>,Y<span class="op">=</span><span class="va">Y</span>, modelPerf<span class="op">=</span><span class="va">ModelPerf</span>, cutoff<span class="op">=</span> <span class="fl">0</span>, plot.pca<span class="op">=</span><span class="st">'yes'</span><span class="op">)</span> <span class="co">#the cutoff reduces the number of individual models printed in the second plot. </span></code></pre></div>
-<p><img src="docs/articles/Vignette_regression_files/figure-html/unnamed-chunk-4-1.png"></p>
-<p><img src="mrIML/docs/articles/Vignette_regression_files/figure-html/unnamed-chunk-4-1.png.png"><!-- --></p>
+<p><img src="reference/figures/fig1.png" align="center" style="border: none; float: center;" width="800px"></p>
 </div>
 <div id="effect-of-a-feature-on-genetic-change" class="section level2">
 <h2 class="hasAnchor">
@@ -213,7 +211,7 @@
 <p>Fitzpatrick, M.C. &amp; Keller, S.R. (2015) Ecological genomics meets community-level modelling of biodiversity: mapping the genomic landscape of current and future environmental adaptation. Ecology Letters 18, 1–16.</p>
 <p>Ellis, N., Smith, S.J. and Pitcher, C.R. (2012), Gradient forests: calculating importance gradients on physical predictors. Ecology, 93: 156-168. <a href="doi:10.1890/11-0252.1" class="uri">doi:10.1890/11-0252.1</a></p>
 </div>
-</div>
+
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

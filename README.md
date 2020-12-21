@@ -1,5 +1,6 @@
+
 mrIML: Multivariate--multi-response--interpretable machine learning
-================
+
 Author: **Nick Fountain-Jones**
   -affiliation: **University of Tasmania**
   
@@ -110,9 +111,8 @@ VI <- mrVip(yhats, Y=Y)
 plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes') #the cutoff reduces the number of individual models printed in the second plot. 
 
 ```
-<img src="docs/articles/Vignette_regression_files/figure-html/unnamed-chunk-4-1.png"/>
+<img src="man/figures/fig1.png" align="center" style = "border: none; float: center;" width = "800px">
 
-![](mrIML/docs/articles/Vignette_regression_files/figure-html/unnamed-chunk-4-1.png.png)<!-- -->
 
 ## Effect of a feature on genetic change
 
