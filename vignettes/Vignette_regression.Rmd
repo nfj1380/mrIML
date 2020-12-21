@@ -80,8 +80,7 @@ ModelPerf <- mrIMLperformance(yhats, model1, X=X, model='regression')
 ModelPerf[[1]] #predictive performance for individual responses. 
 ModelPerf[[2]]#overall average r2 
 
-p1 <- as.data.frame(ModelPerf[[1]])#save as a datframe to compare to other models.
-p1
+p1 <- as.data.frame(ModelPerf[[1]])#save as a dataframe to compare to other models.
 ```
 
 Lets compare the performance of linear models to that of random forests. Random forests is the computational engine in gradient forests.
@@ -101,7 +100,6 @@ ModelPerf[[1]] #predictive performance for individual responses.
 ModelPerf[[2]]#overall average r2 
 
 p2 <- as.data.frame(ModelPerf[[1]])
-p2
 ```
 
 You can see that predictive performance is actually slightly less using random forests (overall R2 = 0.12) but for some loci random forests does better than our linear models and sometimes worse. Which to choose? Generally simpler models are preferred (the linear model in this case) but it depends on how important to think non-linear response are. In future versions of MrIML we will implement ensemble models that will overcome this issue. For the time-being we will have a look at variable importance for the random forest based model.
