@@ -121,7 +121,7 @@ It takes a couple of minutes to run on a laptop and there are warnings that you 
 
 ```{r, message = FALSE, warning = FALSE}
 
-ModelPerf <- mrIMLperformance(yhats, model1, X=X) 
+ModelPerf <- mrIMLperformance(yhats, model1, X=X,  model='classification') 
 ModelPerf[[1]] #predictive performance for individual responses 
 ModelPerf[[2]]#overall predictive performance
 ```
@@ -144,7 +144,7 @@ You can see that the random forests model outperforms the logistic regression in
 
 ```{r message = FALSE, warning = FALSE}
 VI <- mrVip(yhats, Y=Y) 
-plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes') #the cutoff reduces the number of individual models printed in the second plot. 
+plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes',  model='classification') #the cutoff reduces the number of individual models printed in the second plot. 
 
 ```
 
