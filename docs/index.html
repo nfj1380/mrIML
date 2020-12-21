@@ -72,6 +72,12 @@
 <li>
   <a href="news/index.html">Changelog</a>
 </li>
+<li>
+  <a href="https://github.com/nfj1380/mrIML/">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right"></ul>
 <form class="navbar-form navbar-right hidden-xs hidden-sm" role="search">
@@ -91,9 +97,8 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="mriml-multivariatemulti-responseinterpretable-machine-learning" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#mriml-multivariatemulti-responseinterpretable-machine-learning" class="anchor"></a>mrIML: Multivariate–multi-response–interpretable machine learning</h1></div>
+
+<p>mrIML: Multivariate–multi-response–interpretable machine learning</p>
 <p>Author: <strong>Nick Fountain-Jones</strong> -affiliation: <strong>University of Tasmania</strong></p>
 <p>Author: <strong>Gustavo Machado</strong> -affiliation: <strong>North Carolina State University</strong> -Lab page: <a href="https://gustavoetal.org/" class="uri">https://gustavoetal.org/</a></p>
 <p><img src="https://user-images.githubusercontent.com/33707823/88988817-531ad080-d31d-11ea-8d76-f1ad0506e405.png" width="200" height="200"></p>
@@ -111,11 +116,11 @@
 <div id="quick-start" class="section level2">
 <h2 class="hasAnchor">
 <a href="#quick-start" class="anchor"></a>Quick start</h2>
-<p><strong>mrIML</strong> is designed to be used with a single function call or to be used in an ad-hoc fashion via individual function calls. In the following section we give an overview of the simple use case. For more on using each function see the <a href="xx">function documentation</a>. The core functions for both regression and classification are: <a href="xx"><code>mrIMLpredicts</code></a>, <a href="xx"><code>mrIMLperformance</code></a>, and <a href="xx"><code>mrInteractions</code></a>,for plotting and visualization <a href="xx"><code>mrVip</code></a>, <a href="xx"><code>mrFlashlight</code></a>, and<a href="xx"><code>plot_vi</code></a>. Estimating the interactions alone can be substantially computationally demanding depending on the number of outcomes you want to test. The first step to using the package is to load it as follows.</p>
+<p><strong>mrIML</strong> is designed to be used with a single function call or to be used in an ad-hoc fashion via individual function calls. In the following section we give an overview of the simple use case. For more on using each function see the <a href="https://nfj1380.github.io/mrIML/reference/index.html">function documentation</a>. The core functions for both regression and classification are: <a href="https://nfj1380.github.io/mrIML/reference/mrIMLpredicts.html"><code>mrIMLpredicts</code></a>, <a href="https://nfj1380.github.io/mrIML/reference/mrIMLperformance.html"><code>mrIMLperformance</code></a>, and <a href="https://nfj1380.github.io/mrIML/reference/mrInteractions.html"><code>mrInteractions</code></a>,for plotting and visualization <a href="https://nfj1380.github.io/mrIML/reference/mrVip.html"><code>mrVip</code></a>, <a href="https://nfj1380.github.io/mrIML/reference/mrFlashlight.html"><code>mrFlashlight</code></a>, and<a href="https://nfj1380.github.io/mrIML/reference/plot_vi.html"><code>plot_vi</code></a>. Estimating the interactions alone can be substantially computationally demanding depending on the number of outcomes you want to test. The first step to using the package is to load it as follows.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">mrIML</span><span class="op">)</span>
 
-<span class="co">#other package we need:</span>
+<span class="co">#other package needed:</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/koalaverse/vip/">vip</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidymodels.tidymodels.org">tidymodels</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/">randomForest</a></span><span class="op">)</span>;  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/topepo/caret/">caret</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/gbm-developers/gbm">gbm</a></span><span class="op">)</span>;
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>;<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">parallel</span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">doParallel</span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/themis">themis</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sjmgarnier/viridis">viridis</a></span><span class="op">)</span>;
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sfirke/janitor">janitor</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/hrbrmstr/hrbrthemes">hrbrthemes</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dmlc/xgboost">xgboost</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://cran.r-project.org">vegan</a></span><span class="op">)</span>;<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mayer79/flashlight">flashlight</a></span><span class="op">)</span>;
@@ -128,13 +133,12 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">model1</span> <span class="op">&lt;-</span> 
   <span class="fu"><a href="https://parsnip.tidymodels.org/reference/rand_forest.html">rand_forest</a></span><span class="op">(</span>trees <span class="op">=</span> <span class="fl">100</span>, mode <span class="op">=</span> <span class="st">"classification"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="co">#100 trees are set for brevity</span>
-  <span class="co"># select the engine/package that underlies the model</span>
-  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_engine.html">set_engine</a></span><span class="op">(</span><span class="st">"ranger"</span>, importance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"impurity"</span>,<span class="st">"impurity_corrected"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="co"># choose either the continuous regression or binary classification mode</span>
-  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_args.html">set_mode</a></span><span class="op">(</span><span class="st">"classification"</span><span class="op">)</span></code></pre></div>
+  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_engine.html">set_engine</a></span><span class="op">(</span><span class="st">"ranger"</span>, importance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"impurity"</span>,<span class="st">"impurity_corrected"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span><span class="co"># select the engine/package that underlies the model</span>
+  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_args.html">set_mode</a></span><span class="op">(</span><span class="st">"classification"</span><span class="op">)</span><span class="co"># choose either the continuous "regression" or binary "classification" mode</span></code></pre></div>
 <div id="mrimlpredicts" class="section level3">
 <h3 class="hasAnchor">
-<a href="#mrimlpredicts" class="anchor"></a>[mrIMLpredicts]</h3>
+<a href="#mrimlpredicts" class="anchor"></a><a href="https://nfj1380.github.io/mrIML/reference/mrIMLpredicts.html">mrIMLpredicts</a>
+</h3>
 <p>This function represents the core functionality of the package and includes results reporting, plotting and optional saving. It requires a data frame of X the loci or snip data for exampel and Y represented by the covariates</p>
 <p>Load example data (cite) data from <code>{mrIML}</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>data &lt;-<span class="st"> </span>gfData[<span class="dv">1</span><span class="op">:</span><span class="dv">80</span>]</span>
@@ -164,15 +168,13 @@
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">VI</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrVip.html">mrVip</a></span><span class="op">(</span><span class="va">yhats</span>, Y<span class="op">=</span><span class="va">Y</span><span class="op">)</span> 
 <span class="fu"><a href="reference/plot_vi.html">plot_vi</a></span><span class="op">(</span>VI<span class="op">=</span><span class="va">VI</span>,  X<span class="op">=</span><span class="va">X</span>,Y<span class="op">=</span><span class="va">Y</span>, modelPerf<span class="op">=</span><span class="va">ModelPerf</span>, cutoff<span class="op">=</span> <span class="fl">0</span>, plot.pca<span class="op">=</span><span class="st">'yes'</span><span class="op">)</span> <span class="co">#the cutoff reduces the number of individual models printed in the second plot. </span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="op">(</span><span class="st">"C:/Users/gmachad/Desktop/mrIML_package/R/mrFlashlight.R"</span><span class="op">)</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="op">(</span><span class="st">"C:/Users/gmachad/Desktop/mrIML_package/R/mrProfileplots.R"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p><img src="reference/figures/fig1.png" align="center" style="border: none; float: center;" width="800px"></p>
 </div>
 <div id="effect-of-a-feature-on-genetic-change" class="section level2">
 <h2 class="hasAnchor">
 <a href="#effect-of-a-feature-on-genetic-change" class="anchor"></a>Effect of a feature on genetic change</h2>
 <p>We also wrap some flashlight functionality to visualize the marginal (i.e. partial dependencies) or conditional (accumulated local effects) effect of a feature on genetic change. Partial dependencies take longer to calculate and are more sensitive to correlated features</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="va">flashlightObj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrFlashlight.html">mrFlashlight</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">X</span>, <span class="va">Y</span>, response <span class="op">=</span> <span class="st">"multi"</span>, model<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span>
 
@@ -196,7 +198,7 @@
 <h2 class="hasAnchor">
 <a href="#features-interact" class="anchor"></a>Features interact</h2>
 <p>Finally, we can assess how features interact overall to shape genetic change. Be warned this is memory intensive. Future updates to this package will enable users to visualize these interactions and explore them in more detail using 2D ALE plots for example.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="va">interactions</span> <span class="op">&lt;-</span><span class="fu"><a href="reference/mrInteractions.html">mrInteractions</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">X</span>, <span class="va">Y</span>,  mod<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span> <span class="co">#this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things</span>
 
@@ -209,11 +211,20 @@
 <p>Fitzpatrick, M.C. &amp; Keller, S.R. (2015) Ecological genomics meets community-level modelling of biodiversity: mapping the genomic landscape of current and future environmental adaptation. Ecology Letters 18, 1–16.</p>
 <p>Ellis, N., Smith, S.J. and Pitcher, C.R. (2012), Gradient forests: calculating importance gradients on physical predictors. Ecology, 93: 156-168. <a href="doi:10.1890/11-0252.1" class="uri">doi:10.1890/11-0252.1</a></p>
 </div>
-</div>
+
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <div class="license">
+    <div class="links">
+<h2>Links</h2>
+<ul class="list-unstyled">
+<li>Browse source code at <br><a href="https://github.com/nfj1380/mrIML/">https://​github.com/​nfj1380/​mrIML/​</a>
+</li>
+<li>Report a bug at <br><a href="https://github.com/nfj1380/mrIML/issues">https://​github.com/​nfj1380/​mrIML/​issues</a>
+</li>
+</ul>
+</div>
+<div class="license">
 <h2>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
