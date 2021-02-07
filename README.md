@@ -10,7 +10,6 @@ Author: **Gustavo Machado**
   
 <img src = "https://user-images.githubusercontent.com/33707823/88988817-531ad080-d31d-11ea-8d76-f1ad0506e405.png" width="200" height="200"/>
 
-#![GitHub all releases](https://img.shields.io/github/downloads/nfj1380/mrIML/total?logo=Github&logoColor=%23ff0000&style=flat-square)
 ![GitHub R package version](https://img.shields.io/github/r-package/v/nfj1380/mrIML?logo=github&logoColor=%2300ff37&style=flat-square)
 ![GitHub contributors](https://img.shields.io/github/contributors/nfj1380/mrIML?style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/nfj1380/mrIML?style=flat-square)
