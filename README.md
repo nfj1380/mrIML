@@ -6,7 +6,7 @@ Author: **Nick Fountain-Jones**
   
 Author: **Gustavo Machado**
   -affiliation: **North Carolina State University**
-  -Lab page: https://gustavoetal.org/
+  -Lab page: https://machado-lab.github.io/
   
 <img src = "https://user-images.githubusercontent.com/33707823/88988817-531ad080-d31d-11ea-8d76-f1ad0506e405.png" width="200" height="200"/>
 
