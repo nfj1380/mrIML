@@ -66,7 +66,7 @@ FeaturesnoNA<-Features[complete.cases(Features), ]
 
 Y <- FeaturesnoNA #for simplicity
 
-#for more efficent testing for interactions (more variables more interacting pairs)
+#for more efficient testing for interactions (more variables more interacting pairs)
 Y <- FeaturesnoNA[c(1:3)] #three features only
 
 ```
@@ -206,9 +206,9 @@ Finally, we can assess how features interact overall to shape genetic change. Be
 
 ```{r message = FALSE, warning = FALSE}
 
-#interactions <-mrInteractions(yhats, X, Y,  mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
+interactions <-mrInteractions(yhats, X, Y,  mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
 
-#mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2)
+mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2)
 
 #save(interactions, file='Fitzpatrick2016interactions')
 

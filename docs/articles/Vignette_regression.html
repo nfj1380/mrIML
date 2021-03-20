@@ -101,7 +101,7 @@
       <h1 data-toc-skip>Regression working example</h1>
                         <h4 class="author">Nick Fountain-Jones, Gustavo Machado</h4>
             
-            <h4 class="date">2020-12-21</h4>
+            <h4 class="date">2021-03-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/nfj1380/mrIML/blob/master/vignettes/Vignette_regression.Rmd"><code>vignettes/Vignette_regression.Rmd</code></a></small>
       <div class="hidden name"><code>Vignette_regression.Rmd</code></div>
@@ -161,29 +161,7 @@
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="co">#overall average r2 </span>
 <span class="co">#&gt; [1] 0.1314054</span>
 
-<span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="co">#save as a datframe to compare to other models.</span>
-<span class="va">p1</span>
-<span class="co">#&gt;              response model_name               rmse            rsquared</span>
-<span class="co">#&gt; 1   CANDIDATE_GI5_108 linear_reg 0.0432206113708231                &lt;NA&gt;</span>
-<span class="co">#&gt; 2   CANDIDATE_GI5_198 linear_reg  0.159934366332159    0.43526433377395</span>
-<span class="co">#&gt; 3   CANDIDATE_GI5_268 linear_reg 0.0702869521141183   0.462342634908029</span>
-<span class="co">#&gt; 4    CANDIDATE_GI5_92 linear_reg  0.141230770443253  0.0812319088713004</span>
-<span class="co">#&gt; 5  CANDIDATE_GI5_1950 linear_reg  0.160589679648764   0.477426651593085</span>
-<span class="co">#&gt; 6  CANDIDATE_GI5_2382 linear_reg  0.106213429063814  0.0840249322969783</span>
-<span class="co">#&gt; 7  CANDIDATE_GI5_2405 linear_reg  0.161871549910205   0.451617738052215</span>
-<span class="co">#&gt; 8  CANDIDATE_GI5_2612 linear_reg  0.175469642762451   0.339409289873085</span>
-<span class="co">#&gt; 9  CANDIDATE_GI5_2641 linear_reg 0.0999693928474619   0.217866921006445</span>
-<span class="co">#&gt; 10   CANDIDATE_GI5_33 linear_reg  0.173186069006976   0.359528460295866</span>
-<span class="co">#&gt; 11 CANDIDATE_GI5_3966 linear_reg  0.173125515504368   0.267272808004991</span>
-<span class="co">#&gt; 12 CANDIDATE_GI5_5033 linear_reg 0.0539642003942997   0.193542624903263</span>
-<span class="co">#&gt; 13 CANDIDATE_GI5_5090 linear_reg  0.123869557758096   0.359709898794806</span>
-<span class="co">#&gt; 14 CANDIDATE_GI5_5119 linear_reg  0.141874707318843 0.00572163231013085</span>
-<span class="co">#&gt; 15 CANDIDATE_GI5_8997 linear_reg  0.175197082452154    0.30830639045052</span>
-<span class="co">#&gt; 16 CANDIDATE_GI5_9287 linear_reg 0.0467232397841482   0.250630876722319</span>
-<span class="co">#&gt; 17 CANDIDATE_GI5_9447 linear_reg 0.0993738835702041  0.0177023866501303</span>
-<span class="co">#&gt; 18 CANDIDATE_GI5_9551 linear_reg  0.166385486049607   0.468525805125687</span>
-<span class="co">#&gt; 19 CANDIDATE_GI5_9585 linear_reg  0.186353052496613   0.257399920176667</span>
-<span class="co">#&gt; 20 CANDIDATE_GI5_9659 linear_reg  0.169268976444807   0.319238609523219</span></code></pre></div>
+<span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="co">#save as a dataframe to compare to other models.</span></code></pre></div>
 <p>Lets compare the performance of linear models to that of random forests. Random forests is the computational engine in gradient forests.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">model1</span> <span class="op">&lt;-</span> 
@@ -197,53 +175,31 @@
 
 <span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">model1</span>, X<span class="op">=</span><span class="va">X</span>, model<span class="op">=</span><span class="st">'regression'</span><span class="op">)</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co">#predictive performance for individual responses. </span>
-<span class="co">#&gt;              response  model_name               rmse           rsquared</span>
-<span class="co">#&gt; 1   CANDIDATE_GI5_108 rand_forest 0.0375195427921464               &lt;NA&gt;</span>
-<span class="co">#&gt; 2   CANDIDATE_GI5_198 rand_forest  0.174162910894612  0.250756158434114</span>
-<span class="co">#&gt; 3   CANDIDATE_GI5_268 rand_forest 0.0653704262107216  0.427509831459308</span>
-<span class="co">#&gt; 4    CANDIDATE_GI5_92 rand_forest   0.10072601777818  0.446972802123569</span>
-<span class="co">#&gt; 5  CANDIDATE_GI5_1950 rand_forest  0.172240235399028  0.159442074473356</span>
-<span class="co">#&gt; 6  CANDIDATE_GI5_2382 rand_forest 0.0519323109115133 0.0317821990577237</span>
-<span class="co">#&gt; 7  CANDIDATE_GI5_2405 rand_forest  0.159196233131765  0.528361338398057</span>
-<span class="co">#&gt; 8  CANDIDATE_GI5_2612 rand_forest  0.180619652799089  0.138968831639096</span>
-<span class="co">#&gt; 9  CANDIDATE_GI5_2641 rand_forest 0.0764396034516465 0.0152506070117207</span>
-<span class="co">#&gt; 10   CANDIDATE_GI5_33 rand_forest  0.175562657036769  0.191837373851042</span>
-<span class="co">#&gt; 11 CANDIDATE_GI5_3966 rand_forest  0.153488822428489  0.183365081552054</span>
-<span class="co">#&gt; 12 CANDIDATE_GI5_5033 rand_forest 0.0435327455457493  0.404243567785347</span>
-<span class="co">#&gt; 13 CANDIDATE_GI5_5090 rand_forest  0.103501290032601  0.446089001586035</span>
-<span class="co">#&gt; 14 CANDIDATE_GI5_5119 rand_forest  0.122232949936304  0.101343829630013</span>
-<span class="co">#&gt; 15 CANDIDATE_GI5_8997 rand_forest  0.189290631143923  0.080036930558763</span>
-<span class="co">#&gt; 16 CANDIDATE_GI5_9287 rand_forest 0.0382986999013381 0.0407610329771712</span>
-<span class="co">#&gt; 17 CANDIDATE_GI5_9447 rand_forest 0.0527221319085469   0.19877952266513</span>
-<span class="co">#&gt; 18 CANDIDATE_GI5_9551 rand_forest  0.176685353945669  0.324859790234499</span>
-<span class="co">#&gt; 19 CANDIDATE_GI5_9585 rand_forest  0.189143654323392  0.108204434719315</span>
-<span class="co">#&gt; 20 CANDIDATE_GI5_9659 rand_forest  0.163570183582972  0.173224249934131</span>
+<span class="co">#&gt;              response  model_name               rmse            rsquared</span>
+<span class="co">#&gt; 1   CANDIDATE_GI5_108 rand_forest 0.0346739101196244                &lt;NA&gt;</span>
+<span class="co">#&gt; 2   CANDIDATE_GI5_198 rand_forest  0.174814688585657   0.173193940307069</span>
+<span class="co">#&gt; 3   CANDIDATE_GI5_268 rand_forest  0.061959606072039   0.494193445264608</span>
+<span class="co">#&gt; 4    CANDIDATE_GI5_92 rand_forest   0.10072601777818   0.446972802123569</span>
+<span class="co">#&gt; 5  CANDIDATE_GI5_1950 rand_forest  0.172240235399028   0.159442074473356</span>
+<span class="co">#&gt; 6  CANDIDATE_GI5_2382 rand_forest 0.0666673030260329 0.00366977171783642</span>
+<span class="co">#&gt; 7  CANDIDATE_GI5_2405 rand_forest  0.159196233131765   0.528361338398057</span>
+<span class="co">#&gt; 8  CANDIDATE_GI5_2612 rand_forest  0.175428761333117   0.162439211535684</span>
+<span class="co">#&gt; 9  CANDIDATE_GI5_2641 rand_forest 0.0764396034516465  0.0152506070117207</span>
+<span class="co">#&gt; 10   CANDIDATE_GI5_33 rand_forest  0.172822407306175   0.188895540008237</span>
+<span class="co">#&gt; 11 CANDIDATE_GI5_3966 rand_forest   0.15695193486411   0.182935754398563</span>
+<span class="co">#&gt; 12 CANDIDATE_GI5_5033 rand_forest 0.0424450364878036   0.574915176838734</span>
+<span class="co">#&gt; 13 CANDIDATE_GI5_5090 rand_forest 0.0943171763017087     0.5410748332247</span>
+<span class="co">#&gt; 14 CANDIDATE_GI5_5119 rand_forest  0.122232949936304   0.101343829630013</span>
+<span class="co">#&gt; 15 CANDIDATE_GI5_8997 rand_forest  0.195368114424347   0.054912372799429</span>
+<span class="co">#&gt; 16 CANDIDATE_GI5_9287 rand_forest 0.0382986999013381  0.0407610329771712</span>
+<span class="co">#&gt; 17 CANDIDATE_GI5_9447 rand_forest 0.0650819900808674   0.174690753101146</span>
+<span class="co">#&gt; 18 CANDIDATE_GI5_9551 rand_forest  0.176685353945669   0.324859790234499</span>
+<span class="co">#&gt; 19 CANDIDATE_GI5_9585 rand_forest  0.187650379969312  0.0792961995276269</span>
+<span class="co">#&gt; 20 CANDIDATE_GI5_9659 rand_forest  0.164217401436654   0.145768629534467</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="co">#overall average r2 </span>
-<span class="co">#&gt; [1] 0.1213118</span>
+<span class="co">#&gt; [1] 0.1219109</span>
 
-<span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
-<span class="va">p2</span>
-<span class="co">#&gt;              response  model_name               rmse           rsquared</span>
-<span class="co">#&gt; 1   CANDIDATE_GI5_108 rand_forest 0.0375195427921464               &lt;NA&gt;</span>
-<span class="co">#&gt; 2   CANDIDATE_GI5_198 rand_forest  0.174162910894612  0.250756158434114</span>
-<span class="co">#&gt; 3   CANDIDATE_GI5_268 rand_forest 0.0653704262107216  0.427509831459308</span>
-<span class="co">#&gt; 4    CANDIDATE_GI5_92 rand_forest   0.10072601777818  0.446972802123569</span>
-<span class="co">#&gt; 5  CANDIDATE_GI5_1950 rand_forest  0.172240235399028  0.159442074473356</span>
-<span class="co">#&gt; 6  CANDIDATE_GI5_2382 rand_forest 0.0519323109115133 0.0317821990577237</span>
-<span class="co">#&gt; 7  CANDIDATE_GI5_2405 rand_forest  0.159196233131765  0.528361338398057</span>
-<span class="co">#&gt; 8  CANDIDATE_GI5_2612 rand_forest  0.180619652799089  0.138968831639096</span>
-<span class="co">#&gt; 9  CANDIDATE_GI5_2641 rand_forest 0.0764396034516465 0.0152506070117207</span>
-<span class="co">#&gt; 10   CANDIDATE_GI5_33 rand_forest  0.175562657036769  0.191837373851042</span>
-<span class="co">#&gt; 11 CANDIDATE_GI5_3966 rand_forest  0.153488822428489  0.183365081552054</span>
-<span class="co">#&gt; 12 CANDIDATE_GI5_5033 rand_forest 0.0435327455457493  0.404243567785347</span>
-<span class="co">#&gt; 13 CANDIDATE_GI5_5090 rand_forest  0.103501290032601  0.446089001586035</span>
-<span class="co">#&gt; 14 CANDIDATE_GI5_5119 rand_forest  0.122232949936304  0.101343829630013</span>
-<span class="co">#&gt; 15 CANDIDATE_GI5_8997 rand_forest  0.189290631143923  0.080036930558763</span>
-<span class="co">#&gt; 16 CANDIDATE_GI5_9287 rand_forest 0.0382986999013381 0.0407610329771712</span>
-<span class="co">#&gt; 17 CANDIDATE_GI5_9447 rand_forest 0.0527221319085469   0.19877952266513</span>
-<span class="co">#&gt; 18 CANDIDATE_GI5_9551 rand_forest  0.176685353945669  0.324859790234499</span>
-<span class="co">#&gt; 19 CANDIDATE_GI5_9585 rand_forest  0.189143654323392  0.108204434719315</span>
-<span class="co">#&gt; 20 CANDIDATE_GI5_9659 rand_forest  0.163570183582972  0.173224249934131</span></code></pre></div>
+<span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <p>You can see that predictive performance is actually slightly less using random forests (overall R2 = 0.12) but for some loci random forests does better than our linear models and sometimes worse. Which to choose? Generally simpler models are preferred (the linear model in this case) but it depends on how important to think non-linear response are. In future versions of MrIML we will implement ensemble models that will overcome this issue. For the time-being we will have a look at variable importance for the random forest based model.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">VI</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrVip.html">mrVip</a></span><span class="op">(</span><span class="va">yhats</span>, Y<span class="op">=</span><span class="va">Y</span><span class="op">)</span> 
@@ -282,10 +238,96 @@
 <p>The effect of mean annual temperature on SNP turnover is not as distinct in the global ALE plot. This may mean that correlations between features may be important for the predictions.</p>
 <p>MrIML has easy to use functionality that can can quantify interactions between features. Note that this can take a while to compute.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#interactions &lt;-mrInteractions(yhats, X, Y,  model='regression') #this is computationally intensive so multicores are needed.</span>
+<code class="sourceCode R"><span class="va">interactions</span> <span class="op">&lt;-</span><span class="fu"><a href="../reference/mrInteractions.html">mrInteractions</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">X</span>, <span class="va">Y</span>,  model<span class="op">=</span><span class="st">'regression'</span><span class="op">)</span> <span class="co">#this is computationally intensive so multicores are needed.</span>
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
 
-<span class="co">#mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2) #can increase the number of interactions/SNPs ('responses') shown</span>
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
 
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="co">#&gt; Warning: &lt;anonymous&gt;: ... may be used in an incorrect context: '.fun(piece, ...)'</span>
+
+<span class="fu"><a href="../reference/mrPlot_interactions.html">mrPlot_interactions</a></span><span class="op">(</span><span class="va">interactions</span>, <span class="va">X</span>,<span class="va">Y</span>, top_ranking <span class="op">=</span> <span class="fl">2</span>, top_response<span class="op">=</span><span class="fl">2</span><span class="op">)</span> <span class="co">#can increase the number of interactions/SNPs ('responses') shown</span></code></pre></div>
+<p><img src="Vignette_regression_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+<pre><code>#&gt; Press [enter] to continue for response with strongest interactions
+#&gt; Press [enter] to continue for individual response results
+#&gt; Warning: attributes are not identical across measure variables;
+#&gt; they will be dropped</code></pre>
+<p><img src="Vignette_regression_files/figure-html/unnamed-chunk-8-2.png" width="700"><img src="Vignette_regression_files/figure-html/unnamed-chunk-8-3.png" width="700"></p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
 <span class="co">#Make sure you save your results</span>
 <span class="co">#save(interactions, 'Fitzpatrick2016interactions')</span>
 

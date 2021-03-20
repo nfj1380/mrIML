@@ -64,7 +64,7 @@ reference:
   - '`gfData`'
   - '`mrFlashlight`'
   - '`mrIMLperformance`'
-  - '`mrIMLpredicts`'
+  #- '`mrIMLpredicts`'
   - '`mrInteractions`'
   - '`mrPlot_interactions`'
   - '`mrProfileplot`'
