@@ -20,7 +20,7 @@
 #'@export
 
 
-mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', parallel = TRUE, transformY='log') { 
+mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', parallel = TRUE, transformY='log', tune_grid_size= 10 ) { 
   
   if(parallel==TRUE){
     
@@ -116,10 +116,10 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', p
     ## full tunning 
     
     if (model=='classification'){
-      
-    tune_m<-tune::tune_grid(mod_workflow,
+    
+  tune_m<-tune::tune_grid(mod_workflow,
                             resamples = data_cv,
-                            grid = 10) # 10 paramters
+                            grid = tune_grid_size) 
     
     # select the best model
     best_m <- tune_m %>%
@@ -128,7 +128,8 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', p
     # final
     final_model <- finalize_workflow(mod_workflow,
                                      best_m )
-    
+      
+      
     # Fit model one for each parasite; can easily modify this so that the user
     # can specify the formula necessary for each species as a list of formulas
     mod1_k <- final_model %>%
@@ -167,11 +168,11 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', p
     if (model=='regression'){
       tune_m<-tune::tune_grid(mod_workflow,
                               resamples = data_cv,
-                              grid = 10) # 10 paramters
+                              grid = tune_grid_size)
       
       # select the best model
       best_m <- tune_m %>%
-        select_best("rmse") #
+        select_best("rmse") 
       
       # final
       final_model <- finalize_workflow(mod_workflow,
@@ -211,8 +212,8 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', p
       
       } 
       
-    list(mod1_k = mod1_k, last_mod_fit=last_mod_fit,tune_m=tune_m, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid)
-
+   list(mod1_k = mod1_k, last_mod_fit=last_mod_fit,tune_m=tune_m, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid)
+  
       
   })
 }

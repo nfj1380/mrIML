@@ -33,7 +33,7 @@ library(mice)
 library(tidymodels)
 library(pdp)
 library(randomForest)
-library(caret)
+#library(caret)
 #library(pROC)
 #library(ROCR)
 library(missForest)
@@ -51,40 +51,18 @@ library(xgboost)
 library(vegan)
 library(ggrepel)
 library(LEA) 
+library(flas)
 #if (!requireNamespace("BiocManager", quietly = TRUE))
 # install.packages("BiocManager")
 
 #BiocManager::install("LEA")
 library(ape)
 library(flashlight)
-library(devtools)
-install_github("mayer79/flashlight") 
-#library(pbapply)
 
-# load all function codes. This will disappear when we formally make this a function
-source("./R/filterRareCommon.R")
-source("./R/MrIMLpredicts.R")
-source("./R/StackPredictions.R")
-source("./R/devianceResids.R")
-source("./R/filterRareCommon.R")
-source("./R/MrIMLperformance.R")
-source("./R/mrvip.R")
-source("./R/plot_vi.R")
+devtools::install_github("nfj1380/mrIML") 
+library(mrIML)
 
-#new interaction code
-source("./R/mrInteractions.R")
-source("./R/mrPlotInteractions.R") #not finding this for some reason - no idea why
-source("./R/vintTidy.R")
 
-#Nick C - this and the function below are the functions with tidy model code I made from your original
-source("./R/stacked_preds.R") #this does the stacking
-source("./R/response_covariance") #this should create the covatiance matrix #not working?
-
-source("./R/readSnpsPed.R") #function for reading SNP data from plink .ped file
-source("./R/ResistanceComponents.R") #function for generating resistance component data from resistance matrices
-
-source(("./R/mrFlashlight.R"))
-source("./R/mrProfileplots.R")
 #----------------------------------------------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------
@@ -143,7 +121,7 @@ FeaturesnoNA<-Features[complete.cases(Features), ];str(Features) #dropping NAs
 
 Y <- FeaturesnoNA #for simplicity
 
-#for lofistic regression
+#for logistic regression
 prepY <- Y
 prepY$Sex <- as.factor(prepY$Sex ) #make factors
 prepY$Age <- as.factor(prepY$Age ); str(prepY)
@@ -152,7 +130,7 @@ df2 <- cor(Y) #find correlations
 hc <-  findCorrelation(df2, cutoff=0.9) # put any value as a "cutoff". This is quite high
 hc <-  sort(hc)
 #for more efficent testing for interactions (more variables more interacting pairs)
-#Y <- FeaturesnoNA[c(1:3)]
+Y <- FeaturesnoNA[c(1:3)]
 #Optional: Filter rare/common SNPs or species. Retaining minor allelle frequncies >0.1 and removing common allelles (occur>0.9)
 fData <- filterRareCommon (Responsedata, lower=0.25, higher=0.75) 
 X <- fData #for simplicity when comparing
@@ -200,16 +178,22 @@ model1 <- #model used to generate yhat
   set_mode("classification") #just for your response
 
 model1 <- 
-  rand_forest(trees = 100, mode = "classification") %>% #this should cope with multinomial data alreadf
+  rand_forest(trees = 100, mode = "classification",mtry = tune(), min_n = tune()) %>%  # we only need to tune mtry for rf
   set_engine("ranger", importance = c("impurity","impurity_corrected")) %>%
   set_mode("classification")
 
 #Boosted model (xgboost). Not tuned either currently. This doesn't work with the small bobcat dataset. Much too small
 
 model1 <- 
-boost_tree() %>%
+boost_tree( trees = 100,
+  tree_depth = tune(), min_n = tune(), 
+            loss_reduction = tune(),                     ## first three: model complexity
+            sample_size = tune(), mtry = tune(),         ## randomness
+            learn_rate = tune()#                          # step size
+    ) %>%
   set_engine("xgboost") %>%
   set_mode("classification")
+
 
 #for SVM need different tuning paramters. Currently tuning works best for tree-based algorithms.
   
@@ -219,7 +203,10 @@ boost_tree() %>%
 #parallell processing
 
 #models just using features/predictor variables.
-yhats <- mrIMLpredicts(X=X,Y=prepY, model1=model1, balance_data='no', model='classification', parallel = TRUE, transformY='log') ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set. For regression there no has to be selected.
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='classification', parallel = TRUE,  
+                       tune_grid_size=5) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set. For regression there no has to be selected.
+
+# automatic tuning doesn't work - try another method. Currently yhats not forming right.
 
 #-------------------------------------------------------------------
 # Visualization for model tunning and performance
@@ -246,7 +233,7 @@ save(modelPerfD, file = 'simRF_performance')
 ## GM add here
 
 #we can look at variable importance. Co-infection data only has one feature so not much use there.
-VI <- mrVip(yhats, Y=prepY) 
+VI <- mrVip(yhats, Y=Y) 
 #plot model similarity
 
 #plot variable importance
@@ -258,7 +245,7 @@ groupCov <- c(rep ("Host_characteristics", 1),rep("Urbanisation", 3), rep("Veget
 #not that GLMs in particular wont produce coefficents for features that are strongly colinear and will drop them from the model.
 #in this case group cov will have to be changed to reflect features included in the model. 
 
-plot_vi(VI=VI,  X=X,Y=prepY, modelPerf=ModelPerf, cutoff= 0.6, plot.pca='no', model='classification')#note there are two plots here. PCA is hard to read with > 50 response varianbles
+plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0.6, plot.pca='yes', model='classification', groupCov = groupCov)#note there are two plots here. PCA is hard to read with > 50 response varianbles
 
 #if you dont want/need to group covariates:
 
