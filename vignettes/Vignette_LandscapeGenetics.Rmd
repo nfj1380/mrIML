@@ -6,13 +6,13 @@ opengraph:
   image:
     src: 
 output:
-  github_document: default
   rmarkdown::html_vignette: default
+  github_document: default
   css: extra.css
 vignette: |
   %\VignetteIndexEntry{mrIML}
-  %\VignetteEngine{knitr::rmarkdown} 
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown} 
 ---
 
 
@@ -48,9 +48,6 @@ library(tidyverse);library(parallel); library(doParallel); library(themis); libr
 library(janitor); library(hrbrthemes); library(xgboost); library(vegan);library(flashlight);
 library(ggrepel); library(parsnip);library(rsample); library(workflows)
 
-library(LEA) 
-#if (!requireNamespace("BiocManager", quietly = TRUE))
-# install.packages("BiocManager") #LEA requires Biocmanager
 
 #load SNP data
 #Responsedata)
@@ -162,8 +159,8 @@ MrIML allows a full suite of model agnostic interpretable machine learning tools
 For example, once we create the flashlight objects, we can plot the predicted values of a feature for each response.
 
 ```{r include=FALSE}
-source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrFlashlight.R"))
-source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrProfileplots.R"))
+#source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrFlashlight.R"))
+#source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrProfileplots.R"))
 
 ```
 
