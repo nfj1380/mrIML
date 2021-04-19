@@ -11,7 +11,8 @@ mrIMLpredicts(
   balance_data = "no",
   model = "regression",
   parallel = TRUE,
-  transformY = "log"
+  transformY = "log",
+  tune_grid_size = 10
 )
 }
 \arguments{
