@@ -22,6 +22,8 @@ mrIMLpredicts(
 
 \item{balance_data}{A \code{character} 'up', 'down' or 'no'.}
 
+\item{tune_grid_size}{A \code{numeric} sets the grid size for hyperparamter tuning. Larger grid sizes increase computational time.}
+
 \item{Model}{1 A \code{list} can be any model from the tidy model package. See examples.}
 }
 \description{

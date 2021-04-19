@@ -3,11 +3,15 @@
 #'@param X A \code{dataframe} represents predictor or feature data.
 #'@param balance_data A \code{character} 'up', 'down' or 'no'. 
 #'@param Model 1 A \code{list} can be any model from the tidy model package. See examples.
+#'@param tune_grid_size A \code{numeric} sets the grid size for hyperparamter tuning. Larger grid sizes increase computational time.
 #'@details This function produces yhats that used in all model characteristics for subsequent functions.
 #' This function fits separate classication models for each response variable in a dataset. Y (response variables) should be binary (0/1). Rows in X (features) have the same id (host/site/population)
 #'  as Y. Class imblanace can be a real issue for classification analyses. Class imbalance can be addressed for each
 #' response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling) 
 #'or 'no' (no balancing of classes).
+#' @example 
+#' yhats <- mrIMLpredicts(X= venviro_variables,Y=response data, model1=model1, balance_data='no', model='classification', parallel = TRUE,  
+#'tune_grid_size=5)
 #'@export
 
 

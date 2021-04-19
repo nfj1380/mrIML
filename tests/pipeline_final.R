@@ -316,7 +316,7 @@ plot(light_effects(flashlightObj, v = "Forest"), use = "all")
 
 
 profileData_pd <- light_profile(flashlightObj, v = "Distance") #partial dependencies
-profileData_ale <- light_profile(flashlightObj, v = "Distance", type = "ale") #acumulated local effects
+profileData_ale <- light_profile(flashlightObj, v = "gradient10", type = "ale") #acumulated local effects
 
 #Plot global ALE plot. This the plots the smoothed average ALE value. Have to remove responses that don't respond.
 
