@@ -3,15 +3,6 @@
 #'@param X A \code{dataframe} represents predictor or feature data.
 #'@param balance_data A \code{character} 'up', 'down' or 'no'. 
 #'@param Model 1 A \code{list} can be any model from the tidy model package. See examples.
-#'
-#'@examples
-#'model1 <- #model used to generate yhat
-#'specify that the model is a random forest
-#'logistic_reg() %>%
-#' # select the engine/package that underlies the model
-#'set_engine("glm") %>%
-#'  # choose either the continuous regression or binary classification mode
-#'  set_mode("classification")
 #'@details This function produces yhats that used in all model characteristics for subsequent functions.
 #' This function fits separate classication models for each response variable in a dataset. Y (response variables) should be binary (0/1). Rows in X (features) have the same id (host/site/population)
 #'  as Y. Class imblanace can be a real issue for classification analyses. Class imbalance can be addressed for each

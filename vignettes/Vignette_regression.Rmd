@@ -2,21 +2,26 @@
 title: "Regression working example"
 author: "Nick Fountain-Jones, Gustavo Machado"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+opengraph:
+  image:
+    src: 
+output:
+rmarkdown::html_vignette:
+  toc: yes
 vignette: >
-  %\VignetteIndexEntry{Regression working example}
+  %\VignetteIndexEntry{Testing Sums}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+  \usepackage[utf8]{inputenc}
 ---
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE)
+options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-<img src = "https://user-images.githubusercontent.com/33707823/88988817-531ad080-d31d-11ea-8d76-f1ad0506e405.png" width="200" height="200"/>
+<img src="man/figures/logo.png" align="right" alt="" width="150" />
+
 
 MrIML is a R package allows users to generate and interpret multi-response models (i.e., joint species distribution models) leveraging advances in data science and machine learning. MrIML couples the tidymodel infrastructure developed by Max Kuhn and colleagues with model agnostic interpretable machine learning tools to gain insights into multiple response data such as. As such mrIML is flexible and easily extendable allowing users to construct everything from simple linear models to tree-based methods for each response using the same syntax and same way to compare predictive performance. In this vignette we will guide you through how to apply this package to ecological genomics problems using the regression functionality of the package. This data set comes from Fitzpatrick et al 2014 who were examining adaptive
 genetic variation in relation to geography and climate adaptation (current and future) in balsam poplar(Populus balsamifera). See Ecology Letters, (2014) doi: 10.1111/ele.12376. In this paper they used the similar gradient forests routine (see Ellis et al 2012 Ecology), and we show that MrIML can not only provide more flexible model choice and interpretive capabilities, but can derive new insights into the relationship between climate and genetic variation. Further, we show that linear models of each loci have slightly greater predictive performance. 
@@ -24,12 +29,12 @@ genetic variation in relation to geography and climate adaptation (current and f
 
 We focus on the adaptive SNP loci from GIGANTEA-5 (GI5) gene that has known links to stem development, plant circadian clock and light perception pathway. The data is the proportion of individuals in that population with that SNP loci. 
 
-### Lets load that data.
+# Lets load that data
 
-```{r load-packages, include=FALSE}
+```{r load-packages, include=TRUE}
 
 #make sure you have installed devtools previously.
-#Install the most uptodate version from github
+#Install the most update version from github
 
 #if (!requireNamespace("devtools", quietly = TRUE))
 # install.packages("devtools")
@@ -54,7 +59,7 @@ GI5 <- gfData[,grep("GI5",colnames(gfData))] # GIGANTEA-5 (GI5)
 X <- GI5 #for this example we are going to focus on the adaptive SNPs in the GI5 region.
 ```
 
-### Running the analyis
+# Running the analyis
 
 Performing the analysis is very similar to our classification example. Lets start with a constructing a linear model for this data set. We set Model 1 to a linear regression. See https://www.tidymodels.org/find/ for other regression model options Note that 'mode' must be regression and in MrIMLpredicts, model has to be set to 'regression'. 
 
@@ -147,9 +152,9 @@ The effect of mean annual temperature on SNP turnover is not as distinct in the 
 MrIML has easy to use functionality that can can quantify interactions between features. Note that this can take a while to compute.
 
 ```{r}
-interactions <-mrInteractions(yhats, X, Y,  model='regression') #this is computationally intensive so multicores are needed.
+#interactions <-mrInteractions(yhats, X, Y,  model='regression') #this is computationally intensive so multicores are needed.
 
-mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2) #can increase the number of interactions/SNPs ('responses') shown
+#mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2) #can increase the number of interactions/SNPs ('responses') shown
 
 #Make sure you save your results
 #save(interactions, 'Fitzpatrick2016interactions')

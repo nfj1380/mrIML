@@ -10,9 +10,11 @@ Author: **Gustavo Machado**
   -Lab page: https://machado-lab.github.io/
   
 <!-- badges: start -->
+
 ![GitHub R package version](https://img.shields.io/github/r-package/v/nfj1380/mrIML?logo=github&logoColor=%2300ff37&style=flat-square)
 ![GitHub contributors](https://img.shields.io/github/contributors/nfj1380/mrIML?style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/nfj1380/mrIML?style=flat-square)
+
 <!-- badges: end -->
 
 This package aims to enable users to build and interpret multivariate
@@ -77,8 +79,8 @@ model1 <-
   set_engine("ranger", importance = c("impurity","impurity_corrected")) %>%# select the engine/package that underlies the model
   set_mode("classification")# choose either the continuous "regression" or binary "classification" mode
 ```
- 
-### [mrIMLpredicts](https://nfj1380.github.io/mrIML/reference/mrIMLpredicts.html)
+
+## <i class="fas fa-toolbo"></i> [mrIMLpredicts](https://nfj1380.github.io/mrIML/reference/mrIMLpredicts.html)
 
 This function represents the core functionality of the package and
 includes results reporting, plotting and optional saving.  It requires a

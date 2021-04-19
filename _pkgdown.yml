@@ -1,21 +1,18 @@
-#url: nfj1380.io/mrIML/
+home:
+  title: mrIML
+
+url: nfj1380.io/mrIML/
 template:
+  params:
+    bootswatch: flatly
   opengraph:
     image:
-      src: Logo_mrIML.png
+      src: man/figures/logo.png
       alt: "Multivariate–multi-response–interpretable machine learning"
     twitter:
       creator: "@gustavoetal"
-      card: summary_large_image
-  params:
-    bootswatch: lumen
-    docsearch:
-      api_key:
-      index_name: mrIML
-      
-development:
-  mode: auto
-  
+      card: summary
+
 authors:
   Gustavo Machado:
     href: https://gustavoetal.org/
@@ -27,7 +24,7 @@ navbar:
     - home
     - intro
     - articles
-    - reference
+    - functions
     - tutorials
     - news
     right:
@@ -37,12 +34,12 @@ navbar:
     home:
       icon: fas fa-home fa-lg
       href: index.html
-    reference:
-      text: Reference
-      href: reference/index.html
     news:
-      text: Changelog
+      text: News
       href: news/index.html
+    reference:
+      text: Functions
+      href: reference/index.html
     articles:
       text: Articles
       menu:
@@ -50,7 +47,6 @@ navbar:
         href: articles/Vignette_LandscapeGenetics.html
       - text: Regression working example
         href: articles/Vignette_regression.html
-              
       figures:
         fig.width: 12
         fig.height: 12
@@ -64,7 +60,7 @@ reference:
   - '`gfData`'
   - '`mrFlashlight`'
   - '`mrIMLperformance`'
-  #- '`mrIMLpredicts`'
+  - '`mrIMLpredicts`'
   - '`mrInteractions`'
   - '`mrPlot_interactions`'
   - '`mrProfileplot`'
