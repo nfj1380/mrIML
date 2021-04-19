@@ -80,8 +80,8 @@ mrIMLperformance <- function(yhats, model1, X, model='regression'){
     sp <- names(X[i])
     
     #save all the metrics
-    mod_perf[[i]] <- c( sp, mod_name, rmse, rsq)
-    
+   # mod_perf[[i]] <- c( sp, mod_name, rmse, rsq)
+    mod_perf[[i]] <- data.frame( sp, mod_name, rmse, rsq)
   }
   
   mod1_perf<- do.call(rbind, mod_perf)
