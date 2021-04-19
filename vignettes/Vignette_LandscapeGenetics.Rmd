@@ -6,21 +6,22 @@ opengraph:
   image:
     src: 
 output:
-rmarkdown::html_vignette:
-  toc: yes
-vignette: >
-  %\VignetteIndexEntry{Testing Sums}
-  %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
+  github_document: default
+  rmarkdown::html_vignette: default
+  css: extra.css
+vignette: |
+  %\VignetteIndexEntry{mrIML}
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8}
 ---
 
+
 ```{r setup, include=FALSE}
-library(knitr)
 knitr::opts_chunk$set(echo = TRUE)
-options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-<img src="man/figures/logo.png" align="right" alt="" width="150" />
+
+<img src = "https://user-images.githubusercontent.com/33707823/88988817-531ad080-d31d-11ea-8d76-f1ad0506e405.png" width="200" height="200"/>
 
 # General introduction
 
@@ -47,6 +48,9 @@ library(tidyverse);library(parallel); library(doParallel); library(themis); libr
 library(janitor); library(hrbrthemes); library(xgboost); library(vegan);library(flashlight);
 library(ggrepel); library(parsnip);library(rsample); library(workflows)
 
+library(LEA) 
+#if (!requireNamespace("BiocManager", quietly = TRUE))
+# install.packages("BiocManager") #LEA requires Biocmanager
 
 #load SNP data
 #Responsedata)
@@ -95,17 +99,17 @@ Now all the data is loaded and ready to go we can formulate the model using tidy
 
 ```{r }
 model1 <- 
-  rand_forest(trees = 100, mode = "classification") %>% #100 trees are set for brevity
+  rand_forest(trees = 100, mtry=tune(), min_n = tune(), mode = "classification") %>% #100 trees are set for brevity
   # select the engine/package that underlies the model
   set_engine("ranger", importance = c("impurity","impurity_corrected")) %>%
   # choose either the continuous regression or binary classification mode
   set_mode("classification")
 ```
 
-Now we can run the model. Hyper parameter tuning (for algorithms that have hyper parameters) is done automatically by testing how model performance changes across a random grid of 10 parameters and the best performing combination is kept. The only choice to make is to either down/up sample data or leave it as is. As our viral data set is small, we will not do any up or down-sampling (option 'no'). We could also implement parallel processing for larger data sets. 
+Now we can run the model. Hyper parameter tuning (for algorithms that have hyper parameters) is done automatically by testing how model performance changes across a random grid of 10 parameters and the best performing combination is kept. Notice for random forests we have two hyperparamters to tune; mtry (number of features to randomly include at each split) and min_n (the minimum number of data points in a node that are required for the node to be split further). The syntax 'tune()' acts a placeholder to tell MrIML to tune those hyperparamters across a grid of values (defined in MRIML predicts 'tune_grid_size' argument). Different algorithms will have different hyperparameters. See https://www.tidymodels.org/find/parsnip/ for parameter details. Note that large grid sizes (>10) for algorithms with lots of hyperparameters (such as extreme gradient boosting) will be computationally demanding. In this case we choose a grid size of 5. The only choice to make is to either down/up sample data or leave it as is. As our viral data set is small, we will not do any up or down-sampling (option 'no'). We could also implement parallel processing for larger data sets. 
 
 ```{r message = FALSE, warning = FALSE, results='hide'}
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classification', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mode='classification', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set
 
 # save the model
 #save(yhats, file='rf_model')
@@ -121,7 +125,7 @@ ModelPerf[[1]] #predictive performance for individual responses
 ModelPerf[[2]]#overall predictive performance
 ```
 
-You can compare the  predictive performance of random forests with any other technique simply by altering the following. Lets try a logistic regression. Note that for logistic regression you may need to scale/transform the data or create dummy variables if you include categorical variables. These steps can easily be added to the pipeline following tidymodel syntax (see the website above) 
+You can compare the  predictive performance of random forests with any other technique simply by altering the following. Lets try a logistic regression - no tuning of hyperparamters required. Note that for logistic regression you may need to scale/transform the data or create dummy variables if you include categorical variables. These steps can easily be added to the pipeline following tidymodel syntax (see the website above) 
 
 ```{r, message = FALSE, warning = FALSE }
 model1 <- #model used to generate yhat
@@ -158,8 +162,8 @@ MrIML allows a full suite of model agnostic interpretable machine learning tools
 For example, once we create the flashlight objects, we can plot the predicted values of a feature for each response.
 
 ```{r include=FALSE}
-#source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrFlashlight.R"))
-#source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrProfileplots.R"))
+source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrFlashlight.R"))
+source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrProfileplots.R"))
 
 ```
 
@@ -202,9 +206,9 @@ Finally, we can assess how features interact overall to shape genetic change. Be
 
 ```{r message = FALSE, warning = FALSE}
 
-#interactions <-mrInteractions(yhats, X, Y,  mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
+interactions <-mrInteractions(yhats, X, Y,  mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
 
-#mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2)
+mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2)
 
 #save(interactions, file='Fitzpatrick2016interactions')
 
