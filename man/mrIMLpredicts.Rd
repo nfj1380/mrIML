@@ -34,12 +34,3 @@ This function fits separate classication models for each response variable in a 
 response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling) 
 or 'no' (no balancing of classes).
 }
-\examples{
-model1 <- #model used to generate yhat
-specify that the model is a random forest
-logistic_reg() \%>\%
-# select the engine/package that underlies the model
-set_engine("glm") \%>\%
- # choose either the continuous regression or binary classification mode
- set_mode("classification")
-}

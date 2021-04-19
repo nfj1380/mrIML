@@ -6,22 +6,21 @@ opengraph:
   image:
     src: 
 output:
-  github_document: default
-  rmarkdown::html_vignette: default
-  css: extra.css
-vignette: |
-  %\VignetteIndexEntry{mrIML}
-  %\VignetteEngine{knitr::rmarkdown} 
-  %\VignetteEncoding{UTF-8}
+rmarkdown::html_vignette:
+  toc: yes
+vignette: >
+  %\VignetteIndexEntry{Testing Sums}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
 ---
 
-
 ```{r setup, include=FALSE}
+library(knitr)
 knitr::opts_chunk$set(echo = TRUE)
+options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-
-<img src = "https://user-images.githubusercontent.com/33707823/88988817-531ad080-d31d-11ea-8d76-f1ad0506e405.png" width="200" height="200"/>
+<img src="man/figures/logo.png" align="right" alt="" width="150" />
 
 # General introduction
 
@@ -48,9 +47,6 @@ library(tidyverse);library(parallel); library(doParallel); library(themis); libr
 library(janitor); library(hrbrthemes); library(xgboost); library(vegan);library(flashlight);
 library(ggrepel); library(parsnip);library(rsample); library(workflows)
 
-library(LEA) 
-#if (!requireNamespace("BiocManager", quietly = TRUE))
-# install.packages("BiocManager") #LEA requires Biocmanager
 
 #load SNP data
 #Responsedata)
@@ -162,8 +158,8 @@ MrIML allows a full suite of model agnostic interpretable machine learning tools
 For example, once we create the flashlight objects, we can plot the predicted values of a feature for each response.
 
 ```{r include=FALSE}
-source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrFlashlight.R"))
-source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrProfileplots.R"))
+#source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrFlashlight.R"))
+#source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrProfileplots.R"))
 
 ```
 
@@ -206,9 +202,9 @@ Finally, we can assess how features interact overall to shape genetic change. Be
 
 ```{r message = FALSE, warning = FALSE}
 
-interactions <-mrInteractions(yhats, X, Y,  mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
+#interactions <-mrInteractions(yhats, X, Y,  mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
 
-mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2)
+#mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2)
 
 #save(interactions, file='Fitzpatrick2016interactions')
 
