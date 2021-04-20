@@ -42,11 +42,8 @@ library(vip); library(tidymodels); library(randomForest);  library(caret); libra
 library(tidyverse);library(parallel); library(doParallel); library(themis); library(viridis); library(janitor); library(hrbrthemes); library(xgboost); library(vegan);library(flashlight);
 library(ggrepel)
 
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
 
-BiocManager::install("LEA")
-library(LEA) 
+#library(LEA) 
 # read in data file with minor allele freqs & env/space variables
 gfData; str(gfData)
 envGF <- gfData[,3:13] # get climate & MEM variables
