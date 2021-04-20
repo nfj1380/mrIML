@@ -43,6 +43,11 @@ library(tidyverse);library(parallel); library(doParallel); library(themis); libr
 library(ggrepel)
 
 library(LEA) 
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("LEA")
+library(LEA) 
 # read in data file with minor allele freqs & env/space variables
 gfData; str(gfData)
 envGF <- gfData[,3:13] # get climate & MEM variables
