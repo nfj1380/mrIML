@@ -40,7 +40,7 @@ library(mrIML)
 #other package we need:
 library(vip); library(tidymodels); library(randomForest);  library(caret); library(gbm);
 library(tidyverse);library(parallel); library(doParallel); library(themis); library(viridis); library(janitor); library(hrbrthemes); library(xgboost); library(vegan);library(flashlight);
-library(ggrepel)
+library(ggrepel); library(ranger)
 
 
 #library(LEA) 

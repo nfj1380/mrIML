@@ -108,7 +108,7 @@ model1 <-
 Now we can run the model. Hyper parameter tuning (for algorithms that have hyper parameters) is done automatically by testing how model performance changes across a random grid of 10 parameters and the best performing combination is kept. Notice for random forests we have two hyperparamters to tune; mtry (number of features to randomly include at each split) and min_n (the minimum number of data points in a node that are required for the node to be split further). The syntax 'tune()' acts a placeholder to tell MrIML to tune those hyperparamters across a grid of values (defined in MRIML predicts 'tune_grid_size' argument). Different algorithms will have different hyperparameters. See https://www.tidymodels.org/find/parsnip/ for parameter details. Note that large grid sizes (>10) for algorithms with lots of hyperparameters (such as extreme gradient boosting) will be computationally demanding. In this case we choose a grid size of 5. The only choice to make is to either down/up sample data or leave it as is. As our viral data set is small, we will not do any up or down-sampling (option 'no'). We could also implement parallel processing for larger data sets. 
 
 ```{r message = FALSE, warning = FALSE, results='hide'}
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mode='classification', parallel = TRUE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mode='classification', parallel = FALSE) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set
 
 # save the model
 #save(yhats, file='rf_model')
