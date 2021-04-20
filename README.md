@@ -11,6 +11,7 @@ version](https://img.shields.io/github/r-package/v/nfj1380/mrIML?logo=github&log
 contributors](https://img.shields.io/github/contributors/nfj1380/mrIML?style=flat-square)
 ![GitHub last
 commit](https://img.shields.io/github/last-commit/nfj1380/mrIML?style=flat-square)
+[![R-CMD-check](https://github.com/nfj1380/mrIML/workflows/R-CMD-check/badge.svg)](https://github.com/nfj1380/mrIML/actions)
 <!-- badges: end -->
 
 This package aims to enable users to build and interpret multivariate
@@ -123,7 +124,7 @@ yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classific
 #save(yhats, file='logreg_model')
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) #
 ModelPerf[[2]]
-#> [1] 0.5258621
+#> [1] 0.5603448
 ```
 
 ## Ploting
