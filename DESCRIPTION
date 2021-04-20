@@ -41,7 +41,6 @@ LazyData: true
 VignetteBuilder: 
     knitr
 RoxygenNote: 7.1.1   
-RdMacros: Rdpack
 URL: https://nfj1380.github.io/mrIML
 BugReports: https://github.com/nfj1380/mrIML/issues
 

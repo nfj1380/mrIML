@@ -1,23 +1,26 @@
 ---
 output: github_document
+editor_options: 
+  markdown: 
+    wrap: sentence
 ---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, echo = FALSE, message=F}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  dev = "png",
-  dpi = 200,
-  fig.align = "center",
-  knitr::opts_chunk$set(comment = NA)
-  )
+  out.width = "100%"
+)
+options(width = 100)
 library(mrIML)
 ```
 
-<img src="man/figures/logo.png" width = 250 />
+# mrIML: Multivariate (multi-response) interpretable machine learning <a href='https://nfj1380.github.io/mrIML/index.html'><img src="man/figures/logo.png" width = 250 />
 
-# mrIML: Multivariate (multi-response) interpretable machine learning 
+
 
 <!-- badges: start -->
 ![GitHub R package version](https://img.shields.io/github/r-package/v/nfj1380/mrIML?logo=github&logoColor=%2300ff37&style=flat-square)
@@ -111,8 +114,8 @@ We also wrap some flashlight functionality to visualize the marginal (i.e. parti
 
 
 ```{r include=FALSE}
-source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrFlashlight.R")) #why is this here?
-source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrProfileplots.R"))
+#source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrFlashlight.R")) #why is this here?
+#source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrProfileplots.R"))
 
 ```
 
@@ -147,7 +150,7 @@ interactions <-mrInteractions(yhats, X, Y,  mod='classification') #this is compu
 
 mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2)
 
-````
+```
 
 
 ## References
@@ -156,3 +159,11 @@ Xing, L, Lesperance, ML and Zhang, X (2020). Simultaneous prediction of multiple
 Fitzpatrick, M.C. & Keller, S.R. (2015) Ecological genomics meets community-level modelling of biodiversity: mapping the genomic landscape of current and future environmental adaptation. Ecology Letters 18, 1–16.
 
 Ellis, N., Smith, S.J. and Pitcher, C.R. (2012), Gradient forests: calculating importance gradients on physical predictors. Ecology, 93: 156-168. doi:10.1890/11-0252.1
+
+
+## Session info
+
+```{r}
+devtools::session_info()
+```
+
