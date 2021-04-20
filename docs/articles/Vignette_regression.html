@@ -12,12 +12,22 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
+<<<<<<< HEAD
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+=======
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/lumen/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+>>>>>>> c754efab66e0281c8a44b8ba41e59e7f0baf9638
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<<<<<<< HEAD
 <script src="../pkgdown.js"></script><meta property="og:title" content="Regression working example">
+=======
+<script src="../pkgdown.js"></script><!-- docsearch --><script src="../docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.3/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
+<link href="../docsearch.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Regression working example">
+>>>>>>> c754efab66e0281c8a44b8ba41e59e7f0baf9638
 <meta property="og:description" content="mrIML">
 <meta property="og:image" content="">
 <meta property="og:image:alt" content="Multivariate–multi-response–interpretable machine learning">
@@ -98,7 +108,11 @@
       <h1 data-toc-skip>Regression working example</h1>
                         <h4 class="author">Nick Fountain-Jones, Gustavo Machado</h4>
             
+<<<<<<< HEAD
             <h4 class="date">2021-04-18</h4>
+=======
+            <h4 class="date">2021-04-19</h4>
+>>>>>>> c754efab66e0281c8a44b8ba41e59e7f0baf9638
       
       <small class="dont-index">Source: <a href="https://github.com/nfj1380/mrIML/blob/master/vignettes/Vignette_regression.Rmd"><code>vignettes/Vignette_regression.Rmd</code></a></small>
       <div class="hidden name"><code>Vignette_regression.Rmd</code></div>
@@ -6377,11 +6391,11 @@
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">model1</span> <span class="op">&lt;-</span> <span class="co">#model used to generate yhat</span>
   <span class="co"># specify that the model is a random forest</span>
-  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/linear_reg.html">linear_reg</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">linear_reg</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="co"># select the engine/package that underlies the model</span>
-  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_engine.html">set_engine</a></span><span class="op">(</span><span class="st">"lm"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">set_engine</span><span class="op">(</span><span class="st">"lm"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="co"># choose either the continuous regression or binary classification mode</span>
-  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_args.html">set_mode</a></span><span class="op">(</span><span class="st">"regression"</span><span class="op">)</span>
+  <span class="fu">set_mode</span><span class="op">(</span><span class="st">"regression"</span><span class="op">)</span>
 
 <span class="va">yhats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLpredicts.html">mrIMLpredicts</a></span><span class="op">(</span>X<span class="op">=</span><span class="va">X</span>,Y<span class="op">=</span><span class="va">Y</span>, model1<span class="op">=</span><span class="va">model1</span>, balance_data<span class="op">=</span><span class="st">'no'</span>, model<span class="op">=</span><span class="st">'regression'</span>, parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co">## Balanced data= up updamples and down downsampled to create a balanced set. For regression 'no' has to be selected.</span>
 
@@ -6419,9 +6433,9 @@
 <p>Lets compare the performance of linear models to that of random forests. Random forests is the computational engine in gradient forests.</p>
 <div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">model1</span> <span class="op">&lt;-</span> 
-  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/rand_forest.html">rand_forest</a></span><span class="op">(</span>trees <span class="op">=</span> <span class="fl">100</span>, mode <span class="op">=</span> <span class="st">"regression"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_engine.html">set_engine</a></span><span class="op">(</span><span class="st">"ranger"</span>, importance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"impurity"</span>,<span class="st">"impurity_corrected"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_args.html">set_mode</a></span><span class="op">(</span><span class="st">"regression"</span><span class="op">)</span>
+  <span class="fu">rand_forest</span><span class="op">(</span>trees <span class="op">=</span> <span class="fl">100</span>, mode <span class="op">=</span> <span class="st">"regression"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">set_engine</span><span class="op">(</span><span class="st">"ranger"</span>, importance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"impurity"</span>,<span class="st">"impurity_corrected"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">set_mode</span><span class="op">(</span><span class="st">"regression"</span><span class="op">)</span>
 
 <span class="va">yhats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLpredicts.html">mrIMLpredicts</a></span><span class="op">(</span>X<span class="op">=</span><span class="va">X</span>,Y<span class="op">=</span><span class="va">Y</span>, model1<span class="op">=</span><span class="va">model1</span>, balance_data<span class="op">=</span><span class="st">'no'</span>, model<span class="op">=</span><span class="st">'regression'</span>, parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
@@ -6429,6 +6443,7 @@
 
 <span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">model1</span>, X<span class="op">=</span><span class="va">X</span>, model<span class="op">=</span><span class="st">'regression'</span><span class="op">)</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co">#predictive performance for individual responses. </span></code></pre></div>
+<<<<<<< HEAD
 <pre><code>##              response  model_name               rmse           rsquared
 ## 1   CANDIDATE_GI5_108 rand_forest 0.0350694943768948               &lt;NA&gt;
 ## 2   CANDIDATE_GI5_198 rand_forest  0.173133467596599  0.242833027841432
@@ -6453,6 +6468,32 @@
 <div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="co">#overall average r2 </span></code></pre></div>
 <pre><code>## [1] 0.1196946</code></pre>
+=======
+<pre><code>##              response  model_name               rmse             rsquared
+## 1   CANDIDATE_GI5_108 rand_forest 0.0350694943768948                 &lt;NA&gt;
+## 2   CANDIDATE_GI5_198 rand_forest  0.178075106567057    0.254116062472695
+## 3   CANDIDATE_GI5_268 rand_forest 0.0586782634452646    0.586045771463029
+## 4    CANDIDATE_GI5_92 rand_forest  0.102589162986966    0.420451334794463
+## 5  CANDIDATE_GI5_1950 rand_forest  0.181441397255942    0.114468427273462
+## 6  CANDIDATE_GI5_2382 rand_forest 0.0571591056683116   0.0144643093030815
+## 7  CANDIDATE_GI5_2405 rand_forest  0.153905873145166     0.49762471810075
+## 8  CANDIDATE_GI5_2612 rand_forest   0.17439354896511    0.156881646399771
+## 9  CANDIDATE_GI5_2641 rand_forest 0.0802712786531875 0.000401566139066647
+## 10   CANDIDATE_GI5_33 rand_forest  0.179279050740783    0.150264356701938
+## 11 CANDIDATE_GI5_3966 rand_forest  0.143822154765863    0.411256431521839
+## 12 CANDIDATE_GI5_5033 rand_forest 0.0426338466582562    0.510343572385688
+## 13 CANDIDATE_GI5_5090 rand_forest  0.104524985464884    0.435243531050605
+## 14 CANDIDATE_GI5_5119 rand_forest  0.123006393256641   0.0636542444104104
+## 15 CANDIDATE_GI5_8997 rand_forest  0.196637838370401   0.0588279957945207
+## 16 CANDIDATE_GI5_9287 rand_forest 0.0425016996827469   0.0918884532318538
+## 17 CANDIDATE_GI5_9447 rand_forest 0.0503221923692477    0.381834717158859
+## 18 CANDIDATE_GI5_9551 rand_forest  0.185202310064176    0.317899194189227
+## 19 CANDIDATE_GI5_9585 rand_forest  0.174450313732418    0.224484158748762
+## 20 CANDIDATE_GI5_9659 rand_forest   0.15182398112692    0.270637223098923</code></pre>
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="co">#overall average r2 </span></code></pre></div>
+<pre><code>## [1] 0.1207894</code></pre>
+>>>>>>> c754efab66e0281c8a44b8ba41e59e7f0baf9638
 <div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <p>You can see that predictive performance is actually slightly less using random forests (overall R2 = 0.12) but for some loci random forests does better than our linear models and sometimes worse. Which to choose? Generally simpler models are preferred (the linear model in this case) but it depends on how important to think non-linear response are. In future versions of MrIML we will implement ensemble models that will overcome this issue. For the time-being we will have a look at variable importance for the random forest based model.</p>
@@ -6489,9 +6530,15 @@
 <p>MrIML has easy to use functionality that can can quantify interactions between features. Note that this can take a while to compute.</p>
 <div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#interactions &lt;-mrInteractions(yhats, X, Y,  model='regression') #this is computationally intensive so multicores are needed.</span>
+<<<<<<< HEAD
 
 <span class="co">#mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2) #can increase the number of interactions/SNPs ('responses') shown</span>
 
+=======
+
+<span class="co">#mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2) #can increase the number of interactions/SNPs ('responses') shown</span>
+
+>>>>>>> c754efab66e0281c8a44b8ba41e59e7f0baf9638
 <span class="co">#Make sure you save your results</span>
 <span class="co">#save(interactions, 'Fitzpatrick2016interactions')</span>
 
