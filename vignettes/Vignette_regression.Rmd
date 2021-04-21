@@ -117,8 +117,8 @@ Now we can explore the model further my plotting the relationships between our S
 
 
 ```{r include=FALSE}
-source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrFlashlight.R"))
-source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrProfileplots.R"))
+#source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrFlashlight.R"))
+#source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrProfileplots.R"))
 
 ```
 
@@ -147,7 +147,7 @@ The effect of mean annual temperature on SNP turnover is not as distinct in the 
 
 MrIML has easy to use functionality that can can quantify interactions between features. Note that this can take a while to compute.
 
-```{r}
+```{r warning=FALSE }
 interactions <-mrInteractions(yhats, X, Y,  model='regression') #this is computationally intensive so multicores are needed.
 
 mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2) #can increase the number of interactions/SNPs ('responses') shown

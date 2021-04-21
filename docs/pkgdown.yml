@@ -4,12 +4,8 @@ pkgdown_sha: ~
 articles:
   Vignette_LandscapeGenetics: Vignette_LandscapeGenetics.html
   Vignette_regression: Vignette_regression.html
-<<<<<<< HEAD
-last_built: 2021-04-19T02:36Z
+last_built: 2021-04-21T00:22Z
 urls:
   reference: nfj1380.io/mrIML//reference
   article: nfj1380.io/mrIML//articles
-=======
-last_built: 2021-04-19T11:57Z
->>>>>>> c754efab66e0281c8a44b8ba41e59e7f0baf9638
 
