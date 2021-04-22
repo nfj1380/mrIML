@@ -12,7 +12,8 @@ mrIMLpredicts(
   model = "regression",
   parallel = TRUE,
   transformY = "log",
-  tune_grid_size = 10
+  tune_grid_size = 10,
+  seed = sample.int(1e+08, 1)
 )
 }
 \arguments{
@@ -32,7 +33,7 @@ Wrapper to generate multi-response predictive models.
 \details{
 This function produces yhats that used in all model characteristics for subsequent functions.
 This function fits separate classication models for each response variable in a dataset. Y (response variables) should be binary (0/1). Rows in X (features) have the same id (host/site/population)
- as Y. Class imblanace can be a real issue for classification analyses. Class imbalance can be addressed for each
-response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling) 
+as Y. Class imblanace can be a real issue for classification analyses. Class imbalance can be addressed for each
+response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling)
 or 'no' (no balancing of classes).
 }

@@ -111,7 +111,7 @@ plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.2, plot.pca='
     scale_fill_viridis(discrete = T, option = "E") +
     ggtitle("Individual response models") +
     facet_wrap(~response) +
-    theme_ipsum() +
+    #theme_ipsum() +
     theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank())+
@@ -204,7 +204,7 @@ readline(prompt="Press [enter] to plot individual variable importance summaries"
         scale_fill_viridis(discrete = T, option = "E") +
         ggtitle("Individual response models") +
         facet_wrap(~response) +
-        theme_ipsum() +
+       # theme_ipsum() +
         theme(axis.title.x=element_blank(),
               axis.text.x=element_blank(),
               axis.ticks.x=element_blank())+

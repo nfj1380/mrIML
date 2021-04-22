@@ -91,9 +91,9 @@ mrIMLperformance <- function(yhats, model1, X, model='regression'){
   
 Global_summary<- as.numeric(as.character(unlist(mod1_perf$rmse))) 
   
-  Global_summary[is.na(Global_summary)] <- 0
-  Global_summary <-  mean(Global_summary)
-
+  #Global_summary[is.na(Global_summary)] <- 0
+  #Global_summary <-  mean(Global_summary)
+  Global_summary <-  mean(Global_summary, na.rm = TRUE)
 }  
   #calculate mean for all response variables
   #Global_summary <- mean(as.numeric(as.character(unlist( mod1_perf[[5]]))), na.rm = FALSE) #mean testing mcc
