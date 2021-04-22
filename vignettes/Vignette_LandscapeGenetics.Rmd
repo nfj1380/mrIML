@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 ```
 
 
-<img src = "https://user-images.githubusercontent.com/33707823/88988817-531ad080-d31d-11ea-8d76-f1ad0506e405.png" width="200" height="200"/>
+# mrIML: Multivariate (multi-response) interpretable machine learning <a href='https://nfj1380.github.io/mrIML/index.html'><img src="man/figures/logo.png" align="right" height="139"/></a>
 
 # General introduction
 
