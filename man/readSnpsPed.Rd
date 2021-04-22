@@ -15,7 +15,7 @@ readSnpsPed(pedfile, mapfile)
 Conversion to single column per locus from plink file via LEA functionality
 }
 \details{
-Function to import SNP data from a plink format into a format suitable for MrIML predicts 
+Function to import SNP data from a plink format into a format suitable for MrIML predicts
 (presence/absence of an alelle for each locus).
 Currently if there is missing data (NAs) it either imputes them as the mode or leaves them. A histogram is also produced of the missing data.
 }

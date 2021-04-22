@@ -18,6 +18,6 @@ Wrapper to calculate and plot summed interactions of features across response va
 }
 \details{
 The aim of this function is to enable users to calculate interaction importance for all fatures in a data set.
-and then use plot_mrpd (a plotting function) to create a pd plot for all species/SNPs for each feature. 
+and then use plot_mrpd (a plotting function) to create a pd plot for all species/SNPs for each feature.
 Could build functionality for ICE plots but that would be messy for multiple repsonse variables.
 }
