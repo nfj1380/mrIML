@@ -7,6 +7,7 @@ template_articles()
 sink()
 pkgdown::build_site()
 
+
 build_news()
 build_home()
 build_articles() 

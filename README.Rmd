@@ -7,7 +7,7 @@ editor_options:
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r, echo = FALSE, message=F}
+```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -15,7 +15,6 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 options(width = 100)
-library(mrIML)
 ```
 
 # mrIML: Multivariate (multi-response) interpretable machine learning <a href='https://nfj1380.github.io/mrIML/index.html'><img src="man/figures/logo.png" align="right" height="139"/></a>
