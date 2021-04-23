@@ -8,6 +8,7 @@
 ![GitHub R package
 version](https://img.shields.io/github/r-package/v/nfj1380/mrIML?logo=github&logoColor=%2300ff37&style=flat-square)
 ![GitHub
+![GitHub all releases](https://img.shields.io/github/downloads/nfj1380/mrIML/total)
 contributors](https://img.shields.io/github/contributors/nfj1380/mrIML?style=flat-square)
 ![GitHub last
 commit](https://img.shields.io/github/last-commit/nfj1380/mrIML?style=flat-square)
