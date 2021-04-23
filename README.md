@@ -8,8 +8,9 @@
 ![GitHub R package
 version](https://img.shields.io/github/r-package/v/nfj1380/mrIML?logo=github&logoColor=%2300ff37&style=flat-square)
 ![GitHub
-![GitHub all releases](https://img.shields.io/github/downloads/nfj1380/mrIML/total)
 contributors](https://img.shields.io/github/contributors/nfj1380/mrIML?style=flat-square)
+![GitHub all
+releases](https://img.shields.io/github/downloads/nfj1380/mriml/total?style=flat-square)
 ![GitHub last
 commit](https://img.shields.io/github/last-commit/nfj1380/mrIML?style=flat-square)
 [![R-CMD-check](https://github.com/nfj1380/mrIML/workflows/R-CMD-check/badge.svg)](https://github.com/nfj1380/mrIML/actions)
@@ -125,7 +126,7 @@ yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classific
 #save(yhats, file='logreg_model')
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) #
 ModelPerf[[2]]
-#> [1] 0.6637931
+#> [1] 0.5517241
 ```
 
 ## Ploting
