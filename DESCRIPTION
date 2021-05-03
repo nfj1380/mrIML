@@ -32,6 +32,7 @@ Imports:
     stats,
     utils,
     ranger,
+    pdp,
     rmarkdown
 Suggests: 
     caret,
