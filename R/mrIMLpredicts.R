@@ -4,6 +4,7 @@
 #'@param balance_data A \code{character} 'up', 'down' or 'no'. 
 #'@param Model 1 A \code{list} can be any model from the tidy model package. See examples.
 #'@param tune_grid_size A \code{numeric} sets the grid size for hyperparamter tuning. Larger grid sizes increase computational time.
+#'@param k A \code{numeric} sets the number of folds in the 10-fold cross-validation. 10 is the default.
 #'@seed A \code{numeric} as these models have a stochastic component, a seed is set to make to make the analysis reproducible. Defaults between 100 million and 1.
 #
 #'@details This function produces yhats that used in all model characteristics for subsequent functions.
@@ -18,11 +19,11 @@
 #'  set_mode("classification")
 #'  
 #' yhats <- mrIMLpredicts(X= enviro_variables,Y=response_data, model1=model1, balance_data='no', model='classification', parallel = TRUE,  
-#'tune_grid_size=5, seed = sample.int(1e8, 1)))
+#'tune_grid_size=5, k=10, seed = sample.int(1e8, 1)))
 #'@export
 
 
-mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', parallel = TRUE, transformY='log', tune_grid_size= 10, seed = sample.int(1e8, 1) ) { 
+mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', parallel = TRUE, transformY='log', tune_grid_size= 10, k=10, seed = sample.int(1e8, 1) ) { 
   
   if(parallel==TRUE){
     
@@ -54,7 +55,7 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', p
     data_test <- testing(data_split)
 
     #10 fold cross validation
-    data_cv <- vfold_cv(data_train, v= 10) 
+    data_cv <- vfold_cv(data_train, v= k) 
     
     if(balance_data == 'down'){ 
       data_recipe <- training(data_split) %>%
