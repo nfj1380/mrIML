@@ -76,7 +76,7 @@ model1 <-
 
 This function represents the core functionality of the package and
 includes results reporting, plotting and optional saving.  It requires a
-data frame of X the loci or snip data for exampel and Y represented by the covariates
+data frame of X t( the snp data for example) and Y represented by the covariates or features.
 
 Load example data (cite) data from `{mrIML}`.
 
@@ -97,11 +97,11 @@ X <- fData #
 yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classification', parallel = TRUE)
 #save(yhats, file='logreg_model')
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) #
-ModelPerf[[2]]
+ModelPerf[[2]] #this measures performance across all loci.
 ```
 
 
-## Ploting
+## Plotting
 ```{r message = FALSE, warning = FALSE}
 VI <- mrVip(yhats, Y=Y) 
 plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes') #the cutoff reduces the number of individual models printed in the second plot. 
@@ -140,7 +140,7 @@ mrProfileplot(profileData_ale , sdthresh =0.01)
 
 ```
 
-## Features interact
+## Interacting predictors or features
 
 Finally, we can assess how features interact overall to shape genetic change. Be warned this is memory intensive. Future updates to this package will enable users to visualize these interactions and explore them in more detail using 2D ALE plots for example.
 
