@@ -54,11 +54,6 @@ of outcomes you want to test. The first step to using the package is to load it 
 
 ```{r, message = FALSE}
 library(mrIML)
-#other package needed:
-library(vip); library(tidymodels); library(randomForest);  library(caret); library(gbm);
-library(tidyverse);library(parallel); library(doParallel); library(themis); library(viridis);
-library(janitor); library(hrbrthemes); library(xgboost); library(vegan);library(flashlight);
-library(ggrepel); library(parsnip);library(rsample); library(workflows)
 ```
 
 
@@ -95,7 +90,7 @@ Y <- FeaturesnoNA #for simplicity
 fData <- filterRareCommon (Responsedata, lower=0.4, higher=0.7) 
 X <- fData #
 
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classification', parallel = TRUE)
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classification', parallel = FALSE)
 #save(yhats, file='logreg_model')
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) #
 ModelPerf[[2]] #this measures performance across all loci.
@@ -125,9 +120,6 @@ flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='classifica
 
 #plot prediction scatter for all responses. Gets busy with 
 plot(light_scatter(flashlightObj, v = "Forest", type = "predicted"))
-
-#plots everything on one plot (partial dependency, ALE, scatter)
-plot(light_effects(flashlightObj, v = "Grassland"), use = "all")
 
 
 #profileData_pd <- light_profile(flashlightObj,  v = "Grassland")
