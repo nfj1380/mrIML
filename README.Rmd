@@ -94,7 +94,6 @@ Y <- FeaturesnoNA #for simplicity
 # Define set the outcomes of interst
 fData <- filterRareCommon (Responsedata, lower=0.4, higher=0.7) 
 X <- fData #
-
 yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classification', parallel = TRUE)
 #save(yhats, file='logreg_model')
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) #
@@ -106,7 +105,6 @@ ModelPerf[[2]]
 ```{r message = FALSE, warning = FALSE}
 VI <- mrVip(yhats, Y=Y) 
 plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes') #the cutoff reduces the number of individual models printed in the second plot. 
-
 ```
 
 ## Effect of a feature on genetic change
@@ -117,28 +115,19 @@ We also wrap some flashlight functionality to visualize the marginal (i.e. parti
 ```{r include=FALSE}
 #source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrFlashlight.R")) #why is this here?
 #source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrProfileplots.R"))
-
 ```
 
 ```{r message = FALSE, warning = FALSE}
 flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='classification')
-
 #plot prediction scatter for all responses. Gets busy with 
 plot(light_scatter(flashlightObj, v = "Forest", type = "predicted"))
-
 #plots everything on one plot (partial dependency, ALE, scatter)
 plot(light_effects(flashlightObj, v = "Grassland"), use = "all")
-
-
 #profileData_pd <- light_profile(flashlightObj,  v = "Grassland")
-
 #mrProfileplot(profileData_pd , sdthresh =0.05) #sdthresh removes responses from the first plot that do not vary with the feature
-
 profileData_ale <- light_profile(flashlightObj, v = "Grassland", type = "ale") #acumulated local effects
-
 mrProfileplot(profileData_ale , sdthresh =0.01)
 #the second plot is the cumulative turnover function
-
 ```
 
 ## Features interact
@@ -146,11 +135,8 @@ mrProfileplot(profileData_ale , sdthresh =0.01)
 Finally, we can assess how features interact overall to shape genetic change. Be warned this is memory intensive. Future updates to this package will enable users to visualize these interactions and explore them in more detail using 2D ALE plots for example.
 
 ```{r message = FALSE, warning = FALSE}
-
 #interactions <-mrInteractions(yhats, X, Y,  mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
-
 #mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2)
-
 ```
 
 
@@ -167,4 +153,3 @@ Ellis, N., Smith, S.J. and Pitcher, C.R. (2012), Gradient forests: calculating i
 ```{r}
 devtools::session_info()
 ```
-

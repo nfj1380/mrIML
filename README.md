@@ -55,7 +55,7 @@ library(mrIML)
 #other package needed:
 library(vip); library(tidymodels); library(randomForest);  library(caret); library(gbm);
 library(tidyverse);library(parallel); library(doParallel); library(themis); library(viridis);
-library(janitor); library(hrbrthemes); library(xgboost); library(vegan);library(flashlight);
+library(janitor); library(hrbrthemes); library(xgboost);library(flashlight);
 library(ggrepel); library(parsnip);library(rsample); library(workflows)
 ```
 
@@ -126,25 +126,15 @@ yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classific
 #save(yhats, file='logreg_model')
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) #
 ModelPerf[[2]]
-#> [1] 0.5517241
+#> [1] 0.6982759
 ```
 
 ## Ploting
 
 ``` r
 VI <- mrVip(yhats, Y=Y) 
-plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes') #the cutoff reduces the number of individual models printed in the second plot. 
+#plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes') #the cutoff reduces the number of individual models printed in the second plot. 
 ```
-
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
-
-    #> Press [enter] to plot individual variable importance summaries
-
-<img src="man/figures/README-unnamed-chunk-7-2.png" width="100%" />
-
-    #> Press [enter] to plot the importance PCA plot
-
-<img src="man/figures/README-unnamed-chunk-7-3.png" width="100%" />
 
 ## Effect of a feature on genetic change
 
@@ -156,31 +146,12 @@ to calculate and are more sensitive to correlated features
 ``` r
 flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='classification')
 
-#plot prediction scatter for all responses. Gets busy with 
-plot(light_scatter(flashlightObj, v = "Forest", type = "predicted"))
-```
-
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
-
-``` r
-#plots everything on one plot (partial dependency, ALE, scatter)
-plot(light_effects(flashlightObj, v = "Grassland"), use = "all")
-```
-
-<img src="man/figures/README-unnamed-chunk-9-2.png" width="100%" />
-
-``` r
-
-#profileData_pd <- light_profile(flashlightObj,  v = "Grassland")
-
-#mrProfileplot(profileData_pd , sdthresh =0.05) #sdthresh removes responses from the first plot that do not vary with the feature
-
 profileData_ale <- light_profile(flashlightObj, v = "Grassland", type = "ale") #acumulated local effects
 
 mrProfileplot(profileData_ale , sdthresh =0.01)
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-3.png" width="100%" /><img src="man/figures/README-unnamed-chunk-9-4.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-8-2.png" width="100%" />
 
 ``` r
 #the second plot is the cumulative turnover function
@@ -194,10 +165,20 @@ package will enable users to visualize these interactions and explore
 them in more detail using 2D ALE plots for example.
 
 ``` r
-#interactions <-mrInteractions(yhats, X, Y,  mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
+interactions <-mrInteractions(yhats, X, Y,  mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
 
-#mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2)
+mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2)
 ```
+
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+
+    #> Press [enter] to continue for response with strongest interactions
+
+<img src="man/figures/README-unnamed-chunk-9-2.png" width="100%" />
+
+    #> Press [enter] to continue for individual response results
+
+<img src="man/figures/README-unnamed-chunk-9-3.png" width="100%" />
 
 ## References
 
@@ -228,7 +209,7 @@ devtools::session_info()
 #>  collate  English_United States.1252  
 #>  ctype    English_United States.1252  
 #>  tz       America/New_York            
-#>  date     2021-04-22                  
+#>  date     2021-04-23                  
 #> 
 #> - Packages ---------------------------------------------------------------------------------------
 #>  package         * version    date       lib source                        
@@ -243,7 +224,6 @@ devtools::session_info()
 #>  checkmate         2.0.0      2020-02-06 [1] CRAN (R 3.6.3)                
 #>  class             7.3-15     2019-01-01 [2] CRAN (R 3.6.3)                
 #>  cli               2.4.0      2021-04-05 [1] CRAN (R 3.6.3)                
-#>  cluster           2.1.0      2019-06-19 [2] CRAN (R 3.6.3)                
 #>  codetools         0.2-16     2018-12-24 [2] CRAN (R 3.6.3)                
 #>  colorspace        2.0-0      2020-11-11 [1] CRAN (R 3.6.3)                
 #>  cowplot           1.1.1      2020-12-30 [1] CRAN (R 3.6.3)                
@@ -322,7 +302,6 @@ devtools::session_info()
 #>  parallelMap       1.5.0      2020-03-26 [1] CRAN (R 3.6.3)                
 #>  ParamHelpers      1.14       2020-03-24 [1] CRAN (R 3.6.3)                
 #>  parsnip         * 0.1.5      2021-01-19 [1] CRAN (R 3.6.3)                
-#>  permute         * 0.9-5      2019-03-12 [1] CRAN (R 3.6.3)                
 #>  pillar            1.6.0      2021-04-13 [1] CRAN (R 3.6.3)                
 #>  pkgbuild          1.2.0      2020-12-15 [1] CRAN (R 3.6.3)                
 #>  pkgconfig         2.0.3      2019-09-22 [1] CRAN (R 3.6.3)                
@@ -375,7 +354,6 @@ devtools::session_info()
 #>  usethis           2.0.1      2021-02-10 [1] CRAN (R 3.6.3)                
 #>  utf8              1.2.1      2021-03-12 [1] CRAN (R 3.6.3)                
 #>  vctrs             0.3.6      2020-12-17 [1] CRAN (R 3.6.3)                
-#>  vegan           * 2.5-7      2020-11-28 [1] CRAN (R 3.6.3)                
 #>  vip             * 0.3.2      2020-12-17 [1] CRAN (R 3.6.3)                
 #>  viridis         * 0.6.0      2021-04-15 [1] CRAN (R 3.6.3)                
 #>  viridisLite     * 0.4.0      2021-04-13 [1] CRAN (R 3.6.3)                
