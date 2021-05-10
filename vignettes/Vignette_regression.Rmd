@@ -66,7 +66,7 @@ model1 <- #model used to generate yhat
   # choose either the continuous regression or binary classification mode
   set_mode("regression")
 
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='regression', parallel = TRUE, seed = sample.int(1e8, 1)) ## Balanced data= up updamples and down downsampled to create a balanced set. For regression 'no' has to be selected.
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='regression', parallel = FALSE, seed = sample.int(1e8, 1)) ## Balanced data= up updamples and down downsampled to create a balanced set. For regression 'no' has to be selected.
 
 #save(yhats, file='Regression_lm') #always a good idea
 ```

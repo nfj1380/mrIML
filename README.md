@@ -52,8 +52,8 @@ is to load it as follows.
 
 ``` r
 library(mrIML)
-#other package needed:
-library(vip); library(tidymodels); library(randomForest);  library(caret); library(gbm);
+# to load
+library(vip); library(tidymodels); library(randomForest);  library(caret); library(gbm);library(pdp);
 library(tidyverse);library(parallel); library(doParallel); library(themis); library(viridis);
 library(janitor); library(hrbrthemes); library(xgboost);library(flashlight);
 library(ggrepel); library(parsnip);library(rsample); library(workflows)
@@ -83,8 +83,8 @@ model1 <-
 
 This function represents the core functionality of the package and
 includes results reporting, plotting and optional saving. It requires a
-data frame of X the loci or snip data for exampel and Y represented by
-the covariates
+data frame of X t( the snp data for example) and Y represented by the
+covariates or features.
 
 Load example data (cite) data from `{mrIML}`.
 
@@ -122,14 +122,19 @@ Y <- FeaturesnoNA #for simplicity
 fData <- filterRareCommon (Responsedata, lower=0.4, higher=0.7) 
 X <- fData #
 
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classification', parallel = TRUE)
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classification', parallel = FALSE)
 #save(yhats, file='logreg_model')
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) #
+<<<<<<< HEAD
 ModelPerf[[2]]
 #> [1] 0.6982759
+=======
+ModelPerf[[2]] #this measures performance across all loci.
+#> [1] 0.6034483
+>>>>>>> abce6e7093966e7d10b493afb89473eb098516d9
 ```
 
-## Ploting
+## Plotting
 
 ``` r
 VI <- mrVip(yhats, Y=Y) 
@@ -146,18 +151,37 @@ to calculate and are more sensitive to correlated features
 ``` r
 flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='classification')
 
+<<<<<<< HEAD
+=======
+#plot prediction scatter for all responses. Gets busy with 
+plot(light_scatter(flashlightObj, v = "Forest", type = "predicted"))
+```
+
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+
+``` r
+
+#profileData_pd <- light_profile(flashlightObj,  v = "Grassland")
+
+#mrProfileplot(profileData_pd , sdthresh =0.05) #sdthresh removes responses from the first plot that do not vary with the feature
+
+>>>>>>> abce6e7093966e7d10b493afb89473eb098516d9
 profileData_ale <- light_profile(flashlightObj, v = "Grassland", type = "ale") #acumulated local effects
 
 mrProfileplot(profileData_ale , sdthresh =0.01)
 ```
 
+<<<<<<< HEAD
 <img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-8-2.png" width="100%" />
+=======
+<img src="man/figures/README-unnamed-chunk-9-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-9-3.png" width="100%" />
+>>>>>>> abce6e7093966e7d10b493afb89473eb098516d9
 
 ``` r
 #the second plot is the cumulative turnover function
 ```
 
-## Features interact
+## Interacting predictors or features
 
 Finally, we can assess how features interact overall to shape genetic
 change. Be warned this is memory intensive. Future updates to this
@@ -209,7 +233,11 @@ devtools::session_info()
 #>  collate  English_United States.1252  
 #>  ctype    English_United States.1252  
 #>  tz       America/New_York            
+<<<<<<< HEAD
 #>  date     2021-04-23                  
+=======
+#>  date     2021-05-09                  
+>>>>>>> abce6e7093966e7d10b493afb89473eb098516d9
 #> 
 #> - Packages ---------------------------------------------------------------------------------------
 #>  package         * version    date       lib source                        
@@ -223,7 +251,12 @@ devtools::session_info()
 #>  cellranger        1.1.0      2016-07-27 [1] CRAN (R 3.6.3)                
 #>  checkmate         2.0.0      2020-02-06 [1] CRAN (R 3.6.3)                
 #>  class             7.3-15     2019-01-01 [2] CRAN (R 3.6.3)                
+<<<<<<< HEAD
 #>  cli               2.4.0      2021-04-05 [1] CRAN (R 3.6.3)                
+=======
+#>  cli               2.5.0      2021-04-26 [1] CRAN (R 3.6.3)                
+#>  cluster           2.1.0      2019-06-19 [2] CRAN (R 3.6.3)                
+>>>>>>> abce6e7093966e7d10b493afb89473eb098516d9
 #>  codetools         0.2-16     2018-12-24 [2] CRAN (R 3.6.3)                
 #>  colorspace        2.0-0      2020-11-11 [1] CRAN (R 3.6.3)                
 #>  cowplot           1.1.1      2020-12-30 [1] CRAN (R 3.6.3)                
@@ -302,6 +335,11 @@ devtools::session_info()
 #>  parallelMap       1.5.0      2020-03-26 [1] CRAN (R 3.6.3)                
 #>  ParamHelpers      1.14       2020-03-24 [1] CRAN (R 3.6.3)                
 #>  parsnip         * 0.1.5      2021-01-19 [1] CRAN (R 3.6.3)                
+<<<<<<< HEAD
+=======
+#>  pdp             * 0.7.0      2018-08-27 [1] CRAN (R 3.6.3)                
+#>  permute         * 0.9-5      2019-03-12 [1] CRAN (R 3.6.3)                
+>>>>>>> abce6e7093966e7d10b493afb89473eb098516d9
 #>  pillar            1.6.0      2021-04-13 [1] CRAN (R 3.6.3)                
 #>  pkgbuild          1.2.0      2020-12-15 [1] CRAN (R 3.6.3)                
 #>  pkgconfig         2.0.3      2019-09-22 [1] CRAN (R 3.6.3)                
@@ -315,7 +353,7 @@ devtools::session_info()
 #>  purrr           * 0.3.4      2020-04-17 [1] CRAN (R 3.6.3)                
 #>  R6                2.5.0      2020-10-28 [1] CRAN (R 3.6.3)                
 #>  randomForest    * 4.6-14     2018-03-25 [1] CRAN (R 3.6.3)                
-#>  ranger            0.12.1     2020-01-10 [1] CRAN (R 3.6.3)                
+#>  ranger          * 0.12.1     2020-01-10 [1] CRAN (R 3.6.3)                
 #>  RANN              2.6.1      2019-01-08 [1] CRAN (R 3.6.3)                
 #>  Rcpp              1.0.6      2021-01-15 [1] CRAN (R 3.6.3)                
 #>  readr           * 1.4.0      2020-10-05 [1] CRAN (R 3.6.3)                
@@ -324,7 +362,7 @@ devtools::session_info()
 #>  remotes           2.3.0      2021-04-01 [1] CRAN (R 3.6.3)                
 #>  reprex            2.0.0      2021-04-02 [1] CRAN (R 3.6.3)                
 #>  reshape2          1.4.4      2020-04-09 [1] CRAN (R 3.6.3)                
-#>  rlang             0.4.10     2020-12-30 [1] CRAN (R 3.6.3)                
+#>  rlang           * 0.4.10     2020-12-30 [1] CRAN (R 3.6.3)                
 #>  rmarkdown         2.7        2021-02-19 [1] CRAN (R 3.6.3)                
 #>  ROSE              0.0-3      2014-07-15 [1] CRAN (R 3.6.3)                
 #>  rpart             4.1-15     2019-04-12 [2] CRAN (R 3.6.3)                
@@ -353,7 +391,12 @@ devtools::session_info()
 #>  unbalanced        2.0        2015-06-26 [1] CRAN (R 3.6.3)                
 #>  usethis           2.0.1      2021-02-10 [1] CRAN (R 3.6.3)                
 #>  utf8              1.2.1      2021-03-12 [1] CRAN (R 3.6.3)                
+<<<<<<< HEAD
 #>  vctrs             0.3.6      2020-12-17 [1] CRAN (R 3.6.3)                
+=======
+#>  vctrs           * 0.3.6      2020-12-17 [1] CRAN (R 3.6.3)                
+#>  vegan           * 2.5-7      2020-11-28 [1] CRAN (R 3.6.3)                
+>>>>>>> abce6e7093966e7d10b493afb89473eb098516d9
 #>  vip             * 0.3.2      2020-12-17 [1] CRAN (R 3.6.3)                
 #>  viridis         * 0.6.0      2021-04-15 [1] CRAN (R 3.6.3)                
 #>  viridisLite     * 0.4.0      2021-04-13 [1] CRAN (R 3.6.3)                
