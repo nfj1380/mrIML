@@ -52,8 +52,13 @@ devtools::install_github('nfj1380/mrIML')
 alone can be substantially computationally demanding depending on the number
 of outcomes you want to test. The first step to using the package is to load it as follows.
 
-```{r, message = FALSE}
+```{r, message = FALSE, message = FALSE, warning = FALSE}
 library(mrIML)
+# to load
+library(vip); library(tidymodels); library(randomForest);  library(caret); library(gbm);library(pdp);
+library(tidyverse);library(parallel); library(doParallel); library(themis); library(viridis);
+library(janitor); library(hrbrthemes); library(xgboost); library(vegan);library(flashlight);
+library(ggrepel); library(parsnip);library(rsample); library(workflows)
 ```
 
 
