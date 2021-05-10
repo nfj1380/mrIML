@@ -116,24 +116,11 @@
 <p><strong>mrIML</strong> is designed to be used with a single function call or to be used in an ad-hoc fashion via individual function calls. In the following section we give an overview of the simple use case. For more on using each function see the <a href="xx">function documentation</a>. The core functions for both regression and classification are: <a href="xx"><code>mrIMLpredicts</code></a>, <a href="xx"><code>mrIMLperformance</code></a>, and <a href="xx"><code>mrInteractions</code></a>,for plotting and visualization <a href="xx"><code>mrVip</code></a>, <a href="xx"><code>mrFlashlight</code></a>, and<a href="xx"><code>plot_vi</code></a>. Estimating the interactions alone can be substantially computationally demanding depending on the number of outcomes you want to test. The first step to using the package is to load it as follows.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://nfj1380.github.io/mrIML">mrIML</a></span><span class="op">)</span>
-<span class="co">#other package needed:</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/koalaverse/vip/">vip</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidymodels.tidymodels.org">tidymodels</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/">randomForest</a></span><span class="op">)</span>;  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/topepo/caret/">caret</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/gbm-developers/gbm">gbm</a></span><span class="op">)</span>;
-<span class="co">#&gt; Warning: package 'vip' was built under R version 4.0.5</span>
-<span class="co">#&gt; Warning: package 'randomForest' was built under R version 4.0.5</span>
-<span class="co">#&gt; Warning: package 'caret' was built under R version 4.0.5</span>
-<span class="co">#&gt; Warning: package 'gbm' was built under R version 4.0.5</span>
+<span class="co"># to load</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/koalaverse/vip/">vip</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidymodels.tidymodels.org">tidymodels</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/">randomForest</a></span><span class="op">)</span>;  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/topepo/caret/">caret</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/gbm-developers/gbm">gbm</a></span><span class="op">)</span>;<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bgreenwell.github.io/pdp/index.html">pdp</a></span><span class="op">)</span>;
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>;<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">parallel</span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">doParallel</span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/themis">themis</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/">viridis</a></span><span class="op">)</span>;
-<span class="co">#&gt; Warning: package 'doParallel' was built under R version 4.0.5</span>
-<span class="co">#&gt; Warning: package 'themis' was built under R version 4.0.5</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sfirke/janitor">janitor</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/hrbrmstr/hrbrthemes">hrbrthemes</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dmlc/xgboost">xgboost</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://cran.r-project.org">vegan</a></span><span class="op">)</span>;<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mayer79/flashlight">flashlight</a></span><span class="op">)</span>;
-<span class="co">#&gt; Warning: package 'janitor' was built under R version 4.0.5</span>
-<span class="co">#&gt; Warning: package 'hrbrthemes' was built under R version 4.0.5</span>
-<span class="co">#&gt; Warning: package 'xgboost' was built under R version 4.0.5</span>
-<span class="co">#&gt; Warning: package 'vegan' was built under R version 4.0.5</span>
-<span class="co">#&gt; Warning: package 'permute' was built under R version 4.0.5</span>
-<span class="co">#&gt; Warning: package 'flashlight' was built under R version 4.0.5</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/slowkow/ggrepel">ggrepel</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://parsnip.tidymodels.org">parsnip</a></span><span class="op">)</span>;<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rsample.tidymodels.org">rsample</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/workflows">workflows</a></span><span class="op">)</span>
-<span class="co">#&gt; Warning: package 'ggrepel' was built under R version 4.0.5</span></code></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/slowkow/ggrepel">ggrepel</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://parsnip.tidymodels.org">parsnip</a></span><span class="op">)</span>;<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rsample.tidymodels.org">rsample</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/workflows">workflows</a></span><span class="op">)</span></code></pre></div>
 </div>
 <div id="model-component" class="section level2">
 <h2 class="hasAnchor">
@@ -182,11 +169,11 @@
 <span class="va">fData</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/filterRareCommon.html">filterRareCommon</a></span> <span class="op">(</span><span class="va">Responsedata</span>, lower<span class="op">=</span><span class="fl">0.4</span>, higher<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span> 
 <span class="va">X</span> <span class="op">&lt;-</span> <span class="va">fData</span> <span class="co">#</span>
 
-<span class="va">yhats</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrIMLpredicts.html">mrIMLpredicts</a></span><span class="op">(</span>X<span class="op">=</span><span class="va">X</span>,Y<span class="op">=</span><span class="va">Y</span>, model1<span class="op">=</span><span class="va">model1</span>, balance_data<span class="op">=</span><span class="st">'no'</span>, mod<span class="op">=</span><span class="st">'classification'</span>, parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">yhats</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrIMLpredicts.html">mrIMLpredicts</a></span><span class="op">(</span>X<span class="op">=</span><span class="va">X</span>,Y<span class="op">=</span><span class="va">Y</span>, model1<span class="op">=</span><span class="va">model1</span>, balance_data<span class="op">=</span><span class="st">'no'</span>, mod<span class="op">=</span><span class="st">'classification'</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="co">#save(yhats, file='logreg_model')</span>
 <span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">model1</span>, X<span class="op">=</span><span class="va">X</span><span class="op">)</span> <span class="co">#</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="co">#this measures performance across all loci.</span>
-<span class="co">#&gt; [1] 0.5517241</span></code></pre></div>
+<span class="co">#&gt; [1] 0.6034483</span></code></pre></div>
 </div>
 </div>
 <div id="plotting" class="section level2">
@@ -213,12 +200,6 @@
 <p><img src="reference/figures/README-unnamed-chunk-9-1.png" width="100%"></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
-<span class="co">#plots everything on one plot (partial dependency, ALE, scatter)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/flashlight/man/light_effects.html">light_effects</a></span><span class="op">(</span><span class="va">flashlightObj</span>, v <span class="op">=</span> <span class="st">"Grassland"</span><span class="op">)</span>, use <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-9-2.png" width="100%"></p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-
 <span class="co">#profileData_pd &lt;- light_profile(flashlightObj,  v = "Grassland")</span>
 
 <span class="co">#mrProfileplot(profileData_pd , sdthresh =0.05) #sdthresh removes responses from the first plot that do not vary with the feature</span>
@@ -226,17 +207,16 @@
 <span class="va">profileData_ale</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flashlight/man/light_profile.html">light_profile</a></span><span class="op">(</span><span class="va">flashlightObj</span>, v <span class="op">=</span> <span class="st">"Grassland"</span>, type <span class="op">=</span> <span class="st">"ale"</span><span class="op">)</span> <span class="co">#acumulated local effects</span>
 
 <span class="fu"><a href="reference/mrProfileplot.html">mrProfileplot</a></span><span class="op">(</span><span class="va">profileData_ale</span> , sdthresh <span class="op">=</span><span class="fl">0.01</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-9-3.png" width="100%"><img src="reference/figures/README-unnamed-chunk-9-4.png" width="100%"></p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<p><img src="reference/figures/README-unnamed-chunk-9-2.png" width="100%"><img src="reference/figures/README-unnamed-chunk-9-3.png" width="100%"></p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#the second plot is the cumulative turnover function</span></code></pre></div>
 </div>
 <div id="interacting-predictors-or-features" class="section level2">
 <h2 class="hasAnchor">
 <a href="#interacting-predictors-or-features" class="anchor"></a>Interacting predictors or features</h2>
 <p>Finally, we can assess how features interact overall to shape genetic change. Be warned this is memory intensive. Future updates to this package will enable users to visualize these interactions and explore them in more detail using 2D ALE plots for example.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-<span class="co">#interactions &lt;-mrInteractions(yhats, X, Y,  mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things</span>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">#interactions &lt;-mrInteractions(yhats, X, Y,  mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things</span>
 
 <span class="co">#mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2)</span></code></pre></div>
 </div>
@@ -250,179 +230,181 @@
 <div id="session-info" class="section level2">
 <h2 class="hasAnchor">
 <a href="#session-info" class="anchor"></a>Session info</h2>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/sessioninfo/man/session_info.html">session_info</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; - Session info -----------------------------------------------------------------------------------</span>
 <span class="co">#&gt;  setting  value                       </span>
-<span class="co">#&gt;  version  R version 4.0.4 (2021-02-15)</span>
+<span class="co">#&gt;  version  R version 3.6.3 (2020-02-29)</span>
 <span class="co">#&gt;  os       Windows 10 x64              </span>
 <span class="co">#&gt;  system   x86_64, mingw32             </span>
 <span class="co">#&gt;  ui       RTerm                       </span>
 <span class="co">#&gt;  language (EN)                        </span>
-<span class="co">#&gt;  collate  English_Australia.1252      </span>
-<span class="co">#&gt;  ctype    English_Australia.1252      </span>
-<span class="co">#&gt;  tz       Australia/Hobart            </span>
-<span class="co">#&gt;  date     2021-05-07                  </span>
+<span class="co">#&gt;  collate  English_United States.1252  </span>
+<span class="co">#&gt;  ctype    English_United States.1252  </span>
+<span class="co">#&gt;  tz       America/New_York            </span>
+<span class="co">#&gt;  date     2021-05-09                  </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; - Packages ---------------------------------------------------------------------------------------</span>
 <span class="co">#&gt;  package         * version    date       lib source                        </span>
-<span class="co">#&gt;  assertthat        0.2.1      2019-03-21 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  backports         1.2.1      2020-12-09 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  BBmisc            1.11       2017-03-10 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  broom           * 0.7.5      2021-02-19 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  cachem            1.0.4      2021-02-13 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  callr             3.5.1      2020-10-13 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  caret           * 6.0-86     2020-03-20 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  cellranger        1.1.0      2016-07-27 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  checkmate         2.0.0      2020-02-06 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  class             7.3-18     2021-01-24 [2] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  cli               2.3.1      2021-02-23 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  cluster           2.1.0      2019-06-19 [2] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  codetools         0.2-18     2020-11-04 [2] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  colorspace        2.0-0      2020-11-11 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  cowplot           1.1.1      2020-12-30 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  crayon            1.4.1      2021-02-08 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  data.table        1.14.0     2021-02-21 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  DBI               1.1.1      2021-01-15 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  dbplyr            2.1.0      2021-02-03 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  desc              1.2.0      2018-05-01 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  devtools          2.3.2      2020-09-18 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  dials           * 0.0.9      2020-09-16 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  DiceDesign        1.9        2021-02-13 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  digest            0.6.27     2020-10-24 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  doParallel      * 1.0.16     2020-10-16 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  dplyr           * 1.0.4      2021-02-02 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  ellipsis          0.3.1      2020-05-15 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  evaluate          0.14       2019-05-28 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  extrafont         0.17       2014-12-08 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  extrafontdb       1.0        2012-06-11 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  fansi             0.4.2      2021-01-15 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  farver            2.0.3      2020-01-16 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  fastmap           1.1.0      2021-01-25 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  fastmatch         1.1-0      2017-01-28 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  flashlight      * 0.7.5      2021-02-13 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  FNN               1.1.3      2019-02-15 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  forcats         * 0.5.1      2021-01-27 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  foreach         * 1.5.1      2020-10-15 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  fs                1.5.0      2020-07-31 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  furrr             0.2.2      2021-01-29 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  future            1.21.0     2020-12-10 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  gbm             * 2.1.8      2020-07-15 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  gdtools           0.2.3      2021-01-06 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  generics          0.1.0      2020-10-31 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  ggplot2         * 3.3.3      2020-12-30 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  ggrepel         * 0.9.1      2021-01-15 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  globals           0.14.0     2020-11-22 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  glue              1.4.2      2020-08-27 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  gower             0.2.2      2020-06-23 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  GPfit             1.0-8      2019-02-08 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  gridExtra         2.3        2017-09-09 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  gtable            0.3.0      2019-03-25 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  hardhat           0.1.5      2020-11-09 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  haven             2.3.1      2020-06-01 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  highr             0.8        2019-03-20 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  hms               1.0.0      2021-01-13 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  hrbrthemes      * 0.8.0      2020-03-06 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  htmltools         0.5.1.1    2021-01-22 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  httr              1.4.2      2020-07-20 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  infer           * 0.5.4      2021-01-13 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  ipred             0.9-11     2021-03-12 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  iterators       * 1.0.13     2020-10-15 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  janitor         * 2.1.0      2021-01-05 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  jsonlite          1.7.2      2020-12-09 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  knitr             1.31       2021-01-27 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  labeling          0.4.2      2020-10-20 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  lattice         * 0.20-41    2020-04-02 [2] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  lava              1.6.9      2021-03-11 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  lhs               1.1.1      2020-10-05 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  lifecycle         1.0.0      2021-02-15 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  listenv           0.8.0      2019-12-05 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  lubridate         1.7.9.2    2020-11-13 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  magrittr          2.0.1      2020-11-17 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  MASS              7.3-53     2020-09-09 [2] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  Matrix            1.3-2      2021-01-06 [2] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  memoise           2.0.0      2021-01-26 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  MetricsWeighted   0.5.1      2020-04-18 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  mgcv              1.8-33     2020-08-27 [2] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  mlr               2.19.0     2021-02-22 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  modeldata       * 0.1.0      2020-10-22 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  ModelMetrics      1.2.2.2    2020-03-17 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  modelr            0.1.8      2020-05-19 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  mrIML           * 0.1        2021-04-13 [1] Github (nfj1380/mrIML@57678b8)</span>
-<span class="co">#&gt;  munsell           0.5.0      2018-06-12 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  nlme              3.1-152    2021-02-04 [2] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  nnet              7.3-15     2021-01-24 [2] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  parallelly        1.23.0     2021-01-04 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  parallelMap       1.5.0      2020-03-26 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  ParamHelpers      1.14       2020-03-24 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  parsnip         * 0.1.5      2021-01-19 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  permute         * 0.9-5      2019-03-12 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  pillar            1.5.1      2021-03-05 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  pkgbuild          1.2.0      2020-12-15 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  pkgconfig         2.0.3      2019-09-22 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  pkgload           1.1.0      2020-05-29 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  plyr              1.8.6      2020-03-03 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  prettyunits       1.1.1      2020-01-24 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  pROC              1.17.0.1   2021-01-13 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  processx          3.4.5      2020-11-30 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  prodlim           2019.11.13 2019-11-17 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  ps                1.5.0      2020-12-05 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  purrr           * 0.3.4      2020-04-17 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  R6                2.5.0      2020-10-28 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  randomForest    * 4.6-14     2018-03-25 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  ranger            0.12.1     2020-01-10 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  RANN              2.6.1      2019-01-08 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  Rcpp              1.0.6      2021-01-15 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  readr           * 1.4.0      2020-10-05 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  readxl            1.3.1      2019-03-13 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  recipes         * 0.1.15     2020-11-11 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  remotes           2.2.0      2020-07-21 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  reprex            1.0.0      2021-01-27 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  reshape2          1.4.4      2020-04-09 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  rlang             0.4.10     2020-12-30 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  rmarkdown         2.7        2021-02-19 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  ROSE              0.0-3      2014-07-15 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  rpart             4.1-15     2019-04-12 [2] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  rpart.plot        3.0.9      2020-09-17 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  rprojroot         2.0.2      2020-11-15 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  rsample         * 0.0.9      2021-02-17 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  rstudioapi        0.13       2020-11-12 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  Rttf2pt1          1.3.8      2020-01-10 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  rvest             0.3.6      2020-07-25 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  scales          * 1.1.1      2020-05-11 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  sessioninfo       1.1.1      2018-11-05 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  snakecase         0.11.0     2019-05-25 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  stringi           1.5.3      2020-09-09 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  stringr         * 1.4.0      2019-02-10 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  survival          3.2-7      2020-09-28 [2] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  systemfonts       1.0.1      2021-02-09 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  testthat          3.0.2      2021-02-14 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  themis          * 0.1.3      2020-11-12 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  tibble          * 3.1.0      2021-02-25 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  tidymodels      * 0.1.2      2020-11-22 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  tidyr           * 1.1.2      2020-08-27 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  tidyselect        1.1.0      2020-05-11 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  tidyverse       * 1.3.0      2019-11-21 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  timeDate          3043.102   2018-02-21 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  tune            * 0.1.3      2021-02-28 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  unbalanced        2.0        2015-06-26 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  usethis           2.0.1      2021-02-10 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  utf8              1.1.4      2018-05-24 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  vctrs             0.3.6      2020-12-17 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  vegan           * 2.5-7      2020-11-28 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  vip             * 0.3.2      2020-12-17 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  viridis         * 0.5.1      2018-03-29 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  viridisLite     * 0.3.0      2018-02-01 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  withr             2.4.1      2021-01-26 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  workflows       * 0.2.2      2021-03-10 [1] CRAN (R 4.0.4)                </span>
-<span class="co">#&gt;  xfun              0.21       2021-02-10 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  xgboost         * 1.3.2.1    2021-01-18 [1] CRAN (R 4.0.5)                </span>
-<span class="co">#&gt;  xml2              1.3.2      2020-04-23 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  yaml              2.2.1      2020-02-01 [1] CRAN (R 4.0.3)                </span>
-<span class="co">#&gt;  yardstick       * 0.0.8      2021-03-28 [1] CRAN (R 4.0.4)                </span>
+<span class="co">#&gt;  assertthat        0.2.1      2019-03-21 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  backports         1.2.1      2020-12-09 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  BBmisc            1.11       2017-03-10 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  broom           * 0.7.6      2021-04-05 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  cachem            1.0.4      2021-02-13 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  callr             3.7.0      2021-04-20 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  caret           * 6.0-86     2020-03-20 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  cellranger        1.1.0      2016-07-27 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  checkmate         2.0.0      2020-02-06 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  class             7.3-15     2019-01-01 [2] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  cli               2.5.0      2021-04-26 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  cluster           2.1.0      2019-06-19 [2] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  codetools         0.2-16     2018-12-24 [2] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  colorspace        2.0-0      2020-11-11 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  cowplot           1.1.1      2020-12-30 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  crayon            1.4.1      2021-02-08 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  data.table        1.14.0     2021-02-21 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  DBI               1.1.1      2021-01-15 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  dbplyr            2.1.1      2021-04-06 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  desc              1.3.0      2021-03-05 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  devtools          2.4.0      2021-04-07 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  dials           * 0.0.9      2020-09-16 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  DiceDesign        1.9        2021-02-13 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  digest            0.6.27     2020-10-24 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  doParallel      * 1.0.16     2020-10-16 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  dplyr           * 1.0.5      2021-03-05 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  ellipsis          0.3.1      2020-05-15 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  evaluate          0.14       2019-05-28 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  extrafont         0.17       2014-12-08 [1] CRAN (R 3.6.2)                </span>
+<span class="co">#&gt;  extrafontdb       1.0        2012-06-11 [1] CRAN (R 3.6.0)                </span>
+<span class="co">#&gt;  fansi             0.4.2      2021-01-15 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  farver            2.1.0      2021-02-28 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  fastmap           1.1.0      2021-01-25 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  fastmatch         1.1-0      2017-01-28 [1] CRAN (R 3.6.0)                </span>
+<span class="co">#&gt;  flashlight      * 0.8.0      2021-04-21 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  FNN               1.1.3      2019-02-15 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  forcats         * 0.5.1      2021-01-27 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  foreach         * 1.5.1      2020-10-15 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  fs                1.5.0      2020-07-31 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  furrr             0.2.2      2021-01-29 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  future            1.21.0     2020-12-10 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  gbm             * 2.1.8      2020-07-15 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  gdtools           0.2.3      2021-01-06 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  generics          0.1.0      2020-10-31 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  ggplot2         * 3.3.3      2020-12-30 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  ggrepel         * 0.9.1      2021-01-15 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  globals           0.14.0     2020-11-22 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  glue              1.4.2      2020-08-27 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  gower             0.2.2      2020-06-23 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  GPfit             1.0-8      2019-02-08 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  gridExtra         2.3        2017-09-09 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  gtable            0.3.0      2019-03-25 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  hardhat           0.1.5      2020-11-09 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  haven             2.4.0      2021-04-14 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  highr             0.9        2021-04-16 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  hms               1.0.0      2021-01-13 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  hrbrthemes      * 0.8.0      2020-03-06 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  htmltools         0.5.1.1    2021-01-22 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  httr              1.4.2      2020-07-20 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  infer           * 0.5.4      2021-01-13 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  ipred             0.9-11     2021-03-12 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  iterators       * 1.0.13     2020-10-15 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  janitor         * 2.1.0      2021-01-05 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  jsonlite          1.7.2      2020-12-09 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  knitr             1.32       2021-04-14 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  labeling          0.4.2      2020-10-20 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  lattice         * 0.20-38    2018-11-04 [2] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  lava              1.6.9      2021-03-11 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  lhs               1.1.1      2020-10-05 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  lifecycle         1.0.0      2021-02-15 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  listenv           0.8.0      2019-12-05 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  lubridate         1.7.10     2021-02-26 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  magrittr          2.0.1      2020-11-17 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  MASS              7.3-51.5   2019-12-20 [2] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  Matrix            1.2-18     2019-11-27 [2] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  memoise           2.0.0      2021-01-26 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  MetricsWeighted   0.5.2      2021-04-16 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  mgcv              1.8-31     2019-11-09 [2] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  mlr               2.19.0     2021-02-22 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  modeldata       * 0.1.0      2020-10-22 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  ModelMetrics      1.2.2.2    2020-03-17 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  modelr            0.1.8      2020-05-19 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  mrIML           * 1.0.0      2021-04-23 [1] Github (nfj1380/mrIML@c9873ea)</span>
+<span class="co">#&gt;  munsell           0.5.0      2018-06-12 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  nlme              3.1-144    2020-02-06 [2] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  nnet              7.3-12     2016-02-02 [2] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  parallelly        1.24.0     2021-03-14 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  parallelMap       1.5.0      2020-03-26 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  ParamHelpers      1.14       2020-03-24 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  parsnip         * 0.1.5      2021-01-19 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  pdp             * 0.7.0      2018-08-27 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  permute         * 0.9-5      2019-03-12 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  pillar            1.6.0      2021-04-13 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  pkgbuild          1.2.0      2020-12-15 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  pkgconfig         2.0.3      2019-09-22 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  pkgload           1.2.1      2021-04-06 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  plyr              1.8.6      2020-03-03 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  prettyunits       1.1.1      2020-01-24 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  pROC              1.17.0.1   2021-01-13 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  processx          3.5.0      2021-03-23 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  prodlim           2019.11.13 2019-11-17 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  ps                1.6.0      2021-02-28 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  purrr           * 0.3.4      2020-04-17 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  R6                2.5.0      2020-10-28 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  randomForest    * 4.6-14     2018-03-25 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  ranger          * 0.12.1     2020-01-10 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  RANN              2.6.1      2019-01-08 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  Rcpp              1.0.6      2021-01-15 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  readr           * 1.4.0      2020-10-05 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  readxl            1.3.1      2019-03-13 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  recipes         * 0.1.16     2021-04-16 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  remotes           2.3.0      2021-04-01 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  reprex            2.0.0      2021-04-02 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  reshape2          1.4.4      2020-04-09 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  rlang           * 0.4.10     2020-12-30 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  rmarkdown         2.7        2021-02-19 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  ROSE              0.0-3      2014-07-15 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  rpart             4.1-15     2019-04-12 [2] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  rpart.plot        3.0.9      2020-09-17 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  rprojroot         2.0.2      2020-11-15 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  rsample         * 0.0.9      2021-02-17 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  rstudioapi        0.13       2020-11-12 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  Rttf2pt1          1.3.8      2020-01-10 [1] CRAN (R 3.6.2)                </span>
+<span class="co">#&gt;  rvest             1.0.0      2021-03-09 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  scales          * 1.1.1      2020-05-11 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  sessioninfo       1.1.1      2018-11-05 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  snakecase         0.11.0     2019-05-25 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  stringi           1.5.3      2020-09-09 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  stringr         * 1.4.0      2019-02-10 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  survival          3.1-8      2019-12-03 [2] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  systemfonts       1.0.1      2021-02-09 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  testthat          3.0.2      2021-02-14 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  themis          * 0.1.3      2020-11-12 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  tibble          * 3.1.0      2021-02-25 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  tidymodels      * 0.1.3      2021-04-19 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  tidyr           * 1.1.3      2021-03-03 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  tidyselect        1.1.0      2020-05-11 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  tidyverse       * 1.3.1      2021-04-15 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  timeDate          3043.102   2018-02-21 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  tune            * 0.1.4      2021-04-20 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  unbalanced        2.0        2015-06-26 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  usethis           2.0.1      2021-02-10 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  utf8              1.2.1      2021-03-12 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  vctrs           * 0.3.6      2020-12-17 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  vegan           * 2.5-7      2020-11-28 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  vip             * 0.3.2      2020-12-17 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  viridis         * 0.6.0      2021-04-15 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  viridisLite     * 0.4.0      2021-04-13 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  withr             2.4.2      2021-04-18 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  workflows       * 0.2.2      2021-03-10 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  workflowsets    * 0.0.2      2021-04-16 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  xfun              0.22       2021-03-11 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  xgboost         * 1.3.2.1    2021-01-18 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  xml2              1.3.2      2020-04-23 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  yaml              2.2.1      2020-02-01 [1] CRAN (R 3.6.3)                </span>
+<span class="co">#&gt;  yardstick       * 0.0.8      2021-03-28 [1] CRAN (R 3.6.3)                </span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; [1] C:/Users/Nick FJ/Documents/R/win-library/4.0</span>
-<span class="co">#&gt; [2] C:/Program Files/R/R-4.0.4/library</span></code></pre></div>
+<span class="co">#&gt; [1] C:/Users/gmachad/Documents/R/win-library/3.6</span>
+<span class="co">#&gt; [2] C:/Program Files/R/R-3.6.3/library</span></code></pre></div>
 </div>
 </div>
   </div>
