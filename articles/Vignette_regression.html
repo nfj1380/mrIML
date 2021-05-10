@@ -133,29 +133,29 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">model1</span>, X<span class="op">=</span><span class="va">X</span>, model<span class="op">=</span><span class="st">'regression'</span><span class="op">)</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co">#predictive performance for individual responses. </span>
-<span class="co">#&gt;              response model_name       rmse   rsquared</span>
-<span class="co">#&gt; 1   CANDIDATE_GI5_108 linear_reg 0.06615358 0.27786589</span>
-<span class="co">#&gt; 2   CANDIDATE_GI5_198 linear_reg 0.15861138 0.21702644</span>
-<span class="co">#&gt; 3   CANDIDATE_GI5_268 linear_reg 0.10360504 0.08693004</span>
-<span class="co">#&gt; 4    CANDIDATE_GI5_92 linear_reg 0.08527663 0.42167529</span>
-<span class="co">#&gt; 5  CANDIDATE_GI5_1950 linear_reg 0.22288727 0.06712024</span>
-<span class="co">#&gt; 6  CANDIDATE_GI5_2382 linear_reg 0.16419348 0.51429216</span>
-<span class="co">#&gt; 7  CANDIDATE_GI5_2405 linear_reg 0.15718267 0.27551472</span>
-<span class="co">#&gt; 8  CANDIDATE_GI5_2612 linear_reg 0.23294870 0.06136745</span>
-<span class="co">#&gt; 9  CANDIDATE_GI5_2641 linear_reg 0.07970122 0.38580107</span>
-<span class="co">#&gt; 10   CANDIDATE_GI5_33 linear_reg 0.18077369 0.22109490</span>
-<span class="co">#&gt; 11 CANDIDATE_GI5_3966 linear_reg 0.13072637 0.20852879</span>
-<span class="co">#&gt; 12 CANDIDATE_GI5_5033 linear_reg 0.04468391 0.17214754</span>
-<span class="co">#&gt; 13 CANDIDATE_GI5_5090 linear_reg 0.17624883 0.01222771</span>
-<span class="co">#&gt; 14 CANDIDATE_GI5_5119 linear_reg 0.08296565 0.07659129</span>
-<span class="co">#&gt; 15 CANDIDATE_GI5_8997 linear_reg 0.17460391 0.20083194</span>
-<span class="co">#&gt; 16 CANDIDATE_GI5_9287 linear_reg 0.14565199 0.11805995</span>
-<span class="co">#&gt; 17 CANDIDATE_GI5_9447 linear_reg 0.16470033 0.52995993</span>
-<span class="co">#&gt; 18 CANDIDATE_GI5_9551 linear_reg 0.13793102 0.33301793</span>
-<span class="co">#&gt; 19 CANDIDATE_GI5_9585 linear_reg 0.16638589 0.19742067</span>
-<span class="co">#&gt; 20 CANDIDATE_GI5_9659 linear_reg 0.20064716 0.08463193</span>
+<span class="co">#&gt;              response model_name       rmse     rsquared</span>
+<span class="co">#&gt; 1   CANDIDATE_GI5_108 linear_reg 0.04776453 0.0009064043</span>
+<span class="co">#&gt; 2   CANDIDATE_GI5_198 linear_reg 0.17927737 0.5004829638</span>
+<span class="co">#&gt; 3   CANDIDATE_GI5_268 linear_reg 0.09020869 0.1955654201</span>
+<span class="co">#&gt; 4    CANDIDATE_GI5_92 linear_reg 0.12958657 0.0313466241</span>
+<span class="co">#&gt; 5  CANDIDATE_GI5_1950 linear_reg 0.11746455 0.3518892891</span>
+<span class="co">#&gt; 6  CANDIDATE_GI5_2382 linear_reg 0.27327392 0.1870921698</span>
+<span class="co">#&gt; 7  CANDIDATE_GI5_2405 linear_reg 0.13849215 0.3402549309</span>
+<span class="co">#&gt; 8  CANDIDATE_GI5_2612 linear_reg 0.18578648 0.0013483614</span>
+<span class="co">#&gt; 9  CANDIDATE_GI5_2641 linear_reg 0.09731537 0.0627140477</span>
+<span class="co">#&gt; 10   CANDIDATE_GI5_33 linear_reg 0.21882492 0.0041075085</span>
+<span class="co">#&gt; 11 CANDIDATE_GI5_3966 linear_reg 0.32059102 0.1437614059</span>
+<span class="co">#&gt; 12 CANDIDATE_GI5_5033 linear_reg 0.04282877 0.0014951229</span>
+<span class="co">#&gt; 13 CANDIDATE_GI5_5090 linear_reg 0.17716060 0.2249168011</span>
+<span class="co">#&gt; 14 CANDIDATE_GI5_5119 linear_reg 0.09337711 0.0320060750</span>
+<span class="co">#&gt; 15 CANDIDATE_GI5_8997 linear_reg 0.15819204 0.1342884274</span>
+<span class="co">#&gt; 16 CANDIDATE_GI5_9287 linear_reg 0.11395176 0.0335561303</span>
+<span class="co">#&gt; 17 CANDIDATE_GI5_9447 linear_reg 0.26656794 0.1625389624</span>
+<span class="co">#&gt; 18 CANDIDATE_GI5_9551 linear_reg 0.20946252 0.4981042159</span>
+<span class="co">#&gt; 19 CANDIDATE_GI5_9585 linear_reg 0.15498628 0.2391996653</span>
+<span class="co">#&gt; 20 CANDIDATE_GI5_9659 linear_reg 0.16626779 0.0164080644</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="co">#overall average r2 </span>
-<span class="co">#&gt; [1] 0.1437939</span>
+<span class="co">#&gt; [1] 0.159069</span>
 
 <span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="co">#save as a dataframe to compare to other models.</span></code></pre></div>
 <p>Lets compare the performance of linear models to that of random forests. Random forests is the computational engine in gradient forests. Notice for random forests we have two hyperparamters to tune; mtry (number of features to randomly include at each split) and min_n (the minimum number of data points in a node that are required for the node to be split further). The syntax ‘tune()’ acts a placeholder to tell MrIML to tune those hyperparamters across a grid of values (defined in MRIML predicts ‘tune_grid_size’ argument). Different algorithms will have different hyperparameters.See <a href="https://www.tidymodels.org/find/parsnip/" class="uri">https://www.tidymodels.org/find/parsnip/</a> for parameter details. Note that large grid sizes (&gt;10) for algorithms with lots of hyperparameters (such as extreme gradient boosting) will be computationally demanding. In this case we choose a grid size of 5.</p>
@@ -172,28 +172,28 @@
 <span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">model1</span>, X<span class="op">=</span><span class="va">X</span>, model<span class="op">=</span><span class="st">'regression'</span><span class="op">)</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co">#predictive performance for individual responses. </span>
 <span class="co">#&gt;              response  model_name       rmse   rsquared</span>
-<span class="co">#&gt; 1   CANDIDATE_GI5_108 rand_forest 0.04185996         NA</span>
-<span class="co">#&gt; 2   CANDIDATE_GI5_198 rand_forest 0.15473469 0.34259639</span>
-<span class="co">#&gt; 3   CANDIDATE_GI5_268 rand_forest 0.07926308 0.55029535</span>
-<span class="co">#&gt; 4    CANDIDATE_GI5_92 rand_forest 0.07279510         NA</span>
-<span class="co">#&gt; 5  CANDIDATE_GI5_1950 rand_forest 0.11769411 0.38425602</span>
-<span class="co">#&gt; 6  CANDIDATE_GI5_2382 rand_forest 0.07515983 0.17837442</span>
-<span class="co">#&gt; 7  CANDIDATE_GI5_2405 rand_forest 0.14290148 0.24819163</span>
-<span class="co">#&gt; 8  CANDIDATE_GI5_2612 rand_forest 0.13249188 0.34912068</span>
-<span class="co">#&gt; 9  CANDIDATE_GI5_2641 rand_forest 0.10527978         NA</span>
-<span class="co">#&gt; 10   CANDIDATE_GI5_33 rand_forest 0.14271777 0.24687639</span>
-<span class="co">#&gt; 11 CANDIDATE_GI5_3966 rand_forest 0.15018339 0.05600423</span>
-<span class="co">#&gt; 12 CANDIDATE_GI5_5033 rand_forest 0.05959503         NA</span>
-<span class="co">#&gt; 13 CANDIDATE_GI5_5090 rand_forest 0.11173378 0.44665993</span>
-<span class="co">#&gt; 14 CANDIDATE_GI5_5119 rand_forest 0.05450734         NA</span>
-<span class="co">#&gt; 15 CANDIDATE_GI5_8997 rand_forest 0.13992107 0.28779033</span>
-<span class="co">#&gt; 16 CANDIDATE_GI5_9287 rand_forest 0.06127678         NA</span>
-<span class="co">#&gt; 17 CANDIDATE_GI5_9447 rand_forest 0.08189105         NA</span>
-<span class="co">#&gt; 18 CANDIDATE_GI5_9551 rand_forest 0.15031990 0.38106953</span>
-<span class="co">#&gt; 19 CANDIDATE_GI5_9585 rand_forest 0.14672876 0.25937616</span>
-<span class="co">#&gt; 20 CANDIDATE_GI5_9659 rand_forest 0.13410292 0.33559502</span>
+<span class="co">#&gt; 1   CANDIDATE_GI5_108 rand_forest 0.02096619 0.01941477</span>
+<span class="co">#&gt; 2   CANDIDATE_GI5_198 rand_forest 0.12169972 0.34310851</span>
+<span class="co">#&gt; 3   CANDIDATE_GI5_268 rand_forest 0.08867293 0.10867577</span>
+<span class="co">#&gt; 4    CANDIDATE_GI5_92 rand_forest 0.08489237 0.44789148</span>
+<span class="co">#&gt; 5  CANDIDATE_GI5_1950 rand_forest 0.12814219 0.23920002</span>
+<span class="co">#&gt; 6  CANDIDATE_GI5_2382 rand_forest 0.04690447         NA</span>
+<span class="co">#&gt; 7  CANDIDATE_GI5_2405 rand_forest 0.12665306 0.25007006</span>
+<span class="co">#&gt; 8  CANDIDATE_GI5_2612 rand_forest 0.10450355 0.44700821</span>
+<span class="co">#&gt; 9  CANDIDATE_GI5_2641 rand_forest 0.07921118         NA</span>
+<span class="co">#&gt; 10   CANDIDATE_GI5_33 rand_forest 0.12038679 0.38316631</span>
+<span class="co">#&gt; 11 CANDIDATE_GI5_3966 rand_forest 0.12100841 0.04944375</span>
+<span class="co">#&gt; 12 CANDIDATE_GI5_5033 rand_forest 0.04755632         NA</span>
+<span class="co">#&gt; 13 CANDIDATE_GI5_5090 rand_forest 0.15050809 0.24170588</span>
+<span class="co">#&gt; 14 CANDIDATE_GI5_5119 rand_forest 0.10071302 0.38063731</span>
+<span class="co">#&gt; 15 CANDIDATE_GI5_8997 rand_forest 0.11107280 0.34475925</span>
+<span class="co">#&gt; 16 CANDIDATE_GI5_9287 rand_forest 0.03895292         NA</span>
+<span class="co">#&gt; 17 CANDIDATE_GI5_9447 rand_forest 0.04343095         NA</span>
+<span class="co">#&gt; 18 CANDIDATE_GI5_9551 rand_forest 0.13279040 0.24914914</span>
+<span class="co">#&gt; 19 CANDIDATE_GI5_9585 rand_forest 0.11535721 0.35210765</span>
+<span class="co">#&gt; 20 CANDIDATE_GI5_9659 rand_forest 0.10932985 0.39492090</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="co">#overall average r2 </span>
-<span class="co">#&gt; [1] 0.1077579</span>
+<span class="co">#&gt; [1] 0.09463762</span>
 
 <span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <p>You can see that predictive performance is actually slightly less using random forests (overall R2 = 0.12) but for some loci random forests does better than our linear models and sometimes worse. Which to choose? Generally simpler models are preferred (the linear model in this case) but it depends on how important to think non-linear response are. In future versions of MrIML we will implement ensemble models that will overcome this issue. For the time-being we will have a look at variable importance for the random forest based model.</p>
