@@ -119,7 +119,7 @@
 <span class="co"># to load</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/koalaverse/vip/">vip</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidymodels.tidymodels.org">tidymodels</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/">randomForest</a></span><span class="op">)</span>;  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/topepo/caret/">caret</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/gbm-developers/gbm">gbm</a></span><span class="op">)</span>;<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bgreenwell.github.io/pdp/index.html">pdp</a></span><span class="op">)</span>;
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>;<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">parallel</span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">doParallel</span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/themis">themis</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/">viridis</a></span><span class="op">)</span>;
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sfirke/janitor">janitor</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/hrbrmstr/hrbrthemes">hrbrthemes</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dmlc/xgboost">xgboost</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://cran.r-project.org">vegan</a></span><span class="op">)</span>;<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mayer79/flashlight">flashlight</a></span><span class="op">)</span>;
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sfirke/janitor">janitor</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/hrbrmstr/hrbrthemes">hrbrthemes</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dmlc/xgboost">xgboost</a></span><span class="op">)</span>;<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mayer79/flashlight">flashlight</a></span><span class="op">)</span>;
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/slowkow/ggrepel">ggrepel</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://parsnip.tidymodels.org">parsnip</a></span><span class="op">)</span>;<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rsample.tidymodels.org">rsample</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/workflows">workflows</a></span><span class="op">)</span></code></pre></div>
 </div>
 <div id="model-component" class="section level2">
@@ -172,8 +172,13 @@
 <span class="va">yhats</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrIMLpredicts.html">mrIMLpredicts</a></span><span class="op">(</span>X<span class="op">=</span><span class="va">X</span>,Y<span class="op">=</span><span class="va">Y</span>, model1<span class="op">=</span><span class="va">model1</span>, balance_data<span class="op">=</span><span class="st">'no'</span>, mod<span class="op">=</span><span class="st">'classification'</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="co">#save(yhats, file='logreg_model')</span>
 <span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">model1</span>, X<span class="op">=</span><span class="va">X</span><span class="op">)</span> <span class="co">#</span>
+<<<<<<< HEAD
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="co">#this measures performance across all loci.</span>
 <span class="co">#&gt; [1] 0.6034483</span></code></pre></div>
+=======
+<span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>
+<span class="co">#&gt; [1] 0.6982759</span></code></pre></div>
+>>>>>>> 03c98ad2a032d73ac4f16dd64c964759fa57d22b
 </div>
 </div>
 <div id="plotting" class="section level2">
@@ -181,20 +186,16 @@
 <a href="#plotting" class="anchor"></a>Plotting</h2>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">VI</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrVip.html">mrVip</a></span><span class="op">(</span><span class="va">yhats</span>, Y<span class="op">=</span><span class="va">Y</span><span class="op">)</span> 
-<span class="fu"><a href="reference/plot_vi.html">plot_vi</a></span><span class="op">(</span>VI<span class="op">=</span><span class="va">VI</span>,  X<span class="op">=</span><span class="va">X</span>,Y<span class="op">=</span><span class="va">Y</span>, modelPerf<span class="op">=</span><span class="va">ModelPerf</span>, cutoff<span class="op">=</span> <span class="fl">0</span>, plot.pca<span class="op">=</span><span class="st">'yes'</span><span class="op">)</span> <span class="co">#the cutoff reduces the number of individual models printed in the second plot. </span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-7-1.png" width="100%"></p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Press [enter] to plot individual variable importance summaries</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-7-2.png" width="100%"></p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Press [enter] to plot the importance PCA plot</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-7-3.png" width="100%"></p>
+<span class="co">#plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes') #the cutoff reduces the number of individual models printed in the second plot. </span></code></pre></div>
 </div>
 <div id="effect-of-a-feature-on-genetic-change" class="section level2">
 <h2 class="hasAnchor">
 <a href="#effect-of-a-feature-on-genetic-change" class="anchor"></a>Effect of a feature on genetic change</h2>
 <p>We also wrap some flashlight functionality to visualize the marginal (i.e. partial dependencies) or conditional (accumulated local effects) effect of a feature on genetic change. Partial dependencies take longer to calculate and are more sensitive to correlated features</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">flashlightObj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrFlashlight.html">mrFlashlight</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">X</span>, <span class="va">Y</span>, response <span class="op">=</span> <span class="st">"multi"</span>, model<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span>
 
+<<<<<<< HEAD
 <span class="co">#plot prediction scatter for all responses. Gets busy with </span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/flashlight/man/light_scatter.html">light_scatter</a></span><span class="op">(</span><span class="va">flashlightObj</span>, v <span class="op">=</span> <span class="st">"Forest"</span>, type <span class="op">=</span> <span class="st">"predicted"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-9-1.png" width="100%"></p>
@@ -209,16 +210,33 @@
 <span class="fu"><a href="reference/mrProfileplot.html">mrProfileplot</a></span><span class="op">(</span><span class="va">profileData_ale</span> , sdthresh <span class="op">=</span><span class="fl">0.01</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-9-2.png" width="100%"><img src="reference/figures/README-unnamed-chunk-9-3.png" width="100%"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+=======
+<span class="va">profileData_ale</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flashlight/man/light_profile.html">light_profile</a></span><span class="op">(</span><span class="va">flashlightObj</span>, v <span class="op">=</span> <span class="st">"Grassland"</span>, type <span class="op">=</span> <span class="st">"ale"</span><span class="op">)</span> <span class="co">#acumulated local effects</span>
+
+<span class="fu"><a href="reference/mrProfileplot.html">mrProfileplot</a></span><span class="op">(</span><span class="va">profileData_ale</span> , sdthresh <span class="op">=</span><span class="fl">0.01</span><span class="op">)</span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-8-1.png" width="100%"><img src="reference/figures/README-unnamed-chunk-8-2.png" width="100%"></p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+>>>>>>> 03c98ad2a032d73ac4f16dd64c964759fa57d22b
 <code class="sourceCode R"><span class="co">#the second plot is the cumulative turnover function</span></code></pre></div>
 </div>
 <div id="interacting-predictors-or-features" class="section level2">
 <h2 class="hasAnchor">
 <a href="#interacting-predictors-or-features" class="anchor"></a>Interacting predictors or features</h2>
 <p>Finally, we can assess how features interact overall to shape genetic change. Be warned this is memory intensive. Future updates to this package will enable users to visualize these interactions and explore them in more detail using 2D ALE plots for example.</p>
+<<<<<<< HEAD
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#interactions &lt;-mrInteractions(yhats, X, Y,  mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things</span>
+=======
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">interactions</span> <span class="op">&lt;-</span><span class="fu"><a href="reference/mrInteractions.html">mrInteractions</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">X</span>, <span class="va">Y</span>,  mod<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span> <span class="co">#this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things</span>
+>>>>>>> 03c98ad2a032d73ac4f16dd64c964759fa57d22b
 
-<span class="co">#mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2)</span></code></pre></div>
+<span class="fu"><a href="reference/mrPlot_interactions.html">mrPlot_interactions</a></span><span class="op">(</span><span class="va">interactions</span>, <span class="va">X</span>,<span class="va">Y</span>, top_ranking <span class="op">=</span> <span class="fl">2</span>, top_response<span class="op">=</span><span class="fl">2</span><span class="op">)</span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-9-1.png" width="100%"></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Press [enter] to continue for response with strongest interactions</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-9-2.png" width="100%"></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Press [enter] to continue for individual response results</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-9-3.png" width="100%"></p>
 </div>
 <div id="references" class="section level2">
 <h2 class="hasAnchor">
@@ -230,7 +248,11 @@
 <div id="session-info" class="section level2">
 <h2 class="hasAnchor">
 <a href="#session-info" class="anchor"></a>Session info</h2>
+<<<<<<< HEAD
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+=======
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+>>>>>>> 03c98ad2a032d73ac4f16dd64c964759fa57d22b
 <code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/sessioninfo/man/session_info.html">session_info</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; - Session info -----------------------------------------------------------------------------------</span>
 <span class="co">#&gt;  setting  value                       </span>
@@ -242,7 +264,11 @@
 <span class="co">#&gt;  collate  English_United States.1252  </span>
 <span class="co">#&gt;  ctype    English_United States.1252  </span>
 <span class="co">#&gt;  tz       America/New_York            </span>
+<<<<<<< HEAD
 <span class="co">#&gt;  date     2021-05-09                  </span>
+=======
+<span class="co">#&gt;  date     2021-04-23                  </span>
+>>>>>>> 03c98ad2a032d73ac4f16dd64c964759fa57d22b
 <span class="co">#&gt; </span>
 <span class="co">#&gt; - Packages ---------------------------------------------------------------------------------------</span>
 <span class="co">#&gt;  package         * version    date       lib source                        </span>
@@ -256,8 +282,12 @@
 <span class="co">#&gt;  cellranger        1.1.0      2016-07-27 [1] CRAN (R 3.6.3)                </span>
 <span class="co">#&gt;  checkmate         2.0.0      2020-02-06 [1] CRAN (R 3.6.3)                </span>
 <span class="co">#&gt;  class             7.3-15     2019-01-01 [2] CRAN (R 3.6.3)                </span>
+<<<<<<< HEAD
 <span class="co">#&gt;  cli               2.5.0      2021-04-26 [1] CRAN (R 3.6.3)                </span>
 <span class="co">#&gt;  cluster           2.1.0      2019-06-19 [2] CRAN (R 3.6.3)                </span>
+=======
+<span class="co">#&gt;  cli               2.4.0      2021-04-05 [1] CRAN (R 3.6.3)                </span>
+>>>>>>> 03c98ad2a032d73ac4f16dd64c964759fa57d22b
 <span class="co">#&gt;  codetools         0.2-16     2018-12-24 [2] CRAN (R 3.6.3)                </span>
 <span class="co">#&gt;  colorspace        2.0-0      2020-11-11 [1] CRAN (R 3.6.3)                </span>
 <span class="co">#&gt;  cowplot           1.1.1      2020-12-30 [1] CRAN (R 3.6.3)                </span>
@@ -336,8 +366,11 @@
 <span class="co">#&gt;  parallelMap       1.5.0      2020-03-26 [1] CRAN (R 3.6.3)                </span>
 <span class="co">#&gt;  ParamHelpers      1.14       2020-03-24 [1] CRAN (R 3.6.3)                </span>
 <span class="co">#&gt;  parsnip         * 0.1.5      2021-01-19 [1] CRAN (R 3.6.3)                </span>
+<<<<<<< HEAD
 <span class="co">#&gt;  pdp             * 0.7.0      2018-08-27 [1] CRAN (R 3.6.3)                </span>
 <span class="co">#&gt;  permute         * 0.9-5      2019-03-12 [1] CRAN (R 3.6.3)                </span>
+=======
+>>>>>>> 03c98ad2a032d73ac4f16dd64c964759fa57d22b
 <span class="co">#&gt;  pillar            1.6.0      2021-04-13 [1] CRAN (R 3.6.3)                </span>
 <span class="co">#&gt;  pkgbuild          1.2.0      2020-12-15 [1] CRAN (R 3.6.3)                </span>
 <span class="co">#&gt;  pkgconfig         2.0.3      2019-09-22 [1] CRAN (R 3.6.3)                </span>
@@ -389,8 +422,12 @@
 <span class="co">#&gt;  unbalanced        2.0        2015-06-26 [1] CRAN (R 3.6.3)                </span>
 <span class="co">#&gt;  usethis           2.0.1      2021-02-10 [1] CRAN (R 3.6.3)                </span>
 <span class="co">#&gt;  utf8              1.2.1      2021-03-12 [1] CRAN (R 3.6.3)                </span>
+<<<<<<< HEAD
 <span class="co">#&gt;  vctrs           * 0.3.6      2020-12-17 [1] CRAN (R 3.6.3)                </span>
 <span class="co">#&gt;  vegan           * 2.5-7      2020-11-28 [1] CRAN (R 3.6.3)                </span>
+=======
+<span class="co">#&gt;  vctrs             0.3.6      2020-12-17 [1] CRAN (R 3.6.3)                </span>
+>>>>>>> 03c98ad2a032d73ac4f16dd64c964759fa57d22b
 <span class="co">#&gt;  vip             * 0.3.2      2020-12-17 [1] CRAN (R 3.6.3)                </span>
 <span class="co">#&gt;  viridis         * 0.6.0      2021-04-15 [1] CRAN (R 3.6.3)                </span>
 <span class="co">#&gt;  viridisLite     * 0.4.0      2021-04-13 [1] CRAN (R 3.6.3)                </span>
