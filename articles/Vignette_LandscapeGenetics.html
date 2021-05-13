@@ -98,7 +98,7 @@
       <h1 data-toc-skip>Classification working example</h1>
                         <h4 class="author">Nick Fountain-Jones, Gustavo Machado</h4>
             
-            <h4 class="date">2021-05-12</h4>
+            <h4 class="date">2021-05-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/nfj1380/mrIML/blob/master/vignettes/Vignette_LandscapeGenetics.Rmd"><code>vignettes/Vignette_LandscapeGenetics.Rmd</code></a></small>
       <div class="hidden name"><code>Vignette_LandscapeGenetics.Rmd</code></div>
@@ -152,66 +152,66 @@
 <code class="sourceCode R">
 <span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">model1</span>, X<span class="op">=</span><span class="va">X</span>,  model<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span> 
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co">#predictive performance for individual responses </span>
-<span class="co">#&gt;    response  model_name           roc_AUC                mcc       sensitivity</span>
-<span class="co">#&gt; 1   env_131 rand_forest                 1  0.408248290463863                 1</span>
-<span class="co">#&gt; 2   env_163 rand_forest               0.5               &lt;NA&gt;                 0</span>
-<span class="co">#&gt; 3   env_164 rand_forest 0.833333333333333  0.666666666666667 0.666666666666667</span>
-<span class="co">#&gt; 4   env_167 rand_forest 0.583333333333333 -0.166666666666667               0.5</span>
-<span class="co">#&gt; 5   env_169 rand_forest                 1  0.408248290463863                 1</span>
-<span class="co">#&gt; 6   env_212 rand_forest                 1               &lt;NA&gt;                 0</span>
-<span class="co">#&gt; 7    env_23 rand_forest 0.333333333333333  0.166666666666667               0.5</span>
-<span class="co">#&gt; 8    env_24 rand_forest               0.5  0.408248290463863 0.333333333333333</span>
-<span class="co">#&gt; 9    env_47 rand_forest                 1                  1                 1</span>
-<span class="co">#&gt; 10   env_59 rand_forest                 1  0.408248290463863                 1</span>
-<span class="co">#&gt; 11    env_8 rand_forest              0.25 -0.408248290463863 0.666666666666667</span>
-<span class="co">#&gt; 12   env_84 rand_forest                 1  0.408248290463863                 1</span>
-<span class="co">#&gt; 13   env_85 rand_forest                 1  0.408248290463863                 1</span>
-<span class="co">#&gt; 14   env_86 rand_forest               0.5  0.166666666666667 0.666666666666667</span>
-<span class="co">#&gt; 15  pol_105 rand_forest                 1  0.666666666666667 0.666666666666667</span>
-<span class="co">#&gt; 16  pol_108 rand_forest                 1                  1                 1</span>
-<span class="co">#&gt; 17  pol_111 rand_forest 0.833333333333333  0.666666666666667 0.666666666666667</span>
-<span class="co">#&gt; 18  pol_117 rand_forest              0.75  0.166666666666667 0.666666666666667</span>
-<span class="co">#&gt; 19  pol_132 rand_forest                 1                  1                 1</span>
-<span class="co">#&gt; 20  pol_159 rand_forest 0.166666666666667 -0.408248290463863                 0</span>
-<span class="co">#&gt; 21  pol_258 rand_forest               0.5               &lt;NA&gt;                 1</span>
-<span class="co">#&gt; 22   pol_30 rand_forest                 1                  1                 1</span>
-<span class="co">#&gt; 23  pol_340 rand_forest               0.5               &lt;NA&gt;                 1</span>
-<span class="co">#&gt; 24  pol_353 rand_forest               0.5  0.166666666666667 0.666666666666667</span>
-<span class="co">#&gt; 25  pol_366 rand_forest                 1  0.408248290463863                 1</span>
-<span class="co">#&gt; 26   pol_87 rand_forest                 1                  1                 1</span>
-<span class="co">#&gt; 27   pol_88 rand_forest                 1                  1                 1</span>
-<span class="co">#&gt; 28   pol_89 rand_forest                 1                  1                 1</span>
+<span class="co">#&gt;    response  model_name           roc_AUC               mcc       sensitivity</span>
+<span class="co">#&gt; 1   env_131 rand_forest 0.833333333333333 0.166666666666667 0.666666666666667</span>
+<span class="co">#&gt; 2   env_163 rand_forest               0.5              &lt;NA&gt;                 0</span>
+<span class="co">#&gt; 3   env_164 rand_forest              0.75 0.612372435695795              0.75</span>
+<span class="co">#&gt; 4   env_167 rand_forest               0.5 0.166666666666667 0.666666666666667</span>
+<span class="co">#&gt; 5   env_169 rand_forest                 1 0.408248290463863               0.5</span>
+<span class="co">#&gt; 6   env_212 rand_forest              &lt;NA&gt;              &lt;NA&gt;              &lt;NA&gt;</span>
+<span class="co">#&gt; 7    env_23 rand_forest               0.5              &lt;NA&gt;                 0</span>
+<span class="co">#&gt; 8    env_24 rand_forest               0.5 0.166666666666667 0.666666666666667</span>
+<span class="co">#&gt; 9    env_47 rand_forest              0.75 0.408248290463863                 1</span>
+<span class="co">#&gt; 10   env_59 rand_forest                 1 0.408248290463863               0.5</span>
+<span class="co">#&gt; 11    env_8 rand_forest               0.5              &lt;NA&gt;                 1</span>
+<span class="co">#&gt; 12   env_84 rand_forest                 1 0.408248290463863               0.5</span>
+<span class="co">#&gt; 13   env_85 rand_forest                 1 0.408248290463863               0.5</span>
+<span class="co">#&gt; 14   env_86 rand_forest               0.5              &lt;NA&gt;                 1</span>
+<span class="co">#&gt; 15  pol_105 rand_forest                 1 0.408248290463863               0.5</span>
+<span class="co">#&gt; 16  pol_108 rand_forest              &lt;NA&gt;              &lt;NA&gt;               0.4</span>
+<span class="co">#&gt; 17  pol_111 rand_forest              0.75 0.612372435695795              0.75</span>
+<span class="co">#&gt; 18  pol_117 rand_forest 0.666666666666667 0.666666666666667                 1</span>
+<span class="co">#&gt; 19  pol_132 rand_forest              0.75 0.408248290463863                 1</span>
+<span class="co">#&gt; 20  pol_159 rand_forest               0.5              &lt;NA&gt;                 0</span>
+<span class="co">#&gt; 21  pol_258 rand_forest               0.5              &lt;NA&gt;                 1</span>
+<span class="co">#&gt; 22   pol_30 rand_forest              0.75 0.408248290463863                 1</span>
+<span class="co">#&gt; 23  pol_340 rand_forest               0.5              &lt;NA&gt;                 0</span>
+<span class="co">#&gt; 24  pol_353 rand_forest               0.5              &lt;NA&gt;                 1</span>
+<span class="co">#&gt; 25  pol_366 rand_forest                 1 0.408248290463863               0.5</span>
+<span class="co">#&gt; 26   pol_87 rand_forest              0.75 0.408248290463863                 1</span>
+<span class="co">#&gt; 27   pol_88 rand_forest              0.75 0.408248290463863                 1</span>
+<span class="co">#&gt; 28   pol_89 rand_forest              0.75 0.408248290463863                 1</span>
 <span class="co">#&gt;          specificity        prevalence</span>
-<span class="co">#&gt; 1  0.333333333333333 0.421052631578947</span>
+<span class="co">#&gt; 1                0.5 0.421052631578947</span>
 <span class="co">#&gt; 2                  1 0.631578947368421</span>
 <span class="co">#&gt; 3                  1 0.421052631578947</span>
-<span class="co">#&gt; 4  0.333333333333333 0.421052631578947</span>
-<span class="co">#&gt; 5  0.333333333333333 0.421052631578947</span>
-<span class="co">#&gt; 6                  1 0.684210526315789</span>
-<span class="co">#&gt; 7  0.666666666666667 0.631578947368421</span>
-<span class="co">#&gt; 8                  1 0.421052631578947</span>
-<span class="co">#&gt; 9                  1 0.473684210526316</span>
-<span class="co">#&gt; 10 0.333333333333333 0.421052631578947</span>
+<span class="co">#&gt; 4                0.5 0.421052631578947</span>
+<span class="co">#&gt; 5                  1 0.421052631578947</span>
+<span class="co">#&gt; 6                0.6 0.684210526315789</span>
+<span class="co">#&gt; 7                  1 0.631578947368421</span>
+<span class="co">#&gt; 8                0.5 0.421052631578947</span>
+<span class="co">#&gt; 9                0.5 0.473684210526316</span>
+<span class="co">#&gt; 10                 1 0.421052631578947</span>
 <span class="co">#&gt; 11                 0 0.473684210526316</span>
-<span class="co">#&gt; 12 0.333333333333333 0.421052631578947</span>
-<span class="co">#&gt; 13 0.333333333333333 0.421052631578947</span>
-<span class="co">#&gt; 14               0.5 0.421052631578947</span>
+<span class="co">#&gt; 12                 1 0.421052631578947</span>
+<span class="co">#&gt; 13                 1 0.421052631578947</span>
+<span class="co">#&gt; 14                 0 0.421052631578947</span>
 <span class="co">#&gt; 15                 1 0.473684210526316</span>
-<span class="co">#&gt; 16                 1 0.421052631578947</span>
+<span class="co">#&gt; 16              &lt;NA&gt; 0.421052631578947</span>
 <span class="co">#&gt; 17                 1 0.421052631578947</span>
-<span class="co">#&gt; 18               0.5 0.473684210526316</span>
-<span class="co">#&gt; 19                 1 0.473684210526316</span>
-<span class="co">#&gt; 20 0.666666666666667 0.473684210526316</span>
+<span class="co">#&gt; 18 0.666666666666667 0.473684210526316</span>
+<span class="co">#&gt; 19               0.5 0.473684210526316</span>
+<span class="co">#&gt; 20                 1 0.473684210526316</span>
 <span class="co">#&gt; 21                 0 0.473684210526316</span>
-<span class="co">#&gt; 22                 1 0.473684210526316</span>
-<span class="co">#&gt; 23                 0 0.421052631578947</span>
-<span class="co">#&gt; 24               0.5 0.421052631578947</span>
-<span class="co">#&gt; 25 0.333333333333333 0.421052631578947</span>
-<span class="co">#&gt; 26                 1 0.473684210526316</span>
-<span class="co">#&gt; 27                 1 0.473684210526316</span>
-<span class="co">#&gt; 28                 1 0.473684210526316</span>
+<span class="co">#&gt; 22               0.5 0.473684210526316</span>
+<span class="co">#&gt; 23                 1 0.421052631578947</span>
+<span class="co">#&gt; 24                 0 0.421052631578947</span>
+<span class="co">#&gt; 25                 1 0.421052631578947</span>
+<span class="co">#&gt; 26               0.5 0.473684210526316</span>
+<span class="co">#&gt; 27               0.5 0.473684210526316</span>
+<span class="co">#&gt; 28               0.5 0.473684210526316</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="co">#overall predictive performance</span>
-<span class="co">#&gt; [1] 0.7767857</span></code></pre></div>
+<span class="co">#&gt; [1] 0.6607143</span></code></pre></div>
 <p>You can compare the predictive performance of random forests with any other technique simply by altering the following. Lets try a logistic regression - no tuning of hyperparamters required. Note that for logistic regression you may need to scale/transform the data or create dummy variables if you include categorical variables. These steps can easily be added to the pipeline following tidymodel syntax (see the website above)</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">model1</span> <span class="op">&lt;-</span> <span class="co">#model used to generate yhat</span>
@@ -223,7 +223,7 @@
 <span class="co">#save(yhats, file='logreg_model')</span>
 <span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">model1</span>, X<span class="op">=</span><span class="va">X</span><span class="op">)</span> <span class="co">#</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>
-<span class="co">#&gt; [1] 0.5357143</span></code></pre></div>
+<span class="co">#&gt; [1] 0.7285714</span></code></pre></div>
 <p>You can see that the random forests model outperforms the logistic regression in this case. Once we are happy with the underlying model we can then dive in to see how this model predicts the SNPs. First we can check out variable importance.The first plot is the global importance (what features shape genetic change overall), the second shows the individual models (with an optional importance MCC threshold ‘cutoff’ value ) and the third plots the importances of all models as a PCA. SNPs or responses closer together in PCA space are shaped more similarly by landscape variables (or in other words have similar feature variable importance scores).</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">VI</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrVip.html">mrVip</a></span><span class="op">(</span><span class="va">yhats</span>, Y<span class="op">=</span><span class="va">Y</span><span class="op">)</span> 
