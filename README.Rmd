@@ -68,9 +68,9 @@ Now all the data is loaded and ready to go we can formulate the model using tidy
 
 ```{r }
 model1 <- 
-  rand_forest(trees = 100, mode = "classification") %>% #100 trees are set for brevity
-  set_engine("ranger", importance = c("impurity","impurity_corrected")) %>%# select the engine/package that underlies the model
-  set_mode("classification")# choose either the continuous "regression" or binary "classification" mode
+  rand_forest(trees = 100, mode = "classification", mtry = tune(), min_n = tune()) %>% #100 trees are set for brevity
+  set_engine("randomForest")
+
 ```
  
 ### [mrIMLpredicts]
@@ -94,12 +94,9 @@ Y <- FeaturesnoNA #for simplicity
 # Define set the outcomes of interst
 fData <- filterRareCommon (Responsedata, lower=0.4, higher=0.7) 
 X <- fData #
-<<<<<<< HEAD
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classification', parallel = TRUE)
-=======
 
 yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classification', parallel = FALSE)
->>>>>>> abce6e7093966e7d10b493afb89473eb098516d9
+
 #save(yhats, file='logreg_model')
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) #
 ModelPerf[[2]] #this measures performance across all loci.
@@ -126,13 +123,8 @@ We also wrap some flashlight functionality to visualize the marginal (i.e. parti
 flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='classification')
 #plot prediction scatter for all responses. Gets busy with 
 plot(light_scatter(flashlightObj, v = "Forest", type = "predicted"))
-<<<<<<< HEAD
-#plots everything on one plot (partial dependency, ALE, scatter)
-plot(light_effects(flashlightObj, v = "Grassland"), use = "all")
-=======
 
 
->>>>>>> abce6e7093966e7d10b493afb89473eb098516d9
 #profileData_pd <- light_profile(flashlightObj,  v = "Grassland")
 #mrProfileplot(profileData_pd , sdthresh =0.05) #sdthresh removes responses from the first plot that do not vary with the feature
 profileData_ale <- light_profile(flashlightObj, v = "Grassland", type = "ale") #acumulated local effects
