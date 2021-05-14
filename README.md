@@ -33,7 +33,8 @@ Install the stable version of the package:
 
 ``` r
 #install.packages("devtools")
-devtools::install_github('nfj1380/mrIML')
+#devtools::install_github('nfj1380/mrIML')
+library(mrIML)
 ```
 
 ## Quick start
@@ -49,15 +50,6 @@ functions for both regression and classification are:
 alone can be substantially computationally demanding depending on the
 number of outcomes you want to test. The first step to using the package
 is to load it as follows.
-
-``` r
-library(mrIML)
-# to load
-library(vip); library(tidymodels); library(randomForest);  library(caret); library(gbm);library(pdp);
-library(tidyverse);library(parallel); library(doParallel); library(themis); library(viridis);
-library(janitor); library(hrbrthemes); library(xgboost); library(vegan);library(flashlight);
-library(ggrepel); library(parsnip);library(rsample); library(workflows)
-```
 
 ## Model component
 
@@ -126,7 +118,7 @@ yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classific
 #save(yhats, file='logreg_model')
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) #
 ModelPerf[[2]] #this measures performance across all loci.
-#> [1] 0.6982759
+#> [1] 0.5689655
 ```
 
 ## Plotting
@@ -216,7 +208,7 @@ devtools::session_info()
 #>  collate  English_United States.1252  
 #>  ctype    English_United States.1252  
 #>  tz       America/New_York            
-#>  date     2021-05-13                  
+#>  date     2021-05-14                  
 #> 
 #> - Packages ---------------------------------------------------------------------------------------
 #>  package         * version    date       lib source                        

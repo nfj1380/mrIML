@@ -40,7 +40,8 @@ Install the stable version of the package:
 
 ```{r, eval = FALSE}
 #install.packages("devtools")
-devtools::install_github('nfj1380/mrIML')
+#devtools::install_github('nfj1380/mrIML')
+library(mrIML)
 ```
 
 ## Quick start
@@ -52,7 +53,7 @@ devtools::install_github('nfj1380/mrIML')
 alone can be substantially computationally demanding depending on the number
 of outcomes you want to test. The first step to using the package is to load it as follows.
 
-```{r, message = FALSE, message = FALSE, warning = FALSE}
+```{r, message = FALSE, message = FALSE, warning = FALSE, include=FALSE}
 library(mrIML)
 # to load
 library(vip); library(tidymodels); library(randomForest);  library(caret); library(gbm);library(pdp);
