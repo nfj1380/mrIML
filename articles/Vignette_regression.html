@@ -98,7 +98,7 @@
       <h1 data-toc-skip>Regression working example</h1>
                         <h4 class="author">Nick Fountain-Jones, Gustavo Machado</h4>
             
-            <h4 class="date">2021-05-13</h4>
+            <h4 class="date">2021-05-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/nfj1380/mrIML/blob/master/vignettes/Vignette_regression.Rmd"><code>vignettes/Vignette_regression.Rmd</code></a></small>
       <div class="hidden name"><code>Vignette_regression.Rmd</code></div>
@@ -120,11 +120,11 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">model1</span> <span class="op">&lt;-</span> <span class="co">#model used to generate yhat</span>
   <span class="co"># specify that the model is a random forest</span>
-  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/linear_reg.html">linear_reg</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">linear_reg</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="co"># select the engine/package that underlies the model</span>
-  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_engine.html">set_engine</a></span><span class="op">(</span><span class="st">"lm"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">set_engine</span><span class="op">(</span><span class="st">"lm"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="co"># choose either the continuous regression or binary classification mode</span>
-  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_args.html">set_mode</a></span><span class="op">(</span><span class="st">"regression"</span><span class="op">)</span>
+  <span class="fu">set_mode</span><span class="op">(</span><span class="st">"regression"</span><span class="op">)</span>
 
 <span class="va">yhats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLpredicts.html">mrIMLpredicts</a></span><span class="op">(</span>X<span class="op">=</span><span class="va">X</span>,Y<span class="op">=</span><span class="va">Y</span>, model1<span class="op">=</span><span class="va">model1</span>, balance_data<span class="op">=</span><span class="st">'no'</span>, model<span class="op">=</span><span class="st">'regression'</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample.int</a></span><span class="op">(</span><span class="fl">1e8</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="co">## Balanced data= up updamples and down downsampled to create a balanced set. For regression 'no' has to be selected.</span>
 
@@ -134,36 +134,36 @@
 <code class="sourceCode R"><span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">model1</span>, X<span class="op">=</span><span class="va">X</span>, model<span class="op">=</span><span class="st">'regression'</span><span class="op">)</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co">#predictive performance for individual responses. </span>
 <span class="co">#&gt;              response model_name       rmse    rsquared</span>
-<span class="co">#&gt; 1   CANDIDATE_GI5_108 linear_reg 0.05342649 0.013659425</span>
-<span class="co">#&gt; 2   CANDIDATE_GI5_198 linear_reg 0.08977901 0.723358886</span>
-<span class="co">#&gt; 3   CANDIDATE_GI5_268 linear_reg 0.08350940 0.465287006</span>
-<span class="co">#&gt; 4    CANDIDATE_GI5_92 linear_reg 0.11194014 0.039186776</span>
-<span class="co">#&gt; 5  CANDIDATE_GI5_1950 linear_reg 0.06229786 0.836318174</span>
-<span class="co">#&gt; 6  CANDIDATE_GI5_2382 linear_reg 0.09887965 0.101506697</span>
-<span class="co">#&gt; 7  CANDIDATE_GI5_2405 linear_reg 0.08031583 0.762355766</span>
-<span class="co">#&gt; 8  CANDIDATE_GI5_2612 linear_reg 0.07959920 0.804598434</span>
-<span class="co">#&gt; 9  CANDIDATE_GI5_2641 linear_reg 0.07592549 0.360042254</span>
-<span class="co">#&gt; 10   CANDIDATE_GI5_33 linear_reg 0.11477273 0.649595628</span>
-<span class="co">#&gt; 11 CANDIDATE_GI5_3966 linear_reg 0.15417620 0.176605489</span>
-<span class="co">#&gt; 12 CANDIDATE_GI5_5033 linear_reg 0.04598713          NA</span>
-<span class="co">#&gt; 13 CANDIDATE_GI5_5090 linear_reg 0.13191123 0.263139085</span>
-<span class="co">#&gt; 14 CANDIDATE_GI5_5119 linear_reg 0.08895086 0.005452475</span>
-<span class="co">#&gt; 15 CANDIDATE_GI5_8997 linear_reg 0.07871899 0.784924513</span>
-<span class="co">#&gt; 16 CANDIDATE_GI5_9287 linear_reg 0.07883024 0.311338205</span>
-<span class="co">#&gt; 17 CANDIDATE_GI5_9447 linear_reg 0.07683182 0.087971295</span>
-<span class="co">#&gt; 18 CANDIDATE_GI5_9551 linear_reg 0.09409063 0.722445900</span>
-<span class="co">#&gt; 19 CANDIDATE_GI5_9585 linear_reg 0.08964029 0.742140186</span>
-<span class="co">#&gt; 20 CANDIDATE_GI5_9659 linear_reg 0.06674406 0.850490982</span>
+<span class="co">#&gt; 1   CANDIDATE_GI5_108 linear_reg 0.03440691 0.116016567</span>
+<span class="co">#&gt; 2   CANDIDATE_GI5_198 linear_reg 0.12070448 0.714373617</span>
+<span class="co">#&gt; 3   CANDIDATE_GI5_268 linear_reg 0.05763319 0.509519777</span>
+<span class="co">#&gt; 4    CANDIDATE_GI5_92 linear_reg 0.11073263 0.358295963</span>
+<span class="co">#&gt; 5  CANDIDATE_GI5_1950 linear_reg 0.10460885 0.730439919</span>
+<span class="co">#&gt; 6  CANDIDATE_GI5_2382 linear_reg 0.08054803 0.178778207</span>
+<span class="co">#&gt; 7  CANDIDATE_GI5_2405 linear_reg 0.10215922 0.694613269</span>
+<span class="co">#&gt; 8  CANDIDATE_GI5_2612 linear_reg 0.11665170 0.647183934</span>
+<span class="co">#&gt; 9  CANDIDATE_GI5_2641 linear_reg 0.06277324 0.352578578</span>
+<span class="co">#&gt; 10   CANDIDATE_GI5_33 linear_reg 0.16303265 0.596869649</span>
+<span class="co">#&gt; 11 CANDIDATE_GI5_3966 linear_reg 0.15756803 0.105145137</span>
+<span class="co">#&gt; 12 CANDIDATE_GI5_5033 linear_reg 0.05474057 0.164054029</span>
+<span class="co">#&gt; 13 CANDIDATE_GI5_5090 linear_reg 0.11338280 0.594540566</span>
+<span class="co">#&gt; 14 CANDIDATE_GI5_5119 linear_reg 0.04632595 0.082318139</span>
+<span class="co">#&gt; 15 CANDIDATE_GI5_8997 linear_reg 0.13246308 0.613373829</span>
+<span class="co">#&gt; 16 CANDIDATE_GI5_9287 linear_reg 0.05213663 0.005673984</span>
+<span class="co">#&gt; 17 CANDIDATE_GI5_9447 linear_reg 0.07199458 0.428099504</span>
+<span class="co">#&gt; 18 CANDIDATE_GI5_9551 linear_reg 0.12249590 0.687055826</span>
+<span class="co">#&gt; 19 CANDIDATE_GI5_9585 linear_reg 0.16261400 0.521439521</span>
+<span class="co">#&gt; 20 CANDIDATE_GI5_9659 linear_reg 0.12697235 0.638715728</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="co">#overall average r2 </span>
-<span class="co">#&gt; [1] 0.08781636</span>
+<span class="co">#&gt; [1] 0.09969724</span>
 
 <span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="co">#save as a dataframe to compare to other models.</span></code></pre></div>
 <p>Lets compare the performance of linear models to that of random forests. Random forests is the computational engine in gradient forests. Notice for random forests we have two hyperparamters to tune; mtry (number of features to randomly include at each split) and min_n (the minimum number of data points in a node that are required for the node to be split further). The syntax ‘tune()’ acts a placeholder to tell MrIML to tune those hyperparamters across a grid of values (defined in MRIML predicts ‘tune_grid_size’ argument). Different algorithms will have different hyperparameters.See <a href="https://www.tidymodels.org/find/parsnip/" class="uri">https://www.tidymodels.org/find/parsnip/</a> for parameter details. Note that large grid sizes (&gt;10) for algorithms with lots of hyperparameters (such as extreme gradient boosting) will be computationally demanding. In this case we choose a grid size of 5.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">model1</span> <span class="op">&lt;-</span> 
-  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/rand_forest.html">rand_forest</a></span><span class="op">(</span>trees <span class="op">=</span> <span class="fl">100</span>, mtry<span class="op">=</span><span class="fu">tune</span><span class="op">(</span><span class="op">)</span>, min_n <span class="op">=</span> <span class="fu">tune</span><span class="op">(</span><span class="op">)</span>, mode <span class="op">=</span> <span class="st">"regression"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_engine.html">set_engine</a></span><span class="op">(</span><span class="st">"ranger"</span>, importance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"impurity"</span>,<span class="st">"impurity_corrected"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_args.html">set_mode</a></span><span class="op">(</span><span class="st">"regression"</span><span class="op">)</span>
+  <span class="fu">rand_forest</span><span class="op">(</span>trees <span class="op">=</span> <span class="fl">100</span>, mtry<span class="op">=</span><span class="fu">tune</span><span class="op">(</span><span class="op">)</span>, min_n <span class="op">=</span> <span class="fu">tune</span><span class="op">(</span><span class="op">)</span>, mode <span class="op">=</span> <span class="st">"regression"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">set_engine</span><span class="op">(</span><span class="st">"ranger"</span>, importance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"impurity"</span>,<span class="st">"impurity_corrected"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">set_mode</span><span class="op">(</span><span class="st">"regression"</span><span class="op">)</span>
 
 <span class="va">yhats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLpredicts.html">mrIMLpredicts</a></span><span class="op">(</span>X<span class="op">=</span><span class="va">X</span>,Y<span class="op">=</span><span class="va">Y</span>, model1<span class="op">=</span><span class="va">model1</span>, balance_data<span class="op">=</span><span class="st">'no'</span>, model<span class="op">=</span><span class="st">'regression'</span>, parallel <span class="op">=</span> <span class="cn">TRUE</span>, tune_grid_size<span class="op">=</span><span class="fl">5</span> <span class="op">)</span>
 
@@ -172,28 +172,28 @@
 <span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">model1</span>, X<span class="op">=</span><span class="va">X</span>, model<span class="op">=</span><span class="st">'regression'</span><span class="op">)</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co">#predictive performance for individual responses. </span>
 <span class="co">#&gt;              response  model_name       rmse   rsquared</span>
-<span class="co">#&gt; 1   CANDIDATE_GI5_108 rand_forest 0.02626863 0.16659697</span>
-<span class="co">#&gt; 2   CANDIDATE_GI5_198 rand_forest 0.17483856 0.13139353</span>
-<span class="co">#&gt; 3   CANDIDATE_GI5_268 rand_forest 0.05925861 0.33649202</span>
-<span class="co">#&gt; 4    CANDIDATE_GI5_92 rand_forest 0.09325417 0.41811099</span>
-<span class="co">#&gt; 5  CANDIDATE_GI5_1950 rand_forest 0.17045269 0.17036121</span>
-<span class="co">#&gt; 6  CANDIDATE_GI5_2382 rand_forest 0.05176378         NA</span>
-<span class="co">#&gt; 7  CANDIDATE_GI5_2405 rand_forest 0.14282772 0.33890666</span>
-<span class="co">#&gt; 8  CANDIDATE_GI5_2612 rand_forest 0.13434884 0.45220766</span>
-<span class="co">#&gt; 9  CANDIDATE_GI5_2641 rand_forest 0.07207427 0.08326318</span>
-<span class="co">#&gt; 10   CANDIDATE_GI5_33 rand_forest 0.14808377 0.25315512</span>
-<span class="co">#&gt; 11 CANDIDATE_GI5_3966 rand_forest 0.12053199 0.30440238</span>
-<span class="co">#&gt; 12 CANDIDATE_GI5_5033 rand_forest 0.02803468 0.16506839</span>
-<span class="co">#&gt; 13 CANDIDATE_GI5_5090 rand_forest 0.05547463 0.91307657</span>
-<span class="co">#&gt; 14 CANDIDATE_GI5_5119 rand_forest 0.07286877 0.01566940</span>
-<span class="co">#&gt; 15 CANDIDATE_GI5_8997 rand_forest 0.17316859 0.17271370</span>
-<span class="co">#&gt; 16 CANDIDATE_GI5_9287 rand_forest 0.04119640         NA</span>
-<span class="co">#&gt; 17 CANDIDATE_GI5_9447 rand_forest 0.04764491         NA</span>
-<span class="co">#&gt; 18 CANDIDATE_GI5_9551 rand_forest 0.17029124 0.26105075</span>
-<span class="co">#&gt; 19 CANDIDATE_GI5_9585 rand_forest 0.16277409 0.35260915</span>
-<span class="co">#&gt; 20 CANDIDATE_GI5_9659 rand_forest 0.13969777 0.30333589</span>
+<span class="co">#&gt; 1   CANDIDATE_GI5_108 rand_forest 0.03521816 0.04349206</span>
+<span class="co">#&gt; 2   CANDIDATE_GI5_198 rand_forest 0.13512223 0.40355870</span>
+<span class="co">#&gt; 3   CANDIDATE_GI5_268 rand_forest 0.05132893 0.48272487</span>
+<span class="co">#&gt; 4    CANDIDATE_GI5_92 rand_forest 0.05547199 0.55127495</span>
+<span class="co">#&gt; 5  CANDIDATE_GI5_1950 rand_forest 0.14148215 0.65636368</span>
+<span class="co">#&gt; 6  CANDIDATE_GI5_2382 rand_forest 0.05896967 0.29225002</span>
+<span class="co">#&gt; 7  CANDIDATE_GI5_2405 rand_forest 0.12367698 0.63127446</span>
+<span class="co">#&gt; 8  CANDIDATE_GI5_2612 rand_forest 0.13050155 0.75168727</span>
+<span class="co">#&gt; 9  CANDIDATE_GI5_2641 rand_forest 0.05806344 0.01130707</span>
+<span class="co">#&gt; 10   CANDIDATE_GI5_33 rand_forest 0.11944270 0.55393985</span>
+<span class="co">#&gt; 11 CANDIDATE_GI5_3966 rand_forest 0.11386125 0.05710763</span>
+<span class="co">#&gt; 12 CANDIDATE_GI5_5033 rand_forest 0.02165552         NA</span>
+<span class="co">#&gt; 13 CANDIDATE_GI5_5090 rand_forest 0.09978643 0.53821550</span>
+<span class="co">#&gt; 14 CANDIDATE_GI5_5119 rand_forest 0.04010028         NA</span>
+<span class="co">#&gt; 15 CANDIDATE_GI5_8997 rand_forest 0.11697588 0.54833747</span>
+<span class="co">#&gt; 16 CANDIDATE_GI5_9287 rand_forest 0.05581498         NA</span>
+<span class="co">#&gt; 17 CANDIDATE_GI5_9447 rand_forest 0.05861147 0.09806015</span>
+<span class="co">#&gt; 18 CANDIDATE_GI5_9551 rand_forest 0.12219308 0.39984484</span>
+<span class="co">#&gt; 19 CANDIDATE_GI5_9585 rand_forest 0.10277739 0.53830380</span>
+<span class="co">#&gt; 20 CANDIDATE_GI5_9659 rand_forest 0.11599997 0.66278318</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="co">#overall average r2 </span>
-<span class="co">#&gt; [1] 0.1042427</span>
+<span class="co">#&gt; [1] 0.0878527</span>
 
 <span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <p>You can see that predictive performance is actually slightly less using random forests (overall R2 = 0.12) but for some loci random forests does better than our linear models and sometimes worse. Which to choose? Generally simpler models are preferred (the linear model in this case) but it depends on how important to think non-linear response are. In future versions of MrIML we will implement ensemble models that will overcome this issue. For the time-being we will have a look at variable importance for the random forest based model.</p>
@@ -212,7 +212,7 @@
 <code class="sourceCode R">
 <span class="va">flashlightObj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrFlashlight.html">mrFlashlight</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">X</span>, <span class="va">Y</span>, response <span class="op">=</span> <span class="st">"multi"</span>, model<span class="op">=</span><span class="st">'regression'</span><span class="op">)</span>
 
-<span class="va">profileData_pd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flashlight/man/light_profile.html">light_profile</a></span><span class="op">(</span><span class="va">flashlightObj</span>, v <span class="op">=</span> <span class="st">"bio_1"</span><span class="op">)</span> <span class="co">#partial dependencies</span>
+<span class="va">profileData_pd</span> <span class="op">&lt;-</span> <span class="fu">light_profile</span><span class="op">(</span><span class="va">flashlightObj</span>, v <span class="op">=</span> <span class="st">"bio_1"</span><span class="op">)</span> <span class="co">#partial dependencies</span>
 
 <span class="fu"><a href="../reference/mrProfileplot.html">mrProfileplot</a></span><span class="op">(</span><span class="va">profileData_pd</span> , sdthresh <span class="op">=</span><span class="fl">0.01</span><span class="op">)</span></code></pre></div>
 <p><img src="Vignette_regression_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
@@ -221,7 +221,7 @@
 <p>The first plot is a partial dependency for all SNPs that respond to mean annual temperature. What we mean by respond here is that the prediction surface (the line) deviates across the Y axis of the PD plots. We measure this deviation by calculating the standard deviation and use that as a threshold (‘sd thresh=0.01’ in this case and this will differ by data set) to ease visualization of these relationships. The second plot is the smoothed average partial dependency of SNPs across a annual temperature gradient. This is very similar to the pattern observed by Fitzpatrick et al except with a slight decline in SNP turnover with mean annual temperatures &gt; 0. Combined,you can see here only few candidate SNPs are driving this pattern and these may warrant further interrogation.</p>
 <p>Lets compare the PDs to accumulated local effect plots that are less sensitive to correlations among features (see Molnar 2019).</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">profileData_ale</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flashlight/man/light_profile.html">light_profile</a></span><span class="op">(</span><span class="va">flashlightObj</span>, v <span class="op">=</span> <span class="st">"bio_1"</span>, type <span class="op">=</span> <span class="st">"ale"</span><span class="op">)</span> <span class="co">#accumulated local effects</span>
+<code class="sourceCode R"><span class="va">profileData_ale</span> <span class="op">&lt;-</span> <span class="fu">light_profile</span><span class="op">(</span><span class="va">flashlightObj</span>, v <span class="op">=</span> <span class="st">"bio_1"</span>, type <span class="op">=</span> <span class="st">"ale"</span><span class="op">)</span> <span class="co">#accumulated local effects</span>
 
 <span class="fu"><a href="../reference/mrProfileplot.html">mrProfileplot</a></span><span class="op">(</span><span class="va">profileData_ale</span> , sdthresh <span class="op">=</span><span class="fl">0.01</span><span class="op">)</span></code></pre></div>
 <p><img src="Vignette_regression_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
