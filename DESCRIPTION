@@ -13,6 +13,18 @@ Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
 Imports:
     vip,
+    ape,
+    breakDown,
+    DALEX,
+    ggtext,
+    iml,
+    imputeTS,
+    VIM,
+    mice,
+    LEA,
+    pkgdown,
+    missForest,
+    MRFcov,
     tidymodels,
     randomForest,
     gbm,

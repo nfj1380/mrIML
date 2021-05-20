@@ -1,3 +1,5 @@
 .Rproj.user
 .travis.yml
-tests
+test
+Classification_example.R
+tests/Speces_interactions_code

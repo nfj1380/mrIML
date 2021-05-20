@@ -13,6 +13,7 @@ mrIMLpredicts(
   parallel = TRUE,
   transformY = "log",
   tune_grid_size = 10,
+  k = 10,
   seed = sample.int(1e+08, 1)
 )
 }
@@ -24,6 +25,8 @@ mrIMLpredicts(
 \item{balance_data}{A \code{character} 'up', 'down' or 'no'.}
 
 \item{tune_grid_size}{A \code{numeric} sets the grid size for hyperparamter tuning. Larger grid sizes increase computational time.}
+
+\item{k}{A \code{numeric} sets the number of folds in the 10-fold cross-validation. 10 is the default.}
 
 \item{Model}{1 A \code{list} can be any model from the tidy model package. See examples.}
 }
