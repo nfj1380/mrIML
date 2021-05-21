@@ -21,7 +21,6 @@ Imports:
     imputeTS,
     VIM,
     mice,
-    LEA,
     pkgdown,
     missForest,
     MRFcov,

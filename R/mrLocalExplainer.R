@@ -22,6 +22,9 @@ mat1 <- list()
 #ensure outcome is stored as a factor
 outcome <- as.factor(outcome)
 
+#ensure that data is stored as a data.frame only
+dat <- as.data.frame(dat)
+
 #create colors needed for each outcome
 num_levels <- length(levels(outcome)) #number of levels in the outcome factor
 
@@ -46,7 +49,7 @@ model1 <- pull_workflow_fit(model_dat[[1]]$mod1_k)
 model_explained <- explain.default(model1$fit, dat, predict.function = predict.function)
 
 #determine number of individuals
-n <- length(dat[,1])
+n <- length(Y[,1])
 
 #breakDown model and individual plots
 for (i in 1:n) {
@@ -113,7 +116,7 @@ order_only <- tab3_ordered$f #character vector of variable order
 
 #apply variable order to final data frame
 tab2$f <- as.factor(tab2$f)
-tab2$f <- as.factor(tab2$f, levels = order_only) #not plotting in order at the moment
+tab2$f <- factor(tab2$f, levels = order_only) 
 
 #summary plot of variable contributions
 print(ggplot(tab2, aes(x = f, y = values, fill = as.factor(class))) + 

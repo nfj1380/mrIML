@@ -34,7 +34,7 @@ Please note that the data included in this package is simulated, and is not a re
 library(mrIML)
 
 #other packages needed
-library(ggsci); library(vip); library(mrIML); library(imputeTS); library(mice); library(tidymodels); library(pdp); library(randomForest); library(missForest); library(gbm); library(tidyverse); library(doParallel); library(themis); library(viridis); library(janitor); library(hrbrthemes); library(MRFcov); library(xgboost); library(vegan); library(ggrepel);library(ape); library(plyr); library(flashlight); library(devtools); library(VIM); library(breakDown); library(iml); library(ggpubr); library(DALEX); library(cowplot); library(ggtext); library(dplyr)
+library(ggsci); library(vip); library(mrIML); library(imputeTS); library(mice); library(tidymodels); library(pdp); library(randomForest); library(missForest); library(gbm); library(tidyverse); library(doParallel); library(themis); library(viridis); library(janitor); library(hrbrthemes); library(MRFcov);library(vegan); library(ggrepel);library(ape); library(plyr); library(flashlight); library(devtools); library(VIM); library(breakDown); library(iml); library(ggpubr); library(DALEX); library(cowplot); library(ggtext); library(dplyr)
 ```
 
 ## SET: define the model
