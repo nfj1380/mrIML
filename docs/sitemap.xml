@@ -52,9 +52,21 @@
     <loc>nfj1380.io/mrIML//reference/vintTidy.html</loc>
   </url>
   <url>
+    <loc>nfj1380.io/mrIML//reference/mrBenchmark.html</loc>
+  </url>
+  <url>
+    <loc>nfj1380.io/mrIML//reference/mrLocalExplainer.html</loc>
+  </url>
+  <url>
+    <loc>nfj1380.io/mrIML//reference/plot_vi_biosecurity.html</loc>
+  </url>
+  <url>
     <loc>nfj1380.io/mrIML//articles/Vignette_LandscapeGenetics.html</loc>
   </url>
   <url>
     <loc>nfj1380.io/mrIML//articles/Vignette_regression.html</loc>
+  </url>
+  <url>
+    <loc>nfj1380.io/mrIML//articles/Vignette_biosecurity.html</loc>
   </url>
 </urlset>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Wrapper to generate multi-response predictive models. — mrIMLpredicts • mrIML</title>
+<title>Run local explanation methods for individual data points — mrLocalExplainer • mrIML</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Wrapper to generate multi-response predictive models. — mrIMLpredicts" />
-<meta property="og:description" content="Wrapper to generate multi-response predictive models." />
+<meta property="og:title" content="Run local explanation methods for individual data points — mrLocalExplainer" />
+<meta property="og:description" content="Run local explanation methods for individual data points" />
 <meta property="og:image" content="nfj1380.io/mrIML/reference/figures/logo.png" />
 <meta property="og:image:alt" content="Multivariate–multi-response–interpretable machine learning" />
 <meta name="twitter:card" content="summary" />
@@ -139,65 +139,45 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Wrapper to generate multi-response predictive models.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/nfj1380/mrIML/blob/master/R/mrIMLpredicts.R'><code>R/mrIMLpredicts.R</code></a></small>
-    <div class="hidden name"><code>mrIMLpredicts.Rd</code></div>
+    <h1>Run local explanation methods for individual data points</h1>
+    <small class="dont-index">Source: <a href='https://github.com/nfj1380/mrIML/blob/master/R/mrLocalExplainer.R'><code>R/mrLocalExplainer.R</code></a></small>
+    <div class="hidden name"><code>mrLocalExplainer.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Wrapper to generate multi-response predictive models.</p>
+    <p>Run local explanation methods for individual data points</p>
     </div>
 
-    <pre class="usage"><span class='fu'>mrIMLpredicts</span><span class='op'>(</span>
-  <span class='va'>X</span>,
-  <span class='va'>Y</span>,
-  <span class='va'>model1</span>,
-  balance_data <span class='op'>=</span> <span class='st'>"no"</span>,
-  model <span class='op'>=</span> <span class='st'>"regression"</span>,
-  parallel <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  transformY <span class='op'>=</span> <span class='st'>"log"</span>,
-  tune_grid_size <span class='op'>=</span> <span class='fl'>10</span>,
-  k <span class='op'>=</span> <span class='fl'>10</span>,
-  seed <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample.int</a></span><span class='op'>(</span><span class='fl'>1e+08</span>, <span class='fl'>1</span><span class='op'>)</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>mrLocalExplainer</span><span class='op'>(</span><span class='va'>dat</span>, <span class='va'>model_dat</span>, <span class='va'>outcome</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>X</th>
-      <td><p>A <code>dataframe</code> represents predictor or feature data.</p></td>
+      <th>dat</th>
+      <td><p>A <code>dataframe</code> data frame of predictor variables</p></td>
     </tr>
     <tr>
-      <th>Y</th>
-      <td><p>A <code>dataframe</code> is a response variable data set (species, OTUs, SNPs etc).</p></td>
+      <th>model_dat</th>
+      <td><p>A <code>workflow</code> workflow object containing the machine learning model</p></td>
     </tr>
     <tr>
-      <th>balance_data</th>
-      <td><p>A <code>character</code> 'up', 'down' or 'no'.</p></td>
-    </tr>
-    <tr>
-      <th>tune_grid_size</th>
-      <td><p>A <code>numeric</code> sets the grid size for hyperparamter tuning. Larger grid sizes increase computational time.</p></td>
-    </tr>
-    <tr>
-      <th>k</th>
-      <td><p>A <code>numeric</code> sets the number of folds in the 10-fold cross-validation. 10 is the default.</p></td>
-    </tr>
-    <tr>
-      <th>Model</th>
-      <td><p>1 A <code>list</code> can be any model from the tidy model package. See examples.</p></td>
+      <th>outcome</th>
+      <td><p><code>vector</code> vector containing the outcome for each data instance</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>This function produces yhats that used in all model characteristics for subsequent functions.
-This function fits separate classication models for each response variable in a dataset. Y (response variables) should be binary (0/1). Rows in X (features) have the same id (host/site/population)
-as Y. Class imblanace can be a real issue for classification analyses. Class imbalance can be addressed for each
-response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling)
-or 'no' (no balancing of classes).</p>
+    
 
+
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'>#mrLocalExplainer(data, yhats, data$Class)</span>
+<span class='co'>## will return matrix of phi values, individualized and aggregated plots </span>
+
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -154,7 +154,7 @@ To investigate and interpret the contribution of variables at an individual leve
 
 ```{r, include=TRUE, warning=FALSE, message=FALSE, fig.height=8}
 #Use this function to implement the local explainer 
-mrLocalExplainer(dat = Y, model_dat = yhats, outcome = data$Class)
+#mrLocalExplainer(dat = Y, model_dat = yhats, outcome = data$Class)
 ```
 
 `mrLocalExplainer` also produces the following objects:
