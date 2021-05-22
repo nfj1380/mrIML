@@ -21,6 +21,8 @@ mrBenchmark <- function(dat = "data", outcome = "class", y = "predicted", group 
   y1 <- eval(parse(text=paste("data1$", y, sep="")))
   group1 <- as.factor(eval(parse(text=paste("data1$", group, sep=""))))
   
+  c <- discretize(as.numeric(y1), cuts = 3, labels = c("Low risk", "Medium risk", "High risk"), keep_na = FALSE, infs = FALSE)
+  
   ##among group benchmarking
   if(type == "external"){
     
@@ -29,6 +31,9 @@ mrBenchmark <- function(dat = "data", outcome = "class", y = "predicted", group 
   facet_grid(as.formula(paste(".~", group)))+ #facetting variable
   scale_y_continuous(limits = c(0, 1))+
   ylab(y)+
+  geom_hline(aes(lty="High risk",yintercept= c$breaks[3])) +
+  geom_hline(aes(lty="Low risk",yintercept= c$breaks[2])) +
+  scale_linetype_manual(name="Risk level",values=c(1,2)) +
   theme(plot.title = element_text(hjust = 0.5)) +
   theme(text = element_text(size = 17, face = "bold"),
         axis.title.x=element_blank(),
@@ -64,8 +69,12 @@ for(i in n){
     geom_point(aes(color = as.factor(outcome2))) +
     xlab(outcome) +
     ylab(y) +
+    geom_hline(aes(lty="High risk",yintercept= c$breaks[3])) +
+    geom_hline(aes(lty="Low risk",yintercept= c$breaks[2])) +
+    scale_linetype_manual(name="Risk level",values=c(1,2)) +
     ggtitle(i) +
-      geom_label_repel(aes(label=label2),
+    guides(colour = guide_legend(title = outcome)) +
+    geom_label_repel(aes(label=label2),
                        fontface = "bold",
                        force =10,
                        box.padding = unit(0.35, "lines"),
@@ -80,7 +89,6 @@ for(i in n){
           axis.text.y=element_text(colour="black", size = 18), 
           axis.title.x = element_text(size = 18), 
           axis.title.y = element_text(size = 18),
-          legend.position = "none",
           strip.background = element_rect(color="black",size=1.5, linetype="solid"))+
       scale_color_uchicago(palette = "dark") +
       scale_fill_uchicago(palette = "dark"))}
@@ -108,6 +116,10 @@ if(is.null(label_by) == TRUE){
             xlab(outcome) +
             ylab(y) +
             ggtitle(i) +
+            geom_hline(aes(lty="High risk", yintercept = c$breaks[3])) +
+            geom_hline(aes(lty="Low risk", yintercept = c$breaks[2])) +
+            scale_linetype_manual(name="Risk level",values=c(1,2)) +
+            guides(colour = guide_legend(title = outcome)) +
             theme(text = element_text(size = 12, face = "bold"),
                   plot.title = element_text(size = 18, hjust = 0.5),
                   axis.line = element_line(size=0.8, colour = "black"), 
@@ -115,7 +127,6 @@ if(is.null(label_by) == TRUE){
                   axis.text.y=element_text(colour="black", size = 18), 
                   axis.title.x = element_text(size = 18), 
                   axis.title.y = element_text(size = 18),
-                  legend.position = "none",
                   strip.background = element_rect(color="black",size=1.5, linetype="solid"))+
             scale_color_uchicago(palette = "dark") +
             scale_fill_uchicago(palette = "dark"))

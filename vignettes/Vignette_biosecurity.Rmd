@@ -30,13 +30,22 @@ Please note that the data included in this package is simulated, and is not a re
 ```{r load packages, include=TRUE, message=FALSE, results='hide'}
 #other packages needed
 library(parsnip); library(mrIML); library(tidymodels); library(workflows); library(tidyverse); library(flashlight); library(devtools); library(DALEX); library(plyr);library(vip); library(ggsci); library(ggrepel); library(breakDown)
+
+set.seed(130) #set the seed to ensure consistency
+data <- as.data.frame(mrIML::biosecurity_vignette_data)
+```
+
+```{r, include=FALSE}
+colnames(data)[1] <- "Class"
+data<-data%>%
+  mutate(Class = revalue(Class,
+                         c("Negative"="0", "Positive"="1"))) 
+data$Class<-as.numeric(as.character(data$Class))
 ```
 
 ### Defining your model engine
 This is a random forest model, as used in the classification example. However there are more models available within MrIML and can be found [here](https://www.tidymodels.org/find/). 
 ```{r define model, include=TRUE}
-set.seed(130) #set the seed to ensure consistency
-data <- as.data.frame(biosecurity_vignette_data)
 #split predictor variables and outcome
 X <- as.data.frame(data %>% select(1))
 Y <- data %>% select(-c(1, 44, 45)) #remove class, group and ID
@@ -86,6 +95,7 @@ fl <- mrFlashlight(yhats, X, Y,
 #plot partial dependence profiles
 plot(light_profile(fl, v = "Swine_3_rad"))
 ```
+
 ```{r interactions, include=FALSE, warning=FALSE}
 #calculate interaction strength
 # interactions <-mrInteractions(yhats, X, Y,
@@ -102,7 +112,7 @@ The following function allows you to visualize and compare predicted risk among 
 #apply the trained model to the entire data set to provide risk of predicted outbreak
 fit_bio <- pull_workflow_fit(yhats[[1]]$mod1_k)
 preds_pos <- predict(fit_bio, data, "prob")
-data$predicted <- preds_pos$.pred_1
+data$Predicted <- preds_pos$.pred_1
 #process data ready for the function
 data$Class <- as.factor(data$Class)
 data<-data%>%
@@ -110,16 +120,20 @@ data<-data%>%
                          c("1" = "Positive", "0" = "Negative"))) 
 data$Class <- relevel(data$Class, "Positive")
 #plot among group comparison of predicted risk
-mrBenchmark(dat = "data", outcome = "Class", y = "predicted", group = "Group", type = "external") 
+mrBenchmark(dat = "data", outcome = "Class", y = "Predicted", group = "Group", type = "external") 
 ```
 ```{r, include=TRUE, warning=FALSE, message=FALSE}
 #plot within group comparison of predicted risk
-mrBenchmark(dat = "data", outcome = "Class", y = "predicted", group = "Group", label_by = "ID", type = "internal") 
+mrBenchmark(dat = "data", outcome = "Class", y = "Predicted", group = "Group", label_by = "ID", type = "internal") 
 ```
 ### Benchmarking:: Predicted risk
 To investigate and interpret the contribution of variables at an individual level, we must use a local explanation method. Here we implement a local breakDown explainer
 ```{r, include=TRUE, warning=FALSE, message=FALSE, fig.height=8}
 #Use this function to implement the local explainer 
+data<-data%>%
+  mutate(Class = revalue(Class,
+                         c("1" = "Positive", "0" = "Negative"))) 
+data$Class <- relevel(data$Class, "Positive")
 mrLocalExplainer(dat = Y, model_dat = yhats, outcome = data$Class)
 ```
 `mrLocalExplainer` also produces the following objects:

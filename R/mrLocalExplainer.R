@@ -20,18 +20,18 @@ indiv_plots <- list()
 mat1 <- list()
 
 #ensure outcome is stored as a factor
-outcome <- as.factor(outcome)
+outcome <- as.character(outcome)
 
 #ensure that data is stored as a data.frame only
 dat <- as.data.frame(dat)
 
 #create colors needed for each outcome
-num_levels <- length(levels(outcome)) #number of levels in the outcome factor
+num_levels <- length(levels(outcome))#number of levels in the outcome factor
 
 my_colors <- pal_uchicago("dark")(9)[1:num_levels] #select same number of colors as there are levels 
 
 #create vector of colors according to outcome level 
-color_levels <- as.numeric(outcome) 
+color_levels <- as.numeric(as.factor(outcome)) 
 
 for (i in 1:num_levels) {
 color_levels[which(color_levels == i)] <- my_colors[i]
@@ -115,11 +115,12 @@ tab3_ordered <- tab3[order(tab3$x),] #order variables by size
 order_only <- tab3_ordered$f #character vector of variable order
 
 #apply variable order to final data frame
-tab2$f <- as.factor(tab2$f)
-tab2$f <- factor(tab2$f, levels = order_only) 
+tab4 <- tab1
+tab4$f <- as.factor(tab4$f)
+tab4$f <- factor(tab4$f, levels = order_only) 
 
 #summary plot of variable contributions
-print(ggplot(tab2, aes(x = f, y = values, fill = as.factor(class))) + 
+print(ggplot(tab4, aes(x = f, y = values, fill = as.factor(class))) + 
   geom_boxplot(position = position_dodge(.9)) + 
   geom_hline(aes(yintercept = 0.00), linetype = "dashed") +
   theme(axis.text.x = element_text(size = 16),
