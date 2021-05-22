@@ -6,35 +6,37 @@ opengraph:
   image:
     src: 
 output:
-  rmarkdown::html_vignette: default
   github_document: default
+  rmarkdown::html_vignette: default
   css: extra.css
 vignette: |
   %\VignetteIndexEntry{mrIML}
   %\VignetteEncoding{UTF-8}
 ---
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+# General introduction
+
 MrIML is a R package allows users to generate and interpret multi-response models (i.e., joint species distribution models) leveraging advances in data science and machine learning. MrIML couples the tidymodel infrastructure developed by Max Kuhn and colleagues with model agnostic interpretable machine learning tools to gain insights into multiple response data such as. As such MrIML is flexible and easily extendable allowing users to construct everything from simple linear models to tree-based methods for each response using the same syntax and same way to compare predictive performance.In this vignette we will guide you through how to apply the MrIML framework to identify and benchmark biosecurity practices in veterinary disease. 
 This working example is built upon a classification framework. More information about this can be found in the "Classification working example". 
-## READY: load the data
+
+### Lets load that data
 This is a synthesized dataset to simulate PRRSV infection, biosecurity practices and farm demographics on swine farms across the united states. 
 Please note that the data included in this package is simulated, and is not a reflection of any real farm, company or state. 
 ```{r load packages, include=TRUE, message=FALSE, results='hide'}
 #other packages needed
 library(parsnip); library(mrIML); library(tidymodels); library(workflows); library(tidyverse); library(flashlight); library(devtools); library(DALEX); library(plyr);library(vip); library(ggsci); library(ggrepel); library(breakDown)
-#load("/Users/alsykes4/Documents/Code/mrIML-master/data/biosecurity_vignette_data.RData")
-#load("Q:/My Drive/GitHub/mrIML_1.0.1/data/biosecurity_vignette_data.RData")
-data <- as.data.frame(biosecurity_vignette_data)
 ```
-## SET: define the model
+
+### Defining your model engine
 This is a random forest model, as used in the classification example. However there are more models available within MrIML and can be found [here](https://www.tidymodels.org/find/). 
 ```{r define model, include=TRUE}
 set.seed(130) #set the seed to ensure consistency
-#revalue the outcome
-colnames(data)[1] <- "Class"
-data<-data%>%
-  mutate(Class = revalue(Class,
-                         c("Negative"="0", "Positive"="1"))) 
-data$Class<-as.numeric(as.character(data$Class))
+data <- as.data.frame(biosecurity_vignette_data)
 #split predictor variables and outcome
 X <- as.data.frame(data %>% select(1))
 Y <- data %>% select(-c(1, 44, 45)) #remove class, group and ID
@@ -46,7 +48,7 @@ model1 <- #model used to generate yhat
   #must be set to classification for classification problems
   set_mode("classification")
 ```
-## GO: run the analysis
+### Running the analyis
 Now we can train and test our model
 ```{r run model, include=TRUE, message=FALSE, warning=FALSE}
 yhats <- mrIMLpredicts(X=X, #response data
@@ -63,7 +65,7 @@ ModelPerf <- mrIMLperformance(yhats, model1, X=X, model='classification')
 ModelPerf[[1]] #predictive performance for individual responses 
 ModelPerf[[2]]#overall predictive performance. r2 for regression and MCC for classification
 ```
-## BENCHMARKING: global importance
+### Benchmarking: global importance
 Here we can look at the variable importance. This is the dependence between our outcome and biosecurity variables. 
 ```{r variable importance, message=FALSE, error=FALSE, fig.height=8, prompt=FALSE, }
 #calculate variable importance
@@ -94,7 +96,7 @@ plot(light_profile(fl, v = "Swine_3_rad"))
 #                     top_ranking = 5, #the number of results you would like to plot 
 #                     top_response=1) 
 ```
-## BENCHMARKING: Local importance
+### Benchmarking: Local importance
 The following function allows you to visualize and compare predicted risk among and within groups 
 ```{r, include=TRUE, warning=FALSE, message=FALSE, fig.width=10}
 #apply the trained model to the entire data set to provide risk of predicted outbreak
@@ -114,7 +116,7 @@ mrBenchmark(dat = "data", outcome = "Class", y = "predicted", group = "Group", t
 #plot within group comparison of predicted risk
 mrBenchmark(dat = "data", outcome = "Class", y = "predicted", group = "Group", label_by = "ID", type = "internal") 
 ```
-## BENCHMARKING: Predicted risk
+### Benchmarking:: Predicted risk
 To investigate and interpret the contribution of variables at an individual level, we must use a local explanation method. Here we implement a local breakDown explainer
 ```{r, include=TRUE, warning=FALSE, message=FALSE, fig.height=8}
 #Use this function to implement the local explainer 

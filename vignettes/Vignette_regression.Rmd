@@ -2,9 +2,15 @@
 title: "Regression working example"
 author: "Nick Fountain-Jones, Gustavo Machado"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Regression working example}
+opengraph:
+  image:
+    src: 
+output:
+  github_document: default
+  rmarkdown::html_vignette: default
+  css: extra.css
+vignette: |
+  %\VignetteIndexEntry{mrIML}
   %\VignetteEncoding{UTF-8}
 ---
 
@@ -14,6 +20,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+# General introduction
 
 MrIML is a R package allows users to generate and interpret multi-response models (i.e., joint species distribution models) leveraging advances in data science and machine learning. MrIML couples the tidymodel infrastructure developed by Max Kuhn and colleagues with model agnostic interpretable machine learning tools to gain insights into multiple response data such as. As such mrIML is flexible and easily extendable allowing users to construct everything from simple linear models to tree-based methods for each response using the same syntax and same way to compare predictive performance. In this vignette we will guide you through how to apply this package to ecological genomics problems using the regression functionality of the package. This data set comes from Fitzpatrick et al 2014 who were examining adaptive
 genetic variation in relation to geography and climate adaptation (current and future) in balsam poplar(Populus balsamifera). See Ecology Letters, (2014) doi: 10.1111/ele.12376. In this paper they used the similar gradient forests routine (see Ellis et al 2012 Ecology), and we show that MrIML can not only provide more flexible model choice and interpretive capabilities, but can derive new insights into the relationship between climate and genetic variation. Further, we show that linear models of each loci have slightly greater predictive performance. 
@@ -21,7 +28,7 @@ genetic variation in relation to geography and climate adaptation (current and f
 
 We focus on the adaptive SNP loci from GIGANTEA-5 (GI5) gene that has known links to stem development, plant circadian clock and light perception pathway. The data is the proportion of individuals in that population with that SNP loci. 
 
-### Lets load that data.
+### Lets load that data
 
 ```{r load-packages, include=FALSE}
 
@@ -99,6 +106,8 @@ ModelPerf[[2]]#overall average r2
 
 p2 <- as.data.frame(ModelPerf[[1]])
 ```
+
+## Plotting
 
 You can see that predictive performance is actually slightly less using random forests (overall R2 = 0.12) but for some loci random forests does better than our linear models and sometimes worse. Which to choose? Generally simpler models are preferred (the linear model in this case) but it depends on how important to think non-linear response are. In future versions of MrIML we will implement ensemble models that will overcome this issue. For the time-being we will have a look at variable importance for the random forest based model.
 

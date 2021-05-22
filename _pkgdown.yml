@@ -43,6 +43,8 @@ navbar:
     articles:
       text: Articles
       menu:
+      - text: Swine Biosecurity working example
+        href: articles/Vignette_biosecurity.html
       - text: Classification working example
         href: articles/Vignette_LandscapeGenetics.html
       - text: Regression working example
@@ -70,12 +72,15 @@ reference:
   - '`resist_components`'
   - '`Responsedata`'
   - '`vintTidy`'
+  - '`mrBenchmark`'
+  - '`mrLocalExplainer`'
+  - '`plot_vi_biosecurity`'
 
 articles:
 - title: All vignettes
   desc: ~
   contents:
+  - '`Vignette_biosecurity`'
   - '`Vignette_LandscapeGenetics`'
   - '`Vignette_regression`'
-  - '`Vignette_biosecurity`'
 

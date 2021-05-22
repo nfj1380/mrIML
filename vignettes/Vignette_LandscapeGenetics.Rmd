@@ -26,6 +26,8 @@ knitr::opts_chunk$set(
 
 MrIML is a R package allows users to generate and interpret multi-response models (i.e., joint species distribution models) leveraging advances in data science and machine learning. MrIML couples the tidymodel infrastructure developed by Max Kuhn and colleagues with model agnostic interpretable machine learning tools to gain insights into multiple response data such as. As such mrIML is flexible and easily extendable allowing users to construct everything from simple linear models to tree-based methods for each response using the same syntax and same way to compare predictive performance. In this vignette we will guide you through how to apply this package to landscape genetics problems but keep in mind any multiple-response data can be interrogated using this package (e.g., species or OTU presence/absence data).
 
+### Lets load that data.
+
 Let's start by loading  the required packages and data. The data we are going to use is from Fountain-Jones etal (2017) and consists of single nucleotide polymorphism (SNP) data from a virus (feline immunodeficiency virus, FIV) infecting bobcats in Southern California.
 
 Features (a.k.a predictor variables) with missing data can be removed or interpolated depending on the nature of the missing data. Here we remove them.
@@ -42,7 +44,7 @@ Features (a.k.a predictor variables) with missing data can be removed or interpo
 library(mrIML)
 
 #other package we need:
-library(vip); library(tidymodels); library(randomForest);  library(caret); library(gbm);library(pdp);
+library(vip); library(tidymodels); library(randomForest);   library(gbm);library(pdp);
 library(tidyverse);library(parallel); library(doParallel); library(themis); library(viridis);
 library(janitor); library(hrbrthemes); library(xgboost); library(vegan);library(flashlight);
 library(ggrepel); library(parsnip);library(rsample); library(workflows)
@@ -90,6 +92,8 @@ If your feature data consists of landscape resistance data generated from Circui
 #Y <- cbind(R,Y)
 ```
 
+### Running the analyis
+
 Now all the data is loaded and ready to go we can formulate the model using tidymodel syntax. In this case we have binary data (SNP presence/absence at each loci) but the data could also be counts or continuous (the set_model argument would be "regression" instead of "classification"). The user can specify any model from the tidymodel universe as 'model 1' (see https://www.tidymodels.org/find/ for details). However, we have done most of our testing on random forests (rf), xgr boost and glms (generalized linear models). Here we will specify a random forest classification model as the model applied to each response.
 
 ```{r }
@@ -133,6 +137,8 @@ yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classific
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) #
 ModelPerf[[2]]
 ```
+
+## Plotting
 
 You can see that the random forests model outperforms the logistic regression in this case.  Once we are happy with the underlying model we can then dive in to see how this model predicts the SNPs. First we can check out variable importance.The first plot is the global importance (what features shape genetic change overall), the second shows the individual models (with an optional importance MCC threshold 'cutoff' value ) and the third plots the importances of all models as a PCA. SNPs or responses closer together in PCA space are shaped more similarly by landscape variables (or in other words have similar feature variable importance scores).
 

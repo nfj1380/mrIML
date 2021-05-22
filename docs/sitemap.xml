@@ -4,19 +4,19 @@
     <loc>nfj1380.io/mrIML//index.html</loc>
   </url>
   <url>
-    <loc>nfj1380.io/mrIML//reference/Features.html</loc>
-  </url>
-  <url>
-    <loc>nfj1380.io/mrIML//reference/Responsedata.html</loc>
-  </url>
-  <url>
     <loc>nfj1380.io/mrIML//reference/devianceResids.html</loc>
+  </url>
+  <url>
+    <loc>nfj1380.io/mrIML//reference/Features.html</loc>
   </url>
   <url>
     <loc>nfj1380.io/mrIML//reference/filterRareCommon.html</loc>
   </url>
   <url>
     <loc>nfj1380.io/mrIML//reference/gfData.html</loc>
+  </url>
+  <url>
+    <loc>nfj1380.io/mrIML//reference/mrBenchmark.html</loc>
   </url>
   <url>
     <loc>nfj1380.io/mrIML//reference/mrFlashlight.html</loc>
@@ -31,6 +31,9 @@
     <loc>nfj1380.io/mrIML//reference/mrInteractions.html</loc>
   </url>
   <url>
+    <loc>nfj1380.io/mrIML//reference/mrLocalExplainer.html</loc>
+  </url>
+  <url>
     <loc>nfj1380.io/mrIML//reference/mrPlot_interactions.html</loc>
   </url>
   <url>
@@ -43,30 +46,27 @@
     <loc>nfj1380.io/mrIML//reference/plot_vi.html</loc>
   </url>
   <url>
+    <loc>nfj1380.io/mrIML//reference/plot_vi_biosecurity.html</loc>
+  </url>
+  <url>
     <loc>nfj1380.io/mrIML//reference/readSnpsPed.html</loc>
   </url>
   <url>
     <loc>nfj1380.io/mrIML//reference/resist_components.html</loc>
   </url>
   <url>
+    <loc>nfj1380.io/mrIML//reference/Responsedata.html</loc>
+  </url>
+  <url>
     <loc>nfj1380.io/mrIML//reference/vintTidy.html</loc>
   </url>
   <url>
-    <loc>nfj1380.io/mrIML//reference/mrBenchmark.html</loc>
-  </url>
-  <url>
-    <loc>nfj1380.io/mrIML//reference/mrLocalExplainer.html</loc>
-  </url>
-  <url>
-    <loc>nfj1380.io/mrIML//reference/plot_vi_biosecurity.html</loc>
+    <loc>nfj1380.io/mrIML//articles/Vignette_biosecurity.html</loc>
   </url>
   <url>
     <loc>nfj1380.io/mrIML//articles/Vignette_LandscapeGenetics.html</loc>
   </url>
   <url>
     <loc>nfj1380.io/mrIML//articles/Vignette_regression.html</loc>
-  </url>
-  <url>
-    <loc>nfj1380.io/mrIML//articles/Vignette_biosecurity.html</loc>
   </url>
 </urlset>
