@@ -77,7 +77,7 @@ includes results reporting, plotting and optional saving. It requires a
 data frame of X t( the snp data for example) and Y represented by the
 covariates or features.
 
-Load example data (cite) data from `{mrIML}`.
+For example, for a regression problem lets look at the data from Fitzpatrick and Keller (2015) from `{mrIML}`. Columns 1-2 represent geographical coordinates, 3-9 environmental data for each location, 10-14 are spatial eigenvectors (MEMs) and the remaining columns are proportion of the poulations with a each reference allelle. 
 
 ``` r
 data <- gfData[1:20]
@@ -105,13 +105,16 @@ head(data)
 #> 6        0.00000000        0.08333333        0.00000000
 ```
 
+For a classiciation problem, the data is similar except are response (by definition) is binary (i.e., is there a muutation at that locus).
+
 ``` r
 # Define set of features
 FeaturesnoNA<-Features[complete.cases(Features), ]
 Y <- FeaturesnoNA #for simplicity
 # Define set the outcomes of interst
 fData <- filterRareCommon (Responsedata, lower=0.4, higher=0.7) 
-X <- fData #
+X <- fData
+head(X)
 
 yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classification', parallel = FALSE)
 
