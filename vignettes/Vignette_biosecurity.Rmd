@@ -57,8 +57,21 @@ model1 <- #model used to generate yhat
   #must be set to classification for classification problems
   set_mode("classification")
 ```
+
+```{r, include=FALSE}
+Y_names <- sort(colnames(Y), decreasing = FALSE)
+long_names <- c("Air_filtered", "Breeding_female_capacity_3_miles", "Boar_capacity_3_miles", "Breeding_replacement_deliveries", "Cull_breeding_animals_hauls", "On_farm_employees", "Dead_disposal_method", "Other_farms_disease_status_known", "Manure_removal_equipment_downtime", "Employee_exit_re_entries", "Other_farms_same_system", "Entry_of_pork_products", "Forested_area", "Finishing_pig_capacity_3_miles", "Feed_deliveries", "Propane_fuel_deliveries", "Gilt_capacity_3_miles", "Genetic_multiplication_site", "Others_using_cull_animal_trailer", "Others_using_weaned_animal_trailer", "Manure_removal_personnel_downtime", "Manure_removals", "Garbage_collections", "Grass_mowing", "Nursery_pig_capactiy_3_miles", "Others_using_breeding_replacement_trailer", "PRRSV_positive_animals_on_cull_breeding_trailer", "PRRSV_positive_animals_on_cull_weaned_trailer", "Removals_of_dead", "Repair_personnel_visits", "Others_with_same_semen_delivery", "Show_capacity_3_miles", "Premises_in_3_miles", "Topography", "Employee_turnover", "Vehicle_entrances", " Veterinarians_managers_downtime", "Veterinarian_manager_visits", "Weaned_animal_hauls", "Wean_to_finish_capacity_3_miles", "Yards_to_public_road", "Snow_removal")
+
+for (i in 1:42) {
+  names(Y)[names(Y) == Y_names[i]] <- long_names[i]
+  names(data)[names(data) == Y_names[i]] <- long_names[i]
+  }
+names(Y) <- as.character(names(Y))
+```
+
+
 ### Running the analyis
-Now we can train and test our model
+Now we can train and test our model.
 ```{r run model, include=TRUE, message=FALSE, warning=FALSE}
 yhats <- mrIMLpredicts(X=X, #response data
                        Y=Y, #features/predictors
@@ -68,15 +81,16 @@ yhats <- mrIMLpredicts(X=X, #response data
                        parallel = FALSE, #do you want to run the model in parallel?
                        seed = 120) #set seed
 ```
-We can then assess our model performance using a number of performance metrics including area under the curve (AUC), sensitivity, specificity and Matthews correlation coefficient (MCC)
+We can then assess our model performance using a number of performance metrics including area under the curve (AUC), sensitivity, specificity and Matthews correlation coefficient (MCC).
 ```{r performance, include=TRUE}
 ModelPerf <- mrIMLperformance(yhats, model1, X=X, model='classification')
 ModelPerf[[1]] #predictive performance for individual responses 
 ModelPerf[[2]]#overall predictive performance. r2 for regression and MCC for classification
 ```
+
 ### Benchmarking: global importance
 Here we can look at the variable importance. This is the dependence between our outcome and biosecurity variables. 
-```{r variable importance, message=FALSE, error=FALSE, fig.height=8, prompt=FALSE, }
+```{r variable importance, message=FALSE, error=FALSE, fig.height=9, fig.width=13, prompt=FALSE, }
 #calculate variable importance
 VI <- mrVip(yhats, Y=Y)
 #plot cumulative variable importance 
@@ -85,7 +99,7 @@ plot_vi_biosecurity(VI=VI,  X=X,Y=Y,
         cutoff= 0.6,
         plot.pca='no') #Follow instructions in console
 ```
-We can explore further and assess the partial dependence of each variable. Here we isolate the dependence of one variable and visualize how this dependence changes over different observed values 
+We can explore further and assess the partial dependence of each variable. Here we isolate the dependence of one variable and visualize how this dependence changes over different observed values.
 ```{r pdp, warning=FALSE, message=FALSE}
 #create a flashlight object
 fl <- mrFlashlight(yhats, X, Y, 
@@ -93,7 +107,7 @@ fl <- mrFlashlight(yhats, X, Y,
                    index=1,
                    model='classification') 
 #plot partial dependence profiles
-plot(light_profile(fl, v = "Swine_3_rad"))
+plot(light_profile(fl, v = "Premises_in_3_miles")) 
 ```
 
 ```{r interactions, include=FALSE, warning=FALSE}
@@ -106,9 +120,10 @@ plot(light_profile(fl, v = "Swine_3_rad"))
 #                     top_ranking = 5, #the number of results you would like to plot 
 #                     top_response=1) 
 ```
-### Benchmarking: Local importance
+
+### Benchmarking: predicted risk
 The following function allows you to visualize and compare predicted risk among and within groups 
-```{r, include=TRUE, warning=FALSE, message=FALSE, fig.width=10}
+```{r, include=TRUE, warning=FALSE, message=FALSE, fig.width=13}
 #apply the trained model to the entire data set to provide risk of predicted outbreak
 fit_bio <- pull_workflow_fit(yhats[[1]]$mod1_k)
 preds_pos <- predict(fit_bio, data, "prob")
@@ -120,23 +135,30 @@ data<-data%>%
                          c("1" = "Positive", "0" = "Negative"))) 
 data$Class <- relevel(data$Class, "Positive")
 #plot among group comparison of predicted risk
-mrBenchmark(dat = "data", outcome = "Class", y = "Predicted", group = "Group", type = "external") 
+mrBenchmark(my.data = "data", outcome = "Class", y = "Predicted", group = "Group", type = "external") 
 ```
 ```{r, include=TRUE, warning=FALSE, message=FALSE}
 #plot within group comparison of predicted risk
-mrBenchmark(dat = "data", outcome = "Class", y = "Predicted", group = "Group", label_by = "ID", type = "internal") 
+mrBenchmark(my.data = "data", outcome = "Class", y = "Predicted", group = "Group", label_by = "ID", type = "internal") 
 ```
-### Benchmarking:: Predicted risk
-To investigate and interpret the contribution of variables at an individual level, we must use a local explanation method. Here we implement a local breakDown explainer
-```{r, include=TRUE, warning=FALSE, message=FALSE, fig.height=8}
+
+### Benchmarking: local importance 
+To investigate and interpret the contribution of variables at an individual level, we must use a local explanation method. Here we implement a local breakDown explainer. `mrLocalExplainer` produces both aggregated and individual results of variable contribution. Variables with a phi > 0 contribute to an increase in predicted PRRSV outbreak risk, while variables with a phi < 0 contribute to a decrease in predicted outbreak risk. 
+```{r, include=TRUE, warning=FALSE, message=FALSE, fig.height=9, fig.width=15}
 #Use this function to implement the local explainer 
 data<-data%>%
   mutate(Class = revalue(Class,
                          c("1" = "Positive", "0" = "Negative"))) 
 data$Class <- relevel(data$Class, "Positive")
-mrLocalExplainer(dat = Y, model_dat = yhats, outcome = data$Class)
+mrLocalExplainer(my.data = Y, model_data = yhats, outcome = data$Class)
 ```
-`mrLocalExplainer` also produces the following objects:
-* `LE_matrix` (list) containing the contribution values and respective variables for each individual 
-* `LE_indiv_plots` (list) containing individual waterfall plots of local variable contribution
+
+Individual plots are produced in the list object `LE_indiv_plots`. Each plot corresponds to a single farm. An example of a positive farm and a negative farm are shown here. 
+```{r, include=TRUE, warning=FALSE, message=FALSE, fig.height=9, fig.width=13}
+LE_indiv_plots[1]
+LE_indiv_plots[2]
+```
+At the positive farm we can see that yards from the public road and garbage collection are contributing to an increased outbreak risk, while manure removals and repair visits are contributing to a decreased outbreak risk. 
+Likewise, at the negative farm yards to the public road and and the downtime required for manure removal personnel are contributing to an increased outbreak risk, while feed deliveries and manure removals are contributing to a decreased outbreak risk. 
+
 Collapse

@@ -4,12 +4,12 @@
 \alias{mrLocalExplainer}
 \title{Run local explanation methods for individual data points}
 \usage{
-mrLocalExplainer(dat, model_dat, outcome)
+mrLocalExplainer(my.data, model_data, outcome)
 }
 \arguments{
-\item{dat}{A \code{dataframe} data frame of predictor variables}
+\item{my.data}{A \code{dataframe} data frame of predictor variables}
 
-\item{model_dat}{A \code{workflow} workflow object containing the machine learning model}
+\item{model_data}{A \code{workflow} workflow object containing the machine learning model}
 
 \item{outcome}{\code{vector} vector containing the outcome for each data instance}
 }

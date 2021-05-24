@@ -5,7 +5,7 @@
 \title{Compare and benchmark disease outbreak risk among and within groups}
 \usage{
 mrBenchmark(
-  dat = "data",
+  my.data = "data",
   outcome = "class",
   y = "predicted",
   group = "group1",
@@ -14,7 +14,7 @@ mrBenchmark(
 )
 }
 \arguments{
-\item{dat}{A \code{character} object name of data frame}
+\item{my.data}{A \code{character} object name of data frame}
 
 \item{outcome}{A \code{character} column name of variable containing outcome}
 
