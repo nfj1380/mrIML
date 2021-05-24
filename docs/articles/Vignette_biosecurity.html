@@ -101,7 +101,7 @@
       <h1 data-toc-skip>Biosecurity working example</h1>
                         <h4 class="author">Abagael Sykes, Gustavo Machado</h4>
             
-            <h4 class="date">2021-05-22</h4>
+            <h4 class="date">2021-05-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/nfj1380/mrIML/blob/master/vignettes/Vignette_biosecurity.Rmd"><code>vignettes/Vignette_biosecurity.Rmd</code></a></small>
       <div class="hidden name"><code>Vignette_biosecurity.Rmd</code></div>
@@ -144,7 +144,7 @@
 <div id="running-the-analyis" class="section level3">
 <h3 class="hasAnchor">
 <a href="#running-the-analyis" class="anchor"></a>Running the analyis</h3>
-<p>Now we can train and test our model</p>
+<p>Now we can train and test our model.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">yhats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLpredicts.html">mrIMLpredicts</a></span><span class="op">(</span>X<span class="op">=</span><span class="va">X</span>, <span class="co">#response data</span>
                        Y<span class="op">=</span><span class="va">Y</span>, <span class="co">#features/predictors</span>
@@ -153,7 +153,7 @@
                        model<span class="op">=</span><span class="st">'classification'</span>, <span class="co">#chose your mode (classification versus regression)</span>
                        parallel <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co">#do you want to run the model in parallel?</span>
                        seed <span class="op">=</span> <span class="fl">120</span><span class="op">)</span> <span class="co">#set seed</span></code></pre></div>
-<p>We can then assess our model performance using a number of performance metrics including area under the curve (AUC), sensitivity, specificity and Matthews correlation coefficient (MCC)</p>
+<p>We can then assess our model performance using a number of performance metrics including area under the curve (AUC), sensitivity, specificity and Matthews correlation coefficient (MCC).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">model1</span>, X<span class="op">=</span><span class="va">X</span>, model<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co">#predictive performance for individual responses </span>
@@ -176,10 +176,10 @@
         modelPerf<span class="op">=</span><span class="va">ModelPerf</span>,
         cutoff<span class="op">=</span> <span class="fl">0.6</span>,
         plot.pca<span class="op">=</span><span class="st">'no'</span><span class="op">)</span> <span class="co">#Follow instructions in console</span></code></pre></div>
-<p><img src="Vignette_biosecurity_files/figure-html/variable%20importance-1.png" width="700"></p>
+<p><img src="Vignette_biosecurity_files/figure-html/variable%20importance-1.png" width="1248"></p>
 <pre><code>#&gt; Press [enter] to plot individual variable importance summaries
 #&gt; [1] ""</code></pre>
-<p>We can explore further and assess the partial dependence of each variable. Here we isolate the dependence of one variable and visualize how this dependence changes over different observed values</p>
+<p>We can explore further and assess the partial dependence of each variable. Here we isolate the dependence of one variable and visualize how this dependence changes over different observed values.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#create a flashlight object</span>
 <span class="va">fl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrFlashlight.html">mrFlashlight</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">X</span>, <span class="va">Y</span>, 
@@ -187,12 +187,12 @@
                    index<span class="op">=</span><span class="fl">1</span>,
                    model<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span> 
 <span class="co">#plot partial dependence profiles</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/flashlight/man/light_profile.html">light_profile</a></span><span class="op">(</span><span class="va">fl</span>, v <span class="op">=</span> <span class="st">"Swine_3_rad"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/flashlight/man/light_profile.html">light_profile</a></span><span class="op">(</span><span class="va">fl</span>, v <span class="op">=</span> <span class="st">"Premises_in_3_miles"</span><span class="op">)</span><span class="op">)</span> </code></pre></div>
 <p><img src="Vignette_biosecurity_files/figure-html/pdp-1.png" width="700"></p>
 </div>
-<div id="benchmarking-local-importance" class="section level3">
+<div id="benchmarking-predicted-risk" class="section level3">
 <h3 class="hasAnchor">
-<a href="#benchmarking-local-importance" class="anchor"></a>Benchmarking: Local importance</h3>
+<a href="#benchmarking-predicted-risk" class="anchor"></a>Benchmarking: predicted risk</h3>
 <p>The following function allows you to visualize and compare predicted risk among and within groups</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#apply the trained model to the entire data set to provide risk of predicted outbreak</span>
@@ -206,19 +206,24 @@
                          <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"1"</span> <span class="op">=</span> <span class="st">"Positive"</span>, <span class="st">"0"</span> <span class="op">=</span> <span class="st">"Negative"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> 
 <span class="va">data</span><span class="op">$</span><span class="va">Class</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/relevel.html">relevel</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">Class</span>, <span class="st">"Positive"</span><span class="op">)</span>
 <span class="co">#plot among group comparison of predicted risk</span>
-<span class="fu"><a href="../reference/mrBenchmark.html">mrBenchmark</a></span><span class="op">(</span>dat <span class="op">=</span> <span class="st">"data"</span>, outcome <span class="op">=</span> <span class="st">"Class"</span>, y <span class="op">=</span> <span class="st">"Predicted"</span>, group <span class="op">=</span> <span class="st">"Group"</span>, type <span class="op">=</span> <span class="st">"external"</span><span class="op">)</span> </code></pre></div>
-<p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-2-1.png" width="960"></p>
+<span class="fu"><a href="../reference/mrBenchmark.html">mrBenchmark</a></span><span class="op">(</span>my.data <span class="op">=</span> <span class="st">"data"</span>, outcome <span class="op">=</span> <span class="st">"Class"</span>, y <span class="op">=</span> <span class="st">"Predicted"</span>, group <span class="op">=</span> <span class="st">"Group"</span>, type <span class="op">=</span> <span class="st">"external"</span><span class="op">)</span> </code></pre></div>
+<p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-3-1.png" width="1248"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#plot within group comparison of predicted risk</span>
-<span class="fu"><a href="../reference/mrBenchmark.html">mrBenchmark</a></span><span class="op">(</span>dat <span class="op">=</span> <span class="st">"data"</span>, outcome <span class="op">=</span> <span class="st">"Class"</span>, y <span class="op">=</span> <span class="st">"Predicted"</span>, group <span class="op">=</span> <span class="st">"Group"</span>, label_by <span class="op">=</span> <span class="st">"ID"</span>, type <span class="op">=</span> <span class="st">"internal"</span><span class="op">)</span> </code></pre></div>
-<p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-3-1.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-3-2.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-3-3.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-3-4.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-3-5.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-3-6.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-3-7.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-3-8.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-3-9.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-3-10.png" width="700"> ### Benchmarking:: Predicted risk To investigate and interpret the contribution of variables at an individual level, we must use a local explanation method. Here we implement a local breakDown explainer</p>
+<span class="fu"><a href="../reference/mrBenchmark.html">mrBenchmark</a></span><span class="op">(</span>my.data <span class="op">=</span> <span class="st">"data"</span>, outcome <span class="op">=</span> <span class="st">"Class"</span>, y <span class="op">=</span> <span class="st">"Predicted"</span>, group <span class="op">=</span> <span class="st">"Group"</span>, label_by <span class="op">=</span> <span class="st">"ID"</span>, type <span class="op">=</span> <span class="st">"internal"</span><span class="op">)</span> </code></pre></div>
+<p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-1.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-2.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-3.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-4.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-5.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-6.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-7.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-8.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-9.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-10.png" width="700"></p>
+</div>
+<div id="benchmarking-local-importance" class="section level3">
+<h3 class="hasAnchor">
+<a href="#benchmarking-local-importance" class="anchor"></a>Benchmarking: local importance</h3>
+<p>To investigate and interpret the contribution of variables at an individual level, we must use a local explanation method. Here we implement a local breakDown explainer. <code>mrLocalExplainer</code> produces both aggregated and individual results of variable contribution. Variables with a phi &gt; 0 contribute to an increase in predicted PRRSV outbreak risk, while variables with a phi &lt; 0 contribute to a decrease in predicted outbreak risk.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#Use this function to implement the local explainer </span>
 <span class="va">data</span><span class="op">&lt;-</span><span class="va">data</span><span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/pkg/plyr/man/mutate.html">mutate</a></span><span class="op">(</span>Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/plyr/man/revalue.html">revalue</a></span><span class="op">(</span><span class="va">Class</span>,
                          <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"1"</span> <span class="op">=</span> <span class="st">"Positive"</span>, <span class="st">"0"</span> <span class="op">=</span> <span class="st">"Negative"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> 
 <span class="va">data</span><span class="op">$</span><span class="va">Class</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/relevel.html">relevel</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">Class</span>, <span class="st">"Positive"</span><span class="op">)</span>
-<span class="fu"><a href="../reference/mrLocalExplainer.html">mrLocalExplainer</a></span><span class="op">(</span>dat <span class="op">=</span> <span class="va">Y</span>, model_dat <span class="op">=</span> <span class="va">yhats</span>, outcome <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">Class</span><span class="op">)</span>
+<span class="fu"><a href="../reference/mrLocalExplainer.html">mrLocalExplainer</a></span><span class="op">(</span>my.data <span class="op">=</span> <span class="va">Y</span>, model_data <span class="op">=</span> <span class="va">yhats</span>, outcome <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">Class</span><span class="op">)</span>
 <span class="co">#&gt; Preparation of a new explainer is initiated</span>
 <span class="co">#&gt;   -&gt; model label       :  ranger  ( [33m default [39m )</span>
 <span class="co">#&gt;   -&gt; data              :  200  rows  42  cols </span>
@@ -233,7 +238,17 @@
 <span class="co">#&gt;   -&gt; predicted values  :  numerical, min =  0.1618017 , mean =  0.4919367 , max =  0.8665756  </span>
 <span class="co">#&gt;   -&gt; residual function :  difference between y and yhat ( [33m default [39m )</span>
 <span class="co">#&gt;  [32m A new explainer has been created! [39m</span></code></pre></div>
-<p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-1.png" width="700"><code>mrLocalExplainer</code> also produces the following objects: * <code>LE_matrix</code> (list) containing the contribution values and respective variables for each individual * <code>LE_indiv_plots</code> (list) containing individual waterfall plots of local variable contribution Collapse</p>
+<p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-1.png" width="1440"></p>
+<p>Individual plots are produced in the list object <code>LE_indiv_plots</code>. Each plot corresponds to a single farm. An example of a positive farm and a negative farm are shown here.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">LE_indiv_plots</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
+<span class="co">#&gt; [[1]]</span></code></pre></div>
+<p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-6-1.png" width="1248"></p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">LE_indiv_plots</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>
+<span class="co">#&gt; [[1]]</span></code></pre></div>
+<p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-6-2.png" width="1248"> At the positive farm we can see that yards from the public road and garbage collection are contributing to an increased outbreak risk, while manure removals and repair visits are contributing to a decreased outbreak risk. Likewise, at the negative farm yards to the public road and and the downtime required for manure removal personnel are contributing to an increased outbreak risk, while feed deliveries and manure removals are contributing to a decreased outbreak risk.</p>
+<p>Collapse</p>
 </div>
 </div>
   </div>
