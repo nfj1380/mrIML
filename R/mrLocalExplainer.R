@@ -97,7 +97,6 @@ mrLocalExplainer <- function(my.data, model_data, outcome){
             axis.text.x = element_text(size = 14), 
             axis.text.y = element_text(size = 14, lineheight = 0.7), 
             legend.position = "none") + 
-      ggtitle(paste(i)) +
       scale_color_uchicago(palette = "dark") +
       scale_fill_uchicago(palette = "dark")
     
