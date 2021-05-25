@@ -160,5 +160,3 @@ LE_indiv_plots[2]
 ```
 At the positive farm we can see that yards from the public road and garbage collection are contributing to an increased outbreak risk, while manure removals and repair visits are contributing to a decreased outbreak risk. 
 Likewise, at the negative farm yards to the public road and and the downtime required for manure removal personnel are contributing to an increased outbreak risk, while feed deliveries and manure removals are contributing to a decreased outbreak risk. 
-
-Collapse

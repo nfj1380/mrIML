@@ -188,12 +188,6 @@ flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='classifica
 #plot prediction scatter for all responses. Gets busy with 
 plot(light_scatter(flashlightObj, v = "Forest", type = "predicted"))
 
-#plots everything on one plot (partial dependency, ALE, scatter)
-plot(light_effects(flashlightObj, v = "Grassland"), use = "all")
-
-
-#profileData_pd <- light_profile(flashlightObj,  v = "Grassland")
-
 #mrProfileplot(profileData_pd , sdthresh =0.05) #sdthresh removes responses from the first plot that do not vary with the feature
 
 profileData_ale <- light_profile(flashlightObj, v = "Grassland", type = "ale") #acumulated local effects
