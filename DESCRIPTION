@@ -17,6 +17,7 @@ Imports:
     breakDown,
     DALEX,
     ggtext,
+    ggsci,
     imputeTS,
     pkgdown,
     missForest,
