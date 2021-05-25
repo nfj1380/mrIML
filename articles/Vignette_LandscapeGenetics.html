@@ -62,6 +62,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/Vignette_biosecurity.html">Swine Biosecurity working example</a>
+    </li>
+    <li>
       <a href="../articles/Vignette_LandscapeGenetics.html">Classification working example</a>
     </li>
     <li>
@@ -98,7 +101,7 @@
       <h1 data-toc-skip>Classification working example</h1>
                         <h4 class="author">Nick Fountain-Jones, Gustavo Machado</h4>
             
-            <h4 class="date">2021-05-20</h4>
+            <h4 class="date">2021-05-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/nfj1380/mrIML/blob/master/vignettes/Vignette_LandscapeGenetics.Rmd"><code>vignettes/Vignette_LandscapeGenetics.Rmd</code></a></small>
       <div class="hidden name"><code>Vignette_LandscapeGenetics.Rmd</code></div>
@@ -111,8 +114,12 @@
 <h1 class="hasAnchor">
 <a href="#general-introduction" class="anchor"></a>General introduction</h1>
 <p>MrIML is a R package allows users to generate and interpret multi-response models (i.e., joint species distribution models) leveraging advances in data science and machine learning. MrIML couples the tidymodel infrastructure developed by Max Kuhn and colleagues with model agnostic interpretable machine learning tools to gain insights into multiple response data such as. As such mrIML is flexible and easily extendable allowing users to construct everything from simple linear models to tree-based methods for each response using the same syntax and same way to compare predictive performance. In this vignette we will guide you through how to apply this package to landscape genetics problems but keep in mind any multiple-response data can be interrogated using this package (e.g., species or OTU presence/absence data).</p>
+<div id="lets-load-that-data-" class="section level3">
+<h3 class="hasAnchor">
+<a href="#lets-load-that-data-" class="anchor"></a>Lets load that data.</h3>
 <p>Let’s start by loading the required packages and data. The data we are going to use is from Fountain-Jones etal (2017) and consists of single nucleotide polymorphism (SNP) data from a virus (feline immunodeficiency virus, FIV) infecting bobcats in Southern California.</p>
 <p>Features (a.k.a predictor variables) with missing data can be removed or interpolated depending on the nature of the missing data. Here we remove them.</p>
+</div>
 </div>
 <div id="filter-and-balance-your-dataset" class="section level1">
 <h1 class="hasAnchor">
@@ -133,6 +140,9 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#R &lt;- resist_components(filename = 'location of pairwise matrices', p_val=0.01 ) # p values are used here to filter resistance components that aren't correlated with th original pairwise matrix.</span>
 <span class="co">#Y &lt;- cbind(R,Y)</span></code></pre></div>
+<div id="running-the-analyis" class="section level3">
+<h3 class="hasAnchor">
+<a href="#running-the-analyis" class="anchor"></a>Running the analyis</h3>
 <p>Now all the data is loaded and ready to go we can formulate the model using tidymodel syntax. In this case we have binary data (SNP presence/absence at each loci) but the data could also be counts or continuous (the set_model argument would be “regression” instead of “classification”). The user can specify any model from the tidymodel universe as ‘model 1’ (see <a href="https://www.tidymodels.org/find/" class="uri">https://www.tidymodels.org/find/</a> for details). However, we have done most of our testing on random forests (rf), xgr boost and glms (generalized linear models). Here we will specify a random forest classification model as the model applied to each response.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">model1</span> <span class="op">&lt;-</span> 
@@ -152,66 +162,66 @@
 <code class="sourceCode R">
 <span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">model1</span>, X<span class="op">=</span><span class="va">X</span>,  model<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span> 
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co">#predictive performance for individual responses </span>
-<span class="co">#&gt;    response  model_name roc_AUC               mcc sensitivity specificity</span>
-<span class="co">#&gt; 1   env_131 rand_forest       1              0.25           1        0.25</span>
-<span class="co">#&gt; 2   env_163 rand_forest    &lt;NA&gt;              &lt;NA&gt;        &lt;NA&gt;           1</span>
-<span class="co">#&gt; 3   env_164 rand_forest       1                 1           1           1</span>
-<span class="co">#&gt; 4   env_167 rand_forest     0.5              &lt;NA&gt;           1           0</span>
-<span class="co">#&gt; 5   env_169 rand_forest    0.75              0.25        0.25           1</span>
-<span class="co">#&gt; 6   env_212 rand_forest   0.625 0.408248290463863           1         0.5</span>
-<span class="co">#&gt; 7    env_23 rand_forest     0.5              &lt;NA&gt;           0           1</span>
-<span class="co">#&gt; 8    env_24 rand_forest     0.5              &lt;NA&gt;           1           0</span>
-<span class="co">#&gt; 9    env_47 rand_forest       1 0.612372435695795           1         0.5</span>
-<span class="co">#&gt; 10   env_59 rand_forest    0.75              0.25        0.25           1</span>
-<span class="co">#&gt; 11    env_8 rand_forest     0.5              &lt;NA&gt;           0           1</span>
-<span class="co">#&gt; 12   env_84 rand_forest    0.75              0.25        0.25           1</span>
-<span class="co">#&gt; 13   env_85 rand_forest    0.75              0.25        0.25           1</span>
-<span class="co">#&gt; 14   env_86 rand_forest     0.5              &lt;NA&gt;           1           0</span>
-<span class="co">#&gt; 15  pol_105 rand_forest       1                 1           1           1</span>
-<span class="co">#&gt; 16  pol_108 rand_forest       1                 1           1           1</span>
-<span class="co">#&gt; 17  pol_111 rand_forest       1                 1           1           1</span>
-<span class="co">#&gt; 18  pol_117 rand_forest     0.5              &lt;NA&gt;           1           0</span>
-<span class="co">#&gt; 19  pol_132 rand_forest       1 0.612372435695795           1         0.5</span>
-<span class="co">#&gt; 20  pol_159 rand_forest     0.5              &lt;NA&gt;           0           1</span>
-<span class="co">#&gt; 21  pol_258 rand_forest     0.5              &lt;NA&gt;           0           1</span>
-<span class="co">#&gt; 22   pol_30 rand_forest       1 0.612372435695795           1         0.5</span>
-<span class="co">#&gt; 23  pol_340 rand_forest     0.5              &lt;NA&gt;           1           0</span>
-<span class="co">#&gt; 24  pol_353 rand_forest     0.5              &lt;NA&gt;           1           0</span>
-<span class="co">#&gt; 25  pol_366 rand_forest    0.75              0.25        0.25           1</span>
-<span class="co">#&gt; 26   pol_87 rand_forest       1 0.612372435695795           1         0.5</span>
-<span class="co">#&gt; 27   pol_88 rand_forest       1 0.612372435695795           1         0.5</span>
-<span class="co">#&gt; 28   pol_89 rand_forest       1 0.612372435695795           1         0.5</span>
-<span class="co">#&gt;           prevalence</span>
-<span class="co">#&gt; 1  0.421052631578947</span>
-<span class="co">#&gt; 2  0.631578947368421</span>
-<span class="co">#&gt; 3  0.421052631578947</span>
-<span class="co">#&gt; 4  0.421052631578947</span>
-<span class="co">#&gt; 5  0.421052631578947</span>
-<span class="co">#&gt; 6  0.684210526315789</span>
-<span class="co">#&gt; 7  0.631578947368421</span>
-<span class="co">#&gt; 8  0.421052631578947</span>
-<span class="co">#&gt; 9  0.473684210526316</span>
-<span class="co">#&gt; 10 0.421052631578947</span>
-<span class="co">#&gt; 11 0.473684210526316</span>
-<span class="co">#&gt; 12 0.421052631578947</span>
-<span class="co">#&gt; 13 0.421052631578947</span>
-<span class="co">#&gt; 14 0.421052631578947</span>
-<span class="co">#&gt; 15 0.473684210526316</span>
-<span class="co">#&gt; 16 0.421052631578947</span>
-<span class="co">#&gt; 17 0.421052631578947</span>
-<span class="co">#&gt; 18 0.473684210526316</span>
-<span class="co">#&gt; 19 0.473684210526316</span>
-<span class="co">#&gt; 20 0.473684210526316</span>
-<span class="co">#&gt; 21 0.473684210526316</span>
-<span class="co">#&gt; 22 0.473684210526316</span>
-<span class="co">#&gt; 23 0.421052631578947</span>
-<span class="co">#&gt; 24 0.421052631578947</span>
-<span class="co">#&gt; 25 0.421052631578947</span>
-<span class="co">#&gt; 26 0.473684210526316</span>
-<span class="co">#&gt; 27 0.473684210526316</span>
-<span class="co">#&gt; 28 0.473684210526316</span>
+<span class="co">#&gt;    response  model_name           roc_AUC                mcc       sensitivity</span>
+<span class="co">#&gt; 1   env_131 rand_forest              0.75              -0.25                 0</span>
+<span class="co">#&gt; 2   env_163 rand_forest                 0 -0.666666666666667 0.333333333333333</span>
+<span class="co">#&gt; 3   env_164 rand_forest              &lt;NA&gt;               &lt;NA&gt;               0.8</span>
+<span class="co">#&gt; 4   env_167 rand_forest                 1               &lt;NA&gt;                 1</span>
+<span class="co">#&gt; 5   env_169 rand_forest                 1  0.612372435695795                 1</span>
+<span class="co">#&gt; 6   env_212 rand_forest               0.5               &lt;NA&gt;                 0</span>
+<span class="co">#&gt; 7    env_23 rand_forest               0.5               &lt;NA&gt;                 0</span>
+<span class="co">#&gt; 8    env_24 rand_forest               0.5               &lt;NA&gt;                 1</span>
+<span class="co">#&gt; 9    env_47 rand_forest                 1  0.612372435695795               0.5</span>
+<span class="co">#&gt; 10   env_59 rand_forest                 1  0.612372435695795                 1</span>
+<span class="co">#&gt; 11    env_8 rand_forest               0.5               &lt;NA&gt;                 0</span>
+<span class="co">#&gt; 12   env_84 rand_forest                 1  0.612372435695795                 1</span>
+<span class="co">#&gt; 13   env_85 rand_forest                 1  0.612372435695795                 1</span>
+<span class="co">#&gt; 14   env_86 rand_forest               0.5               &lt;NA&gt;                 1</span>
+<span class="co">#&gt; 15  pol_105 rand_forest 0.666666666666667  0.666666666666667 0.666666666666667</span>
+<span class="co">#&gt; 16  pol_108 rand_forest 0.833333333333333  0.612372435695795                 1</span>
+<span class="co">#&gt; 17  pol_111 rand_forest              &lt;NA&gt;               &lt;NA&gt;               0.8</span>
+<span class="co">#&gt; 18  pol_117 rand_forest               0.5 -0.408248290463863                 0</span>
+<span class="co">#&gt; 19  pol_132 rand_forest                 1  0.612372435695795               0.5</span>
+<span class="co">#&gt; 20  pol_159 rand_forest 0.333333333333333 -0.408248290463863 0.666666666666667</span>
+<span class="co">#&gt; 21  pol_258 rand_forest               0.5               &lt;NA&gt;                 0</span>
+<span class="co">#&gt; 22   pol_30 rand_forest                 1  0.612372435695795               0.5</span>
+<span class="co">#&gt; 23  pol_340 rand_forest               0.5               &lt;NA&gt;                 1</span>
+<span class="co">#&gt; 24  pol_353 rand_forest               0.5               &lt;NA&gt;                 1</span>
+<span class="co">#&gt; 25  pol_366 rand_forest                 1  0.612372435695795                 1</span>
+<span class="co">#&gt; 26   pol_87 rand_forest                 1  0.612372435695795               0.5</span>
+<span class="co">#&gt; 27   pol_88 rand_forest                 1  0.612372435695795               0.5</span>
+<span class="co">#&gt; 28   pol_89 rand_forest                 1  0.612372435695795               0.5</span>
+<span class="co">#&gt;    specificity        prevalence</span>
+<span class="co">#&gt; 1         0.75 0.421052631578947</span>
+<span class="co">#&gt; 2            0 0.631578947368421</span>
+<span class="co">#&gt; 3         &lt;NA&gt; 0.421052631578947</span>
+<span class="co">#&gt; 4            0 0.421052631578947</span>
+<span class="co">#&gt; 5          0.5 0.421052631578947</span>
+<span class="co">#&gt; 6            1 0.684210526315789</span>
+<span class="co">#&gt; 7            1 0.631578947368421</span>
+<span class="co">#&gt; 8            0 0.421052631578947</span>
+<span class="co">#&gt; 9            1 0.473684210526316</span>
+<span class="co">#&gt; 10         0.5 0.421052631578947</span>
+<span class="co">#&gt; 11           1 0.473684210526316</span>
+<span class="co">#&gt; 12         0.5 0.421052631578947</span>
+<span class="co">#&gt; 13         0.5 0.421052631578947</span>
+<span class="co">#&gt; 14           0 0.421052631578947</span>
+<span class="co">#&gt; 15           1 0.473684210526316</span>
+<span class="co">#&gt; 16         0.5 0.421052631578947</span>
+<span class="co">#&gt; 17        &lt;NA&gt; 0.421052631578947</span>
+<span class="co">#&gt; 18         0.5 0.473684210526316</span>
+<span class="co">#&gt; 19           1 0.473684210526316</span>
+<span class="co">#&gt; 20           0 0.473684210526316</span>
+<span class="co">#&gt; 21           1 0.473684210526316</span>
+<span class="co">#&gt; 22           1 0.473684210526316</span>
+<span class="co">#&gt; 23           0 0.421052631578947</span>
+<span class="co">#&gt; 24           0 0.421052631578947</span>
+<span class="co">#&gt; 25         0.5 0.421052631578947</span>
+<span class="co">#&gt; 26           1 0.473684210526316</span>
+<span class="co">#&gt; 27           1 0.473684210526316</span>
+<span class="co">#&gt; 28           1 0.473684210526316</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="co">#overall predictive performance</span>
-<span class="co">#&gt; [1] 0.7276786</span></code></pre></div>
+<span class="co">#&gt; [1] 0.6815476</span></code></pre></div>
 <p>You can compare the predictive performance of random forests with any other technique simply by altering the following. Lets try a logistic regression - no tuning of hyperparamters required. Note that for logistic regression you may need to scale/transform the data or create dummy variables if you include categorical variables. These steps can easily be added to the pipeline following tidymodel syntax (see the website above)</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">model1</span> <span class="op">&lt;-</span> <span class="co">#model used to generate yhat</span>
@@ -223,7 +233,11 @@
 <span class="co">#save(yhats, file='logreg_model')</span>
 <span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">model1</span>, X<span class="op">=</span><span class="va">X</span><span class="op">)</span> <span class="co">#</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>
-<span class="co">#&gt; [1] 0.4785714</span></code></pre></div>
+<span class="co">#&gt; [1] 0.5857143</span></code></pre></div>
+</div>
+<div id="plotting" class="section level2">
+<h2 class="hasAnchor">
+<a href="#plotting" class="anchor"></a>Plotting</h2>
 <p>You can see that the random forests model outperforms the logistic regression in this case. Once we are happy with the underlying model we can then dive in to see how this model predicts the SNPs. First we can check out variable importance.The first plot is the global importance (what features shape genetic change overall), the second shows the individual models (with an optional importance MCC threshold ‘cutoff’ value ) and the third plots the importances of all models as a PCA. SNPs or responses closer together in PCA space are shaped more similarly by landscape variables (or in other words have similar feature variable importance scores).</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">VI</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrVip.html">mrVip</a></span><span class="op">(</span><span class="va">yhats</span>, Y<span class="op">=</span><span class="va">Y</span><span class="op">)</span> 
@@ -253,24 +267,16 @@
 <p><img src="Vignette_LandscapeGenetics_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
-<span class="co">#plots everything on one plot (partial dependency, ALE, scatter)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu">light_effects</span><span class="op">(</span><span class="va">flashlightObj</span>, v <span class="op">=</span> <span class="st">"Grassland"</span><span class="op">)</span>, use <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></code></pre></div>
-<p><img src="Vignette_LandscapeGenetics_files/figure-html/unnamed-chunk-11-2.png" width="700"></p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-
-<span class="co">#profileData_pd &lt;- light_profile(flashlightObj,  v = "Grassland")</span>
-
 <span class="co">#mrProfileplot(profileData_pd , sdthresh =0.05) #sdthresh removes responses from the first plot that do not vary with the feature</span>
 
 <span class="va">profileData_ale</span> <span class="op">&lt;-</span> <span class="fu">light_profile</span><span class="op">(</span><span class="va">flashlightObj</span>, v <span class="op">=</span> <span class="st">"Grassland"</span>, type <span class="op">=</span> <span class="st">"ale"</span><span class="op">)</span> <span class="co">#acumulated local effects</span>
 
 <span class="fu"><a href="../reference/mrProfileplot.html">mrProfileplot</a></span><span class="op">(</span><span class="va">profileData_ale</span> , sdthresh <span class="op">=</span><span class="fl">0.01</span><span class="op">)</span></code></pre></div>
-<p><img src="Vignette_LandscapeGenetics_files/figure-html/unnamed-chunk-11-3.png" width="700"><img src="Vignette_LandscapeGenetics_files/figure-html/unnamed-chunk-11-4.png" width="700"></p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<p><img src="Vignette_LandscapeGenetics_files/figure-html/unnamed-chunk-11-2.png" width="700"><img src="Vignette_LandscapeGenetics_files/figure-html/unnamed-chunk-11-3.png" width="700"></p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#the second plot is the cumulative turnover function</span></code></pre></div>
 <p>Finally, we can assess how features interact overall to shape genetic change. Be warned this is memory intensive. Future updates to this package will enable users to visualize these interactions and explore them in more detail using 2D ALE plots for example.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="va">interactions</span> <span class="op">&lt;-</span><span class="fu"><a href="../reference/mrInteractions.html">mrInteractions</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">X</span>, <span class="va">Y</span>,  mod<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span> <span class="co">#this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things</span>
 
@@ -281,6 +287,7 @@
 <pre><code>#&gt; Press [enter] to continue for individual response results</code></pre>
 <p><img src="Vignette_LandscapeGenetics_files/figure-html/unnamed-chunk-12-3.png" width="700"></p>
 <p>You could easily compare the plots generated above from our random forest model with the logistic regression model we also calculated. This is just an example of the tools can be applied to better interpret multi-response models and in turn gain insights into how landscape impacts genetic change. We’ve demonstrated that this package is modular and flexible, allowing future work on ‘tidymodels’ and interpretable machine learning to easily be incorporated. The predictions from these models, for example, can be used to identify individual SNPs that may be adaptive assess gene flow across space (future updates) or to help better formulate probabilistic models such as generalized dissimilarity models (GDMs).</p>
+</div>
 </div>
   </div>
 

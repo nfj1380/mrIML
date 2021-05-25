@@ -104,6 +104,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/Vignette_biosecurity.html">Swine Biosecurity working example</a>
+    </li>
+    <li>
       <a href="../articles/Vignette_LandscapeGenetics.html">Classification working example</a>
     </li>
     <li>
@@ -157,6 +160,7 @@
   parallel <span class='op'>=</span> <span class='cn'>TRUE</span>,
   transformY <span class='op'>=</span> <span class='st'>"log"</span>,
   tune_grid_size <span class='op'>=</span> <span class='fl'>10</span>,
+  k <span class='op'>=</span> <span class='fl'>10</span>,
   seed <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample.int</a></span><span class='op'>(</span><span class='fl'>1e+08</span>, <span class='fl'>1</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
@@ -178,6 +182,10 @@
     <tr>
       <th>tune_grid_size</th>
       <td><p>A <code>numeric</code> sets the grid size for hyperparamter tuning. Larger grid sizes increase computational time.</p></td>
+    </tr>
+    <tr>
+      <th>k</th>
+      <td><p>A <code>numeric</code> sets the number of folds in the 10-fold cross-validation. 10 is the default.</p></td>
     </tr>
     <tr>
       <th>Model</th>

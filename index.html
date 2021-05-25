@@ -62,6 +62,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="articles/Vignette_biosecurity.html">Swine Biosecurity working example</a>
+    </li>
+    <li>
       <a href="articles/Vignette_LandscapeGenetics.html">Classification working example</a>
     </li>
     <li>
@@ -129,7 +132,7 @@
 <a href="#mrimlpredicts" class="anchor"></a><br><span class="math display"><em>m</em><em>r</em><em>I</em><em>M</em><em>L</em><em>p</em><em>r</em><em>e</em><em>d</em><em>i</em><em>c</em><em>t</em><em>s</em></span><br>
 </h3>
 <p>This function represents the core functionality of the package and includes results reporting, plotting and optional saving. It requires a data frame of X t( the snp data for example) and Y represented by the covariates or features.</p>
-<p>Load example data (cite) data from <a href="https://nfj1380.github.io/mrIML">mrIML</a>.</p>
+<p>For example, for a regression problem lets look at the data from Fitzpatrick and Keller (2015) from <a href="https://nfj1380.github.io/mrIML">mrIML</a>. Columns 1-2 represent geographical coordinates, 3-9 environmental data for each location, 10-14 are spatial eigenvectors (MEMs) and the remaining columns are proportion of the poulations with a each reference allelle.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">gfData</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>
@@ -154,13 +157,15 @@
 <span class="co">#&gt; 4        0.10714286        0.00000000        0.00000000</span>
 <span class="co">#&gt; 5        0.06666667        0.19230769        0.06666667</span>
 <span class="co">#&gt; 6        0.00000000        0.08333333        0.00000000</span></code></pre></div>
+<p>For a classiciation problem, the data is similar except are response (by definition) is binary (i.e., is there a muutation at that locus).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Define set of features</span>
 <span class="va">FeaturesnoNA</span><span class="op">&lt;-</span><span class="va">Features</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html">complete.cases</a></span><span class="op">(</span><span class="va">Features</span><span class="op">)</span>, <span class="op">]</span>
 <span class="va">Y</span> <span class="op">&lt;-</span> <span class="va">FeaturesnoNA</span> <span class="co">#for simplicity</span>
 <span class="co"># Define set the outcomes of interst</span>
 <span class="va">fData</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/filterRareCommon.html">filterRareCommon</a></span> <span class="op">(</span><span class="va">Responsedata</span>, lower<span class="op">=</span><span class="fl">0.4</span>, higher<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span> 
-<span class="va">X</span> <span class="op">&lt;-</span> <span class="va">fData</span> <span class="co">#</span>
+<span class="va">X</span> <span class="op">&lt;-</span> <span class="va">fData</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>
 
 <span class="va">yhats</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrIMLpredicts.html">mrIMLpredicts</a></span><span class="op">(</span>X<span class="op">=</span><span class="va">X</span>,Y<span class="op">=</span><span class="va">Y</span>, model1<span class="op">=</span><span class="va">model1</span>, balance_data<span class="op">=</span><span class="st">'no'</span>, mod<span class="op">=</span><span class="st">'classification'</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 
