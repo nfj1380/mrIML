@@ -101,7 +101,7 @@
       <h1 data-toc-skip>Classification working example</h1>
                         <h4 class="author">Nick Fountain-Jones, Gustavo Machado</h4>
             
-            <h4 class="date">2021-06-28</h4>
+            <h4 class="date">2021-07-07</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/nfj1380/mrIML/blob/master/vignettes/Vignette_LandscapeGenetics.Rmd"><code>vignettes/Vignette_LandscapeGenetics.Rmd</code></a></small>
       <div class="hidden name"><code>Vignette_LandscapeGenetics.Rmd</code></div>
@@ -119,13 +119,175 @@
 <a href="#lets-load-that-data-" class="anchor"></a>Lets load that data.</h3>
 <p>Let’s start by loading the required packages and data. The data we are going to use is from Fountain-Jones etal (2017) and consists of single nucleotide polymorphism (SNP) data from a virus (feline immunodeficiency virus, FIV) infecting bobcats in Southern California.</p>
 <p>Features (a.k.a predictor variables) with missing data can be removed or interpolated depending on the nature of the missing data. Here we remove them.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="co">#make sure you have installed devtools previously.</span>
+<span class="co">#Install the most uptodate version from github</span>
+
+<span class="co">#if (!requireNamespace("devtools", quietly = TRUE))</span>
+<span class="co"># install.packages("devtools")</span>
+<span class="co">#   devtools:: install_github('nfj1380/mrIML')</span>
+
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://nfj1380.github.io/mrIML">mrIML</a></span><span class="op">)</span>
+
+<span class="co">#other package we need:</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/koalaverse/vip/">vip</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidymodels.tidymodels.org">tidymodels</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/">randomForest</a></span><span class="op">)</span>;   <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/gbm-developers/gbm">gbm</a></span><span class="op">)</span>;<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bgreenwell.github.io/pdp/index.html">pdp</a></span><span class="op">)</span>;
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Attaching package: 'vip'</span>
+<span class="co">#&gt; The following object is masked from 'package:utils':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     vi</span>
+<span class="co">#&gt; Registered S3 method overwritten by 'tune':</span>
+<span class="co">#&gt;   method                   from   </span>
+<span class="co">#&gt;   required_pkgs.model_spec parsnip</span>
+<span class="co">#&gt; ── Attaching packages ────────────────────────────────────── tidymodels 0.1.3 ──</span>
+<span class="co">#&gt; ✔ broom        0.7.8      ✔ recipes      0.1.16</span>
+<span class="co">#&gt; ✔ dials        0.0.9      ✔ rsample      0.1.0 </span>
+<span class="co">#&gt; ✔ dplyr        1.0.7      ✔ tibble       3.1.2 </span>
+<span class="co">#&gt; ✔ ggplot2      3.3.5      ✔ tidyr        1.1.3 </span>
+<span class="co">#&gt; ✔ infer        0.5.4      ✔ tune         0.1.5 </span>
+<span class="co">#&gt; ✔ modeldata    0.1.0      ✔ workflows    0.2.2 </span>
+<span class="co">#&gt; ✔ parsnip      0.1.6      ✔ workflowsets 0.0.2 </span>
+<span class="co">#&gt; ✔ purrr        0.3.4      ✔ yardstick    0.0.8</span>
+<span class="co">#&gt; ── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──</span>
+<span class="co">#&gt; ✖ purrr::discard() masks scales::discard()</span>
+<span class="co">#&gt; ✖ dplyr::filter()  masks stats::filter()</span>
+<span class="co">#&gt; ✖ dplyr::lag()     masks stats::lag()</span>
+<span class="co">#&gt; ✖ recipes::step()  masks stats::step()</span>
+<span class="co">#&gt; • Use tidymodels_prefer() to resolve common conflicts.</span>
+<span class="co">#&gt; randomForest 4.6-14</span>
+<span class="co">#&gt; Type rfNews() to see new features/changes/bug fixes.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Attaching package: 'randomForest'</span>
+<span class="co">#&gt; The following object is masked from 'package:ggplot2':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     margin</span>
+<span class="co">#&gt; The following object is masked from 'package:dplyr':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     combine</span>
+<span class="co">#&gt; Loaded gbm 2.1.8</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Attaching package: 'pdp'</span>
+<span class="co">#&gt; The following object is masked from 'package:purrr':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     partial</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>;<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">parallel</span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">doParallel</span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/themis">themis</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/">viridis</a></span><span class="op">)</span>;
+<span class="co">#&gt; ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</span>
+<span class="co">#&gt; ✔ readr   1.4.0     ✔ forcats 0.5.1</span>
+<span class="co">#&gt; ✔ stringr 1.4.0</span>
+<span class="co">#&gt; ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──</span>
+<span class="co">#&gt; ✖ readr::col_factor()     masks scales::col_factor()</span>
+<span class="co">#&gt; ✖ randomForest::combine() masks dplyr::combine()</span>
+<span class="co">#&gt; ✖ purrr::discard()        masks scales::discard()</span>
+<span class="co">#&gt; ✖ dplyr::filter()         masks stats::filter()</span>
+<span class="co">#&gt; ✖ stringr::fixed()        masks recipes::fixed()</span>
+<span class="co">#&gt; ✖ dplyr::lag()            masks stats::lag()</span>
+<span class="co">#&gt; ✖ randomForest::margin()  masks ggplot2::margin()</span>
+<span class="co">#&gt; ✖ pdp::partial()          masks purrr::partial()</span>
+<span class="co">#&gt; ✖ readr::spec()           masks yardstick::spec()</span>
+<span class="co">#&gt; Loading required package: foreach</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Attaching package: 'foreach'</span>
+<span class="co">#&gt; The following objects are masked from 'package:purrr':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     accumulate, when</span>
+<span class="co">#&gt; Loading required package: iterators</span>
+<span class="co">#&gt; Registered S3 methods overwritten by 'themis':</span>
+<span class="co">#&gt;   method                  from   </span>
+<span class="co">#&gt;   bake.step_downsample    recipes</span>
+<span class="co">#&gt;   bake.step_upsample      recipes</span>
+<span class="co">#&gt;   prep.step_downsample    recipes</span>
+<span class="co">#&gt;   prep.step_upsample      recipes</span>
+<span class="co">#&gt;   tidy.step_downsample    recipes</span>
+<span class="co">#&gt;   tidy.step_upsample      recipes</span>
+<span class="co">#&gt;   tunable.step_downsample recipes</span>
+<span class="co">#&gt;   tunable.step_upsample   recipes</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Attaching package: 'themis'</span>
+<span class="co">#&gt; The following objects are masked from 'package:recipes':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     step_downsample, step_upsample</span>
+<span class="co">#&gt; Loading required package: viridisLite</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Attaching package: 'viridis'</span>
+<span class="co">#&gt; The following object is masked from 'package:scales':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     viridis_pal</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sfirke/janitor">janitor</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/hrbrmstr/hrbrthemes">hrbrthemes</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dmlc/xgboost">xgboost</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://cran.r-project.org">vegan</a></span><span class="op">)</span>;<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mayer79/flashlight">flashlight</a></span><span class="op">)</span>;
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Attaching package: 'janitor'</span>
+<span class="co">#&gt; The following objects are masked from 'package:stats':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     chisq.test, fisher.test</span>
+<span class="co">#&gt; NOTE: Either Arial Narrow or Roboto Condensed fonts are required to use these themes.</span>
+<span class="co">#&gt;       Please use hrbrthemes::import_roboto_condensed() to install Roboto Condensed and</span>
+<span class="co">#&gt;       if Arial Narrow is not on your system, please see https://bit.ly/arialnarrow</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Attaching package: 'xgboost'</span>
+<span class="co">#&gt; The following object is masked from 'package:dplyr':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     slice</span>
+<span class="co">#&gt; Loading required package: permute</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Attaching package: 'permute'</span>
+<span class="co">#&gt; The following object is masked from 'package:recipes':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     check</span>
+<span class="co">#&gt; Loading required package: lattice</span>
+<span class="co">#&gt; Registered S3 method overwritten by 'vegan':</span>
+<span class="co">#&gt;   method          from   </span>
+<span class="co">#&gt;   print.nullmodel parsnip</span>
+<span class="co">#&gt; This is vegan 2.5-7</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Attaching package: 'vegan'</span>
+<span class="co">#&gt; The following object is masked from 'package:parsnip':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     nullmodel</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/slowkow/ggrepel">ggrepel</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://parsnip.tidymodels.org">parsnip</a></span><span class="op">)</span>;<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rsample.tidymodels.org">rsample</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/workflows">workflows</a></span><span class="op">)</span>
+
+<span class="co">#load SNP data</span>
+<span class="co">#Responsedata)</span>
+
+<span class="co">#if you have a plink dataset you can load it in to our pipeline with the following:</span>
+<span class="co">#snps &lt;- readSnpsPed("snp.ped", "snp.map") #NAs in data and interpolated as the mode.</span>
+
+<span class="co">#landscape and host features (or predictors). Note that samples must be rows. </span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">Features</span><span class="op">)</span> 
+<span class="co">#&gt; 'data.frame':    20 obs. of  19 variables:</span>
+<span class="co">#&gt;  $ Grassland       : num  0.07 0.0677 0.1845 0.0981 0.1578 ...</span>
+<span class="co">#&gt;  $ Shrub.Scrub     : num  0.557 0.767 0.524 0.786 0.842 ...</span>
+<span class="co">#&gt;  $ Forest          : num  0.01072 0.030588 0.008615 0.000662 0.000616 ...</span>
+<span class="co">#&gt;  $ HighlyDev       : num  0 0 0.00225 0 0 ...</span>
+<span class="co">#&gt;  $ Urban           : num  0 0 0.00159 0 0 ...</span>
+<span class="co">#&gt;  $ Suburban        : num  0.00357 0.13268 0.01325 0.00119 0 ...</span>
+<span class="co">#&gt;  $ Exurban         : num  0.00622 0.03019 0 0.01906 0 ...</span>
+<span class="co">#&gt;  $ Altered         : num  0.441 0.182 0.114 0.12 0 ...</span>
+<span class="co">#&gt;  $ Distance        : num  1.321 0.492 3.231 5.629 4.739 ...</span>
+<span class="co">#&gt;  $ Latitude        : num  33.8 33.8 33.8 33.8 33.8 ...</span>
+<span class="co">#&gt;  $ Longitude       : num  -118 -118 -118 -118 -118 ...</span>
+<span class="co">#&gt;  $ Age             : int  3 0 3 2 3 3 2 3 3 3 ...</span>
+<span class="co">#&gt;  $ Sex             : int  1 1 1 1 0 0 0 1 1 1 ...</span>
+<span class="co">#&gt;  $ Relatedness.PCO1: num  -0.1194 -0.0389 -0.1618 -0.1811 -0.1564 ...</span>
+<span class="co">#&gt;  $ Relatedness.PCO2: num  -0.1947 -0.0525 -0.321 -0.0827 0.1 ...</span>
+<span class="co">#&gt;  $ Relatedness.PCO3: num  -0.191 -0.0874 0.0541 -0.0627 -0.0111 ...</span>
+<span class="co">#&gt;  $ Relatedness.PCO4: num  0.1117 0.2422 0.0974 0.2129 0.2259 ...</span>
+<span class="co">#&gt;  $ Relatedness.PCO5: num  0.06405 0.0706 0.03514 -0.00084 0.0894 ...</span>
+<span class="co">#&gt;  $ Relatedness.PCO6: num  -0.0432 0.0683 -0.0805 0.2247 -0.055 ...</span>
+
+<span class="co"># # remove NAs from the feature/predictor data.</span>
+<span class="va">FeaturesnoNA</span><span class="op">&lt;-</span><span class="va">Features</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html">complete.cases</a></span><span class="op">(</span><span class="va">Features</span><span class="op">)</span>, <span class="op">]</span>
+
+<span class="va">Y</span> <span class="op">&lt;-</span> <span class="va">FeaturesnoNA</span> <span class="co">#for simplicity</span>
+
+<span class="co">#for more efficient testing for interactions (more variables more interacting pairs)</span>
+<span class="va">Y</span> <span class="op">&lt;-</span> <span class="va">FeaturesnoNA</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">]</span> <span class="co">#three features only</span></code></pre></div>
 </div>
 </div>
 <div id="filter-and-balance-your-dataset" class="section level1">
 <h1 class="hasAnchor">
 <a href="#filter-and-balance-your-dataset" class="anchor"></a>Filter and balance your dataset</h1>
 <p>When constructing these type of models, SNPs that are common (occur say in &gt;80% of samples) or rare (&lt; 10% of samples) are difficult to model. This cn be a problem for potentially adaptice loci which tend to be rarer We provide down-sampling or up-sampling strategies for dealing with unbalanced data (see below) but filtering out common and rare loci is another option. The more response variables (SNPs) you include the longer the computational time, so for this example we will trim SNPs occurring in &lt; 40% and &gt; 70% of individuals. This leaves 29 SNPs remaining. In practice, these filtering steps are stringent so &lt; 20 and &gt; 80 maybe more appropriate.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#Optional: Filter rare/common SNPs or species. Retaining minor allele frequencies &gt;0.1 and removing common alleles (occur&gt;0.9)</span>
 <span class="va">fData</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterRareCommon.html">filterRareCommon</a></span> <span class="op">(</span><span class="va">Responsedata</span>, lower<span class="op">=</span><span class="fl">0.4</span>, higher<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span> 
 <span class="va">X</span> <span class="op">&lt;-</span> <span class="va">fData</span> <span class="co">#for simplicity when comparing</span>
@@ -137,146 +299,146 @@
 <span class="co">#hc &lt;-  sort(hc)</span>
 <span class="co">#X &lt;-  X[,-c(hc)] #</span></code></pre></div>
 <p>If your feature data consists of landscape resistance data generated from Circuitscape or similar, we provide functionality that can extract each surface from a folder and generate resistance components that can be used in these models (using principal coordinate analysis). This data can be easily merged if needs be with other non-matrix data (e.g., age/sex). There was no resistance surfaces here, but this is what the code looks like:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#R &lt;- resist_components(filename = 'location of pairwise matrices', p_val=0.01 ) # p values are used here to filter resistance components that aren't correlated with th original pairwise matrix.</span>
 <span class="co">#Y &lt;- cbind(R,Y)</span></code></pre></div>
 <div id="running-the-analyis" class="section level3">
 <h3 class="hasAnchor">
 <a href="#running-the-analyis" class="anchor"></a>Running the analyis</h3>
 <p>Now all the data is loaded and ready to go we can formulate the model using tidymodel syntax. In this case we have binary data (SNP presence/absence at each loci) but the data could also be counts or continuous (the set_model argument would be “regression” instead of “classification”). The user can specify any model from the tidymodel universe as ‘model 1’ (see <a href="https://www.tidymodels.org/find/" class="uri">https://www.tidymodels.org/find/</a> for details). However, we have done most of our testing on random forests (rf), xgr boost and glms (generalized linear models). Here we will specify a random forest classification model as the model applied to each response.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">model1</span> <span class="op">&lt;-</span> 
-  <span class="fu">rand_forest</span><span class="op">(</span>trees <span class="op">=</span> <span class="fl">100</span>, mtry<span class="op">=</span><span class="fu">tune</span><span class="op">(</span><span class="op">)</span>, min_n <span class="op">=</span> <span class="fu">tune</span><span class="op">(</span><span class="op">)</span>, mode <span class="op">=</span> <span class="st">"classification"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="co">#100 trees are set for brevity</span>
-  <span class="co"># select the engine/package that underlies the model</span>
-  <span class="fu">set_engine</span><span class="op">(</span><span class="st">"ranger"</span>, importance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"impurity"</span>,<span class="st">"impurity_corrected"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="co"># choose either the continuous regression or binary classification mode</span>
-  <span class="fu">set_mode</span><span class="op">(</span><span class="st">"classification"</span><span class="op">)</span></code></pre></div>
-<p>Now we can run the model. Hyper parameter tuning (for algorithms that have hyper parameters) is done automatically by testing how model performance changes across a random grid of 10 parameters and the best performing combination is kept. Notice for random forests we have two hyperparamters to tune; mtry (number of features to randomly include at each split) and min_n (the minimum number of data points in a node that are required for the node to be split further). The syntax ‘tune()’ acts a placeholder to tell MrIML to tune those hyperparamters across a grid of values (defined in MRIML predicts ‘tune_grid_size’ argument). Different algorithms will have different hyperparameters. See <a href="https://www.tidymodels.org/find/parsnip/" class="uri">https://www.tidymodels.org/find/parsnip/</a> for parameter details. Note that large grid sizes (&gt;10) for algorithms with lots of hyperparameters (such as extreme gradient boosting) will be computationally demanding. In this case we choose a grid size of 5. The only choice to make is to either down/up sample data or leave it as is. As our viral data set is small, we will not do any up or down-sampling (option ‘no’). We could also implement parallel processing for larger data sets.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">model1</span> <span class="op">&lt;-</span> 
+  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/rand_forest.html">rand_forest</a></span><span class="op">(</span>trees <span class="op">=</span> <span class="fl">100</span>, mtry<span class="op">=</span><span class="fu">tune</span><span class="op">(</span><span class="op">)</span>, min_n <span class="op">=</span> <span class="fu">tune</span><span class="op">(</span><span class="op">)</span>, mode <span class="op">=</span> <span class="st">"classification"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="co">#100 trees are set for brevity</span>
+  <span class="co"># select the engine/package that underlies the model</span>
+  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_engine.html">set_engine</a></span><span class="op">(</span><span class="st">"ranger"</span>, importance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"impurity"</span>,<span class="st">"impurity_corrected"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="co"># choose either the continuous regression or binary classification mode</span>
+  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_args.html">set_mode</a></span><span class="op">(</span><span class="st">"classification"</span><span class="op">)</span></code></pre></div>
+<p>Now we can run the model. Hyper parameter tuning (for algorithms that have hyper parameters) is done automatically by testing how model performance changes across a random grid of 10 parameters and the best performing combination is kept. Notice for random forests we have two hyperparamters to tune; mtry (number of features to randomly include at each split) and min_n (the minimum number of data points in a node that are required for the node to be split further). The syntax ‘tune()’ acts a placeholder to tell MrIML to tune those hyperparamters across a grid of values (defined in MRIML predicts ‘tune_grid_size’ argument). Different algorithms will have different hyperparameters. See <a href="https://www.tidymodels.org/find/parsnip/" class="uri">https://www.tidymodels.org/find/parsnip/</a> for parameter details. Note that large grid sizes (&gt;10) for algorithms with lots of hyperparameters (such as extreme gradient boosting) will be computationally demanding. In this case we choose a grid size of 5. The only choice to make is to either down/up sample data or leave it as is. As our viral data set is small, we will not do any up or down-sampling (option ‘no’). We could also implement parallel processing for larger data sets.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">yhats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLpredicts.html">mrIMLpredicts</a></span><span class="op">(</span>X<span class="op">=</span><span class="va">X</span>,Y<span class="op">=</span><span class="va">Y</span>, model1<span class="op">=</span><span class="va">model1</span>, balance_data<span class="op">=</span><span class="st">'no'</span>, mode<span class="op">=</span><span class="st">'classification'</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span>, tune_grid_size<span class="op">=</span> <span class="fl">10</span>, seed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample.int</a></span><span class="op">(</span><span class="fl">1e8</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="co">## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set</span>
 
 <span class="co"># save the model</span>
 <span class="co">#save(yhats, file='rf_model')</span></code></pre></div>
 <p>It takes a couple of minutes to run on a laptop and there are warnings that you can ignore (this data set is small). The above code constructs tuned random forest models for the features (Y) you have selected for each response (29 viral SNP in this case). We can then check the performance of each model separately and overall. The performance metrics we provide for classification models are area under curve (roc_AUC), Mathew’s correlation coefficient (MCC - a good metric when data is imbalanced i.e., unequal numbers of 0/1s in each response), specificity (proportion correctly classified not having the mutation at that loci) and sensitivity (proportion correctly classified having the mutation at that loci). We also provide ‘prevalence’ that tells you how common that SNP was in the population sampled.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">model1</span>, X<span class="op">=</span><span class="va">X</span>,  model<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span> 
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co">#predictive performance for individual responses </span>
-<span class="co">#&gt;    response  model_name roc_AUC               mcc sensitivity       specificity</span>
-<span class="co">#&gt; 1   env_131 rand_forest    0.75 0.408248290463863         0.5                 1</span>
-<span class="co">#&gt; 2   env_163 rand_forest     0.5              &lt;NA&gt;           0                 1</span>
-<span class="co">#&gt; 3   env_164 rand_forest       1 0.666666666666667           1 0.666666666666667</span>
-<span class="co">#&gt; 4   env_167 rand_forest       1 0.666666666666667           1 0.666666666666667</span>
-<span class="co">#&gt; 5   env_169 rand_forest     0.5              &lt;NA&gt;           1                 0</span>
-<span class="co">#&gt; 6   env_212 rand_forest    &lt;NA&gt;              &lt;NA&gt;        &lt;NA&gt;                 1</span>
-<span class="co">#&gt; 7    env_23 rand_forest     0.5              &lt;NA&gt;           0                 1</span>
-<span class="co">#&gt; 8    env_24 rand_forest     0.5              &lt;NA&gt;           1                 0</span>
-<span class="co">#&gt; 9    env_47 rand_forest     0.5              &lt;NA&gt;           1                 0</span>
-<span class="co">#&gt; 10   env_59 rand_forest     0.5              &lt;NA&gt;           1                 0</span>
-<span class="co">#&gt; 11    env_8 rand_forest     0.5              &lt;NA&gt;           0                 1</span>
-<span class="co">#&gt; 12   env_84 rand_forest     0.5              &lt;NA&gt;           1                 0</span>
-<span class="co">#&gt; 13   env_85 rand_forest     0.5              &lt;NA&gt;           1                 0</span>
-<span class="co">#&gt; 14   env_86 rand_forest     0.5              &lt;NA&gt;           1                 0</span>
-<span class="co">#&gt; 15  pol_105 rand_forest       1 0.408248290463863         0.5                 1</span>
-<span class="co">#&gt; 16  pol_108 rand_forest     0.5              &lt;NA&gt;           0                 1</span>
-<span class="co">#&gt; 17  pol_111 rand_forest       1 0.666666666666667           1 0.666666666666667</span>
-<span class="co">#&gt; 18  pol_117 rand_forest     0.5              &lt;NA&gt;           0                 1</span>
-<span class="co">#&gt; 19  pol_132 rand_forest     0.5              &lt;NA&gt;           1                 0</span>
-<span class="co">#&gt; 20  pol_159 rand_forest     0.5              &lt;NA&gt;           1                 0</span>
-<span class="co">#&gt; 21  pol_258 rand_forest     0.5              &lt;NA&gt;           1                 0</span>
-<span class="co">#&gt; 22   pol_30 rand_forest     0.5              &lt;NA&gt;           1                 0</span>
-<span class="co">#&gt; 23  pol_340 rand_forest     0.5              &lt;NA&gt;           1                 0</span>
-<span class="co">#&gt; 24  pol_353 rand_forest     0.5              &lt;NA&gt;           1                 0</span>
-<span class="co">#&gt; 25  pol_366 rand_forest     0.5              &lt;NA&gt;           1                 0</span>
-<span class="co">#&gt; 26   pol_87 rand_forest     0.5              &lt;NA&gt;           1                 0</span>
-<span class="co">#&gt; 27   pol_88 rand_forest     0.5              &lt;NA&gt;           1                 0</span>
-<span class="co">#&gt; 28   pol_89 rand_forest     0.5              &lt;NA&gt;           1                 0</span>
-<span class="co">#&gt;           prevalence</span>
-<span class="co">#&gt; 1  0.421052631578947</span>
-<span class="co">#&gt; 2  0.631578947368421</span>
-<span class="co">#&gt; 3  0.421052631578947</span>
-<span class="co">#&gt; 4  0.421052631578947</span>
-<span class="co">#&gt; 5  0.421052631578947</span>
-<span class="co">#&gt; 6  0.684210526315789</span>
-<span class="co">#&gt; 7  0.631578947368421</span>
-<span class="co">#&gt; 8  0.421052631578947</span>
-<span class="co">#&gt; 9  0.473684210526316</span>
-<span class="co">#&gt; 10 0.421052631578947</span>
-<span class="co">#&gt; 11 0.473684210526316</span>
-<span class="co">#&gt; 12 0.421052631578947</span>
-<span class="co">#&gt; 13 0.421052631578947</span>
-<span class="co">#&gt; 14 0.421052631578947</span>
-<span class="co">#&gt; 15 0.473684210526316</span>
-<span class="co">#&gt; 16 0.421052631578947</span>
-<span class="co">#&gt; 17 0.421052631578947</span>
-<span class="co">#&gt; 18 0.473684210526316</span>
-<span class="co">#&gt; 19 0.473684210526316</span>
-<span class="co">#&gt; 20 0.473684210526316</span>
-<span class="co">#&gt; 21 0.473684210526316</span>
-<span class="co">#&gt; 22 0.473684210526316</span>
-<span class="co">#&gt; 23 0.421052631578947</span>
-<span class="co">#&gt; 24 0.421052631578947</span>
-<span class="co">#&gt; 25 0.421052631578947</span>
-<span class="co">#&gt; 26 0.473684210526316</span>
-<span class="co">#&gt; 27 0.473684210526316</span>
-<span class="co">#&gt; 28 0.473684210526316</span>
+<span class="co">#&gt;    response  model_name           roc_AUC                mcc       sensitivity</span>
+<span class="co">#&gt; 1   env_131 rand_forest 0.666666666666667  0.166666666666667 0.666666666666667</span>
+<span class="co">#&gt; 2   env_163 rand_forest                 0 -0.408248290463863                 0</span>
+<span class="co">#&gt; 3   env_164 rand_forest                 1  0.408248290463863                 1</span>
+<span class="co">#&gt; 4   env_167 rand_forest 0.666666666666667  0.166666666666667 0.666666666666667</span>
+<span class="co">#&gt; 5   env_169 rand_forest 0.833333333333333  0.666666666666667                 1</span>
+<span class="co">#&gt; 6   env_212 rand_forest               0.5               &lt;NA&gt;                 0</span>
+<span class="co">#&gt; 7    env_23 rand_forest               0.5               &lt;NA&gt;                 0</span>
+<span class="co">#&gt; 8    env_24 rand_forest               0.5               &lt;NA&gt;                 1</span>
+<span class="co">#&gt; 9    env_47 rand_forest                 1  0.612372435695795              0.75</span>
+<span class="co">#&gt; 10   env_59 rand_forest 0.833333333333333  0.666666666666667                 1</span>
+<span class="co">#&gt; 11    env_8 rand_forest               0.5               &lt;NA&gt;                 1</span>
+<span class="co">#&gt; 12   env_84 rand_forest 0.833333333333333  0.666666666666667                 1</span>
+<span class="co">#&gt; 13   env_85 rand_forest 0.833333333333333  0.666666666666667                 1</span>
+<span class="co">#&gt; 14   env_86 rand_forest               0.5               &lt;NA&gt;                 1</span>
+<span class="co">#&gt; 15  pol_105 rand_forest 0.666666666666667 -0.408248290463863                 0</span>
+<span class="co">#&gt; 16  pol_108 rand_forest               0.5               &lt;NA&gt;                 1</span>
+<span class="co">#&gt; 17  pol_111 rand_forest                 1  0.408248290463863                 1</span>
+<span class="co">#&gt; 18  pol_117 rand_forest                 0 -0.408248290463863               0.5</span>
+<span class="co">#&gt; 19  pol_132 rand_forest                 1  0.612372435695795              0.75</span>
+<span class="co">#&gt; 20  pol_159 rand_forest               0.5               &lt;NA&gt;                 0</span>
+<span class="co">#&gt; 21  pol_258 rand_forest                 0 -0.612372435695795               0.5</span>
+<span class="co">#&gt; 22   pol_30 rand_forest                 1  0.612372435695795              0.75</span>
+<span class="co">#&gt; 23  pol_340 rand_forest                 0 -0.612372435695795              0.25</span>
+<span class="co">#&gt; 24  pol_353 rand_forest               0.5               &lt;NA&gt;                 1</span>
+<span class="co">#&gt; 25  pol_366 rand_forest 0.833333333333333  0.666666666666667                 1</span>
+<span class="co">#&gt; 26   pol_87 rand_forest                 1  0.612372435695795              0.75</span>
+<span class="co">#&gt; 27   pol_88 rand_forest                 1  0.612372435695795              0.75</span>
+<span class="co">#&gt; 28   pol_89 rand_forest                 1  0.612372435695795              0.75</span>
+<span class="co">#&gt;          specificity        prevalence</span>
+<span class="co">#&gt; 1                0.5 0.421052631578947</span>
+<span class="co">#&gt; 2  0.666666666666667 0.631578947368421</span>
+<span class="co">#&gt; 3  0.333333333333333 0.421052631578947</span>
+<span class="co">#&gt; 4                0.5 0.421052631578947</span>
+<span class="co">#&gt; 5  0.666666666666667 0.421052631578947</span>
+<span class="co">#&gt; 6                  1 0.684210526315789</span>
+<span class="co">#&gt; 7                  1 0.631578947368421</span>
+<span class="co">#&gt; 8                  0 0.421052631578947</span>
+<span class="co">#&gt; 9                  1 0.473684210526316</span>
+<span class="co">#&gt; 10 0.666666666666667 0.421052631578947</span>
+<span class="co">#&gt; 11                 0 0.473684210526316</span>
+<span class="co">#&gt; 12 0.666666666666667 0.421052631578947</span>
+<span class="co">#&gt; 13 0.666666666666667 0.421052631578947</span>
+<span class="co">#&gt; 14                 0 0.421052631578947</span>
+<span class="co">#&gt; 15 0.666666666666667 0.473684210526316</span>
+<span class="co">#&gt; 16                 0 0.421052631578947</span>
+<span class="co">#&gt; 17 0.333333333333333 0.421052631578947</span>
+<span class="co">#&gt; 18                 0 0.473684210526316</span>
+<span class="co">#&gt; 19                 1 0.473684210526316</span>
+<span class="co">#&gt; 20                 1 0.473684210526316</span>
+<span class="co">#&gt; 21                 0 0.473684210526316</span>
+<span class="co">#&gt; 22                 1 0.473684210526316</span>
+<span class="co">#&gt; 23                 0 0.421052631578947</span>
+<span class="co">#&gt; 24                 0 0.421052631578947</span>
+<span class="co">#&gt; 25 0.666666666666667 0.421052631578947</span>
+<span class="co">#&gt; 26                 1 0.473684210526316</span>
+<span class="co">#&gt; 27                 1 0.473684210526316</span>
+<span class="co">#&gt; 28                 1 0.473684210526316</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="co">#overall predictive performance</span>
-<span class="co">#&gt; [1] 0.5625</span></code></pre></div>
+<span class="co">#&gt; [1] 0.6488095</span></code></pre></div>
 <p>You can compare the predictive performance of random forests with any other technique simply by altering the following. Lets try a logistic regression - no tuning of hyperparamters required. Note that for logistic regression you may need to scale/transform the data or create dummy variables if you include categorical variables. These steps can easily be added to the pipeline following tidymodel syntax (see the website above)</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">model1</span> <span class="op">&lt;-</span> <span class="co">#model used to generate yhat</span>
-  <span class="fu">logistic_reg</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">set_engine</span><span class="op">(</span><span class="st">"glm"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">set_mode</span><span class="op">(</span><span class="st">"classification"</span><span class="op">)</span> 
+  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/logistic_reg.html">logistic_reg</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_engine.html">set_engine</a></span><span class="op">(</span><span class="st">"glm"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_args.html">set_mode</a></span><span class="op">(</span><span class="st">"classification"</span><span class="op">)</span> 
 
 <span class="va">yhats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLpredicts.html">mrIMLpredicts</a></span><span class="op">(</span>X<span class="op">=</span><span class="va">X</span>,Y<span class="op">=</span><span class="va">Y</span>, model1<span class="op">=</span><span class="va">model1</span>, balance_data<span class="op">=</span><span class="st">'no'</span>, mod<span class="op">=</span><span class="st">'classification'</span>, parallel <span class="op">=</span> <span class="cn">TRUE</span>, seed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample.int</a></span><span class="op">(</span><span class="fl">1e8</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#save(yhats, file='logreg_model')</span>
 <span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">model1</span>, X<span class="op">=</span><span class="va">X</span><span class="op">)</span> <span class="co">#</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>
-<span class="co">#&gt; [1] 0.4571429</span></code></pre></div>
+<span class="co">#&gt; [1] 0.5428571</span></code></pre></div>
 </div>
 <div id="plotting" class="section level2">
 <h2 class="hasAnchor">
 <a href="#plotting" class="anchor"></a>Plotting</h2>
 <p>You can see that the random forests model outperforms the logistic regression in this case. Once we are happy with the underlying model we can then dive in to see how this model predicts the SNPs. First we can check out variable importance.The first plot is the global importance (what features shape genetic change overall), the second shows the individual models (with an optional importance MCC threshold ‘cutoff’ value ) and the third plots the importances of all models as a PCA. SNPs or responses closer together in PCA space are shaped more similarly by landscape variables (or in other words have similar feature variable importance scores).</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">VI</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrVip.html">mrVip</a></span><span class="op">(</span><span class="va">yhats</span>, Y<span class="op">=</span><span class="va">Y</span><span class="op">)</span> 
 <span class="co">#plot_vi(VI=VI,X=X, Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes', model='classification') #the cutoff reduces the number of individual models printed in the second plot. </span></code></pre></div>
 <p>If your features can be grouped together this can make it easier to interpret variable importance plots.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">groupCov</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span> <span class="op">(</span><span class="st">"Host_characteristics"</span>, <span class="fl">1</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"Urbanisation"</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"Vegetation"</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"Urbanisation"</span>,<span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"Spatial"</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">'Host_relatedness'</span>, <span class="fl">6</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span> <span class="op">(</span><span class="st">"Host_characteristics"</span>, <span class="fl">1</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"Vegetation"</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"Urbanisation"</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co">#plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, groupCov=groupCov, cutoff= 0.5, plot.pca='no')</span></code></pre></div>
 <p>MrIML allows a full suite of model agnostic interpretable machine learning tools to be applied to individual models or the ‘global’ set. We utilize the R package flashlight which offers an exciting and ever growing tool set to interpret these models: <a href="https://cran.r-project.org/web/packages/flashlight/vignettes/flashlight.html" class="uri">https://cran.r-project.org/web/packages/flashlight/vignettes/flashlight.html</a></p>
 <p>For example, once we create the flashlight objects, we can plot the predicted values of a feature for each response.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrFlashlight.html">mrFlashlight</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">X</span>, <span class="va">Y</span>, response <span class="op">=</span> <span class="st">"multi"</span>, index<span class="op">=</span><span class="fl">1</span>, model<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span> <span class="co">#index pointing to the SNP of interest (i.e. the first column)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu">light_performance</span><span class="op">(</span><span class="va">fl</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"orange"</span>, rotate_x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/flashlight/man/light_performance.html">light_performance</a></span><span class="op">(</span><span class="va">fl</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"orange"</span>, rotate_x <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">8</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="Vignette_LandscapeGenetics_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
 <p>We also wrap some flashlight functionality to visualize the marginal (i.e. partial dependencies) or conditional (accumulated local effects) effect of a feature on genetic change. Partial dependencies take longer to calculate and are more sensitive to correlated features. The first plot You can see here that they can get different results based on which plot you use. ALE plots are a better option if your feature set is even moderately impacted by collinearity ( e.g., ., rho = 0.6). The second plot is the overall smoothed genetic-turnover function.</p>
 <p>When running this code yourself, you need to change ‘v’ to the variable of interest within your Y dataset.In this case we are looking at how grassland shapes genetic turnover.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="va">flashlightObj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrFlashlight.html">mrFlashlight</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">X</span>, <span class="va">Y</span>, response <span class="op">=</span> <span class="st">"multi"</span>, model<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span>
 
 <span class="co">#plot prediction scatter for all responses. Gets busy with </span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu">light_scatter</span><span class="op">(</span><span class="va">flashlightObj</span>, v <span class="op">=</span> <span class="st">"Forest"</span>, type <span class="op">=</span> <span class="st">"predicted"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/flashlight/man/light_scatter.html">light_scatter</a></span><span class="op">(</span><span class="va">flashlightObj</span>, v <span class="op">=</span> <span class="st">"Forest"</span>, type <span class="op">=</span> <span class="st">"predicted"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="Vignette_LandscapeGenetics_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="co">#mrProfileplot(profileData_pd , sdthresh =0.05) #sdthresh removes responses from the first plot that do not vary with the feature</span>
 
-<span class="va">profileData_ale</span> <span class="op">&lt;-</span> <span class="fu">light_profile</span><span class="op">(</span><span class="va">flashlightObj</span>, v <span class="op">=</span> <span class="st">"Grassland"</span>, type <span class="op">=</span> <span class="st">"ale"</span><span class="op">)</span> <span class="co">#acumulated local effects</span>
+<span class="va">profileData_ale</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/flashlight/man/light_profile.html">light_profile</a></span><span class="op">(</span><span class="va">flashlightObj</span>, v <span class="op">=</span> <span class="st">"Grassland"</span>, type <span class="op">=</span> <span class="st">"ale"</span><span class="op">)</span> <span class="co">#acumulated local effects</span>
 
 <span class="fu"><a href="../reference/mrProfileplot.html">mrProfileplot</a></span><span class="op">(</span><span class="va">profileData_ale</span> , sdthresh <span class="op">=</span><span class="fl">0.01</span><span class="op">)</span></code></pre></div>
 <p><img src="Vignette_LandscapeGenetics_files/figure-html/unnamed-chunk-11-2.png" width="700"><img src="Vignette_LandscapeGenetics_files/figure-html/unnamed-chunk-11-3.png" width="700"></p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#the second plot is the cumulative turnover function</span></code></pre></div>
 <p>Finally, we can assess how features interact overall to shape genetic change. Be warned this is memory intensive. Future updates to this package will enable users to visualize these interactions and explore them in more detail using 2D ALE plots for example.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="va">interactions</span> <span class="op">&lt;-</span><span class="fu"><a href="../reference/mrInteractions.html">mrInteractions</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">X</span>, <span class="va">Y</span>,  mod<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span> <span class="co">#this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things</span>
 
