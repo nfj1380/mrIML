@@ -101,7 +101,7 @@
       <h1 data-toc-skip>Biosecurity working example</h1>
                         <h4 class="author">Abagael Sykes, Gustavo Machado</h4>
             
-            <h4 class="date">2021-07-07</h4>
+            <h4 class="date">2021-07-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/nfj1380/mrIML/blob/master/vignettes/Vignette_biosecurity.Rmd"><code>vignettes/Vignette_biosecurity.Rmd</code></a></small>
       <div class="hidden name"><code>Vignette_biosecurity.Rmd</code></div>
@@ -157,12 +157,12 @@
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">model1</span>, X<span class="op">=</span><span class="va">X</span>, model<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co">#predictive performance for individual responses </span>
-<span class="co">#&gt;   response  model_name           roc_AUC               mcc       sensitivity</span>
-<span class="co">#&gt; 1    Class rand_forest 0.560897435897436 0.160128153805087 0.583333333333333</span>
+<span class="co">#&gt;   response  model_name           roc_AUC                mcc sensitivity</span>
+<span class="co">#&gt; 1    Class rand_forest 0.581730769230769 0.0771086575954987         0.5</span>
 <span class="co">#&gt;         specificity prevalence</span>
 <span class="co">#&gt; 1 0.576923076923077        0.5</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="co">#overall predictive performance. r2 for regression and MCC for classification</span>
-<span class="co">#&gt; [1] 0.5608974</span></code></pre></div>
+<span class="co">#&gt; [1] 0.5817308</span></code></pre></div>
 </div>
 <div id="benchmarking-global-importance" class="section level3">
 <h3 class="hasAnchor">
@@ -230,12 +230,12 @@
 <span class="co">#&gt;   -&gt; target variable   :  not specified! ( [31m WARNING [39m )</span>
 <span class="co">#&gt;   -&gt; predict function  :  yhat.ranger  will be used ( [33m default [39m )</span>
 <span class="co">#&gt;   -&gt; predicted values  :  No value for predict function target column. ( [33m default [39m )</span>
-<span class="co">#&gt;   -&gt; model_info        :  package ranger , ver. 0.12.1 , task classification ( [33m default [39m ) </span>
+<span class="co">#&gt;   -&gt; model_info        :  package ranger , ver. 0.13.1 , task classification ( [33m default [39m ) </span>
 <span class="co">#&gt;   -&gt; model_info        :  Model info detected classification task but 'y' is a NULL .  ( [31m WARNING [39m )</span>
 <span class="co">#&gt;   -&gt; model_info        :  By deafult classification tasks supports only numercical 'y' parameter. </span>
 <span class="co">#&gt;   -&gt; model_info        :  Consider changing to numerical vector with 0 and 1 values.</span>
 <span class="co">#&gt;   -&gt; model_info        :  Otherwise I will not be able to calculate residuals or loss function.</span>
-<span class="co">#&gt;   -&gt; predicted values  :  numerical, min =  0.1010877 , mean =  0.5039504 , max =  0.9062614  </span>
+<span class="co">#&gt;   -&gt; predicted values  :  numerical, min =  0.07967327 , mean =  0.5037562 , max =  0.9023456  </span>
 <span class="co">#&gt;   -&gt; residual function :  difference between y and yhat ( [33m default [39m )</span>
 <span class="co">#&gt;  [32m A new explainer has been created! [39m</span></code></pre></div>
 <p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-1.png" width="1440"></p>
