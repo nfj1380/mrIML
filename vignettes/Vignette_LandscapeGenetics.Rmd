@@ -32,7 +32,7 @@ Let's start by loading  the required packages and data. The data we are going to
 
 Features (a.k.a predictor variables) with missing data can be removed or interpolated depending on the nature of the missing data. Here we remove them.
 
-```{r  load-packages, include=FALSE}
+```{r  load-packages, include=TRUE}
 
 #make sure you have installed devtools previously.
 #Install the most uptodate version from github
