@@ -36,7 +36,7 @@ mrProfileplot <- function(profileData , sdthresh =0.05){ #from mrFlashlight
   
   print(redALEplot)
   
-  #readline(prompt=" Press [enter] to continue to the global summary plot")
+  readline(prompt=" Press [enter] to continue to the global summary plot")
 
   #-----------------------------------------------  
 #calculate global ALE
