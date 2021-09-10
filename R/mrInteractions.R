@@ -25,8 +25,8 @@ mrInteractions <- function(yhats, X, Y, model='regression'){
   
   imInt <- future_lapply(seq(1:l_response), function(i){ #uses monte carlo CV
     imp <- modList[[i]] %>% 
-      vintTidy(feature_names = n_features, train = dataAll[[i]],  model=model)
-     # vintTidy(feature_names = n_features, train = dataAll[[i]], parallel = TRUE, model=model)
+      #vintTidy(feature_names = n_features, train = dataAll[[i]],  model=model)
+     vintTidy(feature_names = n_features, train = dataAll[[i]], parallel = TRUE, model=model)
     #modified vint function - very slow over171 combinations
     
     impD <- imp$Interaction

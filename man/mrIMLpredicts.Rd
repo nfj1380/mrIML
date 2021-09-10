@@ -10,7 +10,6 @@ mrIMLpredicts(
   model1,
   balance_data = "no",
   model = "regression",
-  parallel = TRUE,
   transformY = "log",
   tune_grid_size = 10,
   k = 10,
