@@ -13,6 +13,10 @@
 #' response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling) 
 #'or 'no' (no balancing of classes).
 #' @example 
+#' set up multi-core processing
+#' cl <- parallel::makeCluster(4)
+#' plan(cluster, workers=cl)
+#' 
 #' model1 <- 
 #' rand_forest(trees = 100, mode = "classification") %>% #this should cope with multinomial data alreadf
 #'   set_engine("ranger", importance = c("impurity","impurity_corrected")) %>% #model is not tuned to increase computational speed
@@ -23,15 +27,8 @@
 #'@export
 
 
-mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', parallel = TRUE, transformY='log', tune_grid_size= 10, k=10, seed = sample.int(1e8, 1) ) { 
+mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', transformY='log', tune_grid_size= 10, k=10, seed = sample.int(1e8, 1) ) { 
   
-  if(parallel==TRUE){
-    
-  all_cores <- parallel::detectCores(logical = FALSE)
-  cl <- makePSOCKcluster(all_cores)
-  registerDoParallel(cl)
-  }
-
   n_response<- length(X)
  
   mod1_perf <- NULL #place to save performance matrix
@@ -174,8 +171,9 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', p
     
 }
      
-    yhats <- lapply(seq(1,n_response), internal_fit_function)
-        
+    yhats <- future_lapply(seq(1,n_response), internal_fit_function, future.seed = TRUE)
+    
+   
 }
    
   

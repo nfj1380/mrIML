@@ -79,23 +79,56 @@
 #'   xlab("") +
 #'   ylab("Interaction strength")
 #' }
+# vintTidy <- function(object, feature_names, 
+#                   model='classication') {
+#   # warning("This function is experimental, use at your own risk!", call. = FALSE)
+#   # FIXME: Should we force `chull = FALSE` in the call to `pdp::partial()`?
+#   all.pairs <- utils::combn(feature_names, m = 2)
+#   
+#   if (model == 'classification'){
+#   pdp_pred_fun <- function(object, newdata) { #pd funtion
+#     predict(object, newdata, type = "prob")$.pred_1 #predict positive class. couldn't get colMeans to work. Werid results for the FIV dataset
+#   }
+#   }
+#   if  (model == 'regression'){
+#     pdp_pred_fun <- function(object, newdata) { #pd funtion
+#       predict(object, newdata)$.pred }
+#      
+#   }
+#   
+#   ints <- apply(
+#     all.pairs, 2,
+#     function(x) {
+#       pd <- pdp::partial(object, pred.fun = pdp_pred_fun, pred.var = x, ...)
+#       mean(c(
+#         stats::sd(tapply(pd$yhat, INDEX = pd[[x[1L]]], FUN = stats::sd)), #note L speeds things up as vectors are faster
+#         stats::sd(tapply(pd$yhat, INDEX = pd[[x[2L]]], FUN = stats::sd))
+#       ))
+#     })
+#   ints <- data.frame(
+#     "Variables" = paste0(all.pairs[1L, ], "*", all.pairs[2L, ]),
+#     "Interaction" = ints
+#   )
+#   tibble::as_tibble(ints)
+# }
+
 vintTidy <- function(object, feature_names, progress = "none", parallel = TRUE,
-                 paropts = NULL, ..., model='classication') {
+                     paropts = NULL, ..., model='classication') {
   # warning("This function is experimental, use at your own risk!", call. = FALSE)
   # FIXME: Should we force `chull = FALSE` in the call to `pdp::partial()`?
   all.pairs <- utils::combn(feature_names, m = 2)
-  
+
   if (model == 'classification'){
-  pdp_pred_fun <- function(object, newdata) { #pd funtion
-    predict(object, newdata, type = "prob")$.pred_1 #predict positive class. couldn't get colMeans to work. Werid results for the FIV dataset
-  }
+    pdp_pred_fun <- function(object, newdata) { #pd funtion
+      predict(object, newdata, type = "prob")$.pred_1 #predict positive class. couldn't get colMeans to work. Werid results for the FIV dataset
+    }
   }
   if  (model == 'regression'){
     pdp_pred_fun <- function(object, newdata) { #pd funtion
       predict(object, newdata)$.pred }
-     
+
   }
-  
+
   ints <- plyr::aaply(
     all.pairs, .margins = 2, .progress = progress, .parallel = parallel,
     .paropts = paropts,
