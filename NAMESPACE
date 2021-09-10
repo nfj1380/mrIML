@@ -2,6 +2,7 @@
 
 export(devianceResids)
 export(filterRareCommon)
+export(interpret_Mrvi)
 export(mrBenchmark)
 export(mrFlashlight)
 export(mrIMLperformance)
