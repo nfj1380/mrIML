@@ -69,6 +69,18 @@ for (i in 1:42) {
 names(Y) <- as.character(names(Y))
 ```
 
+###Parallel processing
+
+MrIML provides uses the flexible future apply functionality to set up multi-core processing. In the example below, we set up a cluster using 4 cores. If you don't set up a cluster, the default settings will be used and the analysis will run sequentially.
+
+```{r, eval = FALSE}
+# detectCores() #check how many cores you have available. We suggest keeping one core free for internet browsing etc.
+
+cl <- parallel::makeCluster(4)
+
+plan(cluster, workers=cl)
+
+```
 
 ### Running the analyis
 Now we can train and test our model.
@@ -78,7 +90,6 @@ yhats <- mrIMLpredicts(X=X, #response data
                        model1=model1, #specify your model
                        balance_data='no', #chose how to balance your data 
                        model='classification', #chose your mode (classification versus regression)
-                       parallel = FALSE, #do you want to run the model in parallel?
                        seed = 120) #set seed
 ```
 We can then assess our model performance using a number of performance metrics including area under the curve (AUC), sensitivity, specificity and Matthews correlation coefficient (MCC).

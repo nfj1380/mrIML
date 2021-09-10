@@ -92,6 +92,18 @@ If your feature data consists of landscape resistance data generated from Circui
 #Y <- cbind(R,Y)
 ```
 
+
+###Parallel processing
+
+MrIML provides uses the flexible future apply functionality to set up multi-core processing. In the example below, we set up a cluster using 4 cores. If you don't set up a cluster, the default settings will be used and the analysis will run sequentially.
+
+```{r, eval=F}
+cl <- parallel::makeCluster(4)
+
+plan(cluster, workers=cl)
+
+```
+
 ### Running the analyis
 
 Now all the data is loaded and ready to go we can formulate the model using tidymodel syntax. In this case we have binary data (SNP presence/absence at each loci) but the data could also be counts or continuous (the set_model argument would be "regression" instead of "classification"). The user can specify any model from the tidymodel universe as 'model 1' (see https://www.tidymodels.org/find/ for details). However, we have done most of our testing on random forests (rf), xgr boost and glms (generalized linear models). Here we will specify a random forest classification model as the model applied to each response.
@@ -108,7 +120,7 @@ model1 <-
 Now we can run the model. Hyper parameter tuning (for algorithms that have hyper parameters) is done automatically by testing how model performance changes across a random grid of 10 parameters and the best performing combination is kept. Notice for random forests we have two hyperparamters to tune; mtry (number of features to randomly include at each split) and min_n (the minimum number of data points in a node that are required for the node to be split further). The syntax 'tune()' acts a placeholder to tell MrIML to tune those hyperparamters across a grid of values (defined in MRIML predicts 'tune_grid_size' argument). Different algorithms will have different hyperparameters. See https://www.tidymodels.org/find/parsnip/ for parameter details. Note that large grid sizes (>10) for algorithms with lots of hyperparameters (such as extreme gradient boosting) will be computationally demanding. In this case we choose a grid size of 5. The only choice to make is to either down/up sample data or leave it as is. As our viral data set is small, we will not do any up or down-sampling (option 'no'). We could also implement parallel processing for larger data sets. 
 
 ```{r message = FALSE, warning = FALSE, results='hide'}
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mode='classification', parallel = FALSE, tune_grid_size= 10, seed = sample.int(1e8, 1)) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mode='classification', tune_grid_size= 10, seed = sample.int(1e8, 1)) ## in MrTidymodels. Balanced data= up updamples and down downsampled to create a balanced set
 
 # save the model
 #save(yhats, file='rf_model')
@@ -132,7 +144,7 @@ model1 <- #model used to generate yhat
   set_engine("glm") %>%
   set_mode("classification") 
 
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classification', parallel = TRUE, seed = sample.int(1e8, 1))
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classification', seed = sample.int(1e8, 1))
 #save(yhats, file='logreg_model')
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) #
 ModelPerf[[2]]

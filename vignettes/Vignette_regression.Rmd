@@ -44,8 +44,7 @@ library(mrIML)
 #other package we need:
 library(vip); library(tidymodels); library(randomForest);  library(caret); library(gbm);
 library(tidyverse);library(parallel); library(doParallel); library(themis); library(viridis); library(janitor); library(hrbrthemes); library(xgboost); library(vegan);library(flashlight);
-library(ggrepel); library(ranger)
-
+library(ggrepel); library(ranger); library(future.apply)
 
 #library(LEA) 
 # read in data file with minor allele freqs & env/space variables
@@ -58,7 +57,22 @@ SNPs_ref <- gfData[,grep("REFERENCE",colnames(gfData))] # reference
 GI5 <- gfData[,grep("GI5",colnames(gfData))] # GIGANTEA-5 (GI5)
 
 X <- GI5 #for this example we are going to focus on the adaptive SNPs in the GI5 region.
+
 ```
+
+###Parallel processing
+
+MrIML provides uses the flexible future apply functionality to set up multi-core processing. In the example below, we set up a cluster using 4 cores. If you don't set up a cluster, the default settings will be used and the analysis will run sequentially.
+
+```{r, eval = FALSE}
+# detectCores() #check how many cores you have available. We suggest keeping one core free for internet browsing etc.
+
+cl <- parallel::makeCluster(4)
+
+plan(cluster, workers=cl)
+
+```
+
 
 ### Running the analyis
 
@@ -73,7 +87,7 @@ model1 <- #model used to generate yhat
   # choose either the continuous regression or binary classification mode
   set_mode("regression")
 
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='regression', parallel = FALSE, seed = sample.int(1e8, 1)) ## Balanced data= up updamples and down downsampled to create a balanced set. For regression 'no' has to be selected.
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='regression', seed = sample.int(1e8, 1)) ## Balanced data= up updamples and down downsampled to create a balanced set. For regression 'no' has to be selected.
 
 #save(yhats, file='Regression_lm') #always a good idea
 ```
