@@ -11,6 +11,7 @@ mrIMLpredicts(
   balance_data = "no",
   model = "regression",
   transformY = "log",
+  dummy = FALSE,
   tune_grid_size = 10,
   k = 10,
   seed = sample.int(1e+08, 1)
@@ -22,6 +23,8 @@ mrIMLpredicts(
 \item{Y}{A \code{dataframe} is a response variable data set (species, OTUs, SNPs etc).}
 
 \item{balance_data}{A \code{character} 'up', 'down' or 'no'.}
+
+\item{dummy}{A \code{logical} 'TRUE or FALSE'.}
 
 \item{tune_grid_size}{A \code{numeric} sets the grid size for hyperparamter tuning. Larger grid sizes increase computational time.}
 
