@@ -2,6 +2,7 @@
 #'@param Y A \code{dataframe} is a response variable data set (species, OTUs, SNPs etc).
 #'@param X A \code{dataframe} represents predictor or feature data.
 #'@param balance_data A \code{character} 'up', 'down' or 'no'. 
+#'@param dummy A \code{logical} 'TRUE or FALSE'. 
 #'@param Model 1 A \code{list} can be any model from the tidy model package. See examples.
 #'@param tune_grid_size A \code{numeric} sets the grid size for hyperparamter tuning. Larger grid sizes increase computational time.
 #'@param k A \code{numeric} sets the number of folds in the 10-fold cross-validation. 10 is the default.
@@ -13,29 +14,28 @@
 #' response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling) 
 #'or 'no' (no balancing of classes).
 #' @example 
-#' set up multi-core processing
-#' cl <- parallel::makeCluster(4)
-#' plan(cluster, workers=cl)
-#' 
 #' model1 <- 
 #' rand_forest(trees = 100, mode = "classification") %>% #this should cope with multinomial data alreadf
 #'   set_engine("ranger", importance = c("impurity","impurity_corrected")) %>% #model is not tuned to increase computational speed
 #'  set_mode("classification")
 #'  
-#' yhats <- mrIMLpredicts(X= enviro_variables,Y=response_data, model1=model1, balance_data='no', model='classification', 
+#' yhats <- mrIMLpredicts(X= enviro_variables,Y=response_data, model1=model1, balance_data='no', model='classification', parallel = TRUE,  
 #'tune_grid_size=5, k=10, seed = sample.int(1e8, 1)))
 #'@export
 
 
-mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', transformY='log', tune_grid_size= 10, k=10, seed = sample.int(1e8, 1) ) { 
+mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', transformY='log',dummy=FALSE, tune_grid_size= 10, k=10, seed = sample.int(1e8, 1) ) { 
   
-  n_response<- length(X)
+ # if(parallel==TRUE){
+  
+
+  n_response<- length(Y)
  
   mod1_perf <- NULL #place to save performance matrix
 
   internal_fit_function <- function( i ){
       
-    data <- cbind(X[i], Y) ###
+    data <- cbind(Y[1], X) ###
     colnames(data)[1] <- c('class') #define response variable for either regression or classification
     
     if (model=='classification'){
@@ -81,6 +81,9 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', t
     }
     
     if ( transformY == 'log'){
+      data_recipe %>% step_log(all_numeric(), -all_outcomes()) #adds dummy variables if needed to any feature that is a factor
+    }
+    if ( dummy == TRUE){
       data_recipe %>% step_log(all_numeric(), -all_outcomes()) #adds dummy variables if needed to any feature that is a factor
     }
     

@@ -11,12 +11,13 @@
 #'Variables also need to be grouped to allow for easier interpretation. 
 #'@example
 #'\dontrun{
+#'
 #'groupCov <- c(rep ("Host_characteristics", 1),rep("Urbanisation", 3), rep("Vegetation", 2), rep("Urbanisation",1), rep("Spatial", 2), 
 #'rep('Host_relatedness', 6),rep ("Host_characteristics", 1),rep("Vegetation", 2), rep("Urbanisation",1))
-#'plot_vi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov, cutoff= 0.5)}
+#'interpret_Mrvi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov, cutoff= 0.5)}
 #'@export 
 
-plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.2, model='regression' ){
+interpret_Mrvi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.2,  model='regression', rogress = "none"){
 
   #colnames(VI) <- names(X)
   row.names(VI) <- names(X)
@@ -50,6 +51,7 @@ plot_vi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.2, model='reg
           axis.ticks.x=element_blank())+
           labs(fill='Feature') 
    print(p1)
+   
    readline(prompt="Press [enter] to continue for the top individual models")
    
     #----------------------------------------------------------------
@@ -141,7 +143,8 @@ readline(prompt="Press [enter] to plot individual variable importance summaries"
       labs(y= "Feature", x='Cumulative importance')
     print(p1)
     
-    readline(prompt="Press [enter] to plot individual variable importance summaries") 
+    readline(prompt="Press [enter] to plot individual variable importance summaries")
+    
 #----------------------------------------------------------------
     #Individual response importance
 #----------------------------------------------------------------
@@ -212,6 +215,71 @@ readline(prompt="Press [enter] to plot individual variable importance summaries"
       #theme(legend.position="none") + #I like the legend personally rather than lots of x axis text.
       
       print(p2)
-  }
-}
-     
+    }
+      #------------------------------------------------------------------  
+      #Importance PCA plot. Responses with similar importance scores group together
+      #------------------------------------------------------------------    
+      
+        
+        readline(prompt="Press [enter] to plot the importance PCA plot")  
+        
+        # a1 <- a[,-1] %>%  mutate_if( is.factor, ~ as.numeric(as.character(.x))) #this is a handy function
+        #row.names(a1) <- a$rowname
+        #trans <- as.data.frame(t(VI) )
+        
+        a.pca <- trans %>% 
+          
+          prcomp() # do PCA
+        
+        #-----------------------------------------------------------------------------------------
+        #outlier detection
+        
+        uscores <- a.pca$x %>%
+          as.data.frame()
+        
+        outL <- apply(uscores, 2, function(x) which( (abs(x - median(x)) / mad(x)) > 6 ))
+
+        #-----------------------------------------------------------------------------------------
+        
+        pca_val <-  a.pca  %>%
+          tidy(matrix = "eigenvalues")
+        
+        p3 <- a.pca %>%
+          augment(trans) %>% 
+          ggplot(aes(.fittedPC1, .fittedPC2)) + 
+          geom_point() + 
+          geom_label_repel(aes(label = rownames(trans)),
+                           box.padding   = 0.35, 
+                           point.padding = 0.5,
+                           label.size = 0.1,
+                           segment.color = 'grey50') +
+          theme_bw()
+        
+        print(p3)
+        
+        p4 <- a.pca %>%
+          tidy(matrix = "eigenvalues") %>%
+          ggplot(aes(PC, percent)) +
+          geom_col(fill = "#56B4E9", alpha = 0.8) +
+          scale_x_continuous(breaks = 1:9) +
+          scale_y_continuous(
+            labels = scales::percent_format(),
+            expand = expansion(mult = c(0, 0.01))
+          ) +
+          theme_bw()  
+        
+        readline(prompt="Press [enter] to plot the axis loadings") 
+        
+        print(p4)
+
+
+
+      #for 3D plots that are interactive.
+       #adapt <- c(rep('diag', 2), rep('gradient', 2), rep('habitat', 2), rep('neutral', 94) )
+      #uscores <- as.data.frame(cbind(uscores,adapt))
+      # p4 <- plotly::plot_ly(uscores, x=~PC1, y=~PC2, z=~PC3, color = ~adapt, colors = c('#BF382A', '#0C4B8E', '#1DF20D','#B9B930' )) %>% 
+        # plotly::add_markers()
+      
+      return(list(outLiers=outL,  pca_val=pca_val, scores=uscores ))
+      
+      }

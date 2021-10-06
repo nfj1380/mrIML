@@ -17,25 +17,25 @@ mrVip <- function (yhats, Y){
   
   modList <- yhats %>% purrr::map(pluck('mod1_k')) #extracts model ###
   
-   im <- lapply(seq(1:n_response), function(i){ #uses monte carlo CV
-     
-     imp <- modList[[i]]%>%  ###
-          pull_workflow_fit()
-     
-   # imp$fit$coefficients[is.na(imp$fit$coefficients)] <- 0#some algorithms will bring back NA coefficents
-
-      impVI <- vip(imp, num_features=length(Y)) 
-      impD <- impVI$data %>% 
-       arrange(Variable)%>% 
-       purrr::pluck("Importance")
-      names(impD) <- n_features
-     
-      missing <- imp$fit$coefficients[is.na(imp$fit$coefficients)] 
-      missing[is.na(missing)] <- 0
-      impDcombined <- c(impD, missing)
- })
- 
+  im <- lapply(seq(1:n_response), function(i){ #uses monte carlo CV. COuld make parallel if needed.
+    
+    imp <- modList[[i]]%>%  ###
+      pull_workflow_fit()
+    
+    # imp$fit$coefficients[is.na(imp$fit$coefficients)] <- 0#some algorithms will bring back NA coefficents
+    
+    impVI <- vip(imp, num_features=length(Y)) 
+    impD <- impVI$data %>% 
+      arrange(Variable)%>% 
+      purrr::pluck("Importance")
+    names(impD) <- n_features
+    
+    missing <- imp$fit$coefficients[is.na(imp$fit$coefficients)] 
+    missing[is.na(missing)] <- 0
+    impDcombined <- c(impD, missing)
+  })
+  
   ImpGlobal <- as.data.frame(do.call(rbind, im)) #from cbind
-
-
+  
+  
 }
