@@ -20,7 +20,7 @@ mrIMLpredicts(
 \arguments{
 \item{X}{A \code{dataframe} represents predictor or feature data.}
 
-\item{Y}{A \code{dataframe} is a response variable data set (species, OTUs, SNPs etc).}
+\item{Y}{A \code{dataframe} is a response variable data (species, OTUs, SNPs etc).}
 
 \item{balance_data}{A \code{character} 'up', 'down' or 'no'.}
 
@@ -36,9 +36,9 @@ mrIMLpredicts(
 Wrapper to generate multi-response predictive models.
 }
 \details{
-This function produces yhats that used in all model characteristics for subsequent functions.
-This function fits separate classication models for each response variable in a dataset. Y (response variables) should be binary (0/1). Rows in X (features) have the same id (host/site/population)
-as Y. Class imblanace can be a real issue for classification analyses. Class imbalance can be addressed for each
+This function produces yhats that used in all subsequent functions.
+This function fits separate classification/regression models for each response variable in a data set.  Rows in X (features) have the same id (host/site/population)
+as Y. Class imbalance can be a real issue for classification analyses. Class imbalance can be addressed for each
 response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling)
 or 'no' (no balancing of classes).
 }

@@ -1,5 +1,5 @@
 #'Wrapper to generate multi-response predictive models.
-#'@param Y A \code{dataframe} is a response variable data set (species, OTUs, SNPs etc).
+#'@param Y A \code{dataframe} is a response variable data (species, OTUs, SNPs etc).
 #'@param X A \code{dataframe} represents predictor or feature data.
 #'@param balance_data A \code{character} 'up', 'down' or 'no'. 
 #'@param dummy A \code{logical} 'TRUE or FALSE'. 
@@ -8,9 +8,9 @@
 #'@param k A \code{numeric} sets the number of folds in the 10-fold cross-validation. 10 is the default.
 #'@seed A \code{numeric} as these models have a stochastic component, a seed is set to make to make the analysis reproducible. Defaults between 100 million and 1.
 #
-#'@details This function produces yhats that used in all model characteristics for subsequent functions.
-#' This function fits separate classication models for each response variable in a dataset. Y (response variables) should be binary (0/1). Rows in X (features) have the same id (host/site/population)
-#'  as Y. Class imblanace can be a real issue for classification analyses. Class imbalance can be addressed for each
+#'@details This function produces yhats that used in all subsequent functions.
+#' This function fits separate classification/regression models for each response variable in a data set.  Rows in X (features) have the same id (host/site/population)
+#'  as Y. Class imbalance can be a real issue for classification analyses. Class imbalance can be addressed for each
 #' response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling) 
 #'or 'no' (no balancing of classes).
 #' @example 
@@ -26,9 +26,6 @@
 
 mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', transformY='log',dummy=FALSE, tune_grid_size= 10, k=10, seed = sample.int(1e8, 1) ) { 
   
- # if(parallel==TRUE){
-  
-
   n_response<- length(Y)
  
   mod1_perf <- NULL #place to save performance matrix

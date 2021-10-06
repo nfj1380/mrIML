@@ -44,7 +44,7 @@ Plots global importance (i.e. cumulative importance of all features for all resp
 }
 \details{
 1st plot:
-and individual reponse feature plots (2nd plot). Requires object generated from the R function mrvip as well as feature data (Y).
+and individual response feature plots (2nd plot). Requires object generated from the R function mrvip as well as feature data (Y).
 Variables also need to be grouped to allow for easier interpretation.
 
 1st plot:

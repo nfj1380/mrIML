@@ -1,8 +1,8 @@
-#'Plots global interactions as well as individual repsonse interaction importance.
-#'@param interactions A \code{dataframe} dataframe generated from mrInteractioms function 
-#'@param Y A \code{dataframe} response dataset
-#'@param X A \code{dataframe} feature dataset
-#'@param top_ranking A \code{numeric} determines how maany of the strongest feature interacions to view/include
+#'Plots global interactions as well as individual response interaction importance.
+#'@param interactions A \code{dataframe} data frame generated from mrInteractioms function 
+#'@param Y A \code{dataframe} response data set
+#'@param X A \code{dataframe} feature data set
+#'@param top_ranking A \code{numeric} determines how many of the strongest feature interacions to view/include
 #'@param top_response A \code{numeric} how many of the response variables with the strongest interactions to view
 #'@details
 #'1st plot: Barplots showing the mean and cumulative importance of each of the top pairs of interactions in the model.

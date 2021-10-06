@@ -13,7 +13,7 @@ mrVip(yhats, Y)
 
 \item{Y}{A \code{dataframe} #is the feature dataset}
 
-\item{X}{A \code{dataframe} #is the feature data set}
+\item{X}{A \code{dataframe} is the feature data}
 }
 \description{
 Wrapper to estimate model-agnostic variable importance for multi-response models.
@@ -21,8 +21,8 @@ Wrapper to estimate model-agnostic variable importance for multi-response models
 Wrapper to estimate model-agnostic variable importance for multi-response models.
 }
 \details{
-Calculates variabie importance using based on partial dependencies but could do permutation as well (mor memory intensive).
-Key imput is the object created by MrIML. Can be plotted with the plot_vi function.
+Calculates variable importance using based on partial dependencies but could do permutations as well (more memory intensive).
+Key input is the object created by MrIML. Can be plotted with the plot_vi function.
 
 Calculates variabie importance using based on partial dependencies but could do permutation as well (mor memory intensive).
 Key imput is the object created by MrIML. Can be plotted with the plot_vi function.
