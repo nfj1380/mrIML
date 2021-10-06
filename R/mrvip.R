@@ -22,7 +22,7 @@ mrVip <- function (yhats, X){
     imp <- modList[[i]]%>%  ###
       pull_workflow_fit()
     
-    # imp$fit$coefficients[is.na(imp$fit$coefficients)] <- 0#some algorithms will bring back NA coefficents
+    imp$fit$coefficients[is.na(imp$fit$coefficients)] <- 0#some algorithms will bring back NA coefficents
     
     impVI <- vip(imp, num_features=length(X)) 
     impD <- impVI$data %>% 

@@ -1,7 +1,7 @@
 #'Plots global interactions as well as individual repsonse interaction importance.
 #'@param interactions A \code{dataframe} dataframe generated from mrInteractioms function 
-#'@param X A \code{dataframe} response dataset
-#'@param Y A \code{dataframe} feature dataset
+#'@param Y A \code{dataframe} response dataset
+#'@param X A \code{dataframe} feature dataset
 #'@param top_ranking A \code{numeric} determines how maany of the strongest feature interacions to view/include
 #'@param top_response A \code{numeric} how many of the response variables with the strongest interactions to view
 #'@details
@@ -15,12 +15,12 @@
 
 mrPlot_interactions <- function(interactions, X,Y, top_ranking = 3, top_response=10 ){
   
-  n_features <- names(Y)
+  n_features <- names(X)
   
   variable_interactions <- as.data.frame((t(utils::combn( n_features, m = 2)))) %>% 
     unite('variables', V1:V2, sep='*')
   
-  colnames(interactions) <- names(X)
+  colnames(interactions) <- names(Y)
   
  meanInteractions <- as.data.frame( rowMeans(interactions) ) #calculate average
   names( meanInteractions )[1] <- c('meanInt')

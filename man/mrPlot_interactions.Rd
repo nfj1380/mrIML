@@ -9,9 +9,9 @@ mrPlot_interactions(interactions, X, Y, top_ranking = 3, top_response = 10)
 \arguments{
 \item{interactions}{A \code{dataframe} dataframe generated from mrInteractioms function}
 
-\item{X}{A \code{dataframe} response dataset}
+\item{X}{A \code{dataframe} feature dataset}
 
-\item{Y}{A \code{dataframe} feature dataset}
+\item{Y}{A \code{dataframe} response dataset}
 
 \item{top_ranking}{A \code{numeric} determines how maany of the strongest feature interacions to view/include}
 
