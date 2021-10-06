@@ -10,10 +10,10 @@
 #' plot_vi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov, cutoff= 0.5)
 #'@export 
 
-mrVip <- function (yhats, Y){ 
+mrVip <- function (yhats, X){ 
   
   n_response<- length(yhats) ###
-  n_features <- sort(names(Y))
+  n_features <- sort(names(X))
   
   modList <- yhats %>% purrr::map(pluck('mod1_k')) #extracts model ###
   
@@ -24,7 +24,7 @@ mrVip <- function (yhats, Y){
     
     # imp$fit$coefficients[is.na(imp$fit$coefficients)] <- 0#some algorithms will bring back NA coefficents
     
-    impVI <- vip(imp, num_features=length(Y)) 
+    impVI <- vip(imp, num_features=length(X)) 
     impD <- impVI$data %>% 
       arrange(Variable)%>% 
       purrr::pluck("Importance")
