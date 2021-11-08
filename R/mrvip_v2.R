@@ -20,7 +20,7 @@ mrVip <- function (yhats, Y){
    im <- lapply(seq(1:n_response), function(i){ #uses monte carlo CV
      
      
-     imp <- modList[[2]]%>%  ###
+     imp <- modList[[i]]%>%  ###
           pull_workflow_fit()
      
      #xgb.importance(model=yhats_xg$fit)
