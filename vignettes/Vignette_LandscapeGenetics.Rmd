@@ -84,6 +84,14 @@ model1 <-
   set_engine("ranger", importance = c("impurity","impurity_corrected")) %>%
   # choose either the continuous regression or binary classification mode
   set_mode("classification")
+
+#set up parallel processing. If you don't add the code below it will still work but just on one core.
+
+## detectCores() #check how many cores you have available. We suggest keeping one core free for internet browsing etc.
+
+##cl <- parallel::makeCluster(4)
+
+##plan(cluster, workers=cl)
 ```
 
 Now we can run the model. Hyper parameter tuning (for algorithms that have hyper parameters) is done automatically by testing how model performance changes across a random grid of 10 parameters and the best performing combination is kept. The only choice to make is to either down/up sample data or leave it as is. As our viral data set is small, we will not do any up or down-sampling (option 'no'). We could also implement parallel processing for larger data sets. 

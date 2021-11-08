@@ -95,14 +95,14 @@ yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='regress
 Model performance can be examined the same way as in the classification example, however the metrics are different. We provide root mean square error (rmse) and R2. You can see that the overall R2 is 0.13 but there is substantial variation across loci in predictive performance.
 
 ```{r}
-ModelPerf <- mrIMLperformance(yhats, model1, X=X, model='regression')
+ModelPerf <- mrIMLperformance(yhats, model1, Y=Y, model='regression')
 ModelPerf[[1]] #predictive performance for individual responses. 
 ModelPerf[[2]]#overall average r2 
 
 p1 <- as.data.frame(ModelPerf[[1]])#save as a dataframe to compare to other models.
 ```
 
-Lets compare the performance of linear models to that of random forests. Random forests is the computational engine in gradient forests. Notice for random forests we have two hyperparamters to tune; mtry (number of features to randomly include at each split) and min_n (the minimum number of data points in a node that are required for the node to be split further). The syntax 'tune()' acts a placeholder to tell MrIML to tune those hyperparamters across a grid of values (defined in MRIML predicts 'tune_grid_size' argument). Different algorithms will have different hyperparameters.See https://www.tidymodels.org/find/parsnip/ for parameter details. Note that large grid sizes (>10) for algorithms with lots of hyperparameters (such as extreme gradient boosting) will be computationally demanding. In this case we choose a grid size of 5.
+Lets compare the performance of linear models to that of random forests. Random forests is the computational engine in gradient forests. Notice for random forests we have two hyperparameters to tune; mtry (number of features to randomly include at each split) and min_n (the minimum number of data points in a node that are required for the node to be split further). The syntax 'tune()' acts a placeholder to tell MrIML to tune those hyperparamters across a grid of values (defined in MRIML predicts 'tune_grid_size' argument). Different algorithms will have different hyperparameters.See https://www.tidymodels.org/find/parsnip/ for parameter details. Note that large grid sizes (>10) for algorithms with lots of hyperparameters (such as extreme gradient boosting) will be computationally demanding. In this case we choose a grid size of 5.
 
 ```{r, message = FALSE, warning = FALSE}
 model1 <- 
@@ -114,7 +114,7 @@ yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='regress
 
 #save(yhats, file='Regression_rf')
 
-ModelPerf <- mrIMLperformance(yhats, model1, X=X, model='regression')
+ModelPerf <- mrIMLperformance(yhats, model1, Y=Y, model='regression')
 ModelPerf[[1]] #predictive performance for individual responses. 
 ModelPerf[[2]]#overall average r2 
 
@@ -126,7 +126,7 @@ p2 <- as.data.frame(ModelPerf[[1]])
 You can see that predictive performance is actually slightly less using random forests (overall R2 = 0.12) but for some loci random forests does better than our linear models and sometimes worse. Which to choose? Generally simpler models are preferred (the linear model in this case) but it depends on how important to think non-linear response are. In future versions of MrIML we will implement ensemble models that will overcome this issue. For the time-being we will have a look at variable importance for the random forest based model.
 
 ```{r, message = FALSE, warning = FALSE }
-VI <- mrVip(yhats, Y=Y) 
+VI <- mrVip(yhats, X=X) 
 
 plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf,  cutoff= 0.1, plot.pca='yes', model='regression')
 
