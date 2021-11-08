@@ -10,10 +10,10 @@
 #' plot_vi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov, cutoff= 0.5)
 #'@export 
 
-mrVip <- function (yhats, Y){ 
+mrVip <- function (yhats, X){ 
   
   n_response<- length(yhats) ###
-  n_features <- sort(names(Y))
+  n_features <- sort(names(X))
   
   modList <- yhats%>% purrr::map(pluck('mod1_k')) #extracts model ###
 

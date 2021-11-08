@@ -78,7 +78,7 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', t
       data_recipe %>% step_log(all_numeric(), -all_outcomes()) #adds dummy variables if needed to any feature that is a factor
     }
     if ( dummy == TRUE){
-      data_recipe %>% step_log(all_numeric(), -all_outcomes()) #adds dummy variables if needed to any feature that is a factor
+      data_recipe %>% step_dummy(all_nominal(), -all_outcomes()) #adds dummy variables if needed to any feature that is a factor
     }
     
     
