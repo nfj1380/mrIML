@@ -14,19 +14,24 @@
 #' response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling) 
 #'or 'no' (no balancing of classes).
 #' @example 
+#' all_cores <- parallel::detectCores(logical = FALSE)
+
+#'cl <- makePSOCKcluster(all_cores)
+#'registerDoParallel(cl)
+#'
 #' model1 <- 
 #' rand_forest(trees = 100, mode = "classification") %>% #this should cope with multinomial data alreadf
 #'   set_engine("ranger", importance = c("impurity","impurity_corrected")) %>% #model is not tuned to increase computational speed
 #'  set_mode("classification")
 #'  
-#' yhats <- mrIMLpredicts(X= enviro_variables,Y=response_data, model1=model1, balance_data='no', model='classification', parallel = TRUE,  
+#' yhats <- mrIMLpredicts(X= enviro_variables,Y=response_data, model1=model1, balance_data='no', model='classification',  
 #'tune_grid_size=5, k=10, seed = sample.int(1e8, 1)))
 #'@export
 
 
 mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', transformY='log',dummy=FALSE, tune_grid_size= 10, k=10, seed = sample.int(1e8, 1) ) { 
   
-  n_response<- length(Y)
+  n_response<- length(X)
  
   mod1_perf <- NULL #place to save performance matrix
 
@@ -48,7 +53,7 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', t
     data_train <- training(data_split)
     data_test <- testing(data_split)
 
-    #10 fold cross validation
+    #n fold cross validation
     data_cv <- vfold_cv(data_train, v= k) 
     
     if(balance_data == 'down'){ 
@@ -67,14 +72,6 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', t
     if(balance_data == 'no'){ 
       data_recipe <- training(data_split) %>% 
         recipe(class ~., data= data_train)
-    }
-    
-    if ( class(model1)[1] == 'logistic_reg'){
-      data_recipe %>% step_dummy(all_nominal(), -all_outcomes()) #adds dummy variables if needed to any feature that is a factor
-    }
-    
-    if ( class(model1)[1] == 'linear_reg'){
-      data_recipe %>% step_dummy(all_nominal(), -all_outcomes()) #adds dummy variables if needed to any feature that is a factor
     }
     
     if ( transformY == 'log'){
