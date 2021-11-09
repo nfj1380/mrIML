@@ -6,7 +6,8 @@
 #'@param response \code{character} single' selects one response, 'multi' selects all responses
 #'@param index \code{numeric} selects which response to create a flashlight object for. Only used when 'single' is selected. The order is the same as 'Y'.
 #'@param predict_function  \code{function}  user specified predict function
-#'
+#'@param mode \code{character}'classification' or 'regression' i.e., is the generative model a regression or classification?
+
 #'@details The aim of this function is to enable users to utilize interpretable machine learning methods
 #'to understand their multi-response and single response models
 #' 
@@ -21,13 +22,12 @@
 #'int <- light_interaction(fl, pairwise=TRUE) #not working, but possible!
 #'
 #'Multiple response
-#' flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi")
+#' flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", mode='regression')
 #' @export 
 
-mrFlashlight <- function(yhats, X, Y, response = "multi", index = 1, model = "regression", predict_function=NULL) {
+mrFlashlight <- function(yhats, X, Y, response = "multi", index = 1, mode = "regression", predict_function=NULL) {
   
-  if (model == "classification") {
-    
+  if (mode == "classification") {
     
     
     # Prediction function
@@ -126,7 +126,7 @@ mrFlashlight <- function(yhats, X, Y, response = "multi", index = 1, model = "re
   
   
   
-  if (model == "regression") { 
+  if (mode == "regression") { 
     
     
     

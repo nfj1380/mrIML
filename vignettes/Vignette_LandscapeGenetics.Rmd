@@ -123,7 +123,7 @@ model1 <- #model used to generate yhat
   set_engine("glm") %>%
   set_mode("classification") 
 
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classification', parallel = TRUE)
+yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mode='classification', parallel = TRUE)
 #save(yhats, file='logreg_model')
 ModelPerf <- mrIMLperformance(yhats, model1, X=X) #
 ModelPerf[[2]]

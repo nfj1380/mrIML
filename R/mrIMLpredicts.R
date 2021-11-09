@@ -7,7 +7,8 @@
 #'@param tune_grid_size A \code{numeric} sets the grid size for hyperparamter tuning. Larger grid sizes increase computational time.
 #'@param k A \code{numeric} sets the number of folds in the 10-fold cross-validation. 10 is the default.
 #'@seed A \code{numeric} as these models have a stochastic component, a seed is set to make to make the analysis reproducible. Defaults between 100 million and 1.
-#
+#'@param mode \code{character}'classification' or 'regression' i.e., is the generative model a regression or classification?
+
 #'@details This function produces yhats that used in all subsequent functions.
 #' This function fits separate classification/regression models for each response variable in a data set.  Rows in X (features) have the same id (host/site/population)
 #'  as Y. Class imbalance can be a real issue for classification analyses. Class imbalance can be addressed for each
@@ -29,7 +30,7 @@
 #'@export
 
 
-mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', transformY='log',dummy=FALSE, tune_grid_size= 10, k=10, seed = sample.int(1e8, 1) ) { 
+mrIMLpredicts<- function(X, Y, Model, balance_data ='no', mode='regression', transformY='log',dummy=FALSE, tune_grid_size= 10, k=10, seed = sample.int(1e8, 1) ) { 
   
   n_response<- length(X)
  
@@ -40,7 +41,7 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', t
     data <- cbind(Y[1], X) ###
     colnames(data)[1] <- c('class') #define response variable for either regression or classification
     
-    if (model=='classification'){
+    if (mode=='classification'){
       
     data$class<- as.factor(data$class)}
 
@@ -77,23 +78,21 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', t
     if ( transformY == 'log'){
       data_recipe %>% step_log(all_numeric(), -all_outcomes()) #adds dummy variables if needed to any feature that is a factor
     }
+    
     if ( dummy == TRUE){
       data_recipe %>% step_dummy(all_nominal(), -all_outcomes()) #adds dummy variables if needed to any feature that is a factor
     }
-    
     
     #optional recipe ingredients can be easily added to.
     #step_corr(all_predictors()) %>% # removes all corrleated features
     #step_center(all_predictors(), -all_outcomes()) %>% #center features
     #step_scale(all_predictors(), -all_outcomes()) %>% #scale features
     
-    
     mod_workflow <- workflow() %>%
       # add the recipe
       add_recipe(data_recipe) %>%
       # add the model
-      add_model(model1)
-    
+      add_model(Model)
     
     ## Tune the model
     
@@ -101,14 +100,14 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', t
                             resamples = data_cv,
                             grid = tune_grid_size) 
     
-  if (model=='classification'){
+  if (mode=='classification'){
     
     # select the best model
     best_m <- tune_m %>%
       select_best("roc_auc")
   }
   
-  if (model=='regression'){
+  if (mode=='regression'){
     
     
     # select the best model
@@ -127,7 +126,7 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', t
     
     # make predictions and calculate deviance residuals. 
     
-    if (model=='classification'){
+    if (mode=='classification'){
       
       #predictions
       yhatO <- predict(mod1_k, new_data = data_train, type='prob' )
@@ -142,7 +141,8 @@ mrIMLpredicts<- function(X, Y, model1, balance_data ='no', model='regression', t
     }
     
     
-    if (model=='regression'){
+    if (mode=='regression'){
+      
       yhatO <- predict(mod1_k, new_data = data_train ) 
       
       yhat <- yhatO$.pred

@@ -24,7 +24,7 @@ mrProfileplot <- function(profileData , sdthresh =0.05){ #from mrFlashlight
   #select only SNPs that are responding to this featured
   
   std <- b %>%  group_by(label) %>% 
-    summarise(sdALE = sd(value))
+    dplyr::summarise(sdALE = sd(value))
   
   Xred <- std %>% filter(sdALE >= sdthresh)
   
@@ -47,7 +47,7 @@ mrProfileplot <- function(profileData , sdthresh =0.05){ #from mrFlashlight
      b[1] <- apply(b[1], 2, as.factor)
   
     sum <- b %>%  group_by(b[1]) %>% 
-          summarise(avgALE = mean(value))
+      dplyr::summarise(avgALE = mean(value))
 
       sum[1] <- sapply(sum[1] , function(x) as.numeric(as.character(x)))
    
