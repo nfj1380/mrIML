@@ -35,6 +35,8 @@ interpret_Mrvi(
 
 \item{cutoff}{A \code{numeric} determines  mathews correlation coefifcent (mcc) threshold for displaying individual reponse model. Default is 0.5}
 
+\item{mode}{\code{character}'classification' or 'regression' i.e., is the generative model a regression or classification?}
+
 \item{mod}{\code{character}'classification' or 'regression' i.e., is the generative model a regression or classification?}
 }
 \description{

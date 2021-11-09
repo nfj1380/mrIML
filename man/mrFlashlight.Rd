@@ -10,7 +10,7 @@ mrFlashlight(
   Y,
   response = "multi",
   index = 1,
-  model = "regression",
+  mode = "regression",
   predict_function = NULL
 )
 }
@@ -24,6 +24,8 @@ mrFlashlight(
 \item{response}{\code{character} single' selects one response, 'multi' selects all responses}
 
 \item{index}{\code{numeric} selects which response to create a flashlight object for. Only used when 'single' is selected. The order is the same as 'Y'.}
+
+\item{mode}{\code{character}'classification' or 'regression' i.e., is the generative model a regression or classification?}
 
 \item{predict_function}{\code{function}  user specified predict function}
 }

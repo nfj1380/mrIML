@@ -7,9 +7,9 @@
 mrIMLpredicts(
   X,
   Y,
-  model1,
+  Model,
   balance_data = "no",
-  model = "regression",
+  mode = "regression",
   transformY = "log",
   dummy = FALSE,
   tune_grid_size = 10,
@@ -22,15 +22,17 @@ mrIMLpredicts(
 
 \item{Y}{A \code{dataframe} is a response variable data (species, OTUs, SNPs etc).}
 
+\item{Model}{1 A \code{list} can be any model from the tidy model package. See examples.}
+
 \item{balance_data}{A \code{character} 'up', 'down' or 'no'.}
+
+\item{mode}{\code{character}'classification' or 'regression' i.e., is the generative model a regression or classification?}
 
 \item{dummy}{A \code{logical} 'TRUE or FALSE'.}
 
 \item{tune_grid_size}{A \code{numeric} sets the grid size for hyperparamter tuning. Larger grid sizes increase computational time.}
 
 \item{k}{A \code{numeric} sets the number of folds in the 10-fold cross-validation. 10 is the default.}
-
-\item{Model}{1 A \code{list} can be any model from the tidy model package. See examples.}
 }
 \description{
 Wrapper to generate multi-response predictive models.
