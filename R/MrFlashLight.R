@@ -13,7 +13,7 @@
 #' 
 #' @example 
 #' #single response
-#' fl <- mrFlashlight(yhats, X, Y, response = "single", index=1)
+#' fl <- mrFlashlight(yhats, X, Y, response = "single", index=1, mode = "regression")
 #'
 #'plot(light_performance(fl), fill = "orange") + labs(x = element_blank())
 #'
@@ -38,7 +38,7 @@ mrFlashlight <- function(yhats, X, Y, response = "multi", index = 1, mode = "reg
       
       predict(
         
-        m, dat[, colnames(X), drop = FALSE],
+        m, dat[, colnames(X), drop = FALSE],  ###
         
         #data.matrix(dat[, colnames(Y), drop = FALSE]),
         
@@ -100,7 +100,7 @@ mrFlashlight <- function(yhats, X, Y, response = "multi", index = 1, mode = "reg
           
           model = yhats[[i]]$mod1_k,
           
-          label = colnames(Y)[i],
+          label = colnames(Y)[i], ##
           
           y = colnames(Y)[i]
           

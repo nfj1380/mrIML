@@ -11,7 +11,7 @@ plot_vi(
   X,
   groupCov = NULL,
   cutoff = 0.2,
-  model = "regression"
+  mode = "regression"
 )
 }
 \arguments{
@@ -25,7 +25,7 @@ plot_vi(
 
 \item{cutoff}{A \code{numeric} determines  Mathews correlation coefficient (mcc) threshold for displaying individual response model. Default is 0.5}
 
-\item{mod}{\code{character}'classification' or 'regression' i.e., is the generative model a regression or classification?}
+\item{mode}{\code{character}'classification' or 'regression' i.e., is the generative model a regression or classification?}
 }
 \description{
 Plots global importance (i.e. cumulative importance of all features for all response variables) and individual response importance.

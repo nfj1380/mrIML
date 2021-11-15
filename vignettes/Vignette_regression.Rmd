@@ -42,21 +42,21 @@ We focus on the adaptive SNP loci from GIGANTEA-5 (GI5) gene that has known link
 library(mrIML)
 
 #other package we need:
-library(vip); library(tidymodels); library(randomForest);  library(caret); library(gbm);
-library(tidyverse);library(parallel); library(doParallel); library(themis); library(viridis); library(janitor); library(hrbrthemes); library(xgboost); library(vegan);library(flashlight);
-library(ggrepel); library(ranger); library(future.apply)
+library(vip); library(tidymodels); library(randomForest);  #library(caret);
+library(gbm);
+library(tidyverse);library(parallel); library(doParallel); library(themis); library(viridis); library(janitor); library(hrbrthemes); library(xgboost); library(vegan);library(flashlight);library(iml);
+library(ggrepel); library(ranger); library(future.apply); library(plyr)
 
 #library(LEA) 
 # read in data file with minor allele freqs & env/space variables
-gfData; str(gfData)
-envGF <- gfData[,3:13] # get climate & MEM variables
-Y <- envGF #for simplicity
+envGF <- mrIML::gfData[,3:13] # get climate & MEM variables
+X <- envGF #for simplicity
 
 # build individual SNP datasets
-SNPs_ref <- gfData[,grep("REFERENCE",colnames(gfData))] # reference
-GI5 <- gfData[,grep("GI5",colnames(gfData))] # GIGANTEA-5 (GI5)
+SNPs_ref <- mrIML::gfData[,grep("REFERENCE",colnames(mrIML::gfData))] # reference
+GI5 <- mrIML::gfData[,grep("GI5",colnames(mrIML::gfData))] # GIGANTEA-5 (GI5)
 
-X <- GI5 #for this example we are going to focus on the adaptive SNPs in the GI5 region.
+Y <- GI5 #for this example we are going to focus on the adaptive SNPs in the GI5 region.
 
 ```
 
@@ -79,7 +79,7 @@ plan(cluster, workers=cl)
 Performing the analysis is very similar to our classification example. Lets start with a constructing a linear model for this data set. We set Model 1 to a linear regression. See https://www.tidymodels.org/find/ for other regression model options Note that 'mode' must be regression and in MrIMLpredicts, model has to be set to 'regression'. 
 
 ```{r,  message = FALSE, warning = FALSE  }
-model1 <- #model used to generate yhat
+model_lm <- #model used to generate yhat
   # specify that the model is a random forest
   linear_reg() %>%
   # select the engine/package that underlies the model
@@ -87,7 +87,7 @@ model1 <- #model used to generate yhat
   # choose either the continuous regression or binary classification mode
   set_mode("regression")
 
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='regression', seed = sample.int(1e8, 1)) ## Balanced data= up updamples and down downsampled to create a balanced set. For regression 'no' has to be selected.
+yhats_lm <- mrIMLpredicts(X=X,Y=Y, Model=model_lm, balance_data='no', mode='regression', seed = sample.int(1e8, 1)) ## Balanced data= up updamples and down downsampled to create a balanced set. For regression 'no' has to be selected.
 
 #save(yhats, file='Regression_lm') #always a good idea
 ```
@@ -95,26 +95,27 @@ yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='regress
 Model performance can be examined the same way as in the classification example, however the metrics are different. We provide root mean square error (rmse) and R2. You can see that the overall R2 is 0.13 but there is substantial variation across loci in predictive performance.
 
 ```{r}
-ModelPerf <- mrIMLperformance(yhats, model1, Y=Y, model='regression')
+ModelPerf <- mrIMLperformance(yhats_lm,  Model=model_lm, Y=Y, mode='regression')
 ModelPerf[[1]] #predictive performance for individual responses. 
 ModelPerf[[2]]#overall average r2 
 
-p1 <- as.data.frame(ModelPerf[[1]])#save as a dataframe to compare to other models.
+p1 <- as.data.frame(ModelPerf[[1]])
+#save as a dataframe to compare to other models.
 ```
 
 Lets compare the performance of linear models to that of random forests. Random forests is the computational engine in gradient forests. Notice for random forests we have two hyperparameters to tune; mtry (number of features to randomly include at each split) and min_n (the minimum number of data points in a node that are required for the node to be split further). The syntax 'tune()' acts a placeholder to tell MrIML to tune those hyperparamters across a grid of values (defined in MRIML predicts 'tune_grid_size' argument). Different algorithms will have different hyperparameters.See https://www.tidymodels.org/find/parsnip/ for parameter details. Note that large grid sizes (>10) for algorithms with lots of hyperparameters (such as extreme gradient boosting) will be computationally demanding. In this case we choose a grid size of 5.
 
 ```{r, message = FALSE, warning = FALSE}
-model1 <- 
-  rand_forest(trees = 100, mtry=tune(), min_n = tune(), mode = "regression") %>% 
-  set_engine("ranger", importance = c("impurity","impurity_corrected")) %>%
-  set_mode("regression")
+model_rf <- 
+  rand_forest(trees = 100, mode = "regression", mtry = tune(), min_n = tune()) %>% #100 trees are set for brevity. Aim to start with 1000
+  set_engine("randomForest")
 
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='regression', parallel = TRUE, tune_grid_size=5 )
+yhats_rf <- mrIMLpredicts(X=X,Y=Y, Model=model_rf, balance_data='no', mode='regression', tune_grid_size=5, seed = sample.int(1e8, 1) )
 
 #save(yhats, file='Regression_rf')
 
-ModelPerf <- mrIMLperformance(yhats, model1, Y=Y, model='regression')
+ModelPerf <- mrIMLperformance(yhats_rf, Model=model_rf, Y, mode='regression')
+
 ModelPerf[[1]] #predictive performance for individual responses. 
 ModelPerf[[2]]#overall average r2 
 
@@ -126,9 +127,9 @@ p2 <- as.data.frame(ModelPerf[[1]])
 You can see that predictive performance is actually slightly less using random forests (overall R2 = 0.12) but for some loci random forests does better than our linear models and sometimes worse. Which to choose? Generally simpler models are preferred (the linear model in this case) but it depends on how important to think non-linear response are. In future versions of MrIML we will implement ensemble models that will overcome this issue. For the time-being we will have a look at variable importance for the random forest based model.
 
 ```{r, message = FALSE, warning = FALSE }
-VI <- mrVip(yhats, X=X) 
+VI <- mrVip(yhats_rf, X=X) 
 
-plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf,  cutoff= 0.1, plot.pca='yes', model='regression')
+plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf,  cutoff= 0.1, mode='regression')
 
 ```
 
@@ -146,7 +147,7 @@ Now we can explore the model further my plotting the relationships between our S
 
 ```{r warning=FALSE}
 
-flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='regression')
+flashlightObj <- mrFlashlight(yhats_rf, X, Y, response = "multi", mode='regression')
 
 profileData_pd <- light_profile(flashlightObj, v = "bio_1") #partial dependencies
 
@@ -169,7 +170,7 @@ The effect of mean annual temperature on SNP turnover is not as distinct in the 
 MrIML has easy to use functionality that can can quantify interactions between features. Note that this can take a while to compute.
 
 ```{r warning=FALSE }
-interactions <-mrInteractions(yhats, X, Y,  model='regression') #this is computationally intensive so multicores are needed.
+interactions <-mrInteractions(yhats_rf, X, Y,  mode='regression') #this is computationally intensive so multicores are needed.
 
 mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2) #can increase the number of interactions/SNPs ('responses') shown
 
@@ -180,7 +181,21 @@ mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2) #can inc
 
 ```
 
-The first plot reveals that the strongest global interaction is between mean annual (bio_1) temperature and summer precipitation (bio_10) but the interactions between other bioclim features are also relatively strong. Mean temperature interacts to some degree with spatial patterns as well (MEMs) to shape SNP turnover. Note that importance is all relative. the second plot shows that the predictions of candidate 33 are most effected by interacting features and the third plot shows that the interaction is between mean annual temperature and altitude.
+The first plot reveals that the strongest global interaction is between mean annual (bio_1) temperature and summer precipitation (bio_1/bio_15) but the interactions between other bioclim features are also relatively strong. Mean temperature interacts to some degree with spatial patterns as well (MEMs) to shape SNP turnover. Note that importance is all relative. the second plot shows that the predictions of candidate 33 are most effected by interacting features and the third plot shows that the interaction is between mean annual temperature and altitude.
 
-This is touching only the surface of what is possible in terms of interrogating this model. See https://cran.r-project.org/web/packages/flashlight/vignettes/flashlight.html for other options.
+We have also provided functionality to visualize the impact of interacting feature pairs using ALEs or PDs. First we need to convert the mrIML predictor object into a form suitable for the IML package and then 2D plots can be constructed. We strongly recommend using ALEs as they a more reliable method for quantifying interactions (see Molnar (2018) for more details.
+
+```{r warning=FALSE }
+mrIMLconverts_list_reg <- MrIMLconverts(yhats=yhats_rf, X=X, mode='regression')
+
+featureA = 'bio_1'
+featureB = 'bio_10'
+
+p2D <- mrProfile2D (mrIMLconverts_list_reg, featureA,featureB,  mode='regression',grid.size=30, method = "ale")
+
+plot(p2D) +theme_bw()
+```
+
+
+This is touching only the surface of what is possible in terms of interrogating this model. Both Flashlight and IML packages have a wide variety of tools that can offer novel insights into how these models perform. See https://cran.r-project.org/web/packages/flashlight/vignettes/flashlight.html and https://cran.r-project.org/web/packages/iml/vignettes/intro.html for other options.
 

@@ -20,7 +20,7 @@ mrIMLpredicts(
 \arguments{
 \item{X}{A \code{dataframe} represents predictor or feature data.}
 
-\item{Y}{A \code{dataframe} is a response variable data (species, OTUs, SNPs etc).}
+\item{Y}{A \code{dataframe} is response variable data (species, OTUs, SNPs etc).}
 
 \item{Model}{1 A \code{list} can be any model from the tidy model package. See examples.}
 

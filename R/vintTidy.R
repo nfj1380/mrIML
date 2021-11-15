@@ -113,17 +113,17 @@
 # }
 
 vintTidy <- function(object, feature_names, progress = "none", parallel = TRUE,
-                     paropts = NULL, ..., model='classication') {
+                     paropts = NULL, ..., mode='classication') {
   # warning("This function is experimental, use at your own risk!", call. = FALSE)
   # FIXME: Should we force `chull = FALSE` in the call to `pdp::partial()`?
   all.pairs <- utils::combn(feature_names, m = 2)
 
-  if (model == 'classification'){
+  if (mode == 'classification'){
     pdp_pred_fun <- function(object, newdata) { #pd funtion
       predict(object, newdata, type = "prob")$.pred_1 #predict positive class. couldn't get colMeans to work. Werid results for the FIV dataset
     }
   }
-  if  (model == 'regression'){
+  if  (mode == 'regression'){
     pdp_pred_fun <- function(object, newdata) { #pd funtion
       predict(object, newdata)$.pred }
 

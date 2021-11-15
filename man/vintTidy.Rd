@@ -11,7 +11,7 @@ vintTidy(
   parallel = TRUE,
   paropts = NULL,
   ...,
-  model = "classication"
+  mode = "classication"
 )
 }
 \arguments{

@@ -1,5 +1,5 @@
 #'Wrapper to generate multi-response predictive models.
-#'@param Y A \code{dataframe} is a response variable data (species, OTUs, SNPs etc).
+#'@param Y A \code{dataframe} is response variable data (species, OTUs, SNPs etc).
 #'@param X A \code{dataframe} represents predictor or feature data.
 #'@param balance_data A \code{character} 'up', 'down' or 'no'. 
 #'@param dummy A \code{logical} 'TRUE or FALSE'. 
@@ -32,13 +32,13 @@
 
 mrIMLpredicts<- function(X, Y, Model, balance_data ='no', mode='regression', transformY='log',dummy=FALSE, tune_grid_size= 10, k=10, seed = sample.int(1e8, 1) ) { 
   
-  n_response<- length(X)
+  n_response<- length(Y)
  
   mod1_perf <- NULL #place to save performance matrix
 
   internal_fit_function <- function( i ){
       
-    data <- cbind(Y[1], X) ###
+    data <- cbind(Y[i], X) ###
     colnames(data)[1] <- c('class') #define response variable for either regression or classification
     
     if (mode=='classification'){
