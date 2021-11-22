@@ -4,7 +4,6 @@ author: "Nick Fountain-Jones, Gustavo Machado"
 date: "10 September 2020"
 output: html_document
 ---
-![](C:/Users/Nick FJ/Documents/MrIML_final/mrIML/Logo_mrIML.png){width=25%}
 
 ## Introduction to mrIML 
 
@@ -109,10 +108,10 @@ yhats_rf <- mrIMLpredicts(X=X,Y=Y, Model=model_rf, balance_data='no', mode='clas
 It takes a couple of minutes to run on a laptop and there are warnings that you can ignore (this data set is small). The above code constructs tuned random forest models for the features (Y) you have selected for each response (29 viral SNP in this case). We can then check the performance of each model separately and overall. The performance metrics we provide for classification models are area under curve (roc_AUC),  Mathew's correlation coefficient (MCC - a good metric when data is imbalanced i.e., unequal numbers of 0/1s in each response), specificity (proportion correctly classified not having the mutation at that loci) and sensitivity (proportion correctly classified having the mutation at that loci). We also provide 'prevalence' that tells you how common that SNP was in the population sampled.
 
 ```{r, message = FALSE, warning = FALSE}
-ModelPerf <- mrIMLperformance(yhats_rf, Model=model_rf, Y=Y, mode='classification')
+ModelPerf_rf <- mrIMLperformance(yhats_rf, Model=model_rf, Y=Y, mode='classification')
 
-ModelPerf[[1]] #predictive performance for individual responses 
-ModelPerf[[2]]#overall predictive performance
+ModelPerf_rf[[1]] #predictive performance for individual responses 
+ModelPerf_rf[[2]]#overall predictive performance
 ```
 
 You can compare the  predictive performance of random forests with any other technique simply by altering the following. Lets try a logistic regression. Note that for logistic regression you may need to scale/transform the data or create dummy variables if you include categorical variables. These steps can easily be added to the pipeline following tidymodel syntax (see the website above) 
@@ -126,8 +125,8 @@ model_glm <- #model used to generate yhat
 yhats_glm <- mrIMLpredicts(X=X,Y=Y, Model=model_glm, balance_data='no', mode='classification',  tune_grid_size=5, seed = sample.int(1e8, 1) )
 
 #save(yhats, file='logreg_model')
-ModelPerf <- mrIMLperformance(yhats_glm, model1, Y=Y) #
-ModelPerf[[2]]
+ModelPerf_glm <- mrIMLperformance(yhats_glm, Model=model_glm, Y=Y, mode='classification') #
+ModelPerf_glm[[2]]
 ```
 
 You can see that the random forests model outperforms the logistic regression in this case.  Once we are happy with the underlying model we can then dive in to see how this model predicts the SNPs. First we can check out variable importance.The first plot is the global importance (what features shape genetic change overall), the second shows the individual models (with an optional importance MCC threshold 'cutoff' value ).
@@ -136,16 +135,17 @@ You can see that the random forests model outperforms the logistic regression in
 
 VI <- mrVip(yhats_rf, X=X) 
 
-plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, mode='classification') #the cutoff reduces the number of individual models printed in the second plot. 
+# plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf_rf, cutoff= 0, mode='classification') #the cutoff reduces the number of individual models printed in the second plot. 
 
 ```
 
 If your features can be grouped together this can make it easier to interpret variable importance plots.
 
 ```{r, eval = FALSE}
+#for example
 groupCov <- c(rep ("Host_characteristics", 1),rep("Urbanisation", 3), rep("Vegetation", 2), rep("Urbanisation",1), rep("Spatial", 2), rep('Host_relatedness', 6),rep ("Host_characteristics", 1),rep("Vegetation", 2), rep("Urbanisation",1))
 
-plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, groupCov=groupCov, cutoff= 0.5)
+# plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf_rf, groupCov=groupCov, cutoff= 0.5)
 
 ```
 
@@ -157,7 +157,7 @@ For example, once we create the flashlight objects, we can plot the predicted va
 ```{r, message = FALSE, warning = FALSE}
 fl <- mrFlashlight(yhats_rf, X=X, Y=Y, response = "single", index=1, mode='classification') #index pointing to the SNP of interest (i.e. the first column)
 
-mfl <- mrFlashlight(yhats_rf, X, Y, response = "multi", mode='classification') #the global set
+mfl <- mrFlashlight(yhats_rf, X=X, Y=Y, response = "multi", mode='classification') #the global set
 
 plot(light_scatter(fl, v = "Grassland", type = "predicted"))
 ```
@@ -180,15 +180,15 @@ Finally, we can assess how features interact overall to shape genetic change. Be
 
 ```{r, message = FALSE, warning = FALSE}
 
-interactions <-mrInteractions(yhats_rf, X, Y) #this is computationally intensive so multicores are needed. 
+interactions <-mrInteractions(yhats= yhats_rf, X=X, Y=Y, mode='classification') #this is computationally intensive so multicores are needed. 
 
-mrPlot_interactions(interactions, X,Y, top_ranking = 3, top_response=3)
+mrPlot_interactions(interactions, X=X,Y=Y, top_ranking = 3, top_response=3)
 
 ```
 
 You could easily compare the plots generated above from our random forest model with the logistic regression model we also calculated.
 
-You can visualize detected interactions by converting the MrIML predicts object into a form suitable for the R package IML (https://cran.r-project.org/web/packages/iml/vignettes/intro.html) using 'MrIMLconverts'. The you can plot how two features interact to shape genetic change using 'mrProfile2D'. In effect this heatmap shows the average prediction of the interacting featuresa across loci/response variables.  ALEs or partial dependencies can be used  - but we highly recommend using ALEs for the most robust results (see Molnar, 2019 for more detail)
+You can visualize detected interactions by converting the MrIML predicts object into a form suitable for the R package IML (https://cran.r-project.org/web/packages/iml/vignettes/intro.html) using 'MrIMLconverts'. You can plot how two features interact to shape genetic change using 'mrProfile2D'. In effect, this heatmap shows the average prediction of the interacting features across loci/response variables.  ALEs or partial dependencies can be used  - but we highly recommend using ALEs for the most robust results (see Molnar (2019) for more detail)
 
 ```{r}
 mrIMLconverts_list <- MrIMLconverts(yhats=yhats_glm,X=X, mode='classification')
