@@ -107,7 +107,7 @@
       <a href="../articles/Vignette_biosecurity.html">Swine Biosecurity working example</a>
     </li>
     <li>
-      <a href="../articles/Vignette_LandscapeGenetics.html">Classification working example</a>
+      <a href="../articles/Vignette_classification.html">Classification working example</a>
     </li>
     <li>
       <a href="../articles/Vignette_regression.html">Regression working example</a>
@@ -159,7 +159,7 @@
   groupCov <span class='op'>=</span> <span class='cn'>NULL</span>,
   cutoff <span class='op'>=</span> <span class='fl'>0.2</span>,
   plot.pca <span class='op'>=</span> <span class='st'>"no"</span>,
-  model <span class='op'>=</span> <span class='st'>"regression"</span>
+  mode <span class='op'>=</span> <span class='st'>"regression"</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -175,18 +175,18 @@
     </tr>
     <tr>
       <th>Y</th>
-      <td><p>A <code>dataframe</code> feature dataset</p></td>
+      <td><p>A <code>dataframe</code> response dataset</p></td>
     </tr>
     <tr>
       <th>X</th>
-      <td><p>A <code>dataframe</code> response dataset</p></td>
+      <td><p>A <code>dataframe</code> feature dataset</p></td>
     </tr>
     <tr>
       <th>cutoff</th>
       <td><p>A <code>numeric</code> determines  mathews correlation coefifcent (mcc) threshold for displaying individual reponse model. Default is 0.5</p></td>
     </tr>
     <tr>
-      <th>mod</th>
+      <th>mode</th>
       <td><p><code>character</code>'classification' or 'regression' i.e., is the generative model a regression or classification?</p></td>
     </tr>
     </table>

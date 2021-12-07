@@ -41,7 +41,10 @@ Imports:
     utils,
     ranger,
     pdp,
-    rmarkdown
+    rmarkdown,
+    future.apply,
+    future,
+    yaImpute
 Suggests: 
     caret,
     devtools,

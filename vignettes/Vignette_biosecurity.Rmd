@@ -29,7 +29,8 @@ This is a synthesized dataset to simulate PRRSV infection, biosecurity practices
 Please note that the data included in this package is simulated, and is not a reflection of any real farm, company or state. 
 ```{r load packages, include=TRUE, message=FALSE, results='hide'}
 #other packages needed
-library(parsnip); library(mrIML); library(tidymodels); library(workflows); library(tidyverse); library(flashlight); library(devtools); library(DALEX); library(plyr);library(vip); library(ggsci); library(ggrepel); library(breakDown)
+library(mrIML)
+library(parsnip); library(tidymodels); library(workflows); library(tidyverse); library(flashlight); library(devtools); library(DALEX); library(plyr);library(vip); library(ggsci); library(ggrepel); library(breakDown); library(future.apply); library(janitor)
 
 set.seed(130) #set the seed to ensure consistency
 data <- as.data.frame(mrIML::biosecurity_vignette_data)
@@ -47,8 +48,8 @@ data$Class<-as.numeric(as.character(data$Class))
 This is a random forest model, as used in the classification example. However there are more models available within MrIML and can be found [here](https://www.tidymodels.org/find/). 
 ```{r define model, include=TRUE}
 #split predictor variables and outcome
-X <- as.data.frame(data %>% select(1))
-Y <- data %>% select(-c(1, 44, 45)) #remove class, group and ID
+Y <- as.data.frame(data %>% select(1))
+X <- data %>% select(-c(1, 44, 45)) #remove class, group and ID
 model1 <- #model used to generate yhat
   #specify that the model is a random forest
   rand_forest(trees = 100, mtry = tune(), min_n = tune(), mode = "classification") %>% 
@@ -59,14 +60,14 @@ model1 <- #model used to generate yhat
 ```
 
 ```{r, include=FALSE}
-Y_names <- sort(colnames(Y), decreasing = FALSE)
+X_names <- sort(colnames(X), decreasing = FALSE)
 long_names <- c("Air_filtered", "Breeding_female_capacity_3_miles", "Boar_capacity_3_miles", "Breeding_replacement_deliveries", "Cull_breeding_animals_hauls", "On_farm_employees", "Dead_disposal_method", "Other_farms_disease_status_known", "Manure_removal_equipment_downtime", "Employee_exit_re_entries", "Other_farms_same_system", "Entry_of_pork_products", "Forested_area", "Finishing_pig_capacity_3_miles", "Feed_deliveries", "Propane_fuel_deliveries", "Gilt_capacity_3_miles", "Genetic_multiplication_site", "Others_using_cull_animal_trailer", "Others_using_weaned_animal_trailer", "Manure_removal_personnel_downtime", "Manure_removals", "Garbage_collections", "Grass_mowing", "Nursery_pig_capactiy_3_miles", "Others_using_breeding_replacement_trailer", "PRRSV_positive_animals_on_cull_breeding_trailer", "PRRSV_positive_animals_on_cull_weaned_trailer", "Removals_of_dead", "Repair_personnel_visits", "Others_with_same_semen_delivery", "Show_capacity_3_miles", "Premises_in_3_miles", "Topography", "Employee_turnover", "Vehicle_entrances", " Veterinarians_managers_downtime", "Veterinarian_manager_visits", "Weaned_animal_hauls", "Wean_to_finish_capacity_3_miles", "Yards_to_public_road", "Snow_removal")
 
 for (i in 1:42) {
-  names(Y)[names(Y) == Y_names[i]] <- long_names[i]
-  names(data)[names(data) == Y_names[i]] <- long_names[i]
+  names(X)[names(X) == X_names[i]] <- long_names[i]
+  names(data)[names(data) == X_names[i]] <- long_names[i]
   }
-names(Y) <- as.character(names(Y))
+names(X) <- as.character(names(X))
 ```
 
 ###Parallel processing
@@ -85,16 +86,16 @@ plan(cluster, workers=cl)
 ### Running the analyis
 Now we can train and test our model.
 ```{r run model, include=TRUE, message=FALSE, warning=FALSE}
-yhats <- mrIMLpredicts(X=X, #response data
-                       Y=Y, #features/predictors
-                       model1=model1, #specify your model
+yhats <- mrIMLpredicts(X=X, #features/predictors 
+                       Y=Y, #response data
+                       Model=model1, #specify your model
                        balance_data='no', #chose how to balance your data 
-                       model='classification', #chose your mode (classification versus regression)
+                       mode='classification', #chose your mode (classification versus regression)
                        seed = 120) #set seed
 ```
 We can then assess our model performance using a number of performance metrics including area under the curve (AUC), sensitivity, specificity and Matthews correlation coefficient (MCC).
 ```{r performance, include=TRUE}
-ModelPerf <- mrIMLperformance(yhats, model1, X=X, model='classification')
+ModelPerf <- mrIMLperformance(yhats=yhats, Model=model1, Y=Y, mode='classification')
 ModelPerf[[1]] #predictive performance for individual responses 
 ModelPerf[[2]]#overall predictive performance. r2 for regression and MCC for classification
 ```
@@ -103,9 +104,9 @@ ModelPerf[[2]]#overall predictive performance. r2 for regression and MCC for cla
 Here we can look at the variable importance. This is the dependence between our outcome and biosecurity variables. 
 ```{r variable importance, message=FALSE, error=FALSE, fig.height=9, fig.width=13, prompt=FALSE, }
 #calculate variable importance
-VI <- mrVip(yhats, Y=Y)
+VI <- mrVip(yhats=yhats, X=X)
 #plot cumulative variable importance 
-plot_vi_biosecurity(VI=VI,  X=X,Y=Y,
+plot_vi_biosecurity(VI=VI, Y=Y, X=X,
         modelPerf=ModelPerf,
         cutoff= 0.6,
         plot.pca='no') #Follow instructions in console
@@ -113,10 +114,10 @@ plot_vi_biosecurity(VI=VI,  X=X,Y=Y,
 We can explore further and assess the partial dependence of each variable. Here we isolate the dependence of one variable and visualize how this dependence changes over different observed values.
 ```{r pdp, warning=FALSE, message=FALSE}
 #create a flashlight object
-fl <- mrFlashlight(yhats, X, Y, 
-                   response = "single", 
+fl <- mrFlashlight(yhats=yhats, X=X, Y=Y, 
+                   response="single", 
                    index=1,
-                   model='classification') 
+                   mode='classification') 
 #plot partial dependence profiles
 plot(light_profile(fl, v = "Premises_in_3_miles")) 
 ```
@@ -145,12 +146,13 @@ data<-data%>%
   mutate(Class = revalue(Class,
                          c("1" = "Positive", "0" = "Negative"))) 
 data$Class <- relevel(data$Class, "Positive")
+data1 <- data
 #plot among group comparison of predicted risk
-mrBenchmark(my.data = "data", outcome = "Class", y = "Predicted", group = "Group", type = "external") 
+mrBenchmark(data = "data1", Y = "Class", pred = "Predicted", group = "Group", type = "external") 
 ```
 ```{r, include=TRUE, warning=FALSE, message=FALSE}
 #plot within group comparison of predicted risk
-mrBenchmark(my.data = "data", outcome = "Class", y = "Predicted", group = "Group", label_by = "ID", type = "internal") 
+mrBenchmark(data = "data1", Y = "Class", pred = "Predicted", group = "Group", label_by = "ID", type = "internal") 
 ```
 
 ### Benchmarking: local importance 
@@ -161,7 +163,8 @@ data<-data%>%
   mutate(Class = revalue(Class,
                          c("1" = "Positive", "0" = "Negative"))) 
 data$Class <- relevel(data$Class, "Positive")
-mrLocalExplainer(my.data = Y, model_data = yhats, outcome = data$Class)
+X1 <- X
+mrLocalExplainer(X = X1, Model = yhats, Y = data$Class)
 ```
 
 Individual plots are produced in the list object `LE_indiv_plots`. Each plot corresponds to a single farm. An example of a positive farm and a negative farm are shown here. 

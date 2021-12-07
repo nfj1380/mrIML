@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>mrFlashlight:  Wrapper to run mutlti-response model agnostic interpretable machine learning analyses. — mrFlashlight • mrIML</title>
+<title>mrFlashlight:  Wrapper to run multi-response model agnostic interpretable machine learning analyses. — mrFlashlight • mrIML</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="mrFlashlight:  Wrapper to run mutlti-response model agnostic interpretable machine learning analyses. — mrFlashlight" />
-<meta property="og:description" content="mrFlashlight:  Wrapper to run mutlti-response model agnostic interpretable machine learning analyses." />
+<meta property="og:title" content="mrFlashlight:  Wrapper to run multi-response model agnostic interpretable machine learning analyses. — mrFlashlight" />
+<meta property="og:description" content="mrFlashlight:  Wrapper to run multi-response model agnostic interpretable machine learning analyses." />
 <meta property="og:image" content="nfj1380.io/mrIML/reference/figures/logo.png" />
 <meta property="og:image:alt" content="Multivariate–multi-response–interpretable machine learning" />
 <meta name="twitter:card" content="summary" />
@@ -107,7 +107,7 @@
       <a href="../articles/Vignette_biosecurity.html">Swine Biosecurity working example</a>
     </li>
     <li>
-      <a href="../articles/Vignette_LandscapeGenetics.html">Classification working example</a>
+      <a href="../articles/Vignette_classification.html">Classification working example</a>
     </li>
     <li>
       <a href="../articles/Vignette_regression.html">Regression working example</a>
@@ -142,13 +142,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>mrFlashlight:  Wrapper to run mutlti-response model agnostic interpretable machine learning analyses.</h1>
+    <h1>mrFlashlight:  Wrapper to run multi-response model agnostic interpretable machine learning analyses.</h1>
     <small class="dont-index">Source: <a href='https://github.com/nfj1380/mrIML/blob/master/R/MrFlashLight.R'><code>R/MrFlashLight.R</code></a></small>
     <div class="hidden name"><code>mrFlashlight.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>mrFlashlight:  Wrapper to run mutlti-response model agnostic interpretable machine learning analyses.</p>
+    <p>mrFlashlight:  Wrapper to run multi-response model agnostic interpretable machine learning analyses.</p>
     </div>
 
     <pre class="usage"><span class='fu'>mrFlashlight</span><span class='op'>(</span>
@@ -157,7 +157,7 @@
   <span class='va'>Y</span>,
   response <span class='op'>=</span> <span class='st'>"multi"</span>,
   index <span class='op'>=</span> <span class='fl'>1</span>,
-  model <span class='op'>=</span> <span class='st'>"regression"</span>,
+  mode <span class='op'>=</span> <span class='st'>"regression"</span>,
   predict_function <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
@@ -170,19 +170,23 @@
     </tr>
     <tr>
       <th>X</th>
-      <td><p>A <code>dataframe</code> is a response variable data set (species, OTUs, SNPs etc)</p></td>
+      <td><p>A <code>dataframe</code> is the feature data set</p></td>
     </tr>
     <tr>
       <th>Y</th>
-      <td><p>A <code>dataframe</code> #is the feature dataset</p></td>
+      <td><p>A <code>dataframe</code> is a response variable data set (species, OTUs, SNPs etc)</p></td>
     </tr>
     <tr>
       <th>response</th>
-      <td><p><code>character</code> 'single' selects one response, 'multi' selects all responses</p></td>
+      <td><p><code>character</code> single' selects one response, 'multi' selects all responses</p></td>
     </tr>
     <tr>
       <th>index</th>
-      <td><p><code>numeric</code> selects which response to create a flaslight object for. Only used when 'single' is selcted. The order is the same as 'X'.</p></td>
+      <td><p><code>numeric</code> selects which response to create a flashlight object for. Only used when 'single' is selected. The order is the same as 'Y'.</p></td>
+    </tr>
+    <tr>
+      <th>mode</th>
+      <td><p><code>character</code>'classification' or 'regression' i.e., is the generative model a regression or classification?</p></td>
     </tr>
     <tr>
       <th>predict_function</th>
@@ -192,7 +196,7 @@
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The aim of this function is to enable users to ustilize interpretable machine learning methods
+    <p>The aim of this function is to enable users to utilize interpretable machine learning methods
 to understand their multi-response and single response models</p>
 
   </div>

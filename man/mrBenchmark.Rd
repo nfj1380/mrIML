@@ -5,20 +5,20 @@
 \title{Compare and benchmark disease outbreak risk among and within groups}
 \usage{
 mrBenchmark(
-  my.data = "data",
-  outcome = "class",
-  y = "predicted",
+  data = "data",
+  Y = "class",
+  pred = "predicted",
   group = "group1",
   label_by = "ID",
   type = "internal"
 )
 }
 \arguments{
-\item{my.data}{A \code{character} object name of data frame}
+\item{data}{A \code{character} object name of data frame}
 
-\item{outcome}{A \code{character} column name of variable containing outcome}
+\item{Y}{A \code{character} column name of variable containing outcome}
 
-\item{y}{A \code{character} column name of variable containing model predicted values}
+\item{pred}{A \code{character} column name of variable containing model predicted values}
 
 \item{group}{A \code{character} column name of variable that individuals should be grouped by}
 

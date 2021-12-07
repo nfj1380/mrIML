@@ -107,7 +107,7 @@
       <a href="../articles/Vignette_biosecurity.html">Swine Biosecurity working example</a>
     </li>
     <li>
-      <a href="../articles/Vignette_LandscapeGenetics.html">Classification working example</a>
+      <a href="../articles/Vignette_classification.html">Classification working example</a>
     </li>
     <li>
       <a href="../articles/Vignette_regression.html">Regression working example</a>
@@ -151,21 +151,21 @@
     <p>Run local explanation methods for individual data points</p>
     </div>
 
-    <pre class="usage"><span class='fu'>mrLocalExplainer</span><span class='op'>(</span><span class='va'>my.data</span>, <span class='va'>model_data</span>, <span class='va'>outcome</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>mrLocalExplainer</span><span class='op'>(</span><span class='va'>X</span>, <span class='va'>Model</span>, <span class='va'>Y</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>my.data</th>
+      <th>X</th>
       <td><p>A <code>dataframe</code> data frame of predictor variables</p></td>
     </tr>
     <tr>
-      <th>model_data</th>
+      <th>Model</th>
       <td><p>A <code>workflow</code> workflow object containing the machine learning model</p></td>
     </tr>
     <tr>
-      <th>outcome</th>
+      <th>Y</th>
       <td><p><code>vector</code> vector containing the outcome for each data instance</p></td>
     </tr>
     </table>
@@ -177,7 +177,7 @@
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>#mrLocalExplainer(data, yhats, data$Class)</span>
+    <pre class="examples"><div class='input'><span class='co'>#mrLocalExplainer(X = data, Model = yhats, Y = data$Class)</span>
 <span class='co'>## will return matrix of phi values, individualized and aggregated plots </span>
 
 </div></pre>

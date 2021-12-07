@@ -69,7 +69,7 @@ MrIML provides uses the flexible future apply functionality to set up multi-core
 
 cl <- parallel::makeCluster(4)
 
-plan(cluster, workers=cl)
+future::plan(cluster, workers=cl)
 
 ```
 

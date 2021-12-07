@@ -46,7 +46,7 @@ navbar:
       - text: Swine Biosecurity working example
         href: articles/Vignette_biosecurity.html
       - text: Classification working example
-        href: articles/Vignette_LandscapeGenetics.html
+        href: articles/Vignette_classification.html
       - text: Regression working example
         href: articles/Vignette_regression.html
       figures:
@@ -74,6 +74,9 @@ reference:
   - '`vintTidy`'
   - '`mrBenchmark`'
   - '`mrLocalExplainer`'
+  - '`MrIMLconverts`'
+  - '`interpret_Mrvi`'
+  - '`mrProfile2D`'
   - '`plot_vi_biosecurity`'
 
 articles:
@@ -81,6 +84,6 @@ articles:
   desc: ~
   contents:
   - '`Vignette_biosecurity`'
-  - '`Vignette_LandscapeGenetics`'
+  - '`Vignette_classification`'
   - '`Vignette_regression`'
 

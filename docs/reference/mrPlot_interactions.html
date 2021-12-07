@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plots global interactions as well as individual repsonse interaction importance. — mrPlot_interactions • mrIML</title>
+<title>Plots global interactions as well as individual response interaction importance. — mrPlot_interactions • mrIML</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Plots global interactions as well as individual repsonse interaction importance. — mrPlot_interactions" />
-<meta property="og:description" content="Plots global interactions as well as individual repsonse interaction importance." />
+<meta property="og:title" content="Plots global interactions as well as individual response interaction importance. — mrPlot_interactions" />
+<meta property="og:description" content="Plots global interactions as well as individual response interaction importance." />
 <meta property="og:image" content="nfj1380.io/mrIML/reference/figures/logo.png" />
 <meta property="og:image:alt" content="Multivariate–multi-response–interpretable machine learning" />
 <meta name="twitter:card" content="summary" />
@@ -107,7 +107,7 @@
       <a href="../articles/Vignette_biosecurity.html">Swine Biosecurity working example</a>
     </li>
     <li>
-      <a href="../articles/Vignette_LandscapeGenetics.html">Classification working example</a>
+      <a href="../articles/Vignette_classification.html">Classification working example</a>
     </li>
     <li>
       <a href="../articles/Vignette_regression.html">Regression working example</a>
@@ -142,13 +142,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Plots global interactions as well as individual repsonse interaction importance.</h1>
+    <h1>Plots global interactions as well as individual response interaction importance.</h1>
     <small class="dont-index">Source: <a href='https://github.com/nfj1380/mrIML/blob/master/R/mrPlotInteractions.R'><code>R/mrPlotInteractions.R</code></a></small>
     <div class="hidden name"><code>mrPlot_interactions.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Plots global interactions as well as individual repsonse interaction importance.</p>
+    <p>Plots global interactions as well as individual response interaction importance.</p>
     </div>
 
     <pre class="usage"><span class='fu'>mrPlot_interactions</span><span class='op'>(</span><span class='va'>interactions</span>, <span class='va'>X</span>, <span class='va'>Y</span>, top_ranking <span class='op'>=</span> <span class='fl'>3</span>, top_response <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span></pre>
@@ -158,19 +158,19 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>interactions</th>
-      <td><p>A <code>dataframe</code> dataframe generated from mrInteractioms function</p></td>
+      <td><p>A <code>dataframe</code> data frame generated from mrInteractioms function</p></td>
     </tr>
     <tr>
       <th>X</th>
-      <td><p>A <code>dataframe</code> response dataset</p></td>
+      <td><p>A <code>dataframe</code> feature data set</p></td>
     </tr>
     <tr>
       <th>Y</th>
-      <td><p>A <code>dataframe</code> feature dataset</p></td>
+      <td><p>A <code>dataframe</code> response data set</p></td>
     </tr>
     <tr>
       <th>top_ranking</th>
-      <td><p>A <code>numeric</code> determines how maany of the strongest feature interacions to view/include</p></td>
+      <td><p>A <code>numeric</code> determines how many of the strongest feature interacions to view/include</p></td>
     </tr>
     <tr>
       <th>top_response</th>

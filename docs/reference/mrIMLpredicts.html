@@ -107,7 +107,7 @@
       <a href="../articles/Vignette_biosecurity.html">Swine Biosecurity working example</a>
     </li>
     <li>
-      <a href="../articles/Vignette_LandscapeGenetics.html">Classification working example</a>
+      <a href="../articles/Vignette_classification.html">Classification working example</a>
     </li>
     <li>
       <a href="../articles/Vignette_regression.html">Regression working example</a>
@@ -154,11 +154,11 @@
     <pre class="usage"><span class='fu'>mrIMLpredicts</span><span class='op'>(</span>
   <span class='va'>X</span>,
   <span class='va'>Y</span>,
-  <span class='va'>model1</span>,
+  <span class='va'>Model</span>,
   balance_data <span class='op'>=</span> <span class='st'>"no"</span>,
-  model <span class='op'>=</span> <span class='st'>"regression"</span>,
-  parallel <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  mode <span class='op'>=</span> <span class='st'>"regression"</span>,
   transformY <span class='op'>=</span> <span class='st'>"log"</span>,
+  dummy <span class='op'>=</span> <span class='cn'>FALSE</span>,
   tune_grid_size <span class='op'>=</span> <span class='fl'>10</span>,
   k <span class='op'>=</span> <span class='fl'>10</span>,
   seed <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample.int</a></span><span class='op'>(</span><span class='fl'>1e+08</span>, <span class='fl'>1</span><span class='op'>)</span>
@@ -173,11 +173,23 @@
     </tr>
     <tr>
       <th>Y</th>
-      <td><p>A <code>dataframe</code> is a response variable data set (species, OTUs, SNPs etc).</p></td>
+      <td><p>A <code>dataframe</code> is response variable data (species, OTUs, SNPs etc).</p></td>
+    </tr>
+    <tr>
+      <th>Model</th>
+      <td><p>1 A <code>list</code> can be any model from the tidy model package. See examples.</p></td>
     </tr>
     <tr>
       <th>balance_data</th>
       <td><p>A <code>character</code> 'up', 'down' or 'no'.</p></td>
+    </tr>
+    <tr>
+      <th>mode</th>
+      <td><p><code>character</code>'classification' or 'regression' i.e., is the generative model a regression or classification?</p></td>
+    </tr>
+    <tr>
+      <th>dummy</th>
+      <td><p>A <code>logical</code> 'TRUE or FALSE'.</p></td>
     </tr>
     <tr>
       <th>tune_grid_size</th>
@@ -187,17 +199,13 @@
       <th>k</th>
       <td><p>A <code>numeric</code> sets the number of folds in the 10-fold cross-validation. 10 is the default.</p></td>
     </tr>
-    <tr>
-      <th>Model</th>
-      <td><p>1 A <code>list</code> can be any model from the tidy model package. See examples.</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function produces yhats that used in all model characteristics for subsequent functions.
-This function fits separate classication models for each response variable in a dataset. Y (response variables) should be binary (0/1). Rows in X (features) have the same id (host/site/population)
-as Y. Class imblanace can be a real issue for classification analyses. Class imbalance can be addressed for each
+    <p>This function produces yhats that used in all subsequent functions.
+This function fits separate classification/regression models for each response variable in a data set.  Rows in X (features) have the same id (host/site/population)
+as Y. Class imbalance can be a real issue for classification analyses. Class imbalance can be addressed for each
 response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling)
 or 'no' (no balancing of classes).</p>
 

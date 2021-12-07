@@ -65,7 +65,7 @@
       <a href="../articles/Vignette_biosecurity.html">Swine Biosecurity working example</a>
     </li>
     <li>
-      <a href="../articles/Vignette_LandscapeGenetics.html">Classification working example</a>
+      <a href="../articles/Vignette_classification.html">Classification working example</a>
     </li>
     <li>
       <a href="../articles/Vignette_regression.html">Regression working example</a>
@@ -95,13 +95,13 @@
 
       
 
-      </header><script src="Vignette_biosecurity_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
+      </header><script src="Vignette_biosecurity_files/header-attrs-2.11/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Biosecurity working example</h1>
                         <h4 class="author">Abagael Sykes, Gustavo Machado</h4>
             
-            <h4 class="date">2021-05-25</h4>
+            <h4 class="date">2021-12-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/nfj1380/mrIML/blob/master/vignettes/Vignette_biosecurity.Rmd"><code>vignettes/Vignette_biosecurity.Rmd</code></a></small>
       <div class="hidden name"><code>Vignette_biosecurity.Rmd</code></div>
@@ -120,7 +120,8 @@
 <p>This is a synthesized dataset to simulate PRRSV infection, biosecurity practices and farm demographics on swine farms across the united states. Please note that the data included in this package is simulated, and is not a reflection of any real farm, company or state.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#other packages needed</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://parsnip.tidymodels.org">parsnip</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://nfj1380.github.io/mrIML">mrIML</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidymodels.tidymodels.org">tidymodels</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/workflows">workflows</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mayer79/flashlight">flashlight</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/">devtools</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dalex.drwhy.ai">DALEX</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://had.co.nz/plyr">plyr</a></span><span class="op">)</span>;<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/koalaverse/vip/">vip</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://nanx.me/ggsci/">ggsci</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/slowkow/ggrepel">ggrepel</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://pbiecek.github.io/breakDown/">breakDown</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://nfj1380.github.io/mrIML">mrIML</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://parsnip.tidymodels.org">parsnip</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidymodels.tidymodels.org">tidymodels</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/workflows">workflows</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mayer79/flashlight">flashlight</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/">devtools</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dalex.drwhy.ai">DALEX</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://had.co.nz/plyr">plyr</a></span><span class="op">)</span>;<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/koalaverse/vip/">vip</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://nanx.me/ggsci/">ggsci</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/slowkow/ggrepel">ggrepel</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://pbiecek.github.io/breakDown/">breakDown</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/HenrikBengtsson/future.apply">future.apply</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sfirke/janitor">janitor</a></span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">130</span><span class="op">)</span> <span class="co">#set the seed to ensure consistency</span>
 <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu">mrIML</span><span class="fu">::</span><span class="va">biosecurity_vignette_data</span><span class="op">)</span></code></pre></div>
@@ -131,8 +132,8 @@
 <p>This is a random forest model, as used in the classification example. However there are more models available within MrIML and can be found <a href="https://www.tidymodels.org/find/">here</a>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#split predictor variables and outcome</span>
-<span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">data</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>
-<span class="va">Y</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">44</span>, <span class="fl">45</span><span class="op">)</span><span class="op">)</span> <span class="co">#remove class, group and ID</span>
+<span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">data</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>
+<span class="va">X</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">44</span>, <span class="fl">45</span><span class="op">)</span><span class="op">)</span> <span class="co">#remove class, group and ID</span>
 <span class="va">model1</span> <span class="op">&lt;-</span> <span class="co">#model used to generate yhat</span>
   <span class="co">#specify that the model is a random forest</span>
   <span class="fu"><a href="https://parsnip.tidymodels.org/reference/rand_forest.html">rand_forest</a></span><span class="op">(</span>trees <span class="op">=</span> <span class="fl">100</span>, mtry <span class="op">=</span> <span class="fu">tune</span><span class="op">(</span><span class="op">)</span>, min_n <span class="op">=</span> <span class="fu">tune</span><span class="op">(</span><span class="op">)</span>, mode <span class="op">=</span> <span class="st">"classification"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
@@ -140,39 +141,46 @@
   <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_engine.html">set_engine</a></span><span class="op">(</span><span class="st">"ranger"</span>, importance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"impurity"</span>,<span class="st">"impurity_corrected"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="co">#must be set to classification for classification problems</span>
   <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_args.html">set_mode</a></span><span class="op">(</span><span class="st">"classification"</span><span class="op">)</span></code></pre></div>
+<p>###Parallel processing</p>
+<p>MrIML provides uses the flexible future apply functionality to set up multi-core processing. In the example below, we set up a cluster using 4 cores. If you don’t set up a cluster, the default settings will be used and the analysis will run sequentially.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># detectCores() #check how many cores you have available. We suggest keeping one core free for internet browsing etc.</span>
+
+<span class="va">cl</span> <span class="op">&lt;-</span> <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/makeCluster.html">makeCluster</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>
+
+<span class="fu">plan</span><span class="op">(</span><span class="va">cluster</span>, workers<span class="op">=</span><span class="va">cl</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="running-the-analyis" class="section level3">
 <h3 class="hasAnchor">
 <a href="#running-the-analyis" class="anchor"></a>Running the analyis</h3>
 <p>Now we can train and test our model.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">yhats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLpredicts.html">mrIMLpredicts</a></span><span class="op">(</span>X<span class="op">=</span><span class="va">X</span>, <span class="co">#response data</span>
-                       Y<span class="op">=</span><span class="va">Y</span>, <span class="co">#features/predictors</span>
-                       model1<span class="op">=</span><span class="va">model1</span>, <span class="co">#specify your model</span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">yhats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLpredicts.html">mrIMLpredicts</a></span><span class="op">(</span>X<span class="op">=</span><span class="va">X</span>, <span class="co">#features/predictors </span>
+                       Y<span class="op">=</span><span class="va">Y</span>, <span class="co">#response data</span>
+                       Model<span class="op">=</span><span class="va">model1</span>, <span class="co">#specify your model</span>
                        balance_data<span class="op">=</span><span class="st">'no'</span>, <span class="co">#chose how to balance your data </span>
-                       model<span class="op">=</span><span class="st">'classification'</span>, <span class="co">#chose your mode (classification versus regression)</span>
-                       parallel <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co">#do you want to run the model in parallel?</span>
+                       mode<span class="op">=</span><span class="st">'classification'</span>, <span class="co">#chose your mode (classification versus regression)</span>
                        seed <span class="op">=</span> <span class="fl">120</span><span class="op">)</span> <span class="co">#set seed</span></code></pre></div>
 <p>We can then assess our model performance using a number of performance metrics including area under the curve (AUC), sensitivity, specificity and Matthews correlation coefficient (MCC).</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">model1</span>, X<span class="op">=</span><span class="va">X</span>, model<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span>yhats<span class="op">=</span><span class="va">yhats</span>, Model<span class="op">=</span><span class="va">model1</span>, Y<span class="op">=</span><span class="va">Y</span>, mode<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co">#predictive performance for individual responses </span>
-<span class="co">#&gt;   response  model_name           roc_AUC               mcc sensitivity</span>
-<span class="co">#&gt; 1    Class rand_forest 0.551282051282051 0.116131449170815         0.5</span>
+<span class="co">#&gt;   response  model_name           roc_AUC                 mcc      sensitivity</span>
+<span class="co">#&gt; 1    Class rand_forest 0.444444444444444 -0.0694634942483509 0.62962962962963</span>
 <span class="co">#&gt;         specificity prevalence</span>
-<span class="co">#&gt; 1 0.615384615384615        0.5</span>
+<span class="co">#&gt; 1 0.304347826086957        0.5</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="co">#overall predictive performance. r2 for regression and MCC for classification</span>
-<span class="co">#&gt; [1] 0.5512821</span></code></pre></div>
+<span class="co">#&gt; [1] 0.4444444</span></code></pre></div>
 </div>
 <div id="benchmarking-global-importance" class="section level3">
 <h3 class="hasAnchor">
 <a href="#benchmarking-global-importance" class="anchor"></a>Benchmarking: global importance</h3>
 <p>Here we can look at the variable importance. This is the dependence between our outcome and biosecurity variables.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#calculate variable importance</span>
-<span class="va">VI</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrVip.html">mrVip</a></span><span class="op">(</span><span class="va">yhats</span>, Y<span class="op">=</span><span class="va">Y</span><span class="op">)</span>
+<span class="va">VI</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrVip.html">mrVip</a></span><span class="op">(</span>yhats<span class="op">=</span><span class="va">yhats</span>, X<span class="op">=</span><span class="va">X</span><span class="op">)</span>
 <span class="co">#plot cumulative variable importance </span>
-<span class="fu"><a href="../reference/plot_vi_biosecurity.html">plot_vi_biosecurity</a></span><span class="op">(</span>VI<span class="op">=</span><span class="va">VI</span>,  X<span class="op">=</span><span class="va">X</span>,Y<span class="op">=</span><span class="va">Y</span>,
+<span class="fu"><a href="../reference/plot_vi_biosecurity.html">plot_vi_biosecurity</a></span><span class="op">(</span>VI<span class="op">=</span><span class="va">VI</span>, Y<span class="op">=</span><span class="va">Y</span>, X<span class="op">=</span><span class="va">X</span>,
         modelPerf<span class="op">=</span><span class="va">ModelPerf</span>,
         cutoff<span class="op">=</span> <span class="fl">0.6</span>,
         plot.pca<span class="op">=</span><span class="st">'no'</span><span class="op">)</span> <span class="co">#Follow instructions in console</span></code></pre></div>
@@ -180,12 +188,12 @@
 <pre><code>#&gt; Press [enter] to plot individual variable importance summaries
 #&gt; [1] ""</code></pre>
 <p>We can explore further and assess the partial dependence of each variable. Here we isolate the dependence of one variable and visualize how this dependence changes over different observed values.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#create a flashlight object</span>
-<span class="va">fl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrFlashlight.html">mrFlashlight</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">X</span>, <span class="va">Y</span>, 
-                   response <span class="op">=</span> <span class="st">"single"</span>, 
+<span class="va">fl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrFlashlight.html">mrFlashlight</a></span><span class="op">(</span>yhats<span class="op">=</span><span class="va">yhats</span>, X<span class="op">=</span><span class="va">X</span>, Y<span class="op">=</span><span class="va">Y</span>, 
+                   response<span class="op">=</span><span class="st">"single"</span>, 
                    index<span class="op">=</span><span class="fl">1</span>,
-                   model<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span> 
+                   mode<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span> 
 <span class="co">#plot partial dependence profiles</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/flashlight/man/light_profile.html">light_profile</a></span><span class="op">(</span><span class="va">fl</span>, v <span class="op">=</span> <span class="st">"Premises_in_3_miles"</span><span class="op">)</span><span class="op">)</span> </code></pre></div>
 <p><img src="Vignette_biosecurity_files/figure-html/pdp-1.png" width="700"></p>
@@ -194,7 +202,7 @@
 <h3 class="hasAnchor">
 <a href="#benchmarking-predicted-risk" class="anchor"></a>Benchmarking: predicted risk</h3>
 <p>The following function allows you to visualize and compare predicted risk among and within groups</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#apply the trained model to the entire data set to provide risk of predicted outbreak</span>
 <span class="va">fit_bio</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://workflows.tidymodels.org//reference/workflow-extractors.html">pull_workflow_fit</a></span><span class="op">(</span><span class="va">yhats</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">mod1_k</span><span class="op">)</span>
 <span class="va">preds_pos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit_bio</span>, <span class="va">data</span>, <span class="st">"prob"</span><span class="op">)</span>
@@ -205,25 +213,27 @@
   <span class="fu"><a href="https://rdrr.io/pkg/plyr/man/mutate.html">mutate</a></span><span class="op">(</span>Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/plyr/man/revalue.html">revalue</a></span><span class="op">(</span><span class="va">Class</span>,
                          <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"1"</span> <span class="op">=</span> <span class="st">"Positive"</span>, <span class="st">"0"</span> <span class="op">=</span> <span class="st">"Negative"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> 
 <span class="va">data</span><span class="op">$</span><span class="va">Class</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/relevel.html">relevel</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">Class</span>, <span class="st">"Positive"</span><span class="op">)</span>
+<span class="va">data1</span> <span class="op">&lt;-</span> <span class="va">data</span>
 <span class="co">#plot among group comparison of predicted risk</span>
-<span class="fu"><a href="../reference/mrBenchmark.html">mrBenchmark</a></span><span class="op">(</span>my.data <span class="op">=</span> <span class="st">"data"</span>, outcome <span class="op">=</span> <span class="st">"Class"</span>, y <span class="op">=</span> <span class="st">"Predicted"</span>, group <span class="op">=</span> <span class="st">"Group"</span>, type <span class="op">=</span> <span class="st">"external"</span><span class="op">)</span> </code></pre></div>
-<p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-3-1.png" width="1248"></p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<span class="fu"><a href="../reference/mrBenchmark.html">mrBenchmark</a></span><span class="op">(</span>data <span class="op">=</span> <span class="st">"data1"</span>, Y <span class="op">=</span> <span class="st">"Class"</span>, pred <span class="op">=</span> <span class="st">"Predicted"</span>, group <span class="op">=</span> <span class="st">"Group"</span>, type <span class="op">=</span> <span class="st">"external"</span><span class="op">)</span> </code></pre></div>
+<p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-1.png" width="1248"></p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#plot within group comparison of predicted risk</span>
-<span class="fu"><a href="../reference/mrBenchmark.html">mrBenchmark</a></span><span class="op">(</span>my.data <span class="op">=</span> <span class="st">"data"</span>, outcome <span class="op">=</span> <span class="st">"Class"</span>, y <span class="op">=</span> <span class="st">"Predicted"</span>, group <span class="op">=</span> <span class="st">"Group"</span>, label_by <span class="op">=</span> <span class="st">"ID"</span>, type <span class="op">=</span> <span class="st">"internal"</span><span class="op">)</span> </code></pre></div>
-<p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-1.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-2.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-3.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-4.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-5.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-6.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-7.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-8.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-9.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-4-10.png" width="700"></p>
+<span class="fu"><a href="../reference/mrBenchmark.html">mrBenchmark</a></span><span class="op">(</span>data <span class="op">=</span> <span class="st">"data1"</span>, Y <span class="op">=</span> <span class="st">"Class"</span>, pred <span class="op">=</span> <span class="st">"Predicted"</span>, group <span class="op">=</span> <span class="st">"Group"</span>, label_by <span class="op">=</span> <span class="st">"ID"</span>, type <span class="op">=</span> <span class="st">"internal"</span><span class="op">)</span> </code></pre></div>
+<p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-1.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-2.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-3.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-4.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-5.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-6.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-7.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-8.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-9.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-10.png" width="700"></p>
 </div>
 <div id="benchmarking-local-importance" class="section level3">
 <h3 class="hasAnchor">
 <a href="#benchmarking-local-importance" class="anchor"></a>Benchmarking: local importance</h3>
 <p>To investigate and interpret the contribution of variables at an individual level, we must use a local explanation method. Here we implement a local breakDown explainer. <code>mrLocalExplainer</code> produces both aggregated and individual results of variable contribution. Variables with a phi &gt; 0 contribute to an increase in predicted PRRSV outbreak risk, while variables with a phi &lt; 0 contribute to a decrease in predicted outbreak risk.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#Use this function to implement the local explainer </span>
 <span class="va">data</span><span class="op">&lt;-</span><span class="va">data</span><span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/pkg/plyr/man/mutate.html">mutate</a></span><span class="op">(</span>Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/plyr/man/revalue.html">revalue</a></span><span class="op">(</span><span class="va">Class</span>,
                          <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"1"</span> <span class="op">=</span> <span class="st">"Positive"</span>, <span class="st">"0"</span> <span class="op">=</span> <span class="st">"Negative"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> 
 <span class="va">data</span><span class="op">$</span><span class="va">Class</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/relevel.html">relevel</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">Class</span>, <span class="st">"Positive"</span><span class="op">)</span>
-<span class="fu"><a href="../reference/mrLocalExplainer.html">mrLocalExplainer</a></span><span class="op">(</span>my.data <span class="op">=</span> <span class="va">Y</span>, model_data <span class="op">=</span> <span class="va">yhats</span>, outcome <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">Class</span><span class="op">)</span>
+<span class="va">X1</span> <span class="op">&lt;-</span> <span class="va">X</span>
+<span class="fu"><a href="../reference/mrLocalExplainer.html">mrLocalExplainer</a></span><span class="op">(</span>X <span class="op">=</span> <span class="va">X1</span>, Model <span class="op">=</span> <span class="va">yhats</span>, Y <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">Class</span><span class="op">)</span>
 <span class="co">#&gt; Preparation of a new explainer is initiated</span>
 <span class="co">#&gt;   -&gt; model label       :  ranger  ( [33m default [39m )</span>
 <span class="co">#&gt;   -&gt; data              :  200  rows  42  cols </span>
@@ -235,19 +245,19 @@
 <span class="co">#&gt;   -&gt; model_info        :  By deafult classification tasks supports only numercical 'y' parameter. </span>
 <span class="co">#&gt;   -&gt; model_info        :  Consider changing to numerical vector with 0 and 1 values.</span>
 <span class="co">#&gt;   -&gt; model_info        :  Otherwise I will not be able to calculate residuals or loss function.</span>
-<span class="co">#&gt;   -&gt; predicted values  :  numerical, min =  0.1618017 , mean =  0.4919367 , max =  0.8665756  </span>
+<span class="co">#&gt;   -&gt; predicted values  :  numerical, min =  0.1959412 , mean =  0.4948436 , max =  0.8232724  </span>
 <span class="co">#&gt;   -&gt; residual function :  difference between y and yhat ( [33m default [39m )</span>
 <span class="co">#&gt;  [32m A new explainer has been created! [39m</span></code></pre></div>
-<p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-1.png" width="1440"></p>
+<p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-6-1.png" width="1440"></p>
 <p>Individual plots are produced in the list object <code>LE_indiv_plots</code>. Each plot corresponds to a single farm. An example of a positive farm and a negative farm are shown here.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">LE_indiv_plots</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
 <span class="co">#&gt; [[1]]</span></code></pre></div>
-<p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-6-1.png" width="1248"></p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-7-1.png" width="1248"></p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">LE_indiv_plots</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>
 <span class="co">#&gt; [[1]]</span></code></pre></div>
-<p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-6-2.png" width="1248"> At the positive farm we can see that yards from the public road and garbage collection are contributing to an increased outbreak risk, while manure removals and repair visits are contributing to a decreased outbreak risk. Likewise, at the negative farm yards to the public road and and the downtime required for manure removal personnel are contributing to an increased outbreak risk, while feed deliveries and manure removals are contributing to a decreased outbreak risk.</p>
+<p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-7-2.png" width="1248"> At the positive farm we can see that yards from the public road and garbage collection are contributing to an increased outbreak risk, while manure removals and repair visits are contributing to a decreased outbreak risk. Likewise, at the negative farm yards to the public road and and the downtime required for manure removal personnel are contributing to an increased outbreak risk, while feed deliveries and manure removals are contributing to a decreased outbreak risk.</p>
 <p>This session of the MrIML has been funded by Critical Agricultural Research and Extension 2019-68008-29910 from the USDA National Institute of Food and Agriculture and is a join effort by <a href="https://fieldepi.research.cvm.iastate.edu/">Dr. Linhares group</a> at Iowa State University and <a href="https://machado-lab.github.io/">Dr. Machado group</a> at North Carolina State University</p>
 </div>
 </div>

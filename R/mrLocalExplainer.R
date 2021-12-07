@@ -1,37 +1,37 @@
 #' Run local explanation methods for individual data points
 #'
-#' @param my.data A \code{dataframe} data frame of predictor variables
-#' @param model_data A \code{workflow} workflow object containing the machine learning model
-#' @param outcome \code{vector} vector containing the outcome for each data instance
+#' @param X A \code{dataframe} data frame of predictor variables
+#' @param Model A \code{workflow} workflow object containing the machine learning model
+#' @param Y \code{vector} vector containing the outcome for each data instance
 #'
 #' @return 
 #' @export
 #'
 #' @examples
-#' #mrLocalExplainer(data, yhats, data$Class)
+#' #mrLocalExplainer(X = data, Model = yhats, Y = data$Class)
 #' ## will return matrix of phi values, individualized and aggregated plots 
 #' 
 
 
-mrLocalExplainer <- function(my.data, model_data, outcome){
+mrLocalExplainer <- function(X, Model, Y){
   
   #create list objects needed later  
   indiv_plots <- list()
   mat1 <- list()
   
   #ensure outcome is stored as a factor
-  outcome <- as.factor(outcome)
+  Y <- as.factor(Y)
   
   #ensure that data is stored as a data.frame only
-  dat <- as.data.frame(my.data)
+  dat <- as.data.frame(X)
   
   #create colors needed for each outcome
-  num_levels <- length(levels(outcome))#number of levels in the outcome factor
+  num_levels <- length(levels(Y))#number of levels in the outcome factor
   
   my_colors <- pal_uchicago("dark")(9)[1:num_levels] #select same number of colors as there are levels 
   
   #create vector of colors according to outcome level 
-  color_levels <- as.numeric(as.factor(outcome)) 
+  color_levels <- as.numeric(as.factor(Y)) 
   
   for (i in 1:num_levels) {
     color_levels[which(color_levels == i)] <- my_colors[i]
@@ -43,7 +43,7 @@ mrLocalExplainer <- function(my.data, model_data, outcome){
   }
   
   #pull the model fit from a workflow object
-  model1 <- pull_workflow_fit(model_data[[1]]$mod1_k)
+  model1 <- pull_workflow_fit(Model[[1]]$mod1_k)
   
   #create explainer object
   model_explained <- explain.default(model1$fit, dat, predict.function = predict.function)
@@ -82,14 +82,14 @@ mrLocalExplainer <- function(my.data, model_data, outcome){
     values <- data1$y
     f <- data1$feature
     obs <- data1$svalue
-    class <- rep(as.character(outcome[i], times = n_feat))
+    class <- rep(as.character(Y[i], times = n_feat))
     ex_data <- cbind(class, f, values, obs)
     mat1[[i]] <- ex_data #store in list object
     
     #produce individual waterfall plots
     indiv_plots[[i]] <- ggplot(data = data1, aes(x = reorder(fplot, -y), y = y)) +
       labs(y = "phi")+
-      labs(x = "",subtitle = outcome[i]) +
+      labs(x = "",subtitle = Y[i]) +
       geom_bar(stat = "identity", fill = color_levels[i]) + #color will depend on individuals outcome class
       coord_flip() +
       guides(fill = FALSE)+
@@ -121,7 +121,7 @@ mrLocalExplainer <- function(my.data, model_data, outcome){
   tab4$f <- as.factor(tab4$f)
   tab4$f <- factor(tab4$f, levels = order_only) 
   
-  o_lvl<- levels(outcome)
+  o_lvl<- levels(Y)
   tab4$class <- relevel(as.factor(tab4$class), ref = o_lvl[1])
   
   #summary plot of variable contributions

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Wrapper to calculate and plot summed interactions of features across response variables. Bases on Greenwell et al 2018 — mrInteractions • mrIML</title>
+<title>Wrapper to calculate and plot summed interactions of features across response variables. Based on Greenwell et al 2018 — mrInteractions • mrIML</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Wrapper to calculate and plot summed interactions of features across response variables. Bases on Greenwell et al 2018 — mrInteractions" />
-<meta property="og:description" content="Wrapper to calculate and plot summed interactions of features across response variables. Bases on Greenwell et al 2018" />
+<meta property="og:title" content="Wrapper to calculate and plot summed interactions of features across response variables. Based on Greenwell et al 2018 — mrInteractions" />
+<meta property="og:description" content="Wrapper to calculate and plot summed interactions of features across response variables. Based on Greenwell et al 2018" />
 <meta property="og:image" content="nfj1380.io/mrIML/reference/figures/logo.png" />
 <meta property="og:image:alt" content="Multivariate–multi-response–interpretable machine learning" />
 <meta name="twitter:card" content="summary" />
@@ -107,7 +107,7 @@
       <a href="../articles/Vignette_biosecurity.html">Swine Biosecurity working example</a>
     </li>
     <li>
-      <a href="../articles/Vignette_LandscapeGenetics.html">Classification working example</a>
+      <a href="../articles/Vignette_classification.html">Classification working example</a>
     </li>
     <li>
       <a href="../articles/Vignette_regression.html">Regression working example</a>
@@ -142,16 +142,16 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Wrapper to calculate and plot summed interactions of features across response variables. Bases on Greenwell et al 2018</h1>
+    <h1>Wrapper to calculate and plot summed interactions of features across response variables. Based on Greenwell et al 2018</h1>
     <small class="dont-index">Source: <a href='https://github.com/nfj1380/mrIML/blob/master/R/mrInteractions.R'><code>R/mrInteractions.R</code></a></small>
     <div class="hidden name"><code>mrInteractions.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Wrapper to calculate and plot summed interactions of features across response variables. Bases on Greenwell et al 2018</p>
+    <p>Wrapper to calculate and plot summed interactions of features across response variables. Based on Greenwell et al 2018</p>
     </div>
 
-    <pre class="usage"><span class='fu'>mrInteractions</span><span class='op'>(</span><span class='va'>yhats</span>, <span class='va'>X</span>, <span class='va'>Y</span>, model <span class='op'>=</span> <span class='st'>"regression"</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>mrInteractions</span><span class='op'>(</span><span class='va'>yhats</span>, <span class='va'>X</span>, <span class='va'>Y</span>, mode <span class='op'>=</span> <span class='st'>"regression"</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -162,19 +162,18 @@
     </tr>
     <tr>
       <th>X</th>
-      <td><p>A <code>dataframe</code> is a response variable data set (species, OTUs, SNPs etc)</p></td>
+      <td><p>A <code>dataframe</code> is the feature data set</p></td>
     </tr>
     <tr>
       <th>Y</th>
-      <td><p>A <code>dataframe</code> #is the feature dataset</p></td>
+      <td><p>A <code>dataframe</code> is the response variable data set (species, OTUs, SNPs etc)</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The aim of this function is to enable users to calculate interaction importance for all fatures in a data set.
-and then use plot_mrpd (a plotting function) to create a pd plot for all species/SNPs for each feature.
-Could build functionality for ICE plots but that would be messy for multiple repsonse variables.</p>
+and then use plot_mrpd (a plotting function) to create a pd plot for all species/SNPs for each feature.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

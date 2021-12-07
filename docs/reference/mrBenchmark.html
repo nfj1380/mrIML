@@ -107,7 +107,7 @@
       <a href="../articles/Vignette_biosecurity.html">Swine Biosecurity working example</a>
     </li>
     <li>
-      <a href="../articles/Vignette_LandscapeGenetics.html">Classification working example</a>
+      <a href="../articles/Vignette_classification.html">Classification working example</a>
     </li>
     <li>
       <a href="../articles/Vignette_regression.html">Regression working example</a>
@@ -152,9 +152,9 @@
     </div>
 
     <pre class="usage"><span class='fu'>mrBenchmark</span><span class='op'>(</span>
-  my.data <span class='op'>=</span> <span class='st'>"data"</span>,
-  outcome <span class='op'>=</span> <span class='st'>"class"</span>,
-  y <span class='op'>=</span> <span class='st'>"predicted"</span>,
+  data <span class='op'>=</span> <span class='st'>"data"</span>,
+  Y <span class='op'>=</span> <span class='st'>"class"</span>,
+  pred <span class='op'>=</span> <span class='st'>"predicted"</span>,
   group <span class='op'>=</span> <span class='st'>"group1"</span>,
   label_by <span class='op'>=</span> <span class='st'>"ID"</span>,
   type <span class='op'>=</span> <span class='st'>"internal"</span>
@@ -164,15 +164,15 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>my.data</th>
+      <th>data</th>
       <td><p>A <code>character</code> object name of data frame</p></td>
     </tr>
     <tr>
-      <th>outcome</th>
+      <th>Y</th>
       <td><p>A <code>character</code> column name of variable containing outcome</p></td>
     </tr>
     <tr>
-      <th>y</th>
+      <th>pred</th>
       <td><p>A <code>character</code> column name of variable containing model predicted values</p></td>
     </tr>
     <tr>

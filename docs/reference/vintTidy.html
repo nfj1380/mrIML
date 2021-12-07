@@ -109,7 +109,7 @@ Greenwell et al. (2018)." />
       <a href="../articles/Vignette_biosecurity.html">Swine Biosecurity working example</a>
     </li>
     <li>
-      <a href="../articles/Vignette_LandscapeGenetics.html">Classification working example</a>
+      <a href="../articles/Vignette_classification.html">Classification working example</a>
     </li>
     <li>
       <a href="../articles/Vignette_regression.html">Regression working example</a>
@@ -162,7 +162,7 @@ Greenwell et al. (2018)." />
   parallel <span class='op'>=</span> <span class='cn'>TRUE</span>,
   paropts <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>...</span>,
-  model <span class='op'>=</span> <span class='st'>"classication"</span>
+  mode <span class='op'>=</span> <span class='st'>"classication"</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -227,7 +227,7 @@ arXiv:1805.04755 (2018).</p>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>mlbench</span><span class='op'>)</span>
 
 <span class='co'># Simulate training data</span>
-<span class='va'>trn</span> <span class='op'>&lt;-</span> <span class='fu'>gen_friedman</span><span class='op'>(</span><span class='fl'>500</span>, seed <span class='op'>=</span> <span class='fl'>101</span><span class='op'>)</span>  <span class='co'># ?vip::gen_friedman</span>
+<span class='va'>trn</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/vip/man/gen_friedman.html'>gen_friedman</a></span><span class='op'>(</span><span class='fl'>500</span>, seed <span class='op'>=</span> <span class='fl'>101</span><span class='op'>)</span>  <span class='co'># ?vip::gen_friedman</span>
 
 <span class='co'>#</span>
 <span class='co'># NOTE: The only interaction that actually occurs in the model from which</span>
@@ -245,7 +245,7 @@ arXiv:1805.04755 (2018).</p>
 <span class='va'>all_pairs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/utils/combn.html'>combn</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='st'>"x."</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span><span class='op'>)</span>, m <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
 <span class='va'>res</span> <span class='op'>&lt;-</span> <span class='cn'>NULL</span>
 <span class='kw'>for</span> <span class='op'>(</span><span class='va'>i</span> <span class='kw'>in</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_along</a></span><span class='op'>(</span><span class='va'>all_pairs</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='va'>interact</span> <span class='op'>&lt;-</span> <span class='fu'>vint</span><span class='op'>(</span><span class='va'>fit</span>, feature_names <span class='op'>=</span> <span class='va'>all_pairs</span><span class='op'>[</span>, <span class='va'>i</span><span class='op'>]</span>, n.trees <span class='op'>=</span> <span class='va'>best_iter</span><span class='op'>)</span>
+  <span class='va'>interact</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/vip/man/vint.html'>vint</a></span><span class='op'>(</span><span class='va'>fit</span>, feature_names <span class='op'>=</span> <span class='va'>all_pairs</span><span class='op'>[</span>, <span class='va'>i</span><span class='op'>]</span>, n.trees <span class='op'>=</span> <span class='va'>best_iter</span><span class='op'>)</span>
   <span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span><span class='op'>(</span><span class='va'>res</span>, <span class='va'>interact</span><span class='op'>)</span>
 <span class='op'>}</span>
 

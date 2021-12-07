@@ -1,8 +1,8 @@
 #' Compare and benchmark disease outbreak risk among and within groups
 #'
-#' @param my.data A \code{character} object name of data frame 
-#' @param outcome A \code{character} column name of variable containing outcome 
-#' @param y A \code{character} column name of variable containing model predicted values
+#' @param data A \code{character} object name of data frame 
+#' @param Y A \code{character} column name of variable containing outcome 
+#' @param pred A \code{character} column name of variable containing model predicted values
 #' @param group A \code{character} column name of variable that individuals should be grouped by
 #' @param type A \code{character} specify within group "internal" or among group "external" benchmarking 
 #' @param label_by A \code{character} column name of variable representing the individual units. If stated, these will be labeled on the ggplot. By default labels will not be included
@@ -13,24 +13,24 @@
 #' @examples
 
 
-mrBenchmark <- function(my.data = "data", outcome = "class", y = "predicted", group = "group1", label_by = "ID", type = "internal"){
+mrBenchmark <- function(data = "data", Y = "class", pred = "predicted", group = "group1", label_by = "ID", type = "internal"){
   
   #create objects from character strings
-  data1 <- as.data.frame(eval(parse(text=my.data)))
-  outcome1 <- as.factor(eval(parse(text=paste("data1$", outcome, sep=""))))
-  y1 <- eval(parse(text=paste("data1$", y, sep="")))
+  data1 <- as.data.frame(eval(parse(text=data)))
+  outcome1 <- as.factor(eval(parse(text=paste("data1$", Y, sep=""))))
+  pred1 <- eval(parse(text=paste("data1$", pred, sep="")))
   group1 <- as.factor(eval(parse(text=paste("data1$", group, sep=""))))
   
-  c <- discretize(as.numeric(y1), cuts = 3, labels = c("Low risk", "Medium risk", "High risk"), keep_na = FALSE, infs = FALSE)
+  c <- discretize(as.numeric(pred1), cuts = 3, labels = c("Low risk", "Medium risk", "High risk"), keep_na = FALSE, infs = FALSE)
   
   ##among group benchmarking
   if(type == "external"){
     
-    print(ggplot(data = data1, aes(x="", y=y1, color=as.factor(outcome1))) +
+    print(ggplot(data = data1, aes(x="", y=pred1, color=as.factor(outcome1))) +
             geom_boxplot(outlier.size=-1, lwd = 1.3)+
             facet_grid(as.formula(paste(".~", group)))+ #facetting variable
             scale_y_continuous(limits = c(0, 1))+
-            ylab(y)+
+            ylab(pred)+
             geom_hline(aes(lty="High risk",yintercept= c$breaks[3])) +
             geom_hline(aes(lty="Low risk",yintercept= c$breaks[2])) +
             scale_linetype_manual(name="Risk level",values=c(1,2)) +
@@ -39,7 +39,7 @@ mrBenchmark <- function(my.data = "data", outcome = "class", y = "predicted", gr
                   axis.title.x=element_blank(),
                   axis.text.x=element_blank(),
                   axis.ticks.x=element_blank()) +
-            scale_color_uchicago(palette = "dark", name = outcome))
+            scale_color_uchicago(palette = "dark", name = Y))
     
   }
   
@@ -60,20 +60,20 @@ mrBenchmark <- function(my.data = "data", outcome = "class", y = "predicted", gr
           filter(group1 == i)
         
         #create more objects
-        outcome2 <- as.factor(eval(parse(text=paste("data2$", outcome, sep=""))))
-        y2 <- eval(parse(text=paste("data2$", y, sep="")))
+        outcome2 <- as.factor(eval(parse(text=paste("data2$", Y, sep=""))))
+        pred2 <- eval(parse(text=paste("data2$", pred, sep="")))
         label2 <- as.factor(eval(parse(text=paste("data2$", label_by, sep=""))))
         
         #internal plots
-        print(ggplot(data2, aes(x=outcome2, y=y2, color = as.factor(outcome2))) +
+        print(ggplot(data2, aes(x=outcome2, y=pred2, color = as.factor(outcome2))) +
                 geom_point(aes(color = as.factor(outcome2))) +
-                xlab(outcome) +
-                ylab(y) +
+                xlab(Y) +
+                ylab(pred) +
                 geom_hline(aes(lty="High risk",yintercept= c$breaks[3])) +
                 geom_hline(aes(lty="Low risk",yintercept= c$breaks[2])) +
                 scale_linetype_manual(name="Risk level",values=c(1,2)) +
                 ggtitle(i) +
-                guides(colour = guide_legend(title = outcome)) +
+                guides(colour = guide_legend(title = Y)) +
                 geom_label_repel(aes(label=label2),
                                  fontface = "bold",
                                  force =10,
@@ -107,19 +107,19 @@ mrBenchmark <- function(my.data = "data", outcome = "class", y = "predicted", gr
           filter(group1 == i)
         
         #create more objects
-        outcome2 <- as.factor(eval(parse(text=paste("data2$", outcome, sep=""))))
-        y2 <- eval(parse(text=paste("data2$", y, sep="")))
+        outcome2 <- as.factor(eval(parse(text=paste("data2$", Y, sep=""))))
+        pred2 <- eval(parse(text=paste("data2$", pred, sep="")))
         
         #internal plots
-        print(ggplot(data2, aes(x=outcome2, y=y2, color = as.factor(outcome2))) +
+        print(ggplot(data2, aes(x=outcome2, y=pred2, color = as.factor(outcome2))) +
                 geom_point(aes(color = as.factor(outcome2))) +
-                xlab(outcome) +
-                ylab(y) +
+                xlab(Y) +
+                ylab(pred) +
                 ggtitle(i) +
                 geom_hline(aes(lty="High risk", yintercept = c$breaks[3])) +
                 geom_hline(aes(lty="Low risk", yintercept = c$breaks[2])) +
                 scale_linetype_manual(name="Risk level",values=c(1,2)) +
-                guides(colour = guide_legend(title = outcome)) +
+                guides(colour = guide_legend(title = Y)) +
                 theme(text = element_text(size = 12, face = "bold"),
                       plot.title = element_text(size = 18, hjust = 0.5),
                       axis.line = element_line(size=0.8, colour = "black"), 

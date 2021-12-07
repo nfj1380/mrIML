@@ -1,3 +1,15 @@
 .Rproj.user
 .travis.yml
 Classification_example.R
+
+# R files and developer folders
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.cache
+.idea
+
+# docs
+inst/doc
+docs

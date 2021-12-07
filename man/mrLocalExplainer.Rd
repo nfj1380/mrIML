@@ -4,14 +4,14 @@
 \alias{mrLocalExplainer}
 \title{Run local explanation methods for individual data points}
 \usage{
-mrLocalExplainer(my.data, model_data, outcome)
+mrLocalExplainer(X, Model, Y)
 }
 \arguments{
-\item{my.data}{A \code{dataframe} data frame of predictor variables}
+\item{X}{A \code{dataframe} data frame of predictor variables}
 
-\item{model_data}{A \code{workflow} workflow object containing the machine learning model}
+\item{Model}{A \code{workflow} workflow object containing the machine learning model}
 
-\item{outcome}{\code{vector} vector containing the outcome for each data instance}
+\item{Y}{\code{vector} vector containing the outcome for each data instance}
 }
 \value{
 
@@ -20,7 +20,7 @@ mrLocalExplainer(my.data, model_data, outcome)
 Run local explanation methods for individual data points
 }
 \examples{
-#mrLocalExplainer(data, yhats, data$Class)
+#mrLocalExplainer(X = data, Model = yhats, Y = data$Class)
 ## will return matrix of phi values, individualized and aggregated plots 
 
 }
