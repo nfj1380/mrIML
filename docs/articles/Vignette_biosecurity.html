@@ -30,6 +30,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
@@ -42,7 +44,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mrIML</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
@@ -75,15 +77,6 @@
 <li>
   <a href="../news/index.html">News</a>
 </li>
-<li>
-  <a href="../reference/index.html">Functions</a>
-</li>
-<li>
-  <a href="https://github.com/nfj1380/mrIML/">
-    <span class="fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
       </ul>
 <ul class="nav navbar-nav navbar-right"></ul>
 </div>
@@ -95,64 +88,64 @@
 
       
 
-      </header><script src="Vignette_biosecurity_files/header-attrs-2.11/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Biosecurity working example</h1>
-                        <h4 class="author">Abagael Sykes, Gustavo Machado</h4>
+                        <h4 data-toc-skip class="author">Abagael Sykes, Gustavo Machado</h4>
             
-            <h4 class="date">2021-12-05</h4>
+            <h4 data-toc-skip class="date">2021-12-16</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/nfj1380/mrIML/blob/master/vignettes/Vignette_biosecurity.Rmd"><code>vignettes/Vignette_biosecurity.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/nfj1380/mrIML/blob/HEAD/vignettes/Vignette_biosecurity.Rmd" class="external-link"><code>vignettes/Vignette_biosecurity.Rmd</code></a></small>
       <div class="hidden name"><code>Vignette_biosecurity.Rmd</code></div>
 
     </div>
 
     
     
-<div id="general-introduction" class="section level1">
-<h1 class="hasAnchor">
-<a href="#general-introduction" class="anchor"></a>General introduction</h1>
+<div class="section level1">
+<h1 id="general-introduction">General introduction<a class="anchor" aria-label="anchor" href="#general-introduction"></a>
+</h1>
 <p>MrIML is a R package allows users to generate and interpret multi-response models (i.e., joint species distribution models) leveraging advances in data science and machine learning. MrIML couples the tidymodel infrastructure developed by Max Kuhn and colleagues with model agnostic interpretable machine learning tools to gain insights into multiple response data such as. As such MrIML is flexible and easily extendable allowing users to construct everything from simple linear models to tree-based methods for each response using the same syntax and same way to compare predictive performance.In this vignette we will guide you through how to apply the MrIML framework to identify and benchmark biosecurity practices in veterinary disease. This working example is built upon a classification framework. More information about this can be found in the “Classification working example”.</p>
-<div id="lets-load-that-data" class="section level3">
-<h3 class="hasAnchor">
-<a href="#lets-load-that-data" class="anchor"></a>Lets load that data</h3>
+<div class="section level3">
+<h3 id="lets-load-that-data">Lets load that data<a class="anchor" aria-label="anchor" href="#lets-load-that-data"></a>
+</h3>
 <p>This is a synthesized dataset to simulate PRRSV infection, biosecurity practices and farm demographics on swine farms across the united states. Please note that the data included in this package is simulated, and is not a reflection of any real farm, company or state.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#other packages needed</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://nfj1380.github.io/mrIML">mrIML</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://parsnip.tidymodels.org">parsnip</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidymodels.tidymodels.org">tidymodels</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/workflows">workflows</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mayer79/flashlight">flashlight</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/">devtools</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dalex.drwhy.ai">DALEX</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://had.co.nz/plyr">plyr</a></span><span class="op">)</span>;<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/koalaverse/vip/">vip</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://nanx.me/ggsci/">ggsci</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/slowkow/ggrepel">ggrepel</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://pbiecek.github.io/breakDown/">breakDown</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/HenrikBengtsson/future.apply">future.apply</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sfirke/janitor">janitor</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://nfj1380.github.io/mrIML" class="external-link">mrIML</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://parsnip.tidymodels.org" class="external-link">parsnip</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidymodels.tidymodels.org" class="external-link">tidymodels</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/workflows" class="external-link">workflows</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mayer79/flashlight" class="external-link">flashlight</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dalex.drwhy.ai" class="external-link">DALEX</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://had.co.nz/plyr" class="external-link">plyr</a></span><span class="op">)</span>;<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/koalaverse/vip/" class="external-link">vip</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://nanx.me/ggsci/" class="external-link">ggsci</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/slowkow/ggrepel" class="external-link">ggrepel</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pbiecek.github.io/breakDown/" class="external-link">breakDown</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://future.apply.futureverse.org" class="external-link">future.apply</a></span><span class="op">)</span>; <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sfirke/janitor" class="external-link">janitor</a></span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">130</span><span class="op">)</span> <span class="co">#set the seed to ensure consistency</span>
-<span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu">mrIML</span><span class="fu">::</span><span class="va">biosecurity_vignette_data</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">130</span><span class="op">)</span> <span class="co">#set the seed to ensure consistency</span>
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu">mrIML</span><span class="fu">::</span><span class="va">biosecurity_vignette_data</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="defining-your-model-engine" class="section level3">
-<h3 class="hasAnchor">
-<a href="#defining-your-model-engine" class="anchor"></a>Defining your model engine</h3>
-<p>This is a random forest model, as used in the classification example. However there are more models available within MrIML and can be found <a href="https://www.tidymodels.org/find/">here</a>.</p>
+<div class="section level3">
+<h3 id="defining-your-model-engine">Defining your model engine<a class="anchor" aria-label="anchor" href="#defining-your-model-engine"></a>
+</h3>
+<p>This is a random forest model, as used in the classification example. However there are more models available within MrIML and can be found <a href="https://www.tidymodels.org/find/" class="external-link">here</a>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#split predictor variables and outcome</span>
-<span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">data</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>
-<span class="va">X</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">44</span>, <span class="fl">45</span><span class="op">)</span><span class="op">)</span> <span class="co">#remove class, group and ID</span>
+<span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>
+<span class="va">X</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">44</span>, <span class="fl">45</span><span class="op">)</span><span class="op">)</span> <span class="co">#remove class, group and ID</span>
 <span class="va">model1</span> <span class="op">&lt;-</span> <span class="co">#model used to generate yhat</span>
   <span class="co">#specify that the model is a random forest</span>
-  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/rand_forest.html">rand_forest</a></span><span class="op">(</span>trees <span class="op">=</span> <span class="fl">100</span>, mtry <span class="op">=</span> <span class="fu">tune</span><span class="op">(</span><span class="op">)</span>, min_n <span class="op">=</span> <span class="fu">tune</span><span class="op">(</span><span class="op">)</span>, mode <span class="op">=</span> <span class="st">"classification"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/rand_forest.html" class="external-link">rand_forest</a></span><span class="op">(</span>trees <span class="op">=</span> <span class="fl">100</span>, mtry <span class="op">=</span> <span class="fu">tune</span><span class="op">(</span><span class="op">)</span>, min_n <span class="op">=</span> <span class="fu">tune</span><span class="op">(</span><span class="op">)</span>, mode <span class="op">=</span> <span class="st">"classification"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="co">#select the engine/package that underlies the model</span>
-  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_engine.html">set_engine</a></span><span class="op">(</span><span class="st">"ranger"</span>, importance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"impurity"</span>,<span class="st">"impurity_corrected"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_engine.html" class="external-link">set_engine</a></span><span class="op">(</span><span class="st">"ranger"</span>, importance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"impurity"</span>,<span class="st">"impurity_corrected"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="co">#must be set to classification for classification problems</span>
-  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_args.html">set_mode</a></span><span class="op">(</span><span class="st">"classification"</span><span class="op">)</span></code></pre></div>
+  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_args.html" class="external-link">set_mode</a></span><span class="op">(</span><span class="st">"classification"</span><span class="op">)</span></code></pre></div>
 <p>###Parallel processing</p>
 <p>MrIML provides uses the flexible future apply functionality to set up multi-core processing. In the example below, we set up a cluster using 4 cores. If you don’t set up a cluster, the default settings will be used and the analysis will run sequentially.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># detectCores() #check how many cores you have available. We suggest keeping one core free for internet browsing etc.</span>
 
-<span class="va">cl</span> <span class="op">&lt;-</span> <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/makeCluster.html">makeCluster</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>
+<span class="va">cl</span> <span class="op">&lt;-</span> <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">makeCluster</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>
 
-<span class="fu">plan</span><span class="op">(</span><span class="va">cluster</span>, workers<span class="op">=</span><span class="va">cl</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="va">cluster</span>, workers<span class="op">=</span><span class="va">cl</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="running-the-analyis" class="section level3">
-<h3 class="hasAnchor">
-<a href="#running-the-analyis" class="anchor"></a>Running the analyis</h3>
+<div class="section level3">
+<h3 id="running-the-analyis">Running the analyis<a class="anchor" aria-label="anchor" href="#running-the-analyis"></a>
+</h3>
 <p>Now we can train and test our model.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">yhats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLpredicts.html">mrIMLpredicts</a></span><span class="op">(</span>X<span class="op">=</span><span class="va">X</span>, <span class="co">#features/predictors </span>
@@ -165,16 +158,16 @@
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span>yhats<span class="op">=</span><span class="va">yhats</span>, Model<span class="op">=</span><span class="va">model1</span>, Y<span class="op">=</span><span class="va">Y</span>, mode<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co">#predictive performance for individual responses </span>
-<span class="co">#&gt;   response  model_name           roc_AUC                 mcc      sensitivity</span>
-<span class="co">#&gt; 1    Class rand_forest 0.444444444444444 -0.0694634942483509 0.62962962962963</span>
+<span class="co">#&gt;   response  model_name           roc_AUC              mcc       sensitivity</span>
+<span class="co">#&gt; 1    Class rand_forest 0.737520128824477 0.44141479464782 0.703703703703704</span>
 <span class="co">#&gt;         specificity prevalence</span>
-<span class="co">#&gt; 1 0.304347826086957        0.5</span>
+<span class="co">#&gt; 1 0.739130434782609        0.5</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="co">#overall predictive performance. r2 for regression and MCC for classification</span>
-<span class="co">#&gt; [1] 0.4444444</span></code></pre></div>
+<span class="co">#&gt; [1] 0.7375201</span></code></pre></div>
 </div>
-<div id="benchmarking-global-importance" class="section level3">
-<h3 class="hasAnchor">
-<a href="#benchmarking-global-importance" class="anchor"></a>Benchmarking: global importance</h3>
+<div class="section level3">
+<h3 id="benchmarking-global-importance">Benchmarking: global importance<a class="anchor" aria-label="anchor" href="#benchmarking-global-importance"></a>
+</h3>
 <p>Here we can look at the variable importance. This is the dependence between our outcome and biosecurity variables.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#calculate variable importance</span>
@@ -185,8 +178,8 @@
         cutoff<span class="op">=</span> <span class="fl">0.6</span>,
         plot.pca<span class="op">=</span><span class="st">'no'</span><span class="op">)</span> <span class="co">#Follow instructions in console</span></code></pre></div>
 <p><img src="Vignette_biosecurity_files/figure-html/variable%20importance-1.png" width="1248"></p>
-<pre><code>#&gt; Press [enter] to plot individual variable importance summaries
-#&gt; [1] ""</code></pre>
+<pre><code><span class="co">#&gt; Press [enter] to plot individual variable importance summaries</span>
+<span class="co">#&gt; [1] ""</span></code></pre>
 <p>We can explore further and assess the partial dependence of each variable. Here we isolate the dependence of one variable and visualize how this dependence changes over different observed values.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#create a flashlight object</span>
@@ -195,24 +188,24 @@
                    index<span class="op">=</span><span class="fl">1</span>,
                    mode<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span> 
 <span class="co">#plot partial dependence profiles</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/flashlight/man/light_profile.html">light_profile</a></span><span class="op">(</span><span class="va">fl</span>, v <span class="op">=</span> <span class="st">"Premises_in_3_miles"</span><span class="op">)</span><span class="op">)</span> </code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/flashlight/man/light_profile.html" class="external-link">light_profile</a></span><span class="op">(</span><span class="va">fl</span>, v <span class="op">=</span> <span class="st">"Premises_in_3_miles"</span><span class="op">)</span><span class="op">)</span> </code></pre></div>
 <p><img src="Vignette_biosecurity_files/figure-html/pdp-1.png" width="700"></p>
 </div>
-<div id="benchmarking-predicted-risk" class="section level3">
-<h3 class="hasAnchor">
-<a href="#benchmarking-predicted-risk" class="anchor"></a>Benchmarking: predicted risk</h3>
+<div class="section level3">
+<h3 id="benchmarking-predicted-risk">Benchmarking: predicted risk<a class="anchor" aria-label="anchor" href="#benchmarking-predicted-risk"></a>
+</h3>
 <p>The following function allows you to visualize and compare predicted risk among and within groups</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#apply the trained model to the entire data set to provide risk of predicted outbreak</span>
-<span class="va">fit_bio</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://workflows.tidymodels.org//reference/workflow-extractors.html">pull_workflow_fit</a></span><span class="op">(</span><span class="va">yhats</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">mod1_k</span><span class="op">)</span>
-<span class="va">preds_pos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit_bio</span>, <span class="va">data</span>, <span class="st">"prob"</span><span class="op">)</span>
+<span class="va">fit_bio</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://workflows.tidymodels.org//reference/workflow-extractors.html" class="external-link">pull_workflow_fit</a></span><span class="op">(</span><span class="va">yhats</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">mod1_k</span><span class="op">)</span>
+<span class="va">preds_pos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit_bio</span>, <span class="va">data</span>, <span class="st">"prob"</span><span class="op">)</span>
 <span class="va">data</span><span class="op">$</span><span class="va">Predicted</span> <span class="op">&lt;-</span> <span class="va">preds_pos</span><span class="op">$</span><span class="va">.pred_1</span>
 <span class="co">#process data ready for the function</span>
-<span class="va">data</span><span class="op">$</span><span class="va">Class</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">Class</span><span class="op">)</span>
-<span class="va">data</span><span class="op">&lt;-</span><span class="va">data</span><span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/plyr/man/mutate.html">mutate</a></span><span class="op">(</span>Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/plyr/man/revalue.html">revalue</a></span><span class="op">(</span><span class="va">Class</span>,
-                         <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"1"</span> <span class="op">=</span> <span class="st">"Positive"</span>, <span class="st">"0"</span> <span class="op">=</span> <span class="st">"Negative"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> 
-<span class="va">data</span><span class="op">$</span><span class="va">Class</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/relevel.html">relevel</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">Class</span>, <span class="st">"Positive"</span><span class="op">)</span>
+<span class="va">data</span><span class="op">$</span><span class="va">Class</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">Class</span><span class="op">)</span>
+<span class="va">data</span><span class="op">&lt;-</span><span class="va">data</span><span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://rdrr.io/pkg/plyr/man/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/plyr/man/revalue.html" class="external-link">revalue</a></span><span class="op">(</span><span class="va">Class</span>,
+                         <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1"</span> <span class="op">=</span> <span class="st">"Positive"</span>, <span class="st">"0"</span> <span class="op">=</span> <span class="st">"Negative"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> 
+<span class="va">data</span><span class="op">$</span><span class="va">Class</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/relevel.html" class="external-link">relevel</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">Class</span>, <span class="st">"Positive"</span><span class="op">)</span>
 <span class="va">data1</span> <span class="op">&lt;-</span> <span class="va">data</span>
 <span class="co">#plot among group comparison of predicted risk</span>
 <span class="fu"><a href="../reference/mrBenchmark.html">mrBenchmark</a></span><span class="op">(</span>data <span class="op">=</span> <span class="st">"data1"</span>, Y <span class="op">=</span> <span class="st">"Class"</span>, pred <span class="op">=</span> <span class="st">"Predicted"</span>, group <span class="op">=</span> <span class="st">"Group"</span>, type <span class="op">=</span> <span class="st">"external"</span><span class="op">)</span> </code></pre></div>
@@ -222,32 +215,32 @@
 <span class="fu"><a href="../reference/mrBenchmark.html">mrBenchmark</a></span><span class="op">(</span>data <span class="op">=</span> <span class="st">"data1"</span>, Y <span class="op">=</span> <span class="st">"Class"</span>, pred <span class="op">=</span> <span class="st">"Predicted"</span>, group <span class="op">=</span> <span class="st">"Group"</span>, label_by <span class="op">=</span> <span class="st">"ID"</span>, type <span class="op">=</span> <span class="st">"internal"</span><span class="op">)</span> </code></pre></div>
 <p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-1.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-2.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-3.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-4.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-5.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-6.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-7.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-8.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-9.png" width="700"><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-5-10.png" width="700"></p>
 </div>
-<div id="benchmarking-local-importance" class="section level3">
-<h3 class="hasAnchor">
-<a href="#benchmarking-local-importance" class="anchor"></a>Benchmarking: local importance</h3>
+<div class="section level3">
+<h3 id="benchmarking-local-importance">Benchmarking: local importance<a class="anchor" aria-label="anchor" href="#benchmarking-local-importance"></a>
+</h3>
 <p>To investigate and interpret the contribution of variables at an individual level, we must use a local explanation method. Here we implement a local breakDown explainer. <code>mrLocalExplainer</code> produces both aggregated and individual results of variable contribution. Variables with a phi &gt; 0 contribute to an increase in predicted PRRSV outbreak risk, while variables with a phi &lt; 0 contribute to a decrease in predicted outbreak risk.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#Use this function to implement the local explainer </span>
-<span class="va">data</span><span class="op">&lt;-</span><span class="va">data</span><span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/plyr/man/mutate.html">mutate</a></span><span class="op">(</span>Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/plyr/man/revalue.html">revalue</a></span><span class="op">(</span><span class="va">Class</span>,
-                         <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"1"</span> <span class="op">=</span> <span class="st">"Positive"</span>, <span class="st">"0"</span> <span class="op">=</span> <span class="st">"Negative"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> 
-<span class="va">data</span><span class="op">$</span><span class="va">Class</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/relevel.html">relevel</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">Class</span>, <span class="st">"Positive"</span><span class="op">)</span>
+<span class="va">data</span><span class="op">&lt;-</span><span class="va">data</span><span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://rdrr.io/pkg/plyr/man/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/plyr/man/revalue.html" class="external-link">revalue</a></span><span class="op">(</span><span class="va">Class</span>,
+                         <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1"</span> <span class="op">=</span> <span class="st">"Positive"</span>, <span class="st">"0"</span> <span class="op">=</span> <span class="st">"Negative"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> 
+<span class="va">data</span><span class="op">$</span><span class="va">Class</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/relevel.html" class="external-link">relevel</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">Class</span>, <span class="st">"Positive"</span><span class="op">)</span>
 <span class="va">X1</span> <span class="op">&lt;-</span> <span class="va">X</span>
 <span class="fu"><a href="../reference/mrLocalExplainer.html">mrLocalExplainer</a></span><span class="op">(</span>X <span class="op">=</span> <span class="va">X1</span>, Model <span class="op">=</span> <span class="va">yhats</span>, Y <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">Class</span><span class="op">)</span>
 <span class="co">#&gt; Preparation of a new explainer is initiated</span>
-<span class="co">#&gt;   -&gt; model label       :  ranger  ( [33m default [39m )</span>
+<span class="co">#&gt;   -&gt; model label       :  ranger  ( <span style="color: #BBBB00;"> default </span><span> )</span></span>
 <span class="co">#&gt;   -&gt; data              :  200  rows  42  cols </span>
-<span class="co">#&gt;   -&gt; target variable   :  not specified! ( [31m WARNING [39m )</span>
-<span class="co">#&gt;   -&gt; predict function  :  yhat.ranger  will be used ( [33m default [39m )</span>
-<span class="co">#&gt;   -&gt; predicted values  :  No value for predict function target column. ( [33m default [39m )</span>
-<span class="co">#&gt;   -&gt; model_info        :  package ranger , ver. 0.12.1 , task classification ( [33m default [39m ) </span>
-<span class="co">#&gt;   -&gt; model_info        :  Model info detected classification task but 'y' is a NULL .  ( [31m WARNING [39m )</span>
+<span class="co">#&gt;   -&gt; target variable   :  not specified! ( <span style="color: #BB0000;"> WARNING </span><span> )</span></span>
+<span class="co">#&gt;   -&gt; predict function  :  yhat.ranger  will be used ( <span style="color: #BBBB00;"> default </span><span> )</span></span>
+<span class="co">#&gt;   -&gt; predicted values  :  No value for predict function target column. ( <span style="color: #BBBB00;"> default </span><span> )</span></span>
+<span class="co">#&gt;   -&gt; model_info        :  package ranger , ver. 0.12.1 , task classification ( <span style="color: #BBBB00;"> default </span><span> ) </span></span>
+<span class="co">#&gt;   -&gt; model_info        :  Model info detected classification task but 'y' is a NULL .  ( <span style="color: #BB0000;"> WARNING </span><span> )</span></span>
 <span class="co">#&gt;   -&gt; model_info        :  By deafult classification tasks supports only numercical 'y' parameter. </span>
 <span class="co">#&gt;   -&gt; model_info        :  Consider changing to numerical vector with 0 and 1 values.</span>
 <span class="co">#&gt;   -&gt; model_info        :  Otherwise I will not be able to calculate residuals or loss function.</span>
-<span class="co">#&gt;   -&gt; predicted values  :  numerical, min =  0.1959412 , mean =  0.4948436 , max =  0.8232724  </span>
-<span class="co">#&gt;   -&gt; residual function :  difference between y and yhat ( [33m default [39m )</span>
-<span class="co">#&gt;  [32m A new explainer has been created! [39m</span></code></pre></div>
+<span class="co">#&gt;   -&gt; predicted values  :  numerical, min =  0.2108687 , mean =  0.5090297 , max =  0.7711763  </span>
+<span class="co">#&gt;   -&gt; residual function :  difference between y and yhat ( <span style="color: #BBBB00;"> default </span><span> )</span></span>
+<span class="co">#&gt;  <span style="color: #00BB00;"> A new explainer has been created! </span></span></code></pre></div>
 <p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-6-1.png" width="1440"></p>
 <p>Individual plots are produced in the list object <code>LE_indiv_plots</code>. Each plot corresponds to a single farm. An example of a positive farm and a negative farm are shown here.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
@@ -258,7 +251,7 @@
 <code class="sourceCode R"><span class="va">LE_indiv_plots</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>
 <span class="co">#&gt; [[1]]</span></code></pre></div>
 <p><img src="Vignette_biosecurity_files/figure-html/unnamed-chunk-7-2.png" width="1248"> At the positive farm we can see that yards from the public road and garbage collection are contributing to an increased outbreak risk, while manure removals and repair visits are contributing to a decreased outbreak risk. Likewise, at the negative farm yards to the public road and and the downtime required for manure removal personnel are contributing to an increased outbreak risk, while feed deliveries and manure removals are contributing to a decreased outbreak risk.</p>
-<p>This session of the MrIML has been funded by Critical Agricultural Research and Extension 2019-68008-29910 from the USDA National Institute of Food and Agriculture and is a join effort by <a href="https://fieldepi.research.cvm.iastate.edu/">Dr. Linhares group</a> at Iowa State University and <a href="https://machado-lab.github.io/">Dr. Machado group</a> at North Carolina State University</p>
+<p>This session of the MrIML has been funded by Critical Agricultural Research and Extension 2019-68008-29910 from the USDA National Institute of Food and Agriculture.</p>
 </div>
 </div>
   </div>
@@ -274,11 +267,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Nick Fountain-Jones, Nicholas Clark, Chris Kozakiewicz, <a href="https://machado-lab.github.io/">Gustavo Machado</a>.</p>
+  <p></p>
+<p>Developed by Nick Fountain-Jones, Nicholas Clark, Chris Kozakiewicz, <a href="https://machado-lab.github.io/" class="external-link">Gustavo Machado</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -286,6 +281,8 @@
 
   
 
+
+  
 
   </body>
 </html>

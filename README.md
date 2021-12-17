@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# mrIML: Multivariate (multi-response) interpretable machine learning <a href='https://nfj1380.github.io/mrIML/index.html'><img src="man/figures/logo.png" align="right" height="139"/></a>
+# mrIML: Multivariate (multi-response) interpretable machine learning <a href='https://nfj1380.github.io/mrIML/index.html'><img src="man/figures/logo.png" align="right" height="120"/></a>
 
 <!-- badges: start -->
 
@@ -18,14 +18,31 @@ commit](https://img.shields.io/github/last-commit/nfj1380/mrIML?style=flat-squar
 
 This package aims to enable users to build and interpret multivariate
 machine learning models harnessing the tidyverse (tidy model syntax in
-particular). This package builds off ideas from Gradient Forests (Ellis
-et al 2012), ecological genomic approaches (Fitzpatrick and Keller,
-2014) and multi-response stacking algorithms (Xing et al 2019).
+particular). This package builds off ideas from Gradient Forests [Ellis
+et al
+2012](https://esajournals-onlinelibrary-wiley-com.prox.lib.ncsu.edu/doi/full/10.1890/11-0252.1)),
+ecological genomic approaches [Fitzpatrick and Keller,
+2014](https://onlinelibrary.wiley.com/doi/abs/10.1111/ele.12376) and
+multi-response stacking algorithms \[Xing et al 2019\].
 
 This package can be of use for any multi-response machine learning
 problem, but was designed to handle data common to community ecology
 (site by species data) and ecological genomics (individual or population
 by SNP loci).
+
+## Recent mrIML publications
+
+1.  Fountain-Jones, N. M., Kozakiewicz, C. P., Forester, B. R.,
+    Landguth, E. L., Carver, S., Charleston, M., Gagne, R. B.,
+    Greenwell, B., Kraberger, S., Trumbo, D. R., Mayer, M., Clark, N.
+    J., & Machado, G. (2021). MrIML: Multi-response interpretable
+    machine learning to model genomic landscapes. Molecular Ecology
+    Resources, 21, 2766– 2781. <https://doi.org/10.1111/1755-0998.13495>
+    2.Sykes, A. L., Silva, G. S., Holtkamp, D. J., Mauch, B. W.,
+    Osemeke, O., Linhares, D. C.L., & Machado, G. (2021). Interpretable
+    machine learning applied to on-farm biosecurity and porcine
+    reproductive and respiratory syndrome virus. Transboundary and
+    Emerging Diseases, 00, 1– 15. <https://doi.org/10.1111/tbed.14369>
 
 ## Installation
 
@@ -42,14 +59,20 @@ library(mrIML)
 **mrIML** is designed to be used with a single function call or to be
 used in an ad-hoc fashion via individual function calls. In the
 following section we give an overview of the simple use case. For more
-on using each function see the [function documentation](xx). The core
-functions for both regression and classification are:
-[`mrIMLpredicts`](xx), [`mrIMLperformance`](xx), and
-[`mrInteractions`](xx),for plotting and visualization [`mrVip`](xx),
-[`mrFlashlight`](xx), and[`plot_vi`](xx). Estimating the interactions
-alone can be substantially computationally demanding depending on the
-number of outcomes you want to test. The first step to using the package
-is to load it as follows.
+on using each function see the [function
+documentation](https://nfj1380.github.io/mrIML/reference/index.html).
+The core functions for both regression and classification are:
+[`mrIMLpredicts`](https://nfj1380.github.io/mrIML/reference/mrIMLpredicts.html),
+[`mrIMLperformance`](https://nfj1380.github.io/mrIML/reference/mrIMLperformance.html),
+and
+[`mrInteractions`](https://nfj1380.github.io/mrIML/reference/mrInteractions.html),for
+plotting and visualization
+[`mrVip`](https://nfj1380.github.io/mrIML/reference/mrVip.html),
+[`mrFlashlight`](https://nfj1380.github.io/mrIML/reference/mrFlashlight.html),
+and[`plot_vi`](https://nfj1380.github.io/mrIML/reference/plot_vi.html).
+Estimating the interactions alone can be substantially computationally
+demanding depending on the number of outcomes you want to test. The
+first step to using the package is to load it as follows.
 
 ## Model component
 
@@ -57,89 +80,178 @@ Now all the data is loaded and ready to go we can formulate the model
 using tidymodel syntax. In this case we have binary data (SNP
 presence/absence at each loci) but the data could also be counts or
 continuous (the set\_model argument would be “regression” instead of
-“classification”). The user can specify any model from the tidymodel
+“classification”). The user can specify any model from the ‘tidymodel’
 universe as ‘model 1’ (see <https://www.tidymodels.org/find/> for
 details). However, we have done most of our testing on random forests
-(rf), xgr boost and glms (generalized linear models). Here we will
-specify a random forest classification model as the model applied to
-each response.
+(rf) and glms (generalized linear models). Here we will specify a random
+forest classification model as the model applied to each response.
 
 ``` r
 model1 <- 
-  rand_forest(trees = 100, mode = "classification", mtry = tune(), min_n = tune()) %>% #100 trees are set for brevity
-  set_engine("randomForest")
+  rand_forest(trees = 10, mode = "classification", 
+              mtry = tune(), 
+              min_n = tune()) %>% #100 trees are set for brevity
+              set_engine("randomForest")
 ```
 
-### \[mrIMLpredicts\]
+### [`mrIMLpredicts`](https://nfj1380.github.io/mrIML/reference/mrIMLpredicts.html)
 
 This function represents the core functionality of the package and
 includes results reporting, plotting and optional saving. It requires a
 data frame of X t( the snp data for example) and Y represented by the
 covariates or features.
 
-For example, for a regression problem lets look at the data from Fitzpatrick and Keller (2015) from `{mrIML}`. Columns 1-2 represent geographical coordinates, 3-9 environmental data for each location, 10-14 are spatial eigenvectors (MEMs) and the remaining columns are proportion of the poulations with a each reference allelle. 
+Load example data (cite) data from `{mrIML}`.
 
 ``` r
-data <- gfData[1:20]
-head(data)
-#>         x     y bio_1 bio_10 bio_15 bio_18 bio_2 bio_7 elevation     MEM.1      MEM.2      MEM.3
-#> 1 -101.57 49.14    31    182     63    189   131   489       498  24.55053   7.444415  -9.018635
-#> 2 -147.89 69.10  -107     85     60     89   110   507       400 -14.18000 -22.945314 -11.845836
-#> 3 -148.51 63.39   -52     90     63    196   102   399      1040 -15.77654 -27.420568 -13.038813
-#> 4  -98.35 54.51   -12    159     52    204   103   510       213  20.73482   8.715802 -19.187171
-#> 5 -112.79 53.33    18    150     66    234   119   427       778  18.51313  -3.488470  24.300653
-#> 6 -146.17 64.59   -43    135     65    154   109   493       460 -17.18802 -31.070507 -13.633361
-#>         MEM.4 REFERENCE_X80928 REFERENCE_X172196 REFERENCE_X172210 REFERENCE_X172625
-#> 1  0.06879434        0.4000000        0.03333333         0.2692308         0.4230769
-#> 2 21.59719769        0.3611111        0.00000000         0.2222222         0.4705882
-#> 3 14.65433486        0.4333333        0.00000000         0.1666667         0.1666667
-#> 4 -5.13771830        0.3846154        0.07142857         0.4230769         0.4615385
-#> 5  7.73910268        0.4285714        0.00000000         0.4000000         0.4000000
-#> 6  5.78938201        0.3333333        0.00000000         0.1785714         0.3846154
-#>   REFERENCE_X177996 REFERENCE_X180626 REFERENCE_X181299
-#> 1        0.00000000        0.03846154        0.06666667
-#> 2        0.00000000        0.05555556        0.00000000
-#> 3        0.03571429        0.16666667        0.00000000
-#> 4        0.10714286        0.00000000        0.00000000
-#> 5        0.06666667        0.19230769        0.06666667
-#> 6        0.00000000        0.08333333        0.00000000
+fData <- filterRareCommon (Responsedata,
+                           lower=0.4,
+                           higher=0.7) 
+data <- fData[1:20]
 ```
 
-For a classiciation problem, the data is similar except are response (by definition) is binary (i.e., is there a muutation at that locus).
+\#\#\#Parallel processing
+
+MrIML provides uses the flexible future apply functionality to set up
+multi-core processing. In the example below, we set up a cluster using 4
+cores. If you don’t set up a cluster, the default settings will be used
+and the analysis will run sequentially.
 
 ``` r
-# Define set of features
+# detectCores() #check how many cores you have available. We suggest keeping one core free for internet browsing etc.
+
+cl <- parallel::makeCluster(4)
+
+plan(cluster,
+     workers=cl)
+```
+
+``` r
+#Define set of features
+fData <- filterRareCommon (Responsedata,
+                           lower=0.4,
+                           higher=0.7) 
+Y <- fData #For simplicity when comparing
+#Define set the outcomes of interest
+str(Features) 
+#> 'data.frame':    20 obs. of  19 variables:
+#>  $ Grassland       : num  0.07 0.0677 0.1845 0.0981 0.1578 ...
+#>  $ Shrub.Scrub     : num  0.557 0.767 0.524 0.786 0.842 ...
+#>  $ Forest          : num  0.01072 0.030588 0.008615 0.000662 0.000616 ...
+#>  $ HighlyDev       : num  0 0 0.00225 0 0 ...
+#>  $ Urban           : num  0 0 0.00159 0 0 ...
+#>  $ Suburban        : num  0.00357 0.13268 0.01325 0.00119 0 ...
+#>  $ Exurban         : num  0.00622 0.03019 0 0.01906 0 ...
+#>  $ Altered         : num  0.441 0.182 0.114 0.12 0 ...
+#>  $ Distance        : num  1.321 0.492 3.231 5.629 4.739 ...
+#>  $ Latitude        : num  33.8 33.8 33.8 33.8 33.8 ...
+#>  $ Longitude       : num  -118 -118 -118 -118 -118 ...
+#>  $ Age             : int  3 0 3 2 3 3 2 3 3 3 ...
+#>  $ Sex             : int  1 1 1 1 0 0 0 1 1 1 ...
+#>  $ Relatedness.PCO1: num  -0.1194 -0.0389 -0.1618 -0.1811 -0.1564 ...
+#>  $ Relatedness.PCO2: num  -0.1947 -0.0525 -0.321 -0.0827 0.1 ...
+#>  $ Relatedness.PCO3: num  -0.191 -0.0874 0.0541 -0.0627 -0.0111 ...
+#>  $ Relatedness.PCO4: num  0.1117 0.2422 0.0974 0.2129 0.2259 ...
+#>  $ Relatedness.PCO5: num  0.06405 0.0706 0.03514 -0.00084 0.0894 ...
+#>  $ Relatedness.PCO6: num  -0.0432 0.0683 -0.0805 0.2247 -0.055 ...
+#Remove NAs from the feature/predictor data.
 FeaturesnoNA<-Features[complete.cases(Features), ]
-Y <- FeaturesnoNA #for simplicity
-# Define set the outcomes of interst
-fData <- filterRareCommon (Responsedata, lower=0.4, higher=0.7) 
-X <- fData
-head(X)
+X <- FeaturesnoNA #For simplicity
+#For more efficient testing for interactions (more variables more interacting pairs)
+X <- FeaturesnoNA[c(1:3)] #Three features only
 
-yhats <- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', mod='classification', parallel = FALSE)
 
-#save(yhats, file='logreg_model')
-ModelPerf <- mrIMLperformance(yhats, model1, X=X) #
-ModelPerf[[2]] #this measures performance across all loci.
-#> [1] 0.5689655
+yhats <- mrIMLpredicts(X=X, #Features/predictors 
+                       Y=Y, #Response data
+                       Model=model1, #Specify your model
+                       balance_data='no', #Chose how to balance your data 
+                       mode='classification', #Chose your mode (classification versus regression)
+                       seed = 120) #Set seed
+
+ModelPerf <- mrIMLperformance(yhats=yhats,
+                              Model=model1,
+                              Y=Y, mode='classification')
+ModelPerf[[1]] #Predictive performance for individual responses 
+#>    response  model_name           roc_AUC                mcc       sensitivity       specificity
+#> 1   env_131 rand_forest                 1  0.666666666666667 0.666666666666667                 1
+#> 2   env_163 rand_forest              0.75               <NA>                 0                 1
+#> 3   env_164 rand_forest                 1                  1                 1                 1
+#> 4   env_167 rand_forest 0.583333333333333 -0.408248290463863 0.666666666666667                 0
+#> 5   env_169 rand_forest                 1  0.666666666666667 0.666666666666667                 1
+#> 6   env_212 rand_forest                 1                  1                 1                 1
+#> 7    env_23 rand_forest             0.875  0.408248290463863                 1               0.5
+#> 8    env_24 rand_forest              0.25 -0.166666666666667               0.5 0.333333333333333
+#> 9    env_41 rand_forest 0.583333333333333  0.166666666666667 0.666666666666667               0.5
+#> 10   env_47 rand_forest                 1  0.666666666666667                 1 0.666666666666667
+#> 11   env_59 rand_forest                 1  0.666666666666667 0.666666666666667                 1
+#> 12    env_8 rand_forest 0.666666666666667               <NA>                 1                 0
+#> 13   env_84 rand_forest                 1  0.666666666666667 0.666666666666667                 1
+#> 14   env_85 rand_forest                 1  0.666666666666667 0.666666666666667                 1
+#> 15   env_86 rand_forest               0.5               <NA>                 0                 1
+#> 16  pol_105 rand_forest             0.875  0.612372435695795              0.75                 1
+#> 17  pol_108 rand_forest              0.75  0.408248290463863               0.5                 1
+#> 18  pol_111 rand_forest                 1                  1                 1                 1
+#> 19  pol_117 rand_forest 0.583333333333333  0.166666666666667 0.666666666666667               0.5
+#> 20  pol_132 rand_forest                 1  0.666666666666667                 1 0.666666666666667
+#> 21  pol_159 rand_forest              0.25 -0.166666666666667               0.5 0.333333333333333
+#> 22  pol_258 rand_forest              0.25 -0.166666666666667               0.5 0.333333333333333
+#> 23   pol_30 rand_forest                 1  0.666666666666667                 1 0.666666666666667
+#> 24  pol_340 rand_forest 0.416666666666667 -0.166666666666667 0.333333333333333               0.5
+#> 25  pol_353 rand_forest               0.5               <NA>                 0                 1
+#> 26  pol_366 rand_forest                 1  0.666666666666667 0.666666666666667                 1
+#> 27   pol_87 rand_forest                 1  0.666666666666667                 1 0.666666666666667
+#> 28   pol_88 rand_forest                 1  0.666666666666667                 1 0.666666666666667
+#> 29   pol_89 rand_forest                 1  0.666666666666667                 1 0.666666666666667
+#>           prevalence
+#> 1  0.421052631578947
+#> 2  0.631578947368421
+#> 3  0.421052631578947
+#> 4  0.421052631578947
+#> 5  0.421052631578947
+#> 6  0.684210526315789
+#> 7  0.631578947368421
+#> 8  0.421052631578947
+#> 9  0.473684210526316
+#> 10 0.473684210526316
+#> 11 0.421052631578947
+#> 12 0.473684210526316
+#> 13 0.421052631578947
+#> 14 0.421052631578947
+#> 15 0.421052631578947
+#> 16 0.473684210526316
+#> 17 0.421052631578947
+#> 18 0.421052631578947
+#> 19 0.473684210526316
+#> 20 0.473684210526316
+#> 21 0.473684210526316
+#> 22 0.473684210526316
+#> 23 0.473684210526316
+#> 24 0.421052631578947
+#> 25 0.421052631578947
+#> 26 0.421052631578947
+#> 27 0.473684210526316
+#> 28 0.473684210526316
+#> 29 0.473684210526316
+ModelPerf[[2]]#Overall predictive performance. r2 for regression and MCC for classification
+#> [1] 0.7873563
 ```
 
 ## Plotting
 
 ``` r
-VI <- mrVip(yhats, Y=Y) 
-plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0, plot.pca='yes') #the cutoff reduces the number of individual models printed in the second plot. 
+VI <- mrVip(yhats, X=X) 
+plot_vi(VI=VI,
+        X=X,
+        Y=Y,
+        modelPerf=ModelPerf, 
+       cutoff= 0, mode='classification') #The cutoff reduces the number of individual models printed in the second plot. 
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
 
     #> Press [enter] to plot individual variable importance summaries
 
-<img src="man/figures/README-unnamed-chunk-7-2.png" width="100%" />
-
-    #> Press [enter] to plot the importance PCA plot
-
-<img src="man/figures/README-unnamed-chunk-7-3.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-8-2.png" width="100%" />
 
 ## Effect of a feature on genetic change
 
@@ -149,22 +261,49 @@ effect of a feature on genetic change. Partial dependencies take longer
 to calculate and are more sensitive to correlated features
 
 ``` r
-flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", model='classification')
+flashlightObj <- mrFlashlight(yhats,
+                              X=X,
+                              Y=Y,
+                              response = "single",
+                              index=1,
+                              mode='classification')
+
 #plot prediction scatter for all responses. Gets busy with 
-plot(light_scatter(flashlightObj, v = "Forest", type = "predicted"))
+plot(light_scatter(flashlightObj,
+                   v = "Forest",
+                   type = "predicted"))
 ```
 
 <img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
 
 ``` r
-
-#profileData_pd <- light_profile(flashlightObj,  v = "Grassland")
-#mrProfileplot(profileData_pd , sdthresh =0.05) #sdthresh removes responses from the first plot that do not vary with the feature
-profileData_ale <- light_profile(flashlightObj, v = "Grassland", type = "ale") #acumulated local effects
-mrProfileplot(profileData_ale , sdthresh =0.01)
+#plots everything on one plot (partial dependency, ALE, scatter)
+plot(light_effects(flashlightObj,
+                   v = "Grassland"),
+                   use = "all")
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-9-3.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-9-2.png" width="100%" />
+
+``` r
+
+#profileData_pd <- light_profile(flashlightObj,  v = "Grassland")
+
+#mrProfileplot(profileData_pd , sdthresh =0.05) #sdthresh removes responses from the first plot that do not vary with the feature
+
+profileData_ale <- light_profile(flashlightObj,
+                                 v = "Grassland",
+                                 type = "ale") #accumulated local effects
+
+mrProfileplot(profileData_ale,
+              sdthresh =0.01)
+```
+
+<img src="man/figures/README-unnamed-chunk-9-3.png" width="100%" />
+
+    #>  Press [enter] to continue to the global summary plot
+
+<img src="man/figures/README-unnamed-chunk-9-4.png" width="100%" />
 
 ``` r
 #the second plot is the cumulative turnover function
@@ -178,199 +317,21 @@ package will enable users to visualize these interactions and explore
 them in more detail using 2D ALE plots for example.
 
 ``` r
-#interactions <-mrInteractions(yhats, X, Y,  mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
-#mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2)
+#interactions <-mrInteractions(yhats,X,Y,mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
+#mrPlot_interactions(interactions,X,Y,top_ranking = 2,top_response=2)
 ```
 
 ## References
 
 Xing, L, Lesperance, ML and Zhang, X (2020). Simultaneous prediction of
 multiple outcomes using revised stacking algorithms. Bioinformatics, 36,
-65-72.
+65-72. <doi:10.1093/bioinformatics/btz531>.
 
 Fitzpatrick, M.C. & Keller, S.R. (2015) Ecological genomics meets
 community-level modelling of biodiversity: mapping the genomic landscape
 of current and future environmental adaptation. Ecology Letters 18,
-1–16.
+1–16.doi.org/10.1111/ele.12376
 
 Ellis, N., Smith, S.J. and Pitcher, C.R. (2012), Gradient forests:
 calculating importance gradients on physical predictors. Ecology, 93:
 156-168. <doi:10.1890/11-0252.1>
-
-## Session info
-
-``` r
-devtools::session_info()
-#> - Session info -----------------------------------------------------------------------------------
-#>  setting  value                       
-#>  version  R version 3.6.3 (2020-02-29)
-#>  os       Windows 10 x64              
-#>  system   x86_64, mingw32             
-#>  ui       RTerm                       
-#>  language (EN)                        
-#>  collate  English_United States.1252  
-#>  ctype    English_United States.1252  
-#>  tz       America/New_York            
-#>  date     2021-05-14                  
-#> 
-#> - Packages ---------------------------------------------------------------------------------------
-#>  package         * version    date       lib source                        
-#>  assertthat        0.2.1      2019-03-21 [1] CRAN (R 3.6.3)                
-#>  backports         1.2.1      2020-12-09 [1] CRAN (R 3.6.3)                
-#>  BBmisc            1.11       2017-03-10 [1] CRAN (R 3.6.3)                
-#>  broom           * 0.7.6      2021-04-05 [1] CRAN (R 3.6.3)                
-#>  cachem            1.0.4      2021-02-13 [1] CRAN (R 3.6.3)                
-#>  callr             3.7.0      2021-04-20 [1] CRAN (R 3.6.3)                
-#>  caret           * 6.0-86     2020-03-20 [1] CRAN (R 3.6.3)                
-#>  cellranger        1.1.0      2016-07-27 [1] CRAN (R 3.6.3)                
-#>  checkmate         2.0.0      2020-02-06 [1] CRAN (R 3.6.3)                
-#>  class             7.3-15     2019-01-01 [2] CRAN (R 3.6.3)                
-#>  cli               2.5.0      2021-04-26 [1] CRAN (R 3.6.3)                
-#>  cluster           2.1.0      2019-06-19 [2] CRAN (R 3.6.3)                
-#>  codetools         0.2-16     2018-12-24 [2] CRAN (R 3.6.3)                
-#>  colorspace        2.0-0      2020-11-11 [1] CRAN (R 3.6.3)                
-#>  cowplot           1.1.1      2020-12-30 [1] CRAN (R 3.6.3)                
-#>  crayon            1.4.1      2021-02-08 [1] CRAN (R 3.6.3)                
-#>  data.table        1.14.0     2021-02-21 [1] CRAN (R 3.6.3)                
-#>  DBI               1.1.1      2021-01-15 [1] CRAN (R 3.6.3)                
-#>  dbplyr            2.1.1      2021-04-06 [1] CRAN (R 3.6.3)                
-#>  desc              1.3.0      2021-03-05 [1] CRAN (R 3.6.3)                
-#>  devtools          2.4.0      2021-04-07 [1] CRAN (R 3.6.3)                
-#>  dials           * 0.0.9      2020-09-16 [1] CRAN (R 3.6.3)                
-#>  DiceDesign        1.9        2021-02-13 [1] CRAN (R 3.6.3)                
-#>  digest            0.6.27     2020-10-24 [1] CRAN (R 3.6.3)                
-#>  doParallel      * 1.0.16     2020-10-16 [1] CRAN (R 3.6.3)                
-#>  dplyr           * 1.0.5      2021-03-05 [1] CRAN (R 3.6.3)                
-#>  ellipsis          0.3.1      2020-05-15 [1] CRAN (R 3.6.3)                
-#>  evaluate          0.14       2019-05-28 [1] CRAN (R 3.6.3)                
-#>  extrafont         0.17       2014-12-08 [1] CRAN (R 3.6.2)                
-#>  extrafontdb       1.0        2012-06-11 [1] CRAN (R 3.6.0)                
-#>  fansi             0.4.2      2021-01-15 [1] CRAN (R 3.6.3)                
-#>  farver            2.1.0      2021-02-28 [1] CRAN (R 3.6.3)                
-#>  fastmap           1.1.0      2021-01-25 [1] CRAN (R 3.6.3)                
-#>  fastmatch         1.1-0      2017-01-28 [1] CRAN (R 3.6.0)                
-#>  flashlight      * 0.8.0      2021-04-21 [1] CRAN (R 3.6.3)                
-#>  FNN               1.1.3      2019-02-15 [1] CRAN (R 3.6.3)                
-#>  forcats         * 0.5.1      2021-01-27 [1] CRAN (R 3.6.3)                
-#>  foreach         * 1.5.1      2020-10-15 [1] CRAN (R 3.6.3)                
-#>  fs                1.5.0      2020-07-31 [1] CRAN (R 3.6.3)                
-#>  furrr             0.2.2      2021-01-29 [1] CRAN (R 3.6.3)                
-#>  future            1.21.0     2020-12-10 [1] CRAN (R 3.6.3)                
-#>  gbm             * 2.1.8      2020-07-15 [1] CRAN (R 3.6.3)                
-#>  gdtools           0.2.3      2021-01-06 [1] CRAN (R 3.6.3)                
-#>  generics          0.1.0      2020-10-31 [1] CRAN (R 3.6.3)                
-#>  ggplot2         * 3.3.3      2020-12-30 [1] CRAN (R 3.6.3)                
-#>  ggrepel         * 0.9.1      2021-01-15 [1] CRAN (R 3.6.3)                
-#>  globals           0.14.0     2020-11-22 [1] CRAN (R 3.6.3)                
-#>  glue              1.4.2      2020-08-27 [1] CRAN (R 3.6.3)                
-#>  gower             0.2.2      2020-06-23 [1] CRAN (R 3.6.3)                
-#>  GPfit             1.0-8      2019-02-08 [1] CRAN (R 3.6.3)                
-#>  gridExtra         2.3        2017-09-09 [1] CRAN (R 3.6.3)                
-#>  gtable            0.3.0      2019-03-25 [1] CRAN (R 3.6.3)                
-#>  hardhat           0.1.5      2020-11-09 [1] CRAN (R 3.6.3)                
-#>  haven             2.4.0      2021-04-14 [1] CRAN (R 3.6.3)                
-#>  highr             0.9        2021-04-16 [1] CRAN (R 3.6.3)                
-#>  hms               1.0.0      2021-01-13 [1] CRAN (R 3.6.3)                
-#>  hrbrthemes      * 0.8.0      2020-03-06 [1] CRAN (R 3.6.3)                
-#>  htmltools         0.5.1.1    2021-01-22 [1] CRAN (R 3.6.3)                
-#>  httr              1.4.2      2020-07-20 [1] CRAN (R 3.6.3)                
-#>  infer           * 0.5.4      2021-01-13 [1] CRAN (R 3.6.3)                
-#>  ipred             0.9-11     2021-03-12 [1] CRAN (R 3.6.3)                
-#>  iterators       * 1.0.13     2020-10-15 [1] CRAN (R 3.6.3)                
-#>  janitor         * 2.1.0      2021-01-05 [1] CRAN (R 3.6.3)                
-#>  jsonlite          1.7.2      2020-12-09 [1] CRAN (R 3.6.3)                
-#>  knitr             1.32       2021-04-14 [1] CRAN (R 3.6.3)                
-#>  labeling          0.4.2      2020-10-20 [1] CRAN (R 3.6.3)                
-#>  lattice         * 0.20-38    2018-11-04 [2] CRAN (R 3.6.3)                
-#>  lava              1.6.9      2021-03-11 [1] CRAN (R 3.6.3)                
-#>  lhs               1.1.1      2020-10-05 [1] CRAN (R 3.6.3)                
-#>  lifecycle         1.0.0      2021-02-15 [1] CRAN (R 3.6.3)                
-#>  listenv           0.8.0      2019-12-05 [1] CRAN (R 3.6.3)                
-#>  lubridate         1.7.10     2021-02-26 [1] CRAN (R 3.6.3)                
-#>  magrittr          2.0.1      2020-11-17 [1] CRAN (R 3.6.3)                
-#>  MASS              7.3-51.5   2019-12-20 [2] CRAN (R 3.6.3)                
-#>  Matrix            1.2-18     2019-11-27 [2] CRAN (R 3.6.3)                
-#>  memoise           2.0.0      2021-01-26 [1] CRAN (R 3.6.3)                
-#>  MetricsWeighted   0.5.2      2021-04-16 [1] CRAN (R 3.6.3)                
-#>  mgcv              1.8-31     2019-11-09 [2] CRAN (R 3.6.3)                
-#>  mlr               2.19.0     2021-02-22 [1] CRAN (R 3.6.3)                
-#>  modeldata       * 0.1.0      2020-10-22 [1] CRAN (R 3.6.3)                
-#>  ModelMetrics      1.2.2.2    2020-03-17 [1] CRAN (R 3.6.3)                
-#>  modelr            0.1.8      2020-05-19 [1] CRAN (R 3.6.3)                
-#>  mrIML           * 1.0.0      2021-05-13 [1] Github (nfj1380/mrIML@7d971b9)
-#>  munsell           0.5.0      2018-06-12 [1] CRAN (R 3.6.3)                
-#>  nlme              3.1-144    2020-02-06 [2] CRAN (R 3.6.3)                
-#>  nnet              7.3-12     2016-02-02 [2] CRAN (R 3.6.3)                
-#>  parallelly        1.24.0     2021-03-14 [1] CRAN (R 3.6.3)                
-#>  parallelMap       1.5.0      2020-03-26 [1] CRAN (R 3.6.3)                
-#>  ParamHelpers      1.14       2020-03-24 [1] CRAN (R 3.6.3)                
-#>  parsnip         * 0.1.5      2021-01-19 [1] CRAN (R 3.6.3)                
-#>  pdp             * 0.7.0      2018-08-27 [1] CRAN (R 3.6.3)                
-#>  permute         * 0.9-5      2019-03-12 [1] CRAN (R 3.6.3)                
-#>  pillar            1.6.0      2021-04-13 [1] CRAN (R 3.6.3)                
-#>  pkgbuild          1.2.0      2020-12-15 [1] CRAN (R 3.6.3)                
-#>  pkgconfig         2.0.3      2019-09-22 [1] CRAN (R 3.6.3)                
-#>  pkgload           1.2.1      2021-04-06 [1] CRAN (R 3.6.3)                
-#>  plyr              1.8.6      2020-03-03 [1] CRAN (R 3.6.3)                
-#>  prettyunits       1.1.1      2020-01-24 [1] CRAN (R 3.6.3)                
-#>  pROC              1.17.0.1   2021-01-13 [1] CRAN (R 3.6.3)                
-#>  processx          3.5.0      2021-03-23 [1] CRAN (R 3.6.3)                
-#>  prodlim           2019.11.13 2019-11-17 [1] CRAN (R 3.6.3)                
-#>  ps                1.6.0      2021-02-28 [1] CRAN (R 3.6.3)                
-#>  purrr           * 0.3.4      2020-04-17 [1] CRAN (R 3.6.3)                
-#>  R6                2.5.0      2020-10-28 [1] CRAN (R 3.6.3)                
-#>  randomForest    * 4.6-14     2018-03-25 [1] CRAN (R 3.6.3)                
-#>  RANN              2.6.1      2019-01-08 [1] CRAN (R 3.6.3)                
-#>  Rcpp              1.0.6      2021-01-15 [1] CRAN (R 3.6.3)                
-#>  readr           * 1.4.0      2020-10-05 [1] CRAN (R 3.6.3)                
-#>  readxl            1.3.1      2019-03-13 [1] CRAN (R 3.6.3)                
-#>  recipes         * 0.1.16     2021-04-16 [1] CRAN (R 3.6.3)                
-#>  remotes           2.3.0      2021-04-01 [1] CRAN (R 3.6.3)                
-#>  reprex            2.0.0      2021-04-02 [1] CRAN (R 3.6.3)                
-#>  reshape2          1.4.4      2020-04-09 [1] CRAN (R 3.6.3)                
-#>  rlang           * 0.4.10     2020-12-30 [1] CRAN (R 3.6.3)                
-#>  rmarkdown         2.7        2021-02-19 [1] CRAN (R 3.6.3)                
-#>  ROSE              0.0-3      2014-07-15 [1] CRAN (R 3.6.3)                
-#>  rpart             4.1-15     2019-04-12 [2] CRAN (R 3.6.3)                
-#>  rpart.plot        3.0.9      2020-09-17 [1] CRAN (R 3.6.3)                
-#>  rprojroot         2.0.2      2020-11-15 [1] CRAN (R 3.6.3)                
-#>  rsample         * 0.0.9      2021-02-17 [1] CRAN (R 3.6.3)                
-#>  rstudioapi        0.13       2020-11-12 [1] CRAN (R 3.6.3)                
-#>  Rttf2pt1          1.3.8      2020-01-10 [1] CRAN (R 3.6.2)                
-#>  rvest             1.0.0      2021-03-09 [1] CRAN (R 3.6.3)                
-#>  scales          * 1.1.1      2020-05-11 [1] CRAN (R 3.6.3)                
-#>  sessioninfo       1.1.1      2018-11-05 [1] CRAN (R 3.6.3)                
-#>  snakecase         0.11.0     2019-05-25 [1] CRAN (R 3.6.3)                
-#>  stringi           1.5.3      2020-09-09 [1] CRAN (R 3.6.3)                
-#>  stringr         * 1.4.0      2019-02-10 [1] CRAN (R 3.6.3)                
-#>  survival          3.1-8      2019-12-03 [2] CRAN (R 3.6.3)                
-#>  systemfonts       1.0.1      2021-02-09 [1] CRAN (R 3.6.3)                
-#>  testthat          3.0.2      2021-02-14 [1] CRAN (R 3.6.3)                
-#>  themis          * 0.1.3      2020-11-12 [1] CRAN (R 3.6.3)                
-#>  tibble          * 3.1.0      2021-02-25 [1] CRAN (R 3.6.3)                
-#>  tidymodels      * 0.1.3      2021-04-19 [1] CRAN (R 3.6.3)                
-#>  tidyr           * 1.1.3      2021-03-03 [1] CRAN (R 3.6.3)                
-#>  tidyselect        1.1.0      2020-05-11 [1] CRAN (R 3.6.3)                
-#>  tidyverse       * 1.3.1      2021-04-15 [1] CRAN (R 3.6.3)                
-#>  timeDate          3043.102   2018-02-21 [1] CRAN (R 3.6.3)                
-#>  tune            * 0.1.4      2021-04-20 [1] CRAN (R 3.6.3)                
-#>  unbalanced        2.0        2015-06-26 [1] CRAN (R 3.6.3)                
-#>  usethis           2.0.1      2021-02-10 [1] CRAN (R 3.6.3)                
-#>  utf8              1.2.1      2021-03-12 [1] CRAN (R 3.6.3)                
-#>  vctrs           * 0.3.6      2020-12-17 [1] CRAN (R 3.6.3)                
-#>  vegan           * 2.5-7      2020-11-28 [1] CRAN (R 3.6.3)                
-#>  vip             * 0.3.2      2020-12-17 [1] CRAN (R 3.6.3)                
-#>  viridis         * 0.6.0      2021-04-15 [1] CRAN (R 3.6.3)                
-#>  viridisLite     * 0.4.0      2021-04-13 [1] CRAN (R 3.6.3)                
-#>  withr             2.4.2      2021-04-18 [1] CRAN (R 3.6.3)                
-#>  workflows       * 0.2.2      2021-03-10 [1] CRAN (R 3.6.3)                
-#>  workflowsets    * 0.0.2      2021-04-16 [1] CRAN (R 3.6.3)                
-#>  xfun              0.22       2021-03-11 [1] CRAN (R 3.6.3)                
-#>  xgboost         * 1.3.2.1    2021-01-18 [1] CRAN (R 3.6.3)                
-#>  xml2              1.3.2      2020-04-23 [1] CRAN (R 3.6.3)                
-#>  yaml              2.2.1      2020-02-01 [1] CRAN (R 3.6.3)                
-#>  yardstick       * 0.0.8      2021-03-28 [1] CRAN (R 3.6.3)                
-#> 
-#> [1] C:/Users/gmachad/Documents/R/win-library/3.6
-#> [2] C:/Program Files/R/R-3.6.3/library
-```

@@ -30,7 +30,6 @@ Imports:
     viridis,
     janitor,
     hrbrthemes,
-    xgboost,
     vegan,
     flashlight,
     ggrepel,
@@ -41,10 +40,17 @@ Imports:
     utils,
     ranger,
     pdp,
-    rmarkdown,
     future.apply,
     future,
-    yaImpute
+    yaImpute,
+    MetricsWeighted,
+    dplyr,
+    plyr,
+    purrr,
+    scales,
+    tibble,
+    tune,
+    yardstick
 Suggests: 
     caret,
     devtools,

@@ -1,5 +1,4 @@
-mrIML 1.0.0 (under development)
+mrIML 1.0.1
 =======================================
 * Initial release to github
 * Initial functions and vignettes
- 

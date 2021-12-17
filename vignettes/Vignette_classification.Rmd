@@ -2,7 +2,16 @@
 title: "A MrIML vignette: Landscape genetics (classification) "
 author: "Nick Fountain-Jones, Gustavo Machado"
 date: "10 September 2020"
-output: html_document
+opengraph:
+  image:
+    src: 
+output:
+  github_document: default
+  rmarkdown::html_vignette: default
+  css: extra.css
+vignette: |
+  %\VignetteIndexEntry{mrIML}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ## Introduction to mrIML 
@@ -77,7 +86,13 @@ model_rf <-
 Now we can run the model. Hyper parameter tuning (for algorithms that have hyper parameters) is done automatically by testing how model performance changes across a random grid of 10 parameters and the best performing combination is kept. The only choice to make is to either down/up sample data or leave it as is. As our viral data set is small, we will not do any up or down-sampling (option 'no'). We could also implement parallel processing for larger data sets. 
 
 ```{r, message = FALSE, warning = FALSE, results='hide'}
-yhats_rf <- mrIMLpredicts(X=X,Y=Y, Model=model_rf, balance_data='no', mode='classification',  tune_grid_size=5, seed = sample.int(1e8, 1) ) ## in MrTidymodels. Balanced data= up upsamples and down downsampled to create a balanced set
+yhats_rf <- mrIMLpredicts(X=X,
+                          Y=Y, 
+                          Model=model_rf,
+                          balance_data='no', 
+                          mode='classification', 
+                          tune_grid_size=5,
+                          seed = sample.int(1e8, 1) ) ## in MrTidymodels. Balanced data= up upsamples and down downsampled to create a balanced set
 # save the model
 #save(yhats, file='rf_model')
 ```

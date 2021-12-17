@@ -6,8 +6,8 @@ opengraph:
   image:
     src: 
 output:
-  rmarkdown::html_vignette: default
   github_document: default
+  rmarkdown::html_vignette: default
   css: extra.css
 vignette: |
   %\VignetteIndexEntry{mrIML}
@@ -136,13 +136,6 @@ plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf,  cutoff= 0.1, mode='regression')
 Cutoff reduces the number of individual SNP plots presented in the second plot and 'plot.pca='yes'' enables the variable importance scores to be analysed using principal component analysis (PCA) where SNPs closer in PCA space are shaped by similar combinations of features. You can see that bio_18 (summer precipitation), bio_1 (mean annual temperature) and bio_10 (mean summer temperature) are the most important features overall. Summer precipitation was not as important in Fitzpatrick et al but otherwise these results are similar. The second plot shows the individual models (with an r2 > 0.1, for your data you will need to play around with this threshold) and you can see for some SNPs bio_1 is more important whereas for another MEM.1 is more prominent.The PCA shows that candidate 5119, 9287, 5033 and 108  are shaped similarly by the features we included and may, for example, be product of linked selection.
 
 Now we can explore the model further my plotting the relationships between our SNPs and a feature in our set. Lets choose bio_1 (mean annual temperature) and plot the individual and global (average of all SNPs) partial dependency (PD) plots. 
-
-
-```{r include=FALSE}
-#source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrFlashlight.R"))
-#source(("C:/Users/gmachad/Desktop/mrIML_package/R/mrProfileplots.R"))
-
-```
 
 
 ```{r warning=FALSE}
