@@ -102,8 +102,8 @@
 <h2 id="recent-mriml-publications">Recent mrIML publications<a class="anchor" aria-label="anchor" href="#recent-mriml-publications"></a>
 </h2>
 <ol style="list-style-type: decimal">
-<li>Fountain-Jones, N. M., Kozakiewicz, C. P., Forester, B. R., Landguth, E. L., Carver, S., Charleston, M., Gagne, R. B., Greenwell, B., Kraberger, S., Trumbo, D. R., Mayer, M., Clark, N. J., &amp; Machado, G. (2021). MrIML: Multi-response interpretable machine learning to model genomic landscapes. Molecular Ecology Resources, 21, 2766– 2781. <a href="https://doi.org/10.1111/1755-0998.13495" class="external-link uri">https://doi.org/10.1111/1755-0998.13495</a> 2.Sykes, A. L., Silva, G. S., Holtkamp, D. J., Mauch, B. W., Osemeke, O., Linhares, D. C.L., &amp; Machado, G. (2021). Interpretable machine learning applied to on-farm biosecurity and porcine reproductive and respiratory syndrome virus. Transboundary and Emerging Diseases, 00, 1– 15. <a href="https://doi.org/10.1111/tbed.14369" class="external-link uri">https://doi.org/10.1111/tbed.14369</a>
-</li>
+<li><p>Fountain-Jones, N. M., Kozakiewicz, C. P., Forester, B. R., Landguth, E. L., Carver, S., Charleston, M., Gagne, R. B., Greenwell, B., Kraberger, S., Trumbo, D. R., Mayer, M., Clark, N. J., &amp; Machado, G. (2021). MrIML: Multi-response interpretable machine learning to model genomic landscapes. Molecular Ecology Resources, 21, 2766– 2781. <a href="https://doi.org/10.1111/1755-0998.13495" class="external-link uri">https://doi.org/10.1111/1755-0998.13495</a></p></li>
+<li><p>Sykes, A. L., Silva, G. S., Holtkamp, D. J., Mauch, B. W., Osemeke, O., Linhares, D. C.L., &amp; Machado, G. (2021). Interpretable machine learning applied to on-farm biosecurity and porcine reproductive and respiratory syndrome virus. Transboundary and Emerging Diseases, 00, 1– 15. <a href="https://doi.org/10.1111/tbed.14369" class="external-link uri">https://doi.org/10.1111/tbed.14369</a></p></li>
 </ol>
 </div>
 <div class="section level2">
@@ -141,7 +141,11 @@
                            lower<span class="op">=</span><span class="fl">0.4</span>,
                            higher<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span> 
 <span class="va">data</span> <span class="op">&lt;-</span> <span class="va">fData</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span></code></pre></div>
-<p>###Parallel processing</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="parallel-processing">Parallel processing<a class="anchor" aria-label="anchor" href="#parallel-processing"></a>
+</h2>
 <p>MrIML provides uses the flexible future apply functionality to set up multi-core processing. In the example below, we set up a cluster using 4 cores. If you don’t set up a cluster, the default settings will be used and the analysis will run sequentially.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># detectCores() #check how many cores you have available. We suggest keeping one core free for internet browsing etc.</span>
@@ -258,7 +262,6 @@
 <span class="co">#&gt; 29 0.473684210526316</span>
 <span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="co">#Overall predictive performance. r2 for regression and MCC for classification</span>
 <span class="co">#&gt; [1] 0.7873563</span></code></pre></div>
-</div>
 </div>
 <div class="section level2">
 <h2 id="plotting">Plotting<a class="anchor" aria-label="anchor" href="#plotting"></a>

@@ -38,11 +38,12 @@ by SNP loci).
     J., & Machado, G. (2021). MrIML: Multi-response interpretable
     machine learning to model genomic landscapes. Molecular Ecology
     Resources, 21, 2766– 2781. <https://doi.org/10.1111/1755-0998.13495>
-    2.Sykes, A. L., Silva, G. S., Holtkamp, D. J., Mauch, B. W.,
-    Osemeke, O., Linhares, D. C.L., & Machado, G. (2021). Interpretable
-    machine learning applied to on-farm biosecurity and porcine
-    reproductive and respiratory syndrome virus. Transboundary and
-    Emerging Diseases, 00, 1– 15. <https://doi.org/10.1111/tbed.14369>
+
+2.  Sykes, A. L., Silva, G. S., Holtkamp, D. J., Mauch, B. W., Osemeke,
+    O., Linhares, D. C.L., & Machado, G. (2021). Interpretable machine
+    learning applied to on-farm biosecurity and porcine reproductive and
+    respiratory syndrome virus. Transboundary and Emerging Diseases, 00,
+    1– 15. <https://doi.org/10.1111/tbed.14369>
 
 ## Installation
 
@@ -110,7 +111,7 @@ fData <- filterRareCommon (Responsedata,
 data <- fData[1:20]
 ```
 
-\#\#\#Parallel processing
+## Parallel processing
 
 MrIML provides uses the flexible future apply functionality to set up
 multi-core processing. In the example below, we set up a cluster using 4
