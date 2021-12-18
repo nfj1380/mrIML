@@ -1,4 +1,3 @@
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # mrIML: Multivariate (multi-response) interpretable machine learning <a href='https://nfj1380.github.io/mrIML/index.html'><img src="man/figures/logo.png" align="right" height="120"/></a>
@@ -80,7 +79,7 @@ first step to using the package is to load it as follows.
 Now all the data is loaded and ready to go we can formulate the model
 using tidymodel syntax. In this case we have binary data (SNP
 presence/absence at each loci) but the data could also be counts or
-continuous (the set\_model argument would be “regression” instead of
+continuous (the set_model argument would be “regression” instead of
 “classification”). The user can specify any model from the ‘tidymodel’
 universe as ‘model 1’ (see <https://www.tidymodels.org/find/> for
 details). However, we have done most of our testing on random forests

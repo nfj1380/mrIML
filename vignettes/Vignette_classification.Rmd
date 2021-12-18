@@ -31,7 +31,7 @@ Features (a.k.a predictor variables) with missing data can be removed or interpo
 library(mrIML)
 #other package we need:
 library(vip); library(tidymodels); library(randomForest);  library(caret); library(gbm);
-library(tidyverse);library(parallel); library(doParallel); library(themis); library(viridis); library(janitor); library(hrbrthemes); library(xgboost); library(vegan);library(flashlight);
+library(tidyverse);library(parallel); library(doParallel); library(themis); library(viridis); library(janitor); library(hrbrthemes);  library(vegan);library(flashlight);
 library(ggrepel); library(iml); library(plyr);
 library(future.apply)
 #library(LEA) 
