@@ -161,28 +161,29 @@
                            higher<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span> 
 <span class="va">Y</span> <span class="op">&lt;-</span> <span class="va">fData</span> <span class="co">#For simplicity when comparing</span>
 <span class="co">#Define set the outcomes of interest</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">Features</span><span class="op">)</span> 
-<span class="co">#&gt; 'data.frame':    20 obs. of  19 variables:</span>
-<span class="co">#&gt;  $ Grassland       : num  0.07 0.0677 0.1845 0.0981 0.1578 ...</span>
-<span class="co">#&gt;  $ Shrub.Scrub     : num  0.557 0.767 0.524 0.786 0.842 ...</span>
-<span class="co">#&gt;  $ Forest          : num  0.01072 0.030588 0.008615 0.000662 0.000616 ...</span>
-<span class="co">#&gt;  $ HighlyDev       : num  0 0 0.00225 0 0 ...</span>
-<span class="co">#&gt;  $ Urban           : num  0 0 0.00159 0 0 ...</span>
-<span class="co">#&gt;  $ Suburban        : num  0.00357 0.13268 0.01325 0.00119 0 ...</span>
-<span class="co">#&gt;  $ Exurban         : num  0.00622 0.03019 0 0.01906 0 ...</span>
-<span class="co">#&gt;  $ Altered         : num  0.441 0.182 0.114 0.12 0 ...</span>
-<span class="co">#&gt;  $ Distance        : num  1.321 0.492 3.231 5.629 4.739 ...</span>
-<span class="co">#&gt;  $ Latitude        : num  33.8 33.8 33.8 33.8 33.8 ...</span>
-<span class="co">#&gt;  $ Longitude       : num  -118 -118 -118 -118 -118 ...</span>
-<span class="co">#&gt;  $ Age             : int  3 0 3 2 3 3 2 3 3 3 ...</span>
-<span class="co">#&gt;  $ Sex             : int  1 1 1 1 0 0 0 1 1 1 ...</span>
-<span class="co">#&gt;  $ Relatedness.PCO1: num  -0.1194 -0.0389 -0.1618 -0.1811 -0.1564 ...</span>
-<span class="co">#&gt;  $ Relatedness.PCO2: num  -0.1947 -0.0525 -0.321 -0.0827 0.1 ...</span>
-<span class="co">#&gt;  $ Relatedness.PCO3: num  -0.191 -0.0874 0.0541 -0.0627 -0.0111 ...</span>
-<span class="co">#&gt;  $ Relatedness.PCO4: num  0.1117 0.2422 0.0974 0.2129 0.2259 ...</span>
-<span class="co">#&gt;  $ Relatedness.PCO5: num  0.06405 0.0706 0.03514 -0.00084 0.0894 ...</span>
-<span class="co">#&gt;  $ Relatedness.PCO6: num  -0.0432 0.0683 -0.0805 0.2247 -0.055 ...</span>
-<span class="co">#Remove NAs from the feature/predictor data.</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">Features</span><span class="op">)</span> </code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">## 'data.frame':    20 obs. of  19 variables:</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="do">##  $ Grassland       : num  0.07 0.0677 0.1845 0.0981 0.1578 ...</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="do">##  $ Shrub.Scrub     : num  0.557 0.767 0.524 0.786 0.842 ...</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="do">##  $ Forest          : num  0.01072 0.030588 0.008615 0.000662 0.000616 ...</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  $ HighlyDev       : num  0 0 0.00225 0 0 ...</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  $ Urban           : num  0 0 0.00159 0 0 ...</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  $ Suburban        : num  0.00357 0.13268 0.01325 0.00119 0 ...</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  $ Exurban         : num  0.00622 0.03019 0 0.01906 0 ...</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  $ Altered         : num  0.441 0.182 0.114 0.12 0 ...</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  $ Distance        : num  1.321 0.492 3.231 5.629 4.739 ...</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  $ Latitude        : num  33.8 33.8 33.8 33.8 33.8 ...</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  $ Longitude       : num  -118 -118 -118 -118 -118 ...</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  $ Age             : int  3 0 3 2 3 3 2 3 3 3 ...</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  $ Sex             : int  1 1 1 1 0 0 0 1 1 1 ...</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  $ Relatedness.PCO1: num  -0.1194 -0.0389 -0.1618 -0.1811 -0.1564 ...</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  $ Relatedness.PCO2: num  -0.1947 -0.0525 -0.321 -0.0827 0.1 ...</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="do">##  $ Relatedness.PCO3: num  -0.191 -0.0874 0.0541 -0.0627 -0.0111 ...</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="do">##  $ Relatedness.PCO4: num  0.1117 0.2422 0.0974 0.2129 0.2259 ...</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="do">##  $ Relatedness.PCO5: num  0.06405 0.0706 0.03514 -0.00084 0.0894 ...</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="do">##  $ Relatedness.PCO6: num  -0.0432 0.0683 -0.0805 0.2247 -0.055 ...</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">#Remove NAs from the feature/predictor data.</span>
 <span class="va">FeaturesnoNA</span><span class="op">&lt;-</span><span class="va">Features</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">Features</span><span class="op">)</span>, <span class="op">]</span>
 <span class="va">X</span> <span class="op">&lt;-</span> <span class="va">FeaturesnoNA</span> <span class="co">#For simplicity</span>
 <span class="co">#For more efficient testing for interactions (more variables more interacting pairs)</span>
@@ -199,89 +200,90 @@
 <span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span>yhats<span class="op">=</span><span class="va">yhats</span>,
                               Model<span class="op">=</span><span class="va">model1</span>,
                               Y<span class="op">=</span><span class="va">Y</span>, mode<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span>
-<span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co">#Predictive performance for individual responses </span>
-<span class="co">#&gt;    response  model_name           roc_AUC                mcc       sensitivity       specificity</span>
-<span class="co">#&gt; 1   env_131 rand_forest                 1  0.666666666666667 0.666666666666667                 1</span>
-<span class="co">#&gt; 2   env_163 rand_forest              0.75               &lt;NA&gt;                 0                 1</span>
-<span class="co">#&gt; 3   env_164 rand_forest                 1                  1                 1                 1</span>
-<span class="co">#&gt; 4   env_167 rand_forest 0.583333333333333 -0.408248290463863 0.666666666666667                 0</span>
-<span class="co">#&gt; 5   env_169 rand_forest                 1  0.666666666666667 0.666666666666667                 1</span>
-<span class="co">#&gt; 6   env_212 rand_forest                 1                  1                 1                 1</span>
-<span class="co">#&gt; 7    env_23 rand_forest             0.875  0.408248290463863                 1               0.5</span>
-<span class="co">#&gt; 8    env_24 rand_forest              0.25 -0.166666666666667               0.5 0.333333333333333</span>
-<span class="co">#&gt; 9    env_41 rand_forest 0.583333333333333  0.166666666666667 0.666666666666667               0.5</span>
-<span class="co">#&gt; 10   env_47 rand_forest                 1  0.666666666666667                 1 0.666666666666667</span>
-<span class="co">#&gt; 11   env_59 rand_forest                 1  0.666666666666667 0.666666666666667                 1</span>
-<span class="co">#&gt; 12    env_8 rand_forest 0.666666666666667               &lt;NA&gt;                 1                 0</span>
-<span class="co">#&gt; 13   env_84 rand_forest                 1  0.666666666666667 0.666666666666667                 1</span>
-<span class="co">#&gt; 14   env_85 rand_forest                 1  0.666666666666667 0.666666666666667                 1</span>
-<span class="co">#&gt; 15   env_86 rand_forest               0.5               &lt;NA&gt;                 0                 1</span>
-<span class="co">#&gt; 16  pol_105 rand_forest             0.875  0.612372435695795              0.75                 1</span>
-<span class="co">#&gt; 17  pol_108 rand_forest              0.75  0.408248290463863               0.5                 1</span>
-<span class="co">#&gt; 18  pol_111 rand_forest                 1                  1                 1                 1</span>
-<span class="co">#&gt; 19  pol_117 rand_forest 0.583333333333333  0.166666666666667 0.666666666666667               0.5</span>
-<span class="co">#&gt; 20  pol_132 rand_forest                 1  0.666666666666667                 1 0.666666666666667</span>
-<span class="co">#&gt; 21  pol_159 rand_forest              0.25 -0.166666666666667               0.5 0.333333333333333</span>
-<span class="co">#&gt; 22  pol_258 rand_forest              0.25 -0.166666666666667               0.5 0.333333333333333</span>
-<span class="co">#&gt; 23   pol_30 rand_forest                 1  0.666666666666667                 1 0.666666666666667</span>
-<span class="co">#&gt; 24  pol_340 rand_forest 0.416666666666667 -0.166666666666667 0.333333333333333               0.5</span>
-<span class="co">#&gt; 25  pol_353 rand_forest               0.5               &lt;NA&gt;                 0                 1</span>
-<span class="co">#&gt; 26  pol_366 rand_forest                 1  0.666666666666667 0.666666666666667                 1</span>
-<span class="co">#&gt; 27   pol_87 rand_forest                 1  0.666666666666667                 1 0.666666666666667</span>
-<span class="co">#&gt; 28   pol_88 rand_forest                 1  0.666666666666667                 1 0.666666666666667</span>
-<span class="co">#&gt; 29   pol_89 rand_forest                 1  0.666666666666667                 1 0.666666666666667</span>
-<span class="co">#&gt;           prevalence</span>
-<span class="co">#&gt; 1  0.421052631578947</span>
-<span class="co">#&gt; 2  0.631578947368421</span>
-<span class="co">#&gt; 3  0.421052631578947</span>
-<span class="co">#&gt; 4  0.421052631578947</span>
-<span class="co">#&gt; 5  0.421052631578947</span>
-<span class="co">#&gt; 6  0.684210526315789</span>
-<span class="co">#&gt; 7  0.631578947368421</span>
-<span class="co">#&gt; 8  0.421052631578947</span>
-<span class="co">#&gt; 9  0.473684210526316</span>
-<span class="co">#&gt; 10 0.473684210526316</span>
-<span class="co">#&gt; 11 0.421052631578947</span>
-<span class="co">#&gt; 12 0.473684210526316</span>
-<span class="co">#&gt; 13 0.421052631578947</span>
-<span class="co">#&gt; 14 0.421052631578947</span>
-<span class="co">#&gt; 15 0.421052631578947</span>
-<span class="co">#&gt; 16 0.473684210526316</span>
-<span class="co">#&gt; 17 0.421052631578947</span>
-<span class="co">#&gt; 18 0.421052631578947</span>
-<span class="co">#&gt; 19 0.473684210526316</span>
-<span class="co">#&gt; 20 0.473684210526316</span>
-<span class="co">#&gt; 21 0.473684210526316</span>
-<span class="co">#&gt; 22 0.473684210526316</span>
-<span class="co">#&gt; 23 0.473684210526316</span>
-<span class="co">#&gt; 24 0.421052631578947</span>
-<span class="co">#&gt; 25 0.421052631578947</span>
-<span class="co">#&gt; 26 0.421052631578947</span>
-<span class="co">#&gt; 27 0.473684210526316</span>
-<span class="co">#&gt; 28 0.473684210526316</span>
-<span class="co">#&gt; 29 0.473684210526316</span>
-<span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="co">#Overall predictive performance. r2 for regression and MCC for classification</span>
-<span class="co">#&gt; [1] 0.7873563</span></code></pre></div>
+<span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co">#Predictive performance for individual responses </span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="do">##    response  model_name           roc_AUC                mcc       sensitivity</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="do">## 1   env_131 rand_forest                 1  0.666666666666667 0.666666666666667</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="do">## 2   env_163 rand_forest              0.75               &lt;NA&gt;                 0</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="do">## 3   env_164 rand_forest                 1                  1                 1</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="do">## 4   env_167 rand_forest 0.583333333333333 -0.408248290463863 0.666666666666667</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="do">## 5   env_169 rand_forest                 1  0.666666666666667 0.666666666666667</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="do">## 6   env_212 rand_forest                 1                  1                 1</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 7    env_23 rand_forest             0.875  0.408248290463863                 1</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 8    env_24 rand_forest              0.25 -0.166666666666667               0.5</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="do">## 9    env_41 rand_forest 0.583333333333333  0.166666666666667 0.666666666666667</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="do">## 10   env_47 rand_forest                 1  0.666666666666667                 1</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="do">## 11   env_59 rand_forest                 1  0.666666666666667 0.666666666666667</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="do">## 12    env_8 rand_forest 0.666666666666667               &lt;NA&gt;                 1</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="do">## 13   env_84 rand_forest                 1  0.666666666666667 0.666666666666667</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 14   env_85 rand_forest                 1  0.666666666666667 0.666666666666667</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 15   env_86 rand_forest               0.5               &lt;NA&gt;                 0</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 16  pol_105 rand_forest             0.875  0.612372435695795              0.75</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 17  pol_108 rand_forest              0.75  0.408248290463863               0.5</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 18  pol_111 rand_forest                 1                  1                 1</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 19  pol_117 rand_forest 0.583333333333333  0.166666666666667 0.666666666666667</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="do">## 20  pol_132 rand_forest                 1  0.666666666666667                 1</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="do">## 21  pol_159 rand_forest              0.25 -0.166666666666667               0.5</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="do">## 22  pol_258 rand_forest              0.25 -0.166666666666667               0.5</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="do">## 23   pol_30 rand_forest                 1  0.666666666666667                 1</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="do">## 24  pol_340 rand_forest 0.416666666666667 -0.166666666666667 0.333333333333333</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="do">## 25  pol_353 rand_forest               0.5               &lt;NA&gt;                 0</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="do">## 26  pol_366 rand_forest                 1  0.666666666666667 0.666666666666667</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="do">## 27   pol_87 rand_forest                 1  0.666666666666667                 1</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="do">## 28   pol_88 rand_forest                 1  0.666666666666667                 1</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="do">## 29   pol_89 rand_forest                 1  0.666666666666667                 1</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="do">##          specificity        prevalence</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="do">## 1                  1 0.421052631578947</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="do">## 2                  1 0.631578947368421</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a><span class="do">## 3                  1 0.421052631578947</span></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="do">## 4                  0 0.421052631578947</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a><span class="do">## 5                  1 0.421052631578947</span></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a><span class="do">## 6                  1 0.684210526315789</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a><span class="do">## 7                0.5 0.631578947368421</span></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a><span class="do">## 8  0.333333333333333 0.421052631578947</span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a><span class="do">## 9                0.5 0.473684210526316</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a><span class="do">## 10 0.666666666666667 0.473684210526316</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a><span class="do">## 11                 1 0.421052631578947</span></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a><span class="do">## 12                 0 0.473684210526316</span></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a><span class="do">## 13                 1 0.421052631578947</span></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a><span class="do">## 14                 1 0.421052631578947</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a><span class="do">## 15                 1 0.421052631578947</span></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a><span class="do">## 16                 1 0.473684210526316</span></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a><span class="do">## 17                 1 0.421052631578947</span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a><span class="do">## 18                 1 0.421052631578947</span></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a><span class="do">## 19               0.5 0.473684210526316</span></span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a><span class="do">## 20 0.666666666666667 0.473684210526316</span></span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a><span class="do">## 21 0.333333333333333 0.473684210526316</span></span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a><span class="do">## 22 0.333333333333333 0.473684210526316</span></span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a><span class="do">## 23 0.666666666666667 0.473684210526316</span></span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a><span class="do">## 24               0.5 0.421052631578947</span></span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a><span class="do">## 25                 1 0.421052631578947</span></span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a><span class="do">## 26                 1 0.421052631578947</span></span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a><span class="do">## 27 0.666666666666667 0.473684210526316</span></span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a><span class="do">## 28 0.666666666666667 0.473684210526316</span></span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a><span class="do">## 29 0.666666666666667 0.473684210526316</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="co">#Overall predictive performance. r2 for regression and MCC for classification</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 0.7873563</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="plotting">Plotting<a class="anchor" aria-label="anchor" href="#plotting"></a>
 </h2>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">VI</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrVip.html">mrVip</a></span><span class="op">(</span><span class="va">yhats</span>, X<span class="op">=</span><span class="va">X</span><span class="op">)</span> 
 <span class="fu"><a href="reference/plot_vi.html">plot_vi</a></span><span class="op">(</span>VI<span class="op">=</span><span class="va">VI</span>,
         X<span class="op">=</span><span class="va">X</span>,
         Y<span class="op">=</span><span class="va">Y</span>,
         modelPerf<span class="op">=</span><span class="va">ModelPerf</span>, 
        cutoff<span class="op">=</span> <span class="fl">0</span>, mode<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span> <span class="co">#The cutoff reduces the number of individual models printed in the second plot. </span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-8-1.png" width="100%"></p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Press [enter] to plot individual variable importance summaries</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-8-2.png" width="100%"></p>
+<p><img src="README_files/figure-gfm/unnamed-chunk-7-1.png"><!-- --></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Press [enter] to plot individual variable importance summaries</span></span></code></pre></div>
+<p><img src="README_files/figure-gfm/unnamed-chunk-7-2.png"><!-- --></p>
 </div>
 <div class="section level2">
 <h2 id="effect-of-a-feature-on-genetic-change">Effect of a feature on genetic change<a class="anchor" aria-label="anchor" href="#effect-of-a-feature-on-genetic-change"></a>
 </h2>
 <p>We also wrap some flashlight functionality to visualize the marginal (i.e. partial dependencies) or conditional (accumulated local effects) effect of a feature on genetic change. Partial dependencies take longer to calculate and are more sensitive to correlated features</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">flashlightObj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrFlashlight.html">mrFlashlight</a></span><span class="op">(</span><span class="va">yhats</span>,
                               X<span class="op">=</span><span class="va">X</span>,
                               Y<span class="op">=</span><span class="va">Y</span>,
@@ -293,16 +295,15 @@
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">light_scatter</span><span class="op">(</span><span class="va">flashlightObj</span>,
                    v <span class="op">=</span> <span class="st">"Forest"</span>,
                    type <span class="op">=</span> <span class="st">"predicted"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-9-1.png" width="100%"></p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<p><img src="README_files/figure-gfm/unnamed-chunk-8-1.png"><!-- --></p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#plots everything on one plot (partial dependency, ALE, scatter)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">light_effects</span><span class="op">(</span><span class="va">flashlightObj</span>,
                    v <span class="op">=</span> <span class="st">"Grassland"</span><span class="op">)</span>,
                    use <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-9-2.png" width="100%"></p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-<span class="co">#profileData_pd &lt;- light_profile(flashlightObj,  v = "Grassland")</span>
+<p><img src="README_files/figure-gfm/unnamed-chunk-8-2.png"><!-- --></p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">#profileData_pd &lt;- light_profile(flashlightObj,  v = "Grassland")</span>
 
 <span class="co">#mrProfileplot(profileData_pd , sdthresh =0.05) #sdthresh removes responses from the first plot that do not vary with the feature</span>
 
@@ -312,17 +313,17 @@
 
 <span class="fu"><a href="reference/mrProfileplot.html">mrProfileplot</a></span><span class="op">(</span><span class="va">profileData_ale</span>,
               sdthresh <span class="op">=</span><span class="fl">0.01</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-9-3.png" width="100%"></p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Press [enter] to continue to the global summary plot</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-9-4.png" width="100%"></p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<p><img src="README_files/figure-gfm/unnamed-chunk-8-3.png"><!-- --></p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="do">##  Press [enter] to continue to the global summary plot</span></span></code></pre></div>
+<p><img src="README_files/figure-gfm/unnamed-chunk-8-4.png"><!-- --></p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#the second plot is the cumulative turnover function</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="interacting-predictors-or-features">Interacting predictors or features<a class="anchor" aria-label="anchor" href="#interacting-predictors-or-features"></a>
 </h2>
 <p>Finally, we can assess how features interact overall to shape genetic change. Be warned this is memory intensive. Future updates to this package will enable users to visualize these interactions and explore them in more detail using 2D ALE plots for example.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#interactions &lt;-mrInteractions(yhats,X,Y,mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things</span>
 <span class="co">#mrPlot_interactions(interactions,X,Y,top_ranking = 2,top_response=2)</span></code></pre></div>
 </div>

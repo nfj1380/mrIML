@@ -1,3 +1,4 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # mrIML: Multivariate (multi-response) interpretable machine learning <a href='https://nfj1380.github.io/mrIML/index.html'><img src="man/figures/logo.png" align="right" height="120"/></a>
@@ -79,7 +80,7 @@ first step to using the package is to load it as follows.
 Now all the data is loaded and ready to go we can formulate the model
 using tidymodel syntax. In this case we have binary data (SNP
 presence/absence at each loci) but the data could also be counts or
-continuous (the set_model argument would be “regression” instead of
+continuous (the set\_model argument would be “regression” instead of
 “classification”). The user can specify any model from the ‘tidymodel’
 universe as ‘model 1’ (see <https://www.tidymodels.org/find/> for
 details). However, we have done most of our testing on random forests
@@ -134,26 +135,30 @@ fData <- filterRareCommon (Responsedata,
 Y <- fData #For simplicity when comparing
 #Define set the outcomes of interest
 str(Features) 
-#> 'data.frame':    20 obs. of  19 variables:
-#>  $ Grassland       : num  0.07 0.0677 0.1845 0.0981 0.1578 ...
-#>  $ Shrub.Scrub     : num  0.557 0.767 0.524 0.786 0.842 ...
-#>  $ Forest          : num  0.01072 0.030588 0.008615 0.000662 0.000616 ...
-#>  $ HighlyDev       : num  0 0 0.00225 0 0 ...
-#>  $ Urban           : num  0 0 0.00159 0 0 ...
-#>  $ Suburban        : num  0.00357 0.13268 0.01325 0.00119 0 ...
-#>  $ Exurban         : num  0.00622 0.03019 0 0.01906 0 ...
-#>  $ Altered         : num  0.441 0.182 0.114 0.12 0 ...
-#>  $ Distance        : num  1.321 0.492 3.231 5.629 4.739 ...
-#>  $ Latitude        : num  33.8 33.8 33.8 33.8 33.8 ...
-#>  $ Longitude       : num  -118 -118 -118 -118 -118 ...
-#>  $ Age             : int  3 0 3 2 3 3 2 3 3 3 ...
-#>  $ Sex             : int  1 1 1 1 0 0 0 1 1 1 ...
-#>  $ Relatedness.PCO1: num  -0.1194 -0.0389 -0.1618 -0.1811 -0.1564 ...
-#>  $ Relatedness.PCO2: num  -0.1947 -0.0525 -0.321 -0.0827 0.1 ...
-#>  $ Relatedness.PCO3: num  -0.191 -0.0874 0.0541 -0.0627 -0.0111 ...
-#>  $ Relatedness.PCO4: num  0.1117 0.2422 0.0974 0.2129 0.2259 ...
-#>  $ Relatedness.PCO5: num  0.06405 0.0706 0.03514 -0.00084 0.0894 ...
-#>  $ Relatedness.PCO6: num  -0.0432 0.0683 -0.0805 0.2247 -0.055 ...
+```
+
+    ## 'data.frame':    20 obs. of  19 variables:
+    ##  $ Grassland       : num  0.07 0.0677 0.1845 0.0981 0.1578 ...
+    ##  $ Shrub.Scrub     : num  0.557 0.767 0.524 0.786 0.842 ...
+    ##  $ Forest          : num  0.01072 0.030588 0.008615 0.000662 0.000616 ...
+    ##  $ HighlyDev       : num  0 0 0.00225 0 0 ...
+    ##  $ Urban           : num  0 0 0.00159 0 0 ...
+    ##  $ Suburban        : num  0.00357 0.13268 0.01325 0.00119 0 ...
+    ##  $ Exurban         : num  0.00622 0.03019 0 0.01906 0 ...
+    ##  $ Altered         : num  0.441 0.182 0.114 0.12 0 ...
+    ##  $ Distance        : num  1.321 0.492 3.231 5.629 4.739 ...
+    ##  $ Latitude        : num  33.8 33.8 33.8 33.8 33.8 ...
+    ##  $ Longitude       : num  -118 -118 -118 -118 -118 ...
+    ##  $ Age             : int  3 0 3 2 3 3 2 3 3 3 ...
+    ##  $ Sex             : int  1 1 1 1 0 0 0 1 1 1 ...
+    ##  $ Relatedness.PCO1: num  -0.1194 -0.0389 -0.1618 -0.1811 -0.1564 ...
+    ##  $ Relatedness.PCO2: num  -0.1947 -0.0525 -0.321 -0.0827 0.1 ...
+    ##  $ Relatedness.PCO3: num  -0.191 -0.0874 0.0541 -0.0627 -0.0111 ...
+    ##  $ Relatedness.PCO4: num  0.1117 0.2422 0.0974 0.2129 0.2259 ...
+    ##  $ Relatedness.PCO5: num  0.06405 0.0706 0.03514 -0.00084 0.0894 ...
+    ##  $ Relatedness.PCO6: num  -0.0432 0.0683 -0.0805 0.2247 -0.055 ...
+
+``` r
 #Remove NAs from the feature/predictor data.
 FeaturesnoNA<-Features[complete.cases(Features), ]
 X <- FeaturesnoNA #For simplicity
@@ -172,69 +177,74 @@ ModelPerf <- mrIMLperformance(yhats=yhats,
                               Model=model1,
                               Y=Y, mode='classification')
 ModelPerf[[1]] #Predictive performance for individual responses 
-#>    response  model_name           roc_AUC                mcc       sensitivity       specificity
-#> 1   env_131 rand_forest                 1  0.666666666666667 0.666666666666667                 1
-#> 2   env_163 rand_forest              0.75               <NA>                 0                 1
-#> 3   env_164 rand_forest                 1                  1                 1                 1
-#> 4   env_167 rand_forest 0.583333333333333 -0.408248290463863 0.666666666666667                 0
-#> 5   env_169 rand_forest                 1  0.666666666666667 0.666666666666667                 1
-#> 6   env_212 rand_forest                 1                  1                 1                 1
-#> 7    env_23 rand_forest             0.875  0.408248290463863                 1               0.5
-#> 8    env_24 rand_forest              0.25 -0.166666666666667               0.5 0.333333333333333
-#> 9    env_41 rand_forest 0.583333333333333  0.166666666666667 0.666666666666667               0.5
-#> 10   env_47 rand_forest                 1  0.666666666666667                 1 0.666666666666667
-#> 11   env_59 rand_forest                 1  0.666666666666667 0.666666666666667                 1
-#> 12    env_8 rand_forest 0.666666666666667               <NA>                 1                 0
-#> 13   env_84 rand_forest                 1  0.666666666666667 0.666666666666667                 1
-#> 14   env_85 rand_forest                 1  0.666666666666667 0.666666666666667                 1
-#> 15   env_86 rand_forest               0.5               <NA>                 0                 1
-#> 16  pol_105 rand_forest             0.875  0.612372435695795              0.75                 1
-#> 17  pol_108 rand_forest              0.75  0.408248290463863               0.5                 1
-#> 18  pol_111 rand_forest                 1                  1                 1                 1
-#> 19  pol_117 rand_forest 0.583333333333333  0.166666666666667 0.666666666666667               0.5
-#> 20  pol_132 rand_forest                 1  0.666666666666667                 1 0.666666666666667
-#> 21  pol_159 rand_forest              0.25 -0.166666666666667               0.5 0.333333333333333
-#> 22  pol_258 rand_forest              0.25 -0.166666666666667               0.5 0.333333333333333
-#> 23   pol_30 rand_forest                 1  0.666666666666667                 1 0.666666666666667
-#> 24  pol_340 rand_forest 0.416666666666667 -0.166666666666667 0.333333333333333               0.5
-#> 25  pol_353 rand_forest               0.5               <NA>                 0                 1
-#> 26  pol_366 rand_forest                 1  0.666666666666667 0.666666666666667                 1
-#> 27   pol_87 rand_forest                 1  0.666666666666667                 1 0.666666666666667
-#> 28   pol_88 rand_forest                 1  0.666666666666667                 1 0.666666666666667
-#> 29   pol_89 rand_forest                 1  0.666666666666667                 1 0.666666666666667
-#>           prevalence
-#> 1  0.421052631578947
-#> 2  0.631578947368421
-#> 3  0.421052631578947
-#> 4  0.421052631578947
-#> 5  0.421052631578947
-#> 6  0.684210526315789
-#> 7  0.631578947368421
-#> 8  0.421052631578947
-#> 9  0.473684210526316
-#> 10 0.473684210526316
-#> 11 0.421052631578947
-#> 12 0.473684210526316
-#> 13 0.421052631578947
-#> 14 0.421052631578947
-#> 15 0.421052631578947
-#> 16 0.473684210526316
-#> 17 0.421052631578947
-#> 18 0.421052631578947
-#> 19 0.473684210526316
-#> 20 0.473684210526316
-#> 21 0.473684210526316
-#> 22 0.473684210526316
-#> 23 0.473684210526316
-#> 24 0.421052631578947
-#> 25 0.421052631578947
-#> 26 0.421052631578947
-#> 27 0.473684210526316
-#> 28 0.473684210526316
-#> 29 0.473684210526316
-ModelPerf[[2]]#Overall predictive performance. r2 for regression and MCC for classification
-#> [1] 0.7873563
 ```
+
+    ##    response  model_name           roc_AUC                mcc       sensitivity
+    ## 1   env_131 rand_forest                 1  0.666666666666667 0.666666666666667
+    ## 2   env_163 rand_forest              0.75               <NA>                 0
+    ## 3   env_164 rand_forest                 1                  1                 1
+    ## 4   env_167 rand_forest 0.583333333333333 -0.408248290463863 0.666666666666667
+    ## 5   env_169 rand_forest                 1  0.666666666666667 0.666666666666667
+    ## 6   env_212 rand_forest                 1                  1                 1
+    ## 7    env_23 rand_forest             0.875  0.408248290463863                 1
+    ## 8    env_24 rand_forest              0.25 -0.166666666666667               0.5
+    ## 9    env_41 rand_forest 0.583333333333333  0.166666666666667 0.666666666666667
+    ## 10   env_47 rand_forest                 1  0.666666666666667                 1
+    ## 11   env_59 rand_forest                 1  0.666666666666667 0.666666666666667
+    ## 12    env_8 rand_forest 0.666666666666667               <NA>                 1
+    ## 13   env_84 rand_forest                 1  0.666666666666667 0.666666666666667
+    ## 14   env_85 rand_forest                 1  0.666666666666667 0.666666666666667
+    ## 15   env_86 rand_forest               0.5               <NA>                 0
+    ## 16  pol_105 rand_forest             0.875  0.612372435695795              0.75
+    ## 17  pol_108 rand_forest              0.75  0.408248290463863               0.5
+    ## 18  pol_111 rand_forest                 1                  1                 1
+    ## 19  pol_117 rand_forest 0.583333333333333  0.166666666666667 0.666666666666667
+    ## 20  pol_132 rand_forest                 1  0.666666666666667                 1
+    ## 21  pol_159 rand_forest              0.25 -0.166666666666667               0.5
+    ## 22  pol_258 rand_forest              0.25 -0.166666666666667               0.5
+    ## 23   pol_30 rand_forest                 1  0.666666666666667                 1
+    ## 24  pol_340 rand_forest 0.416666666666667 -0.166666666666667 0.333333333333333
+    ## 25  pol_353 rand_forest               0.5               <NA>                 0
+    ## 26  pol_366 rand_forest                 1  0.666666666666667 0.666666666666667
+    ## 27   pol_87 rand_forest                 1  0.666666666666667                 1
+    ## 28   pol_88 rand_forest                 1  0.666666666666667                 1
+    ## 29   pol_89 rand_forest                 1  0.666666666666667                 1
+    ##          specificity        prevalence
+    ## 1                  1 0.421052631578947
+    ## 2                  1 0.631578947368421
+    ## 3                  1 0.421052631578947
+    ## 4                  0 0.421052631578947
+    ## 5                  1 0.421052631578947
+    ## 6                  1 0.684210526315789
+    ## 7                0.5 0.631578947368421
+    ## 8  0.333333333333333 0.421052631578947
+    ## 9                0.5 0.473684210526316
+    ## 10 0.666666666666667 0.473684210526316
+    ## 11                 1 0.421052631578947
+    ## 12                 0 0.473684210526316
+    ## 13                 1 0.421052631578947
+    ## 14                 1 0.421052631578947
+    ## 15                 1 0.421052631578947
+    ## 16                 1 0.473684210526316
+    ## 17                 1 0.421052631578947
+    ## 18                 1 0.421052631578947
+    ## 19               0.5 0.473684210526316
+    ## 20 0.666666666666667 0.473684210526316
+    ## 21 0.333333333333333 0.473684210526316
+    ## 22 0.333333333333333 0.473684210526316
+    ## 23 0.666666666666667 0.473684210526316
+    ## 24               0.5 0.421052631578947
+    ## 25                 1 0.421052631578947
+    ## 26                 1 0.421052631578947
+    ## 27 0.666666666666667 0.473684210526316
+    ## 28 0.666666666666667 0.473684210526316
+    ## 29 0.666666666666667 0.473684210526316
+
+``` r
+ModelPerf[[2]]#Overall predictive performance. r2 for regression and MCC for classification
+```
+
+    ## [1] 0.7873563
 
 ## Plotting
 
@@ -247,11 +257,11 @@ plot_vi(VI=VI,
        cutoff= 0, mode='classification') #The cutoff reduces the number of individual models printed in the second plot. 
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
+![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
-    #> Press [enter] to plot individual variable importance summaries
+    ## Press [enter] to plot individual variable importance summaries
 
-<img src="man/figures/README-unnamed-chunk-8-2.png" width="100%" />
+![](README_files/figure-gfm/unnamed-chunk-7-2.png)<!-- -->
 
 ## Effect of a feature on genetic change
 
@@ -274,7 +284,7 @@ plot(light_scatter(flashlightObj,
                    type = "predicted"))
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 ``` r
 #plots everything on one plot (partial dependency, ALE, scatter)
@@ -283,10 +293,9 @@ plot(light_effects(flashlightObj,
                    use = "all")
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-2.png" width="100%" />
+![](README_files/figure-gfm/unnamed-chunk-8-2.png)<!-- -->
 
 ``` r
-
 #profileData_pd <- light_profile(flashlightObj,  v = "Grassland")
 
 #mrProfileplot(profileData_pd , sdthresh =0.05) #sdthresh removes responses from the first plot that do not vary with the feature
@@ -299,11 +308,11 @@ mrProfileplot(profileData_ale,
               sdthresh =0.01)
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-3.png" width="100%" />
+![](README_files/figure-gfm/unnamed-chunk-8-3.png)<!-- -->
 
-    #>  Press [enter] to continue to the global summary plot
+    ##  Press [enter] to continue to the global summary plot
 
-<img src="man/figures/README-unnamed-chunk-9-4.png" width="100%" />
+![](README_files/figure-gfm/unnamed-chunk-8-4.png)<!-- -->
 
 ``` r
 #the second plot is the cumulative turnover function

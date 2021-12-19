@@ -50,6 +50,7 @@ Imports:
     scales,
     tibble,
     tune,
+    iml,
     yardstick
 Suggests: 
     caret,
