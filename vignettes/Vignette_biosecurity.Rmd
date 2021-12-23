@@ -30,8 +30,14 @@ This is a synthesized dataset to simulate PRRSV infection, biosecurity practices
 Please note that the data included in this package is simulated, and is not a reflection of any real farm, company or state. 
 ```{r load packages, include=TRUE, message=FALSE, results='hide'}
 #other packages needed
-library(mrIML)
-library(parsnip); library(tidymodels); library(workflows); library(tidyverse); library(flashlight); library(devtools); library(DALEX); library(plyr);library(vip); library(ggsci); library(ggrepel); library(breakDown); library(future.apply); library(janitor)
+library(mrIML);library(parsnip);
+library(tidymodels); library(workflows);
+library(tidyverse); library(flashlight);
+library(devtools); library(DALEX); 
+library(plyr);library(vip);
+library(ggsci); library(ggrepel);
+library(breakDown); library(future.apply);
+library(janitor)
 
 set.seed(130) #set the seed to ensure consistency
 data <- as.data.frame(mrIML::biosecurity_vignette_data)

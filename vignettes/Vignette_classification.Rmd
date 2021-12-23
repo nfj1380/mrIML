@@ -1,7 +1,7 @@
 ---
 title: "A MrIML vignette: Landscape genetics (classification) "
 author: "Nick Fountain-Jones, Gustavo Machado"
-date: "10 September 2020"
+date: "`r Sys.Date()`"
 opengraph:
   image:
     src: 
@@ -30,9 +30,14 @@ Features (a.k.a predictor variables) with missing data can be removed or interpo
 #   devtools:: install_github('nfj1380/mrIML')
 library(mrIML)
 #other package we need:
-library(vip); library(tidymodels); library(randomForest);  library(caret); library(gbm);
-library(tidyverse);library(parallel); library(doParallel); library(themis); library(viridis); library(janitor); library(hrbrthemes);  library(vegan);library(flashlight);
-library(ggrepel); library(iml); library(plyr);
+library(vip); library(tidymodels);
+library(randomForest); library(gbm);
+library(tidyverse);library(parallel);
+library(doParallel); library(themis);
+library(viridis); library(janitor);
+library(hrbrthemes);library(vegan);
+library(flashlight);library(ggrepel);
+library(iml); library(plyr);
 library(future.apply)
 #library(LEA) 
 #if (!requireNamespace("BiocManager", quietly = TRUE))
