@@ -30,6 +30,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
@@ -42,7 +44,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">mrIML</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
@@ -65,7 +67,7 @@
       <a href="articles/Vignette_biosecurity.html">Swine Biosecurity working example</a>
     </li>
     <li>
-      <a href="articles/Vignette_LandscapeGenetics.html">Classification working example</a>
+      <a href="articles/Vignette_classification.html">Classification working example</a>
     </li>
     <li>
       <a href="articles/Vignette_regression.html">Regression working example</a>
@@ -74,15 +76,6 @@
 </li>
 <li>
   <a href="news/index.html">News</a>
-</li>
-<li>
-  <a href="reference/index.html">Functions</a>
-</li>
-<li>
-  <a href="https://github.com/nfj1380/mrIML/">
-    <span class="fab fa-github fa-lg"></span>
-     
-  </a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right"></ul>
@@ -97,355 +90,308 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="mriml-multivariate-multi-response-interpretable-machine-learning-" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#mriml-multivariate-multi-response-interpretable-machine-learning-" class="anchor"></a>mrIML: Multivariate (multi-response) interpretable machine learning <a href="https://nfj1380.github.io/mrIML/index.html"><img src="reference/figures/logo.png" align="right" height="139"></a>
+<div class="section level1">
+<div class="page-header"><h1 id="mriml-multivariate-multi-response-interpretable-machine-learning-">mrIML: Multivariate (multi-response) interpretable machine learning <a href="https://nfj1380.github.io/mrIML/index.html" class="external-link"><img src="reference/figures/logo.png" align="right" height="120"></a>
+<a class="anchor" aria-label="anchor" href="#mriml-multivariate-multi-response-interpretable-machine-learning-"></a>
 </h1></div>
 <!-- badges: start -->
 
-<p>This package aims to enable users to build and interpret multivariate machine learning models harnessing the tidyverse (tidy model syntax in particular). This package builds off ideas from Gradient Forests (Ellis et al 2012), ecological genomic approaches (Fitzpatrick and Keller, 2014) and multi-response stacking algorithms (Xing et al 2019).</p>
+<p>This package aims to enable users to build and interpret multivariate machine learning models harnessing the tidyverse (tidy model syntax in particular). This package builds off ideas from Gradient Forests <a href="https://esajournals-onlinelibrary-wiley-com.prox.lib.ncsu.edu/doi/full/10.1890/11-0252.1" class="external-link">Ellis et al 2012</a>), ecological genomic approaches <a href="https://onlinelibrary.wiley.com/doi/abs/10.1111/ele.12376" class="external-link">Fitzpatrick and Keller, 2014</a> and multi-response stacking algorithms [Xing et al 2019].</p>
 <p>This package can be of use for any multi-response machine learning problem, but was designed to handle data common to community ecology (site by species data) and ecological genomics (individual or population by SNP loci).</p>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
+<div class="section level2">
+<h2 id="recent-mriml-publications">Recent mrIML publications<a class="anchor" aria-label="anchor" href="#recent-mriml-publications"></a>
+</h2>
+<ol style="list-style-type: decimal">
+<li><p>Fountain-Jones, N. M., Kozakiewicz, C. P., Forester, B. R., Landguth, E. L., Carver, S., Charleston, M., Gagne, R. B., Greenwell, B., Kraberger, S., Trumbo, D. R., Mayer, M., Clark, N. J., &amp; Machado, G. (2021). MrIML: Multi-response interpretable machine learning to model genomic landscapes. Molecular Ecology Resources, 21, 2766– 2781. <a href="https://doi.org/10.1111/1755-0998.13495" class="external-link uri">https://doi.org/10.1111/1755-0998.13495</a></p></li>
+<li><p>Sykes, A. L., Silva, G. S., Holtkamp, D. J., Mauch, B. W., Osemeke, O., Linhares, D. C.L., &amp; Machado, G. (2021). Interpretable machine learning applied to on-farm biosecurity and porcine reproductive and respiratory syndrome virus. Transboundary and Emerging Diseases, 00, 1– 15. <a href="https://doi.org/10.1111/tbed.14369" class="external-link uri">https://doi.org/10.1111/tbed.14369</a></p></li>
+</ol>
+</div>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <p>Install the stable version of the package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#install.packages("devtools")</span>
 <span class="co">#devtools::install_github('nfj1380/mrIML')</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://nfj1380.github.io/mrIML">mrIML</a></span><span class="op">)</span></code></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://nfj1380.github.io/mrIML" class="external-link">mrIML</a></span><span class="op">)</span></code></pre></div>
 </div>
-<div id="quick-start" class="section level2">
-<h2 class="hasAnchor">
-<a href="#quick-start" class="anchor"></a>Quick start</h2>
-<p><strong>mrIML</strong> is designed to be used with a single function call or to be used in an ad-hoc fashion via individual function calls. In the following section we give an overview of the simple use case. For more on using each function see the <a href="xx">function documentation</a>. The core functions for both regression and classification are: <a href="xx"><code>mrIMLpredicts</code></a>, <a href="xx"><code>mrIMLperformance</code></a>, and <a href="xx"><code>mrInteractions</code></a>,for plotting and visualization <a href="xx"><code>mrVip</code></a>, <a href="xx"><code>mrFlashlight</code></a>, and<a href="xx"><code>plot_vi</code></a>. Estimating the interactions alone can be substantially computationally demanding depending on the number of outcomes you want to test. The first step to using the package is to load it as follows.</p>
+<div class="section level2">
+<h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
+</h2>
+<p><strong>mrIML</strong> is designed to be used with a single function call or to be used in an ad-hoc fashion via individual function calls. In the following section we give an overview of the simple use case. For more on using each function see the <a href="https://nfj1380.github.io/mrIML/reference/index.html" class="external-link">function documentation</a>. The core functions for both regression and classification are: <a href="https://nfj1380.github.io/mrIML/reference/mrIMLpredicts.html" class="external-link"><code>mrIMLpredicts</code></a>, <a href="https://nfj1380.github.io/mrIML/reference/mrIMLperformance.html" class="external-link"><code>mrIMLperformance</code></a>, and <a href="https://nfj1380.github.io/mrIML/reference/mrInteractions.html" class="external-link"><code>mrInteractions</code></a>,for plotting and visualization <a href="https://nfj1380.github.io/mrIML/reference/mrVip.html" class="external-link"><code>mrVip</code></a>, <a href="https://nfj1380.github.io/mrIML/reference/mrFlashlight.html" class="external-link"><code>mrFlashlight</code></a>, and<a href="https://nfj1380.github.io/mrIML/reference/plot_vi.html" class="external-link"><code>plot_vi</code></a>. Estimating the interactions alone can be substantially computationally demanding depending on the number of outcomes you want to test. The first step to using the package is to load it as follows.</p>
 </div>
-<div id="model-component" class="section level2">
-<h2 class="hasAnchor">
-<a href="#model-component" class="anchor"></a>Model component</h2>
-<p>Now all the data is loaded and ready to go we can formulate the model using tidymodel syntax. In this case we have binary data (SNP presence/absence at each loci) but the data could also be counts or continuous (the set_model argument would be “regression” instead of “classification”). The user can specify any model from the tidymodel universe as ‘model 1’ (see <a href="https://www.tidymodels.org/find/" class="uri">https://www.tidymodels.org/find/</a> for details). However, we have done most of our testing on random forests (rf), xgr boost and glms (generalized linear models). Here we will specify a random forest classification model as the model applied to each response.</p>
+<div class="section level2">
+<h2 id="model-component">Model component<a class="anchor" aria-label="anchor" href="#model-component"></a>
+</h2>
+<p>Now all the data is loaded and ready to go we can formulate the model using tidymodel syntax. In this case we have binary data (SNP presence/absence at each loci) but the data could also be counts or continuous (the set_model argument would be “regression” instead of “classification”). The user can specify any model from the ‘tidymodel’ universe as ‘model 1’ (see <a href="https://www.tidymodels.org/find/" class="external-link uri">https://www.tidymodels.org/find/</a> for details). However, we have done most of our testing on random forests (rf) and glms (generalized linear models). Here we will specify a random forest classification model as the model applied to each response.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">model1</span> <span class="op">&lt;-</span> 
-  <span class="fu">rand_forest</span><span class="op">(</span>trees <span class="op">=</span> <span class="fl">100</span>, mode <span class="op">=</span> <span class="st">"classification"</span>, mtry <span class="op">=</span> <span class="fu">tune</span><span class="op">(</span><span class="op">)</span>, min_n <span class="op">=</span> <span class="fu">tune</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="co">#100 trees are set for brevity</span>
-  <span class="fu">set_engine</span><span class="op">(</span><span class="st">"randomForest"</span><span class="op">)</span></code></pre></div>
-<div id="mrimlpredicts" class="section level3">
-<h3 class="hasAnchor">
-<a href="#mrimlpredicts" class="anchor"></a><br><span class="math display"><em>m</em><em>r</em><em>I</em><em>M</em><em>L</em><em>p</em><em>r</em><em>e</em><em>d</em><em>i</em><em>c</em><em>t</em><em>s</em></span><br>
+  <span class="fu">rand_forest</span><span class="op">(</span>trees <span class="op">=</span> <span class="fl">10</span>, mode <span class="op">=</span> <span class="st">"classification"</span>, 
+              mtry <span class="op">=</span> <span class="fu">tune</span><span class="op">(</span><span class="op">)</span>, 
+              min_n <span class="op">=</span> <span class="fu">tune</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="co">#100 trees are set for brevity</span>
+              <span class="fu">set_engine</span><span class="op">(</span><span class="st">"randomForest"</span><span class="op">)</span></code></pre></div>
+<div class="section level3">
+<h3 id="mrimlpredicts">
+<a href="https://nfj1380.github.io/mrIML/reference/mrIMLpredicts.html" class="external-link"><code>mrIMLpredicts</code></a><a class="anchor" aria-label="anchor" href="#mrimlpredicts"></a>
 </h3>
 <p>This function represents the core functionality of the package and includes results reporting, plotting and optional saving. It requires a data frame of X t( the snp data for example) and Y represented by the covariates or features.</p>
-<p>For example, for a regression problem lets look at the data from Fitzpatrick and Keller (2015) from <a href="https://nfj1380.github.io/mrIML">mrIML</a>. Columns 1-2 represent geographical coordinates, 3-9 environmental data for each location, 10-14 are spatial eigenvectors (MEMs) and the remaining columns are proportion of the poulations with a each reference allelle.</p>
+<p>Load example data (cite) data from <a href="https://nfj1380.github.io/mrIML" class="external-link">mrIML</a>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">gfData</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>
-<span class="co">#&gt;         x     y bio_1 bio_10 bio_15 bio_18 bio_2 bio_7 elevation     MEM.1      MEM.2      MEM.3</span>
-<span class="co">#&gt; 1 -101.57 49.14    31    182     63    189   131   489       498  24.55053   7.444415  -9.018635</span>
-<span class="co">#&gt; 2 -147.89 69.10  -107     85     60     89   110   507       400 -14.18000 -22.945314 -11.845836</span>
-<span class="co">#&gt; 3 -148.51 63.39   -52     90     63    196   102   399      1040 -15.77654 -27.420568 -13.038813</span>
-<span class="co">#&gt; 4  -98.35 54.51   -12    159     52    204   103   510       213  20.73482   8.715802 -19.187171</span>
-<span class="co">#&gt; 5 -112.79 53.33    18    150     66    234   119   427       778  18.51313  -3.488470  24.300653</span>
-<span class="co">#&gt; 6 -146.17 64.59   -43    135     65    154   109   493       460 -17.18802 -31.070507 -13.633361</span>
-<span class="co">#&gt;         MEM.4 REFERENCE_X80928 REFERENCE_X172196 REFERENCE_X172210 REFERENCE_X172625</span>
-<span class="co">#&gt; 1  0.06879434        0.4000000        0.03333333         0.2692308         0.4230769</span>
-<span class="co">#&gt; 2 21.59719769        0.3611111        0.00000000         0.2222222         0.4705882</span>
-<span class="co">#&gt; 3 14.65433486        0.4333333        0.00000000         0.1666667         0.1666667</span>
-<span class="co">#&gt; 4 -5.13771830        0.3846154        0.07142857         0.4230769         0.4615385</span>
-<span class="co">#&gt; 5  7.73910268        0.4285714        0.00000000         0.4000000         0.4000000</span>
-<span class="co">#&gt; 6  5.78938201        0.3333333        0.00000000         0.1785714         0.3846154</span>
-<span class="co">#&gt;   REFERENCE_X177996 REFERENCE_X180626 REFERENCE_X181299</span>
-<span class="co">#&gt; 1        0.00000000        0.03846154        0.06666667</span>
-<span class="co">#&gt; 2        0.00000000        0.05555556        0.00000000</span>
-<span class="co">#&gt; 3        0.03571429        0.16666667        0.00000000</span>
-<span class="co">#&gt; 4        0.10714286        0.00000000        0.00000000</span>
-<span class="co">#&gt; 5        0.06666667        0.19230769        0.06666667</span>
-<span class="co">#&gt; 6        0.00000000        0.08333333        0.00000000</span></code></pre></div>
-<p>For a classiciation problem, the data is similar except are response (by definition) is binary (i.e., is there a muutation at that locus).</p>
+<code class="sourceCode R"><span class="va">fData</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/filterRareCommon.html">filterRareCommon</a></span> <span class="op">(</span><span class="va">Responsedata</span>,
+                           lower<span class="op">=</span><span class="fl">0.4</span>,
+                           higher<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span> 
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="va">fData</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="parallel-processing">Parallel processing<a class="anchor" aria-label="anchor" href="#parallel-processing"></a>
+</h2>
+<p>MrIML provides uses the flexible future apply functionality to set up multi-core processing. In the example below, we set up a cluster using 4 cores. If you don’t set up a cluster, the default settings will be used and the analysis will run sequentially.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Define set of features</span>
-<span class="va">FeaturesnoNA</span><span class="op">&lt;-</span><span class="va">Features</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html">complete.cases</a></span><span class="op">(</span><span class="va">Features</span><span class="op">)</span>, <span class="op">]</span>
-<span class="va">Y</span> <span class="op">&lt;-</span> <span class="va">FeaturesnoNA</span> <span class="co">#for simplicity</span>
-<span class="co"># Define set the outcomes of interst</span>
-<span class="va">fData</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/filterRareCommon.html">filterRareCommon</a></span> <span class="op">(</span><span class="va">Responsedata</span>, lower<span class="op">=</span><span class="fl">0.4</span>, higher<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span> 
-<span class="va">X</span> <span class="op">&lt;-</span> <span class="va">fData</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>
+<code class="sourceCode R"><span class="co"># detectCores() #check how many cores you have available. We suggest keeping one core free for internet browsing etc.</span>
 
-<span class="va">yhats</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrIMLpredicts.html">mrIMLpredicts</a></span><span class="op">(</span>X<span class="op">=</span><span class="va">X</span>,Y<span class="op">=</span><span class="va">Y</span>, model1<span class="op">=</span><span class="va">model1</span>, balance_data<span class="op">=</span><span class="st">'no'</span>, mod<span class="op">=</span><span class="st">'classification'</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="va">cl</span> <span class="op">&lt;-</span> <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">makeCluster</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>
 
-<span class="co">#save(yhats, file='logreg_model')</span>
-<span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">model1</span>, X<span class="op">=</span><span class="va">X</span><span class="op">)</span> <span class="co">#</span>
-<span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="co">#this measures performance across all loci.</span>
-<span class="co">#&gt; [1] 0.5689655</span></code></pre></div>
-</div>
-</div>
-<div id="plotting" class="section level2">
-<h2 class="hasAnchor">
-<a href="#plotting" class="anchor"></a>Plotting</h2>
+<span class="fu">plan</span><span class="op">(</span><span class="va">cluster</span>,
+     workers<span class="op">=</span><span class="va">cl</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">VI</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrVip.html">mrVip</a></span><span class="op">(</span><span class="va">yhats</span>, Y<span class="op">=</span><span class="va">Y</span><span class="op">)</span> 
-<span class="fu"><a href="reference/plot_vi.html">plot_vi</a></span><span class="op">(</span>VI<span class="op">=</span><span class="va">VI</span>,  X<span class="op">=</span><span class="va">X</span>,Y<span class="op">=</span><span class="va">Y</span>, modelPerf<span class="op">=</span><span class="va">ModelPerf</span>, cutoff<span class="op">=</span> <span class="fl">0</span>, plot.pca<span class="op">=</span><span class="st">'yes'</span><span class="op">)</span> <span class="co">#the cutoff reduces the number of individual models printed in the second plot. </span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-7-1.png" width="100%"></p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co">#&gt; Press [enter] to plot individual variable importance summaries</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-7-2.png" width="100%"></p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co">#&gt; Press [enter] to plot the importance PCA plot</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-7-3.png" width="100%"></p>
-</div>
-<div id="effect-of-a-feature-on-genetic-change" class="section level2">
-<h2 class="hasAnchor">
-<a href="#effect-of-a-feature-on-genetic-change" class="anchor"></a>Effect of a feature on genetic change</h2>
-<p>We also wrap some flashlight functionality to visualize the marginal (i.e. partial dependencies) or conditional (accumulated local effects) effect of a feature on genetic change. Partial dependencies take longer to calculate and are more sensitive to correlated features</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">flashlightObj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrFlashlight.html">mrFlashlight</a></span><span class="op">(</span><span class="va">yhats</span>, <span class="va">X</span>, <span class="va">Y</span>, response <span class="op">=</span> <span class="st">"multi"</span>, model<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span>
-<span class="co">#plot prediction scatter for all responses. Gets busy with </span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu">light_scatter</span><span class="op">(</span><span class="va">flashlightObj</span>, v <span class="op">=</span> <span class="st">"Forest"</span>, type <span class="op">=</span> <span class="st">"predicted"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-9-1.png" width="100%"></p>
+<code class="sourceCode R"><span class="co">#Define set of features</span>
+<span class="va">fData</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/filterRareCommon.html">filterRareCommon</a></span> <span class="op">(</span><span class="va">Responsedata</span>,
+                           lower<span class="op">=</span><span class="fl">0.4</span>,
+                           higher<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span> 
+<span class="va">Y</span> <span class="op">&lt;-</span> <span class="va">fData</span> <span class="co">#For simplicity when comparing</span>
+<span class="co">#Define set the outcomes of interest</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">Features</span><span class="op">)</span> </code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co">## 'data.frame':    20 obs. of  19 variables:</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="co">##  $ Grassland       : num  0.07 0.0677 0.1845 0.0981 0.1578 ...</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="co">##  $ Shrub.Scrub     : num  0.557 0.767 0.524 0.786 0.842 ...</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="co">##  $ Forest          : num  0.01072 0.030588 0.008615 0.000662 0.000616 ...</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="co">##  $ HighlyDev       : num  0 0 0.00225 0 0 ...</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="co">##  $ Urban           : num  0 0 0.00159 0 0 ...</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="co">##  $ Suburban        : num  0.00357 0.13268 0.01325 0.00119 0 ...</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="co">##  $ Exurban         : num  0.00622 0.03019 0 0.01906 0 ...</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a><span class="co">##  $ Altered         : num  0.441 0.182 0.114 0.12 0 ...</span></span>
+<span id="cb6-10"><a href="#cb6-10"></a><span class="co">##  $ Distance        : num  1.321 0.492 3.231 5.629 4.739 ...</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="co">##  $ Latitude        : num  33.8 33.8 33.8 33.8 33.8 ...</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a><span class="co">##  $ Longitude       : num  -118 -118 -118 -118 -118 ...</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a><span class="co">##  $ Age             : int  3 0 3 2 3 3 2 3 3 3 ...</span></span>
+<span id="cb6-14"><a href="#cb6-14"></a><span class="co">##  $ Sex             : int  1 1 1 1 0 0 0 1 1 1 ...</span></span>
+<span id="cb6-15"><a href="#cb6-15"></a><span class="co">##  $ Relatedness.PCO1: num  -0.1194 -0.0389 -0.1618 -0.1811 -0.1564 ...</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a><span class="co">##  $ Relatedness.PCO2: num  -0.1947 -0.0525 -0.321 -0.0827 0.1 ...</span></span>
+<span id="cb6-17"><a href="#cb6-17"></a><span class="co">##  $ Relatedness.PCO3: num  -0.191 -0.0874 0.0541 -0.0627 -0.0111 ...</span></span>
+<span id="cb6-18"><a href="#cb6-18"></a><span class="co">##  $ Relatedness.PCO4: num  0.1117 0.2422 0.0974 0.2129 0.2259 ...</span></span>
+<span id="cb6-19"><a href="#cb6-19"></a><span class="co">##  $ Relatedness.PCO5: num  0.06405 0.0706 0.03514 -0.00084 0.0894 ...</span></span>
+<span id="cb6-20"><a href="#cb6-20"></a><span class="co">##  $ Relatedness.PCO6: num  -0.0432 0.0683 -0.0805 0.2247 -0.055 ...</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">#Remove NAs from the feature/predictor data.</span>
+<span class="va">FeaturesnoNA</span><span class="op">&lt;-</span><span class="va">Features</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">Features</span><span class="op">)</span>, <span class="op">]</span>
+<span class="va">X</span> <span class="op">&lt;-</span> <span class="va">FeaturesnoNA</span> <span class="co">#For simplicity</span>
+<span class="co">#For more efficient testing for interactions (more variables more interacting pairs)</span>
+<span class="va">X</span> <span class="op">&lt;-</span> <span class="va">FeaturesnoNA</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">]</span> <span class="co">#Three features only</span>
+
+
+<span class="va">yhats</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrIMLpredicts.html">mrIMLpredicts</a></span><span class="op">(</span>X<span class="op">=</span><span class="va">X</span>, <span class="co">#Features/predictors </span>
+                       Y<span class="op">=</span><span class="va">Y</span>, <span class="co">#Response data</span>
+                       Model<span class="op">=</span><span class="va">model1</span>, <span class="co">#Specify your model</span>
+                       balance_data<span class="op">=</span><span class="st">'no'</span>, <span class="co">#Chose how to balance your data </span>
+                       mode<span class="op">=</span><span class="st">'classification'</span>, <span class="co">#Chose your mode (classification versus regression)</span>
+                       seed <span class="op">=</span> <span class="fl">120</span><span class="op">)</span> <span class="co">#Set seed</span>
+
+<span class="va">ModelPerf</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrIMLperformance.html">mrIMLperformance</a></span><span class="op">(</span>yhats<span class="op">=</span><span class="va">yhats</span>,
+                              Model<span class="op">=</span><span class="va">model1</span>,
+                              Y<span class="op">=</span><span class="va">Y</span>, mode<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span>
+<span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co">#Predictive performance for individual responses </span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co">##    response  model_name           roc_AUC                mcc       sensitivity</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="co">## 1   env_131 rand_forest                 1  0.666666666666667 0.666666666666667</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="co">## 2   env_163 rand_forest              0.75               &lt;NA&gt;                 0</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="co">## 3   env_164 rand_forest                 1                  1                 1</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a><span class="co">## 4   env_167 rand_forest 0.583333333333333 -0.408248290463863 0.666666666666667</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="co">## 5   env_169 rand_forest                 1  0.666666666666667 0.666666666666667</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="co">## 6   env_212 rand_forest                 1                  1                 1</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a><span class="co">## 7    env_23 rand_forest             0.875  0.408248290463863                 1</span></span>
+<span id="cb8-9"><a href="#cb8-9"></a><span class="co">## 8    env_24 rand_forest              0.25 -0.166666666666667               0.5</span></span>
+<span id="cb8-10"><a href="#cb8-10"></a><span class="co">## 9    env_41 rand_forest 0.583333333333333  0.166666666666667 0.666666666666667</span></span>
+<span id="cb8-11"><a href="#cb8-11"></a><span class="co">## 10   env_47 rand_forest                 1  0.666666666666667                 1</span></span>
+<span id="cb8-12"><a href="#cb8-12"></a><span class="co">## 11   env_59 rand_forest                 1  0.666666666666667 0.666666666666667</span></span>
+<span id="cb8-13"><a href="#cb8-13"></a><span class="co">## 12    env_8 rand_forest 0.666666666666667               &lt;NA&gt;                 1</span></span>
+<span id="cb8-14"><a href="#cb8-14"></a><span class="co">## 13   env_84 rand_forest                 1  0.666666666666667 0.666666666666667</span></span>
+<span id="cb8-15"><a href="#cb8-15"></a><span class="co">## 14   env_85 rand_forest                 1  0.666666666666667 0.666666666666667</span></span>
+<span id="cb8-16"><a href="#cb8-16"></a><span class="co">## 15   env_86 rand_forest               0.5               &lt;NA&gt;                 0</span></span>
+<span id="cb8-17"><a href="#cb8-17"></a><span class="co">## 16  pol_105 rand_forest             0.875  0.612372435695795              0.75</span></span>
+<span id="cb8-18"><a href="#cb8-18"></a><span class="co">## 17  pol_108 rand_forest              0.75  0.408248290463863               0.5</span></span>
+<span id="cb8-19"><a href="#cb8-19"></a><span class="co">## 18  pol_111 rand_forest                 1                  1                 1</span></span>
+<span id="cb8-20"><a href="#cb8-20"></a><span class="co">## 19  pol_117 rand_forest 0.583333333333333  0.166666666666667 0.666666666666667</span></span>
+<span id="cb8-21"><a href="#cb8-21"></a><span class="co">## 20  pol_132 rand_forest                 1  0.666666666666667                 1</span></span>
+<span id="cb8-22"><a href="#cb8-22"></a><span class="co">## 21  pol_159 rand_forest              0.25 -0.166666666666667               0.5</span></span>
+<span id="cb8-23"><a href="#cb8-23"></a><span class="co">## 22  pol_258 rand_forest              0.25 -0.166666666666667               0.5</span></span>
+<span id="cb8-24"><a href="#cb8-24"></a><span class="co">## 23   pol_30 rand_forest                 1  0.666666666666667                 1</span></span>
+<span id="cb8-25"><a href="#cb8-25"></a><span class="co">## 24  pol_340 rand_forest 0.416666666666667 -0.166666666666667 0.333333333333333</span></span>
+<span id="cb8-26"><a href="#cb8-26"></a><span class="co">## 25  pol_353 rand_forest               0.5               &lt;NA&gt;                 0</span></span>
+<span id="cb8-27"><a href="#cb8-27"></a><span class="co">## 26  pol_366 rand_forest                 1  0.666666666666667 0.666666666666667</span></span>
+<span id="cb8-28"><a href="#cb8-28"></a><span class="co">## 27   pol_87 rand_forest                 1  0.666666666666667                 1</span></span>
+<span id="cb8-29"><a href="#cb8-29"></a><span class="co">## 28   pol_88 rand_forest                 1  0.666666666666667                 1</span></span>
+<span id="cb8-30"><a href="#cb8-30"></a><span class="co">## 29   pol_89 rand_forest                 1  0.666666666666667                 1</span></span>
+<span id="cb8-31"><a href="#cb8-31"></a><span class="co">##          specificity        prevalence</span></span>
+<span id="cb8-32"><a href="#cb8-32"></a><span class="co">## 1                  1 0.421052631578947</span></span>
+<span id="cb8-33"><a href="#cb8-33"></a><span class="co">## 2                  1 0.631578947368421</span></span>
+<span id="cb8-34"><a href="#cb8-34"></a><span class="co">## 3                  1 0.421052631578947</span></span>
+<span id="cb8-35"><a href="#cb8-35"></a><span class="co">## 4                  0 0.421052631578947</span></span>
+<span id="cb8-36"><a href="#cb8-36"></a><span class="co">## 5                  1 0.421052631578947</span></span>
+<span id="cb8-37"><a href="#cb8-37"></a><span class="co">## 6                  1 0.684210526315789</span></span>
+<span id="cb8-38"><a href="#cb8-38"></a><span class="co">## 7                0.5 0.631578947368421</span></span>
+<span id="cb8-39"><a href="#cb8-39"></a><span class="co">## 8  0.333333333333333 0.421052631578947</span></span>
+<span id="cb8-40"><a href="#cb8-40"></a><span class="co">## 9                0.5 0.473684210526316</span></span>
+<span id="cb8-41"><a href="#cb8-41"></a><span class="co">## 10 0.666666666666667 0.473684210526316</span></span>
+<span id="cb8-42"><a href="#cb8-42"></a><span class="co">## 11                 1 0.421052631578947</span></span>
+<span id="cb8-43"><a href="#cb8-43"></a><span class="co">## 12                 0 0.473684210526316</span></span>
+<span id="cb8-44"><a href="#cb8-44"></a><span class="co">## 13                 1 0.421052631578947</span></span>
+<span id="cb8-45"><a href="#cb8-45"></a><span class="co">## 14                 1 0.421052631578947</span></span>
+<span id="cb8-46"><a href="#cb8-46"></a><span class="co">## 15                 1 0.421052631578947</span></span>
+<span id="cb8-47"><a href="#cb8-47"></a><span class="co">## 16                 1 0.473684210526316</span></span>
+<span id="cb8-48"><a href="#cb8-48"></a><span class="co">## 17                 1 0.421052631578947</span></span>
+<span id="cb8-49"><a href="#cb8-49"></a><span class="co">## 18                 1 0.421052631578947</span></span>
+<span id="cb8-50"><a href="#cb8-50"></a><span class="co">## 19               0.5 0.473684210526316</span></span>
+<span id="cb8-51"><a href="#cb8-51"></a><span class="co">## 20 0.666666666666667 0.473684210526316</span></span>
+<span id="cb8-52"><a href="#cb8-52"></a><span class="co">## 21 0.333333333333333 0.473684210526316</span></span>
+<span id="cb8-53"><a href="#cb8-53"></a><span class="co">## 22 0.333333333333333 0.473684210526316</span></span>
+<span id="cb8-54"><a href="#cb8-54"></a><span class="co">## 23 0.666666666666667 0.473684210526316</span></span>
+<span id="cb8-55"><a href="#cb8-55"></a><span class="co">## 24               0.5 0.421052631578947</span></span>
+<span id="cb8-56"><a href="#cb8-56"></a><span class="co">## 25                 1 0.421052631578947</span></span>
+<span id="cb8-57"><a href="#cb8-57"></a><span class="co">## 26                 1 0.421052631578947</span></span>
+<span id="cb8-58"><a href="#cb8-58"></a><span class="co">## 27 0.666666666666667 0.473684210526316</span></span>
+<span id="cb8-59"><a href="#cb8-59"></a><span class="co">## 28 0.666666666666667 0.473684210526316</span></span>
+<span id="cb8-60"><a href="#cb8-60"></a><span class="co">## 29 0.666666666666667 0.473684210526316</span></span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-<span class="co">#profileData_pd &lt;- light_profile(flashlightObj,  v = "Grassland")</span>
+<code class="sourceCode R"><span class="va">ModelPerf</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="co">#Overall predictive performance. r2 for regression and MCC for classification</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co">## [1] 0.7873563</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="plotting">Plotting<a class="anchor" aria-label="anchor" href="#plotting"></a>
+</h2>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">VI</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrVip.html">mrVip</a></span><span class="op">(</span><span class="va">yhats</span>, X<span class="op">=</span><span class="va">X</span><span class="op">)</span> 
+<span class="fu"><a href="reference/plot_vi.html">plot_vi</a></span><span class="op">(</span>VI<span class="op">=</span><span class="va">VI</span>,
+        X<span class="op">=</span><span class="va">X</span>,
+        Y<span class="op">=</span><span class="va">Y</span>,
+        modelPerf<span class="op">=</span><span class="va">ModelPerf</span>, 
+       cutoff<span class="op">=</span> <span class="fl">0</span>, mode<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span> <span class="co">#The cutoff reduces the number of individual models printed in the second plot. </span></code></pre></div>
+<p><img src="README_files/figure-gfm/unnamed-chunk-7-1.png"><!-- --></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="co">## Press [enter] to plot individual variable importance summaries</span></span></code></pre></div>
+<p><img src="README_files/figure-gfm/unnamed-chunk-7-2.png"><!-- --></p>
+</div>
+<div class="section level2">
+<h2 id="effect-of-a-feature-on-genetic-change">Effect of a feature on genetic change<a class="anchor" aria-label="anchor" href="#effect-of-a-feature-on-genetic-change"></a>
+</h2>
+<p>We also wrap some flashlight functionality to visualize the marginal (i.e. partial dependencies) or conditional (accumulated local effects) effect of a feature on genetic change. Partial dependencies take longer to calculate and are more sensitive to correlated features</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">flashlightObj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrFlashlight.html">mrFlashlight</a></span><span class="op">(</span><span class="va">yhats</span>,
+                              X<span class="op">=</span><span class="va">X</span>,
+                              Y<span class="op">=</span><span class="va">Y</span>,
+                              response <span class="op">=</span> <span class="st">"single"</span>,
+                              index<span class="op">=</span><span class="fl">1</span>,
+                              mode<span class="op">=</span><span class="st">'classification'</span><span class="op">)</span>
+
+<span class="co">#plot prediction scatter for all responses. Gets busy with </span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">light_scatter</span><span class="op">(</span><span class="va">flashlightObj</span>,
+                   v <span class="op">=</span> <span class="st">"Forest"</span>,
+                   type <span class="op">=</span> <span class="st">"predicted"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p><img src="README_files/figure-gfm/unnamed-chunk-8-1.png"><!-- --></p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">#plots everything on one plot (partial dependency, ALE, scatter)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">light_effects</span><span class="op">(</span><span class="va">flashlightObj</span>,
+                   v <span class="op">=</span> <span class="st">"Grassland"</span><span class="op">)</span>,
+                   use <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></code></pre></div>
+<p><img src="README_files/figure-gfm/unnamed-chunk-8-2.png"><!-- --></p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">#profileData_pd &lt;- light_profile(flashlightObj,  v = "Grassland")</span>
+
 <span class="co">#mrProfileplot(profileData_pd , sdthresh =0.05) #sdthresh removes responses from the first plot that do not vary with the feature</span>
-<span class="va">profileData_ale</span> <span class="op">&lt;-</span> <span class="fu">light_profile</span><span class="op">(</span><span class="va">flashlightObj</span>, v <span class="op">=</span> <span class="st">"Grassland"</span>, type <span class="op">=</span> <span class="st">"ale"</span><span class="op">)</span> <span class="co">#acumulated local effects</span>
-<span class="fu"><a href="reference/mrProfileplot.html">mrProfileplot</a></span><span class="op">(</span><span class="va">profileData_ale</span> , sdthresh <span class="op">=</span><span class="fl">0.01</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-9-2.png" width="100%"><img src="reference/figures/README-unnamed-chunk-9-3.png" width="100%"></p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+
+<span class="va">profileData_ale</span> <span class="op">&lt;-</span> <span class="fu">light_profile</span><span class="op">(</span><span class="va">flashlightObj</span>,
+                                 v <span class="op">=</span> <span class="st">"Grassland"</span>,
+                                 type <span class="op">=</span> <span class="st">"ale"</span><span class="op">)</span> <span class="co">#accumulated local effects</span>
+
+<span class="fu"><a href="reference/mrProfileplot.html">mrProfileplot</a></span><span class="op">(</span><span class="va">profileData_ale</span>,
+              sdthresh <span class="op">=</span><span class="fl">0.01</span><span class="op">)</span></code></pre></div>
+<p><img src="README_files/figure-gfm/unnamed-chunk-8-3.png"><!-- --></p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="co">##  Press [enter] to continue to the global summary plot</span></span></code></pre></div>
+<p><img src="README_files/figure-gfm/unnamed-chunk-8-4.png"><!-- --></p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#the second plot is the cumulative turnover function</span></code></pre></div>
 </div>
-<div id="interacting-predictors-or-features" class="section level2">
-<h2 class="hasAnchor">
-<a href="#interacting-predictors-or-features" class="anchor"></a>Interacting predictors or features</h2>
+<div class="section level2">
+<h2 id="interacting-predictors-or-features">Interacting predictors or features<a class="anchor" aria-label="anchor" href="#interacting-predictors-or-features"></a>
+</h2>
 <p>Finally, we can assess how features interact overall to shape genetic change. Be warned this is memory intensive. Future updates to this package will enable users to visualize these interactions and explore them in more detail using 2D ALE plots for example.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#interactions &lt;-mrInteractions(yhats, X, Y,  mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things</span>
-<span class="co">#mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2)</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">#interactions &lt;-mrInteractions(yhats,X,Y,mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things</span>
+<span class="co">#mrPlot_interactions(interactions,X,Y,top_ranking = 2,top_response=2)</span></code></pre></div>
 </div>
-<div id="references" class="section level2">
-<h2 class="hasAnchor">
-<a href="#references" class="anchor"></a>References</h2>
-<p>Xing, L, Lesperance, ML and Zhang, X (2020). Simultaneous prediction of multiple outcomes using revised stacking algorithms. Bioinformatics, 36, 65-72.</p>
-<p>Fitzpatrick, M.C. &amp; Keller, S.R. (2015) Ecological genomics meets community-level modelling of biodiversity: mapping the genomic landscape of current and future environmental adaptation. Ecology Letters 18, 1–16.</p>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<p>Xing, L, Lesperance, ML and Zhang, X (2020). Simultaneous prediction of multiple outcomes using revised stacking algorithms. Bioinformatics, 36, 65-72. <a href="doi:10.1093/bioinformatics/btz531" class="uri">doi:10.1093/bioinformatics/btz531</a>.</p>
+<p>Fitzpatrick, M.C. &amp; Keller, S.R. (2015) Ecological genomics meets community-level modelling of biodiversity: mapping the genomic landscape of current and future environmental adaptation. Ecology Letters 18, 1–16.doi.org/10.1111/ele.12376</p>
 <p>Ellis, N., Smith, S.J. and Pitcher, C.R. (2012), Gradient forests: calculating importance gradients on physical predictors. Ecology, 93: 156-168. <a href="doi:10.1890/11-0252.1" class="uri">doi:10.1890/11-0252.1</a></p>
-</div>
-<div id="session-info" class="section level2">
-<h2 class="hasAnchor">
-<a href="#session-info" class="anchor"></a>Session info</h2>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/sessioninfo/man/session_info.html">session_info</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; - Session info -----------------------------------------------------------------------------------</span>
-<span class="co">#&gt;  setting  value                       </span>
-<span class="co">#&gt;  version  R version 3.6.3 (2020-02-29)</span>
-<span class="co">#&gt;  os       Windows 10 x64              </span>
-<span class="co">#&gt;  system   x86_64, mingw32             </span>
-<span class="co">#&gt;  ui       RTerm                       </span>
-<span class="co">#&gt;  language (EN)                        </span>
-<span class="co">#&gt;  collate  English_United States.1252  </span>
-<span class="co">#&gt;  ctype    English_United States.1252  </span>
-<span class="co">#&gt;  tz       America/New_York            </span>
-<span class="co">#&gt;  date     2021-05-14                  </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; - Packages ---------------------------------------------------------------------------------------</span>
-<span class="co">#&gt;  package         * version    date       lib source                        </span>
-<span class="co">#&gt;  assertthat        0.2.1      2019-03-21 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  backports         1.2.1      2020-12-09 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  BBmisc            1.11       2017-03-10 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  broom           * 0.7.6      2021-04-05 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  cachem            1.0.4      2021-02-13 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  callr             3.7.0      2021-04-20 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  caret           * 6.0-86     2020-03-20 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  cellranger        1.1.0      2016-07-27 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  checkmate         2.0.0      2020-02-06 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  class             7.3-15     2019-01-01 [2] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  cli               2.5.0      2021-04-26 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  cluster           2.1.0      2019-06-19 [2] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  codetools         0.2-16     2018-12-24 [2] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  colorspace        2.0-0      2020-11-11 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  cowplot           1.1.1      2020-12-30 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  crayon            1.4.1      2021-02-08 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  data.table        1.14.0     2021-02-21 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  DBI               1.1.1      2021-01-15 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  dbplyr            2.1.1      2021-04-06 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  desc              1.3.0      2021-03-05 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  devtools          2.4.0      2021-04-07 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  dials           * 0.0.9      2020-09-16 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  DiceDesign        1.9        2021-02-13 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  digest            0.6.27     2020-10-24 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  doParallel      * 1.0.16     2020-10-16 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  dplyr           * 1.0.5      2021-03-05 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  ellipsis          0.3.1      2020-05-15 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  evaluate          0.14       2019-05-28 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  extrafont         0.17       2014-12-08 [1] CRAN (R 3.6.2)                </span>
-<span class="co">#&gt;  extrafontdb       1.0        2012-06-11 [1] CRAN (R 3.6.0)                </span>
-<span class="co">#&gt;  fansi             0.4.2      2021-01-15 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  farver            2.1.0      2021-02-28 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  fastmap           1.1.0      2021-01-25 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  fastmatch         1.1-0      2017-01-28 [1] CRAN (R 3.6.0)                </span>
-<span class="co">#&gt;  flashlight      * 0.8.0      2021-04-21 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  FNN               1.1.3      2019-02-15 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  forcats         * 0.5.1      2021-01-27 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  foreach         * 1.5.1      2020-10-15 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  fs                1.5.0      2020-07-31 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  furrr             0.2.2      2021-01-29 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  future            1.21.0     2020-12-10 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  gbm             * 2.1.8      2020-07-15 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  gdtools           0.2.3      2021-01-06 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  generics          0.1.0      2020-10-31 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  ggplot2         * 3.3.3      2020-12-30 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  ggrepel         * 0.9.1      2021-01-15 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  globals           0.14.0     2020-11-22 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  glue              1.4.2      2020-08-27 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  gower             0.2.2      2020-06-23 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  GPfit             1.0-8      2019-02-08 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  gridExtra         2.3        2017-09-09 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  gtable            0.3.0      2019-03-25 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  hardhat           0.1.5      2020-11-09 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  haven             2.4.0      2021-04-14 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  highr             0.9        2021-04-16 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  hms               1.0.0      2021-01-13 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  hrbrthemes      * 0.8.0      2020-03-06 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  htmltools         0.5.1.1    2021-01-22 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  httr              1.4.2      2020-07-20 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  infer           * 0.5.4      2021-01-13 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  ipred             0.9-11     2021-03-12 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  iterators       * 1.0.13     2020-10-15 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  janitor         * 2.1.0      2021-01-05 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  jsonlite          1.7.2      2020-12-09 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  knitr             1.32       2021-04-14 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  labeling          0.4.2      2020-10-20 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  lattice         * 0.20-38    2018-11-04 [2] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  lava              1.6.9      2021-03-11 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  lhs               1.1.1      2020-10-05 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  lifecycle         1.0.0      2021-02-15 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  listenv           0.8.0      2019-12-05 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  lubridate         1.7.10     2021-02-26 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  magrittr          2.0.1      2020-11-17 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  MASS              7.3-51.5   2019-12-20 [2] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  Matrix            1.2-18     2019-11-27 [2] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  memoise           2.0.0      2021-01-26 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  MetricsWeighted   0.5.2      2021-04-16 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  mgcv              1.8-31     2019-11-09 [2] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  mlr               2.19.0     2021-02-22 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  modeldata       * 0.1.0      2020-10-22 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  ModelMetrics      1.2.2.2    2020-03-17 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  modelr            0.1.8      2020-05-19 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  mrIML           * 1.0.0      2021-05-13 [1] Github (nfj1380/mrIML@7d971b9)</span>
-<span class="co">#&gt;  munsell           0.5.0      2018-06-12 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  nlme              3.1-144    2020-02-06 [2] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  nnet              7.3-12     2016-02-02 [2] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  parallelly        1.24.0     2021-03-14 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  parallelMap       1.5.0      2020-03-26 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  ParamHelpers      1.14       2020-03-24 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  parsnip         * 0.1.5      2021-01-19 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  pdp             * 0.7.0      2018-08-27 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  permute         * 0.9-5      2019-03-12 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  pillar            1.6.0      2021-04-13 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  pkgbuild          1.2.0      2020-12-15 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  pkgconfig         2.0.3      2019-09-22 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  pkgload           1.2.1      2021-04-06 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  plyr              1.8.6      2020-03-03 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  prettyunits       1.1.1      2020-01-24 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  pROC              1.17.0.1   2021-01-13 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  processx          3.5.0      2021-03-23 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  prodlim           2019.11.13 2019-11-17 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  ps                1.6.0      2021-02-28 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  purrr           * 0.3.4      2020-04-17 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  R6                2.5.0      2020-10-28 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  randomForest    * 4.6-14     2018-03-25 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  RANN              2.6.1      2019-01-08 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  Rcpp              1.0.6      2021-01-15 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  readr           * 1.4.0      2020-10-05 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  readxl            1.3.1      2019-03-13 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  recipes         * 0.1.16     2021-04-16 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  remotes           2.3.0      2021-04-01 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  reprex            2.0.0      2021-04-02 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  reshape2          1.4.4      2020-04-09 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  rlang           * 0.4.10     2020-12-30 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  rmarkdown         2.7        2021-02-19 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  ROSE              0.0-3      2014-07-15 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  rpart             4.1-15     2019-04-12 [2] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  rpart.plot        3.0.9      2020-09-17 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  rprojroot         2.0.2      2020-11-15 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  rsample         * 0.0.9      2021-02-17 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  rstudioapi        0.13       2020-11-12 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  Rttf2pt1          1.3.8      2020-01-10 [1] CRAN (R 3.6.2)                </span>
-<span class="co">#&gt;  rvest             1.0.0      2021-03-09 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  scales          * 1.1.1      2020-05-11 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  sessioninfo       1.1.1      2018-11-05 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  snakecase         0.11.0     2019-05-25 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  stringi           1.5.3      2020-09-09 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  stringr         * 1.4.0      2019-02-10 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  survival          3.1-8      2019-12-03 [2] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  systemfonts       1.0.1      2021-02-09 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  testthat          3.0.2      2021-02-14 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  themis          * 0.1.3      2020-11-12 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  tibble          * 3.1.0      2021-02-25 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  tidymodels      * 0.1.3      2021-04-19 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  tidyr           * 1.1.3      2021-03-03 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  tidyselect        1.1.0      2020-05-11 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  tidyverse       * 1.3.1      2021-04-15 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  timeDate          3043.102   2018-02-21 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  tune            * 0.1.4      2021-04-20 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  unbalanced        2.0        2015-06-26 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  usethis           2.0.1      2021-02-10 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  utf8              1.2.1      2021-03-12 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  vctrs           * 0.3.6      2020-12-17 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  vegan           * 2.5-7      2020-11-28 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  vip             * 0.3.2      2020-12-17 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  viridis         * 0.6.0      2021-04-15 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  viridisLite     * 0.4.0      2021-04-13 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  withr             2.4.2      2021-04-18 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  workflows       * 0.2.2      2021-03-10 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  workflowsets    * 0.0.2      2021-04-16 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  xfun              0.22       2021-03-11 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  xgboost         * 1.3.2.1    2021-01-18 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  xml2              1.3.2      2020-04-23 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  yaml              2.2.1      2020-02-01 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt;  yardstick       * 0.0.8      2021-03-28 [1] CRAN (R 3.6.3)                </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; [1] C:/Users/gmachad/Documents/R/win-library/3.6</span>
-<span class="co">#&gt; [2] C:/Program Files/R/R-3.6.3/library</span></code></pre></div>
 </div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/nfj1380/mrIML/">https://​github.com/​nfj1380/​mrIML/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/nfj1380/mrIML/issues">https://​github.com/​nfj1380/​mrIML/​issues</a>
-</li>
-</ul>
-</div>
-<div class="license">
-<h2>License</h2>
-<ul class="list-unstyled">
-<li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
-</ul>
-</div>
-<div class="developers">
-<h2>Developers</h2>
-<ul class="list-unstyled">
-<li>Nick Fountain-Jones <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0001-9248-8493" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Nicholas Clark <br><small class="roles"> Author </small>  </li>
-<li>Chris Kozakiewicz <br><small class="roles"> Author </small>  </li>
-<li>
-<a href="https://machado-lab.github.io/">Gustavo Machado</a> <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0001-7552-6144" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li><a href="https://github.com/nfj1380/mrIML/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/nfj1380/mrIML/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="license">
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/nfj1380/mrIML/actions"><img src="https://github.com/nfj1380/mrIML/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="LICENSE.html">Full license</a></li>
+<li><small><a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
 </ul>
 </div>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing mrIML</a></li>
+</ul>
 </div>
+
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
+<ul class="list-unstyled">
+<li>Nick Fountain-Jones <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0001-9248-8493" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Nicholas Clark <br><small class="roles"> Author </small>  </li>
+<li>Chris Kozakiewicz <br><small class="roles"> Author </small>  </li>
+<li>
+<a href="https://machado-lab.github.io/" class="external-link">Gustavo Machado</a> <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0001-7552-6144" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+</ul>
+</div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/nfj1380/mrIML/actions" class="external-link"><img src="https://github.com/nfj1380/mrIML/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+</ul>
+</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Nick Fountain-Jones, Nicholas Clark, Chris Kozakiewicz, <a href="https://machado-lab.github.io/">Gustavo Machado</a>.</p>
+  <p></p>
+<p>Developed by Nick Fountain-Jones, Nicholas Clark, Chris Kozakiewicz, <a href="https://machado-lab.github.io/" class="external-link">Gustavo Machado</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -453,6 +399,8 @@
 
   
 
+
+  
 
   </body>
 </html>
