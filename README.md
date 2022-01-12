@@ -21,7 +21,7 @@ machine learning models harnessing the tidyverse (tidy model syntax in
 particular). This package builds off ideas from Gradient Forests ([Ellis
 et al
 2012](https://esajournals-onlinelibrary-wiley-com.prox.lib.ncsu.edu/doi/full/10.1890/11-0252.1)),
-and ecological genomic approaches [Fitzpatrick and Keller,
+and ecological genomics [Fitzpatrick and Keller,
 2014](https://onlinelibrary.wiley.com/doi/abs/10.1111/ele.12376).
 
 This package can be of use for any multi-response machine learning
