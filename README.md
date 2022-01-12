@@ -18,12 +18,11 @@ commit](https://img.shields.io/github/last-commit/nfj1380/mrIML?style=flat-squar
 
 This package aims to enable users to build and interpret multivariate
 machine learning models harnessing the tidyverse (tidy model syntax in
-particular). This package builds off ideas from Gradient Forests [Ellis
+particular). This package builds off ideas from Gradient Forests ([Ellis
 et al
 2012](https://esajournals-onlinelibrary-wiley-com.prox.lib.ncsu.edu/doi/full/10.1890/11-0252.1)),
-ecological genomic approaches [Fitzpatrick and Keller,
-2014](https://onlinelibrary.wiley.com/doi/abs/10.1111/ele.12376) and
-multi-response stacking algorithms \[Xing et al 2019\].
+and ecological genomic approaches [Fitzpatrick and Keller,
+2014](https://onlinelibrary.wiley.com/doi/abs/10.1111/ele.12376).
 
 This package can be of use for any multi-response machine learning
 problem, but was designed to handle data common to community ecology
