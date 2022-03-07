@@ -78,7 +78,7 @@ mrFlashlight <- function(yhats, X, Y, response = "multi", index = 1, mode = "reg
         
         label = colnames(Y)[index],
         
-        data = cbind(Y, X),
+        data = cbind(Y[index], X),
         
         y = colnames(Y)[index],
         
@@ -162,7 +162,7 @@ mrFlashlight <- function(yhats, X, Y, response = "multi", index = 1, mode = "reg
         
         label = colnames(Y)[index],
         
-        data = cbind(Y, X),
+        data = cbind(Y[index], X),
         
         y = colnames(Y)[index],
         
