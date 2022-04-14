@@ -10,32 +10,35 @@
 #' plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, groupCov, cutoff= 0.5)
 #'@export 
 
+
 mrVip <- function (yhats, X){ 
   
-  n_response<- length(yhats) ###
+  n_response<- length(yhats) 
   n_features <- sort(names(X))
+  n_features_df <-data.frame(Variable=n_features)
   
   modList <- yhats %>% purrr::map(pluck('mod1_k')) #extracts model ###
   
   im <- lapply(seq(1:n_response), function(i){ #uses monte carlo CV. COuld make parallel if needed.
     
-    imp <- modList[[i]]%>%  ###
-      pull_workflow_fit()
+    imp <- modList[[i]] %>%  ###
+      extract_fit_parsnip() #pull workflow deprecated
+    #pull_workflow_fit()
     
-    imp$fit$coefficients[is.na(imp$fit$coefficients)] <- 0#some algorithms will bring back NA coefficents
+    impVI <- vip::vi(imp,feature_names= n_features,  ice = TRUE)  
     
-    impVI <- vip(imp, num_features=length(X)) 
-    impD <- impVI$data %>% 
-      arrange(Variable)%>% 
-      purrr::pluck("Importance")
-    names(impD) <- n_features
+    miss <- anti_join(n_features_df , impVI, by="Variable")
+    z <- rep(0,nrow(miss))
     
-    missing <- imp$fit$coefficients[is.na(imp$fit$coefficients)] 
-    missing[is.na(missing)] <- 0
-    impDcombined <- c(impD, missing)
+    miss_df <- data.frame(Variable=miss, Importance=z) 
+    
+    impDcombined <- rbind(impVI,miss_df ) %>% 
+      arrange(Variable)
+    
+    impDcombined_names <-  impDcombined %>% column_to_rownames(var="Variable") 
+    
   })
   
-  ImpGlobal <- as.data.frame(do.call(rbind, im)) #from cbind
-  
-  
+  ImpGlobal <- as.data.frame(do.call(cbind, im)) 
+  ImpGlobal  <- as.data.frame(t(ImpGlobal))
 }
