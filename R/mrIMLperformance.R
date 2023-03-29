@@ -11,95 +11,55 @@
 #'
 #'@export
 
-mrIMLperformance <- function(yhats, Model, Y, mode='regression'){ 
+mrIMLperformance <- function (yhats, Model, Y, mode = "regression"){
   
-  n_response<- length(yhats)
+  n_response <- length(yhats)
   mod_perf <- NULL
-
-#  yList <- yhats %>% purrr::map(pluck('yhatT')) #get the training yhats all together
-  bList <- yhats %>% purrr::map(pluck('last_mod_fit')) ## fix the model ID
+  bList <- yhats %>% purrr::map(pluck("last_mod_fit"))
   
-  if (mode=='classification'){
-
-  for( i in 1:n_response) {
-   
-    #get already calculated ROC and accuracy
-   met1 <- as.data.frame(bList[[i]]$.metrics) ####
-   
-   
-   roc <- met1$.estimate[2]
-   #accuracy <-  met1$.estimate[1]
-   
-   #data from best model to get MCC, specificity and sensivity using yardstick
-   
-   yd <- as.data.frame(bList[[i]]$.predictions) ###
-    
-     mathews <-  yardstick::mcc(yd,class, .pred_class) #yardstick is the tidymodels performance package.
-     mathews <- mathews$.estimate #extract mcc
-      sen <- yardstick::sens(yd,class, .pred_class)
+  if (mode == "classification") {
+    for (i in 1:n_response) {
+      met1 <- as.data.frame(bList[[i]]$.metrics)
+      roc <- met1$.estimate[2]
+      yd <- as.data.frame(bList[[i]]$.predictions)
+      mathews <- yardstick::mcc(yd, class, .pred_class)
+      mathews <- mathews$.estimate
+      sen <- yardstick::sens(yd, class, .pred_class)
       sen <- sen$.estimate
-      spe <- yardstick::spec(yd,class, .pred_class)
+      spe <- yardstick::spec(yd, class, .pred_class)
+      ppv_e <- yardstick::ppv(yd, class, .pred_class)
+      ppv  <- ppv_e$.estimate
       spe <- spe$.estimate
-    
-
-#add some identifiers
-  mod_name <- class(Model)[1] #extracts model name
-  #model1_perf <- c(mod_name, mathews, sen, spe)
-  sp <- names(Y[i])
-  prev <- sum(Y[i])/nrow(Y)
-
-#save all the metrics
-  mod_perf[[i]] <- c( sp, mod_name, roc, mathews, sen, spe, prev)
-
+      mod_name <- class(Model)[1]
+      sp <- names(Y[i])
+      prev <- sum(Y[i])/nrow(Y)
+      mod_perf[[i]] <- c(sp, mod_name, roc, mathews, sen, 
+                         spe, ppv,  prev)
+    }
+    mod1_perf <- do.call(rbind, mod_perf)
+    mod1_perf <- as.data.frame(mod1_perf)
+    colnames(mod1_perf) <- c("response", "model_name", 
+                             "roc_AUC", "mcc", "sensitivity","ppv",
+                             "specificity", "prevalence")
+    Global_summary <- as.numeric(as.character(unlist(mod1_perf$roc_AUC)))
+    Global_summary[is.na(Global_summary)] <- 0
+    Global_summary <- mean(Global_summary)
   }
-  
-  mod1_perf<- do.call(rbind, mod_perf)
-  mod1_perf <- as.data.frame( mod1_perf)
-  colnames(mod1_perf) <- c('response', 'model_name', 'roc_AUC', 'mcc', 'sensitivity', 'specificity', 'prevalence')
-
-  Global_summary<- as.numeric(as.character(unlist(mod1_perf$roc_AUC))) #cant be mcc as it goes negative
-  Global_summary[is.na(Global_summary)] <- 0
-  Global_summary <-  mean(Global_summary)
-  
+  if (mode == "regression") {
+    for (i in 1:n_response) {
+      met1 <- as.data.frame(bList[[i]]$.metrics)
+      rmse <- met1$.estimate[1]
+      rsq <- met1$.estimate[2]
+      mod_name <- class(Model)[1]
+      sp <- names(Y[i])
+      mod_perf[[i]] <- data.frame(sp, mod_name, rmse, rsq)
+    }
+    mod1_perf <- do.call(rbind, mod_perf)
+    mod1_perf <- as.data.frame(mod1_perf)
+    colnames(mod1_perf) <- c("response", "model_name", 
+                             "rmse", "rsquared")
+    Global_summary <- as.numeric(as.character(unlist(mod1_perf$rmse)))
+    Global_summary <- mean(Global_summary, na.rm = TRUE)
   }
-  
-  if (mode=='regression'){
-    
-    for( i in 1:n_response) {
-      
-    met1 <- as.data.frame(bList[[i]]$.metrics) ####
-    
-    
-    rmse <- met1$.estimate[1]
-    
-    rsq  <- met1$.estimate[2]
-    
-    #add some identifiers
-    mod_name <- class(Model)[1] #extracts model name
-
-    sp <- names(Y[i])
-    
-    #save all the metrics
-   # mod_perf[[i]] <- c( sp, mod_name, rmse, rsq)
-    mod_perf[[i]] <- data.frame( sp, mod_name, rmse, rsq)
-  }
-  
-  mod1_perf<- do.call(rbind, mod_perf)
-  mod1_perf <- as.data.frame( mod1_perf)
-  colnames(mod1_perf) <- c('response', 'model_name', 'rmse', 'rsquared')
-
-  
-Global_summary<- as.numeric(as.character(unlist(mod1_perf$rmse))) 
-  
-  #Global_summary[is.na(Global_summary)] <- 0
-  #Global_summary <-  mean(Global_summary)
-  Global_summary <-  mean(Global_summary, na.rm = TRUE)
-}  
-  #calculate mean for all response variables
-  #Global_summary <- mean(as.numeric(as.character(unlist( mod1_perf[[5]]))), na.rm = FALSE) #mean testing mcc
-  #Global_summary <- mean(as.numeric(as.character(unlist( ModelPerf[[1]]$mcc)))) #mean testing
-  
-  #
-  return (list(mod1_perf, Global_summary))
-  
+  return(list(mod1_perf, Global_summary))
 }
