@@ -30,24 +30,43 @@
 #'@export
 
 
-mrIMLpredicts<- function(X, Y, Model, balance_data ='no', mode='regression', transformY='log',dummy=FALSE, tune_grid_size= 10, k=10, seed = sample.int(1e8, 1) ) { 
+mrIMLpredicts<- function(X, X1=NULL, Y, Model, balance_data ='no', mode='regression', transformY='log',dummy=FALSE,
+                         prop=0.5, tune_grid_size= 10, k=10, racing=T, seed = sample.int(1e8, 1) ) { 
   
   n_response<- length(Y)
  
   mod1_perf <- NULL #place to save performance matrix
 
   internal_fit_function <- function( i ){
-      
-    data <- cbind(Y[i], X) ###
+    
+
+    if (!is.null(X1)) {
+      if (!is.null(X)) {
+        data <- as.data.frame(cbind(Y[i], X, X1[-i]), stringsAsFactors = FALSE) ###
+      } else {
+        data <- as.data.frame(cbind(Y[i], X1[-i]), stringsAsFactors = FALSE)
+      }
+    } else {
+      if (!is.null(X)) {
+        data <- as.data.frame(cbind(Y[i], X))
+      } else {
+        stop("At least one of X or X1 must be specified.")
+      }
+    }
+    
+    
     colnames(data)[1] <- c('class') #define response variable for either regression or classification
+    
     
     if (mode=='classification'){
       
-    data$class<- as.factor(data$class)}
-
+    data$class<- as.factor(data$class)
+    }
+  
+  
     set.seed(seed)
     
-    data_split <- initial_split(data, prop = 0.75)
+    data_split <- initial_split(data, prop = prop) 
     #data_splitalt <- initial_split(data, strata = class)
     
     # extract training and testing sets
@@ -60,8 +79,7 @@ mrIMLpredicts<- function(X, Y, Model, balance_data ='no', mode='regression', tra
     if(balance_data == 'down'){ 
       data_recipe <- training(data_split) %>%
         recipe(class ~., data= data_train) %>% 
-        themis::step_downsample(class)
-      
+        themis::step_downsample(class) 
     }
     
     if(balance_data == 'up'){
@@ -79,12 +97,12 @@ mrIMLpredicts<- function(X, Y, Model, balance_data ='no', mode='regression', tra
       data_recipe %>% step_log(all_numeric(), -all_outcomes()) #adds dummy variables if needed to any feature that is a factor
     }
     
-    if ( dummy == TRUE){
-      data_recipe %>% step_dummy(all_nominal(), -all_outcomes()) #adds dummy variables if needed to any feature that is a factor
+    if ( dummy == 'yes'){
+      data_recipe <- data_recipe %>% step_dummy(all_nominal(), -all_outcomes(),)#adds dummy variables if needed to any feature that is a factor
     }
     
     #optional recipe ingredients can be easily added to.
-    #step_corr(all_predictors()) %>% # removes all corrleated features
+    #step_corr(all_predictors()) %>% # removes all correlated features
     #step_center(all_predictors(), -all_outcomes()) %>% #center features
     #step_scale(all_predictors(), -all_outcomes()) %>% #scale features
     
@@ -94,25 +112,33 @@ mrIMLpredicts<- function(X, Y, Model, balance_data ='no', mode='regression', tra
       # add the model
       add_model(Model)
     
+   # c.metrics <- metric_set(mcc) #needed for mcc. may be a problem for regression
     ## Tune the model
     
-  tune_m<-tune::tune_grid(mod_workflow,
-                            resamples = data_cv,
-                            grid = tune_grid_size) 
-    
+  # tune_m<-tune::tune_grid(mod_workflow,
+  #                           resamples = data_cv,
+  #                           grid = tune_grid_size)#,
+  #                           #metrics = c.metrics)
+  
+    if (racing == TRUE) {
+      tune_m <- finetune::tune_race_anova(mod_workflow, resamples = data_cv)
+    } else {
+      tune_m <- tune::tune_grid(mod_workflow, resamples = data_cv, grid = tune_grid_size)
+    }
+  
   if (mode=='classification'){
     
     # select the best model
     best_m <- tune_m %>%
-      select_best("roc_auc")
+      select_best("roc_auc") #try mcc or roc_auc
   }
   
   if (mode=='regression'){
     
-    
     # select the best model
     best_m <- tune_m %>%
       select_best("rmse")
+    
   }
   
     
@@ -129,17 +155,26 @@ mrIMLpredicts<- function(X, Y, Model, balance_data ='no', mode='regression', tra
     if (mode=='classification'){
       
       #predictions
-      yhatO <- predict(mod1_k, new_data = data_train, type='prob' )
+      yhatO <- predict(mod1_k, new_data = data, type='prob' )
       
       yhat <- yhatO$.pred_1
       
       #predictions based on testing data
-      yhatT <- predict(mod1_k, new_data = data_test, type='class' ) %>% 
+      yhatT <- predict(mod1_k, new_data = data_test, type='class' ) %>%
         bind_cols(data_test %>% select(class))
       
-    resid <- devianceResids(yhatO, data_train$class) 
-    }
+      truth <- as.numeric(as.character(data$class))
+      
+      #pred_truth <- cbind(yhat, truth)
     
+    deviance <- sapply(seq_along(truth), function(j) {
+      resid <- ifelse(truth[j] == 1, 
+                      sqrt((-2 * log(yhat[j]))), 
+                      -1 * (sqrt((-2*log(1 - yhat[j])))))
+      return(resid)
+    })
+    
+    }
     
     if (mode=='regression'){
       
@@ -151,8 +186,8 @@ mrIMLpredicts<- function(X, Y, Model, balance_data ='no', mode='regression', tra
       yhatT <- predict(mod1_k, new_data = data_test) # %>% 
       #bind_cols(data_test %>% select(class))
       
-      # resid <- devianceResids(yhatO, data_train$class)
-      resid= NULL
+      deviance=NULL
+      
     }
     
   
@@ -163,16 +198,18 @@ mrIMLpredicts<- function(X, Y, Model, balance_data ='no', mode='regression', tra
       last_fit(data_split)
     
     #save data
-    list(mod1_k = mod1_k, last_mod_fit=last_mod_fit,tune_m=tune_m, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, resid = resid)
+    list(mod1_k = mod1_k, last_mod_fit=last_mod_fit,tune_m=tune_m, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, deviance = deviance)
     
     
 }
+
      
     yhats <- future_lapply(seq(1,n_response), internal_fit_function, future.seed = TRUE)
     
    
 }
-   
+
+
   
 
 

@@ -5,7 +5,7 @@
 #'
 #'@example
 #'yhats<- mrIMLpredicts(X=X,Y=Y, model1=model1, balance_data='no', model='classification') 
-#'mrIMLconverts_list <- MrIMLconverts(yhats, model='classification')
+#'mrIMLconverts_list <- MrIMLconverts(yhats, X, mode='classification')
 #'\dontrun{
 #'
 #'@export 
