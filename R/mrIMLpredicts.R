@@ -30,16 +30,18 @@
 #'@export
 
 
-mrIMLpredicts<- function(X, X1=NULL, Y, Model, balance_data ='no', mode='regression', transformY='log',dummy=FALSE,
-                         prop=0.5, tune_grid_size= 10, k=10, racing=T, seed = sample.int(1e8, 1) ) { 
+mrIMLpredicts<- function(X, X1=NULL, Y, spatial_data=NULL, Model, balance_data ='no', mode='regression', transformY='log',dummy=FALSE,
+                         prop=0.5, morans=F, tune_grid_size= 10, k=10, racing=T, seed = sample.int(1e8, 1) ) { 
   
   n_response<- length(Y)
  
   mod1_perf <- NULL #place to save performance matrix
-
+  
+  pb <- txtProgressBar(min = 0, max = n_response, style = 3)
+  
   internal_fit_function <- function( i ){
+    setTxtProgressBar(pb, i)
     
-
     if (!is.null(X1)) {
       if (!is.null(X)) {
         data <- as.data.frame(cbind(Y[i], X, X1[-i]), stringsAsFactors = FALSE) ###
@@ -161,7 +163,7 @@ mrIMLpredicts<- function(X, X1=NULL, Y, Model, balance_data ='no', mode='regress
       
       #predictions based on testing data
       yhatT <- predict(mod1_k, new_data = data_test, type='class' ) %>%
-        bind_cols(data_test %>% select(class))
+        bind_cols(data_test %>% dplyr::select(class))
       
       truth <- as.numeric(as.character(data$class))
       
@@ -174,6 +176,9 @@ mrIMLpredicts<- function(X, X1=NULL, Y, Model, balance_data ='no', mode='regress
       return(resid)
     })
     
+    deviance_morans <- deviance
+    deviance_morans[is.infinite(deviance_morans)] <- 2 #cant have Inf values. It means that the model isnt fitting this
+    #data point very well. This is a temporary fix
     }
     
     if (mode=='regression'){
@@ -190,7 +195,34 @@ mrIMLpredicts<- function(X, X1=NULL, Y, Model, balance_data ='no', mode='regress
       
     }
     
-  
+    if(morans==TRUE){
+      
+    combined_data <- cbind(spatial_data, deviance_morans)
+    
+    # Convert data to a SpatialPointsDataFrame or SpatialPolygonsDataFrame
+    sp::coordinates(combined_data) <- c("longitude", "latitude")
+    
+    # Calculate the spatial weights matrix
+    spatial_weights <- spdep::dnearneigh(combined_data, d1 = 0, d2 = 1)
+    
+    #create network
+    spatial_weights_listw <- spdep::nb2listw(spatial_weights, style = "W")
+    
+    # Calculate Moran's I on residuals
+    moran_residuals <- spdep::moran.mc(dev, listw =  spatial_weights_listw, nsim = 999)
+    
+    moran_p <- data.frame(response=names(Y[i]), morans_p=moran_residuals$p.value)
+    
+    moran_stat <- data.frame(response=names(Y[i]), morans_stat=moran_residuals$stat)
+    
+    }
+    
+    else {
+      
+      moran_p <= NULL
+      moran_stat = NULL
+    }
+      
     # the last fit. Useful for some functionality
 
     last_mod_fit <- 
@@ -198,7 +230,9 @@ mrIMLpredicts<- function(X, X1=NULL, Y, Model, balance_data ='no', mode='regress
       last_fit(data_split)
     
     #save data
-    list(mod1_k = mod1_k, last_mod_fit=last_mod_fit,tune_m=tune_m, data=data, data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT, deviance = deviance)
+    list(mod1_k = mod1_k, last_mod_fit=last_mod_fit,tune_m=tune_m, data=data, 
+         data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT,
+         deviance = deviance,   moran_p=  moran_p,  moran_stat = moran_stat)
     
     
 }

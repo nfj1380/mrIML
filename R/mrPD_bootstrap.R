@@ -1,6 +1,6 @@
 
 
-mrPD_bootstrap <- function(mrBootstrap_obj, vi_obj, X, Y, target, global_top_var = 10) {
+mrPD_bootstrap <- function(mrBootstrap_obj, vi_obj, X, Y, target, global_top_var = 2) {
   
   n_response <- ncol(Y)
   complete_df <- cbind(Y, X)
@@ -48,12 +48,14 @@ mrPD_bootstrap <- function(mrBootstrap_obj, vi_obj, X, Y, target, global_top_var
   G_top_vars <- head(G_target_data_avg[order(-G_target_data_avg$mean_imp), ], global_top_var)
   
   # Iterate through each pd_list and create individual plots
-  for (i in seq_along(pd_list)) {
-    df <- pd_list[[i]] %>%
+  for (k in seq_along(pd_list)) {
+    
+    df <- pd_list[[k]] %>%
       filter(target == {{target}})
     
     if (names(df)[1] %in% G_top_vars$var) {
       if (is.factor(df[[1]]) || (all(df[[1]] %in% c(0, 1)))) {
+        
         d1 <- df %>%
           mutate(class = recode(.[[1]], `0` = "absent", `1` = "present"))
         
@@ -63,6 +65,7 @@ mrPD_bootstrap <- function(mrBootstrap_obj, vi_obj, X, Y, target, global_top_var
           theme_bw()
         
       } else {
+        
         d1 <- df %>%
           group_by(bootstrap) %>% 
           rename(class = 1)
@@ -73,14 +76,18 @@ mrPD_bootstrap <- function(mrBootstrap_obj, vi_obj, X, Y, target, global_top_var
           theme_bw()
       }
       
-      plot_list[[i]] <- plot  # Add the plot to the list
+      plot_list[[k]] <- plot  # Add the plot to the list
     }
   }
   
-  plot_list <- plot_list[sapply(plot_list, function(p) any(p$data$value != 0))]
+  plot_list_updated <- plot_list[sapply(plot_list, function(p) any(p$data$value != 0))]
+  
+  p <- grid.arrange(grobs = plot_list_updated )
   
   # Create combined plot using the order from G_top_vars
-  combined_plot <- plot_grid(plotlist = plot_list[G_top_vars$var], ncol = 1, rel_heights = rep(1, length(G_top_vars$var)))
+  #combined_plot <- plot_grid(  plot_list_updated =   plot_list_updated[G_top_vars$var], ncol = 1, rel_heights = rep(1, length(G_top_vars$var)))
   
-  return(list(pd_list, combined_plot))  # Return both pd_list and combined_plot
+  combined_plot <- plot_grid(p, ncol = 1, rel_heights = rep(1, length(G_top_vars$var)))
+  
+  return(list(pd_list, combined_plot ))  # Return both pd_list and combined_plot
 }
