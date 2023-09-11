@@ -46,7 +46,7 @@ mrInteractions <- function(yhats, X, Y, num_bootstrap = 1,
       
       s <- hstats(model_fit, v = names(yhats[[k]]$data_train)[-1],
                   X = yhats[[k]]$data_train, pred_fun = pred_fun, n_max = 300, 
-                  pairwise_m = length(names(yhats[[k]]$data_train)[-1]), threeway_m = 0)
+                  pairwise_m = length(names(yhats[[k]]$data_train)[-1]), threeway_m = 0, verbose=F )
       
       overall <- data.frame(response = names(Y[k]), overall = h2(s), bs = i)
       
@@ -96,7 +96,7 @@ mrInteractions <- function(yhats, X, Y, num_bootstrap = 1,
   top_names <-  top_int_overall_ordered$response
   
   overall_int_final_top <- overall_int_final %>% 
-    filter(response %in% top_names)
+    dplyr::filter(response %in% top_names)
   
   p1 <- ggplot(overall_int_final_top, aes(x = reorder(response, -overall), y = overall)) +
     geom_boxplot() +
@@ -111,7 +111,7 @@ mrInteractions <- function(yhats, X, Y, num_bootstrap = 1,
   overall_one_way_final <- do.call(rbind, bs_list_one_way)
   
   filtered_one_way <- overall_one_way_final %>% 
-    filter(response == feature) 
+    dplyr::filter(response == feature) 
   
   top_int_one_way <-   filtered_one_way  %>%
     group_by(response,predictor) %>%
@@ -123,7 +123,7 @@ mrInteractions <- function(yhats, X, Y, num_bootstrap = 1,
   top_names_one_way <-  top_int_one_way_ordered$predictor
   
  one_way_int_final_top <- top_names_one_way %>% 
-    filter(predictor %in% top_names)
+   dplyr::filter(predictor %in% top_names)
   
   p2 <- ggplot(one_way_int_final_top, aes(x = reorder(predictor, -V1), y = V1)) +
     geom_boxplot() +
@@ -156,7 +156,7 @@ bs_list_two_way <- lapply(bstraps_int_list, function(sublist) {
 overall_two_way_final <- do.call(rbind, bs_list_two_way)
   
 filtered_two_way <- overall_two_way_final %>% 
-  filter(response == feature) 
+  dplyr::filter(response == feature) 
 
 top_int_two_way <-   filtered_two_way  %>%
   group_by(response,predictor) %>%

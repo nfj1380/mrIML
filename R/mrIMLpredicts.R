@@ -30,7 +30,7 @@
 #'@export
 
 
-mrIMLpredicts<- function(X, X1=NULL, Y, spatial_data=NULL, Model, balance_data ='no', mode='regression', transformY='log',dummy=FALSE,
+mrIMLpredicts<- function(X, X1=NULL, Y, spatial_data=NULL, Model, balance_data ='no', mode='regression',dummy=FALSE,
                          prop=0.5, morans=F, tune_grid_size= 10, k=10, racing=T, seed = sample.int(1e8, 1) ) { 
   
   n_response<- length(Y)
@@ -79,30 +79,33 @@ mrIMLpredicts<- function(X, X1=NULL, Y, spatial_data=NULL, Model, balance_data =
     data_cv <- vfold_cv(data_train, v= k) 
     
     if(balance_data == 'down'){ 
+      
       data_recipe <- training(data_split) %>%
         recipe(class ~., data= data_train) %>% 
         themis::step_downsample(class) 
     }
     
     if(balance_data == 'up'){
+      
       data_recipe <- training(data_split) %>%
         recipe(class ~., data= data_train) %>%
         themis::step_rose(class) #ROSE works better on smaller data sets. SMOTE is an option too.
     }
     
     if(balance_data == 'no'){ 
+      
       data_recipe <- training(data_split) %>% 
         recipe(class ~., data= data_train)
     }
     
-    if ( transformY == 'log'){
-      data_recipe %>% step_log(all_numeric(), -all_outcomes()) #adds dummy variables if needed to any feature that is a factor
+   
+    if ( dummy == TRUE){
+      
+      data_recipe <- data_recipe %>% step_dummy(all_nominal(), -all_outcomes(), one_hot = T) #adds dummy variables if needed to any feature that is a factor
     }
-    
-    if ( dummy == 'yes'){
-      data_recipe <- data_recipe %>% step_dummy(all_nominal(), -all_outcomes(),)#adds dummy variables if needed to any feature that is a factor
-    }
-    
+    # else{
+    #   data_recipe_final <- data_recipe
+   # }
     #optional recipe ingredients can be easily added to.
     #step_corr(all_predictors()) %>% # removes all correlated features
     #step_center(all_predictors(), -all_outcomes()) %>% #center features
@@ -123,8 +126,11 @@ mrIMLpredicts<- function(X, X1=NULL, Y, spatial_data=NULL, Model, balance_data =
   #                           #metrics = c.metrics)
   
     if (racing == TRUE) {
+      
       tune_m <- finetune::tune_race_anova(mod_workflow, resamples = data_cv)
+      
     } else {
+      
       tune_m <- tune::tune_grid(mod_workflow, resamples = data_cv, grid = tune_grid_size)
     }
   
@@ -195,7 +201,10 @@ mrIMLpredicts<- function(X, X1=NULL, Y, spatial_data=NULL, Model, balance_data =
       
     }
     
-    if(morans==TRUE){
+    moran_p <- NA  # Initialize moran_p with a default value
+    moran_stat <- NA
+    
+      if(morans==TRUE){
       
     combined_data <- cbind(spatial_data, deviance_morans)
     
@@ -217,11 +226,7 @@ mrIMLpredicts<- function(X, X1=NULL, Y, spatial_data=NULL, Model, balance_data =
     
     }
     
-    else {
-      
-      moran_p <= NULL
-      moran_stat = NULL
-    }
+    
       
     # the last fit. Useful for some functionality
 
@@ -232,7 +237,7 @@ mrIMLpredicts<- function(X, X1=NULL, Y, spatial_data=NULL, Model, balance_data =
     #save data
     list(mod1_k = mod1_k, last_mod_fit=last_mod_fit,tune_m=tune_m, data=data, 
          data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT,
-         deviance = deviance,   moran_p=  moran_p,  moran_stat = moran_stat)
+         deviance = deviance, moran_p=moran_p,  moran_stat = moran_stat)
     
     
 }
