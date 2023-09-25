@@ -2,15 +2,13 @@ Package: mrIML
 Type: Package
 Title: Multi Response Interpretable Machine Learning
 Version: 1.0.0
-Authors@R: c(person("Nick","Fountain-Jones", email = "nfountainjones@email.com", role = c("aut", "cre"),
-                     comment = c(ORCID = "0000-0001-9248-8493")),
-             person("Nicholas","Clark", role = c("aut")),
-             person("Chris","Kozakiewicz", role = c("aut")),
-             person("Gustavo","Machado",email = "gmachad@ncsu.edu", role = c("aut"),
-                     comment = c(ORCID = "0000-0001-7552-6144")))
+Author: Nick Fountain-Jones<nfountainjones@gmail.com>
+  Gustavo Machado<gmachad@ncsu.edu>
+  Chris Kozakiewicz<cpkoz@msu.edu>
+  Nick Clark<Nicholas.J.Clark1214@gmail.com>
+Maintainer: Nick Fountain-Jones<nfountainjones@email.com>
 Description: This package aims to enable users to build and interpret multivariate machine learning models harnessing the tidyverse (tidy model syntax in particular). This package builds off ideas from Gradient Forests (Ellis et al 2012), ecological genomic approaches (Fitzpatrick and Keller, 2014) and multi-response stacking algorithms (Xing et al 2019).
 Depends: R (>= 3.5.0)
-License: MIT + file LICENSE
 Imports:
     vip,
     ape,
@@ -51,19 +49,28 @@ Imports:
     tibble,
     tune,
     iml,
-    yardstick
-Suggests: 
-    caret,
-    devtools,
-    themis,
-    knitr,
-    rmarkdown,
-    testthat (>= 3.0.0)
-Encoding: UTF-8
+    yardstick,
+    MRFcov,
+    finetune, 
+    igraph,
+    ggnetwork,
+    network,
+    gridExtra,
+    xgboost,
+    brulee,
+    fastshap,
+    tabnet,
+    bonsai,
+    cowplot,
+    progress,
+    hstats,
+    geosphere
+Suggests: knitr, rmarkdown
+License: MIT + file LICENSE
 LazyData: true    
 VignetteBuilder: knitr, rmarkdown
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
-URL: https://nfj1380.github.io/mrIML
+URL: https://github.com/nfj1380/mrIML
 BugReports: https://github.com/nfj1380/mrIML/issues
 Config/testthat/edition: 3
