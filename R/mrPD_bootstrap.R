@@ -1,3 +1,41 @@
+#' Bootstrap Partial Dependence plots
+#'
+#' This function bootstraps model predictions and generates partial dependence plots for each response variable.
+#' It also creates a combined plot for the top variables of interest.
+#'
+#' @param mrBootstrap_obj A list of model bootstraps generated using mrBootstrap function.
+#' @param vi_obj Variable Importance data.
+#' @param X The predictor data.
+#' @param Y The response data.
+#' @param target The target variable for generating plots.
+#' @param global_top_var The number of top variables to consider (default: 2).
+#' 
+#' @return A list containing the partial dependence plots for each response variable and a combined plot.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'#' # Example usage:
+#' #set up analysis
+#' Y <- dplyr::select(Bird.parasites, -scale.prop.zos)%>% 
+#' dplyr::select(sort(names(.)))#response variables eg. SNPs, pathogens, species....
+#' X <- dplyr::select(Bird.parasites, scale.prop.zos) # feature set
+
+#' X1 <- Y %>%
+#' dplyr::select(sort(names(.)))
+#'model_rf <- 
+#' rand_forest(trees = 100, mode = "classification", mtry = tune(), min_n = tune()) %>% #100 trees are set for brevity. Aim to start with 1000
+#' set_engine("randomForest")
+#' yhats_rf <- mrIMLpredicts(X=X, Y=Y,
+#'X1=X1,'Model=model_rf , 
+#'balance_data='no',mode='classification',
+#'tune_grid_size=5,seed = sample.int(1e8, 1),'morans=F,
+#'prop=0.7, k=5, racing=T) #
+#'bs_analysis <- mrBootstrap(yhats=yhats_rf,Y=Y, num_bootstrap = 5)
+#'pds <- mrPD_bootstrap(mrBootstrap_obj=bs_malaria, vi_obj=bs_impVIa, X, Y,
+#'target='Plas', global_top_var=5)
+#'pd_list <- pds[[1]] #data
+#'pds[[2]]#plot }
 
 
 mrPD_bootstrap <- function(mrBootstrap_obj, vi_obj, X, Y, target, global_top_var = 2) {

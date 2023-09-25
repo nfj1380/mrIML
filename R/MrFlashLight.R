@@ -25,7 +25,7 @@
 #' flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", mode='regression')
 #' @export 
 
-mrFlashlight <- function(yhats, X, Y, response = "multi", index = 1, mode = "regression", predict_function=NULL) {
+mrFlashlight <- function(yhats, X, X1, Y, response = "multi", index = 1, mode = "regression", predict_function=NULL) {
   
   if (mode == "classification") {
     
@@ -44,7 +44,7 @@ mrFlashlight <- function(yhats, X, Y, response = "multi", index = 1, mode = "reg
         
         type = "prob"
         
-      )[[".pred_1"]]
+      )}[[".pred_1"]]
       
     }
     }
@@ -102,7 +102,10 @@ mrFlashlight <- function(yhats, X, Y, response = "multi", index = 1, mode = "reg
           
           label = colnames(Y)[i], ##
           
-          y = colnames(Y)[i]
+          y = colnames(Y)[i],
+          
+          x = colnames(yhats[[i]]$data)[-1]####
+
           
         )
         
@@ -122,7 +125,7 @@ mrFlashlight <- function(yhats, X, Y, response = "multi", index = 1, mode = "reg
       
     }
     
-  }
+
   
   
   

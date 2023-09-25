@@ -4,12 +4,12 @@
 \alias{resist_components}
 \title{Calculates resistance components from a list of pairwise resistance surfaces.}
 \usage{
-resist_components(filename = filename, p_val = p_val)
+resist_components(foldername = foldername, p_val = p_val)
 }
 \arguments{
-\item{p_val}{A \code{numeric} this sets the significance threshold for axes in explaining variance in the original resistance matrix based on redundancy analysis. In effect this filters out axes that dont explain variance.}
+\item{foldername}{A \code{character} this is the location where the resistance surfaces are stored.}
 
-\item{fileneame}{A \code{character} this is the location where the resistance surfaces are stored.}
+\item{p_val}{A \code{numeric} this sets the significance threshold for axes in explaining variance in the original resistance matrix based on redundancy analysis. In effect this filters out axes that dont explain variance.}
 }
 \description{
 Calculates resistance components from a list of pairwise resistance surfaces.

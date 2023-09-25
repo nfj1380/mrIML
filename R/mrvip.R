@@ -20,7 +20,7 @@ mrVip <- function (yhats, X){
   im <- lapply(seq(1:n_response), function(i){ #uses monte carlo CV. COuld make parallel if needed.
     
     imp <- modList[[i]]%>%  ###
-      pull_workflow_fit()
+      extract_fit_parsnip()
     
     imp$fit$coefficients[is.na(imp$fit$coefficients)] <- 0#some algorithms will bring back NA coefficents
     
@@ -28,11 +28,12 @@ mrVip <- function (yhats, X){
     impD <- impVI%>% #impVI$data
       arrange(Variable)%>% 
       purrr::pluck("Importance")
-    names(impD) <- n_features
+   
     
     missing <- imp$fit$coefficients[is.na(imp$fit$coefficients)] 
     missing[is.na(missing)] <- 0
     impDcombined <- c(impD, missing)
+    names(impDcombined) <- n_features
   })
   
   ImpGlobal <- as.data.frame(do.call(rbind, im))

@@ -26,9 +26,6 @@ mrBenchmark(
 
 \item{type}{A \code{character} specify within group "internal" or among group "external" benchmarking}
 }
-\value{
-
-}
 \description{
 Compare and benchmark disease outbreak risk among and within groups
 }

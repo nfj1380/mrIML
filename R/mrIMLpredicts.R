@@ -1,13 +1,16 @@
 #'Wrapper to generate multi-response predictive models.
 #'@param Y A \code{dataframe} is response variable data (species, OTUs, SNPs etc).
 #'@param X A \code{dataframe} represents predictor or feature data.
+#'#'@param X1 A \code{dataframe} extra predictor set used in each model. For the MrIML Joint species distribution model (JSDM) this is just a copy of the response data.
 #'@param balance_data A \code{character} 'up', 'down' or 'no'. 
 #'@param dummy A \code{logical} 'TRUE or FALSE'. 
 #'@param Model 1 A \code{list} can be any model from the tidy model package. See examples.
-#'@param tune_grid_size A \code{numeric} sets the grid size for hyperparamter tuning. Larger grid sizes increase computational time.
+#'@param tune_grid_size A \code{numeric} sets the grid size for hyperparameter tuning. Larger grid sizes increase computational time. Ignored if racing=T.
+#'@param racing \code{logical} 'TRUE or FALSE'. If 'TRUE' MrIML performs the grid search using the 'racing' ANOVA method. See https://finetune.tidymodels.org/reference/tune_race_anova.html
 #'@param k A \code{numeric} sets the number of folds in the 10-fold cross-validation. 10 is the default.
 #'@seed A \code{numeric} as these models have a stochastic component, a seed is set to make to make the analysis reproducible. Defaults between 100 million and 1.
 #'@param mode \code{character}'classification' or 'regression' i.e., is the generative model a regression or classification?
+#'@param morans \code{logical} 'TRUE or FALSE'. If 'TRUE' global Morans I is calculated for each response
 
 #'@details This function produces yhats that used in all subsequent functions.
 #' This function fits separate classification/regression models for each response variable in a data set.  Rows in X (features) have the same id (host/site/population)
@@ -30,7 +33,7 @@
 #'@export
 
 
-mrIMLpredicts<- function(X, X1=NULL, Y, spatial_data=NULL, Model, balance_data ='no', mode='regression',dummy=FALSE,
+mrIMLpredicts<- function(X, X1=NULL, Y, Model, balance_data ='no', mode='regression',dummy=FALSE,
                          prop=0.5, morans=F, tune_grid_size= 10, k=10, racing=T, seed = sample.int(1e8, 1) ) { 
   
   n_response<- length(Y)
@@ -69,7 +72,6 @@ mrIMLpredicts<- function(X, X1=NULL, Y, spatial_data=NULL, Model, balance_data =
     set.seed(seed)
     
     data_split <- initial_split(data, prop = prop) 
-    #data_splitalt <- initial_split(data, strata = class)
     
     # extract training and testing sets
     data_train <- training(data_split)
@@ -98,7 +100,6 @@ mrIMLpredicts<- function(X, X1=NULL, Y, spatial_data=NULL, Model, balance_data =
         recipe(class ~., data= data_train)
     }
     
-   
     if ( dummy == TRUE){
       
       data_recipe <- data_recipe %>% step_dummy(all_nominal(), -all_outcomes(), one_hot = T) #adds dummy variables if needed to any feature that is a factor
@@ -117,13 +118,6 @@ mrIMLpredicts<- function(X, X1=NULL, Y, spatial_data=NULL, Model, balance_data =
       # add the model
       add_model(Model)
     
-   # c.metrics <- metric_set(mcc) #needed for mcc. may be a problem for regression
-    ## Tune the model
-    
-  # tune_m<-tune::tune_grid(mod_workflow,
-  #                           resamples = data_cv,
-  #                           grid = tune_grid_size)#,
-  #                           #metrics = c.metrics)
   
     if (racing == TRUE) {
       

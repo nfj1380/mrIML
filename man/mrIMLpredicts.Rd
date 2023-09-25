@@ -6,19 +6,23 @@
 \usage{
 mrIMLpredicts(
   X,
+  X1 = NULL,
   Y,
   Model,
   balance_data = "no",
   mode = "regression",
-  transformY = "log",
   dummy = FALSE,
+  prop = 0.5,
+  morans = F,
   tune_grid_size = 10,
   k = 10,
+  racing = T,
   seed = sample.int(1e+08, 1)
 )
 }
 \arguments{
-\item{X}{A \code{dataframe} represents predictor or feature data.}
+\item{X}{A \code{dataframe} represents predictor or feature data.
+#'@param X1 A \code{dataframe} extra predictor set used in each model. For the MrIML Joint species distribution model (JSDM) this is just a copy of the response data.}
 
 \item{Y}{A \code{dataframe} is response variable data (species, OTUs, SNPs etc).}
 
@@ -30,9 +34,13 @@ mrIMLpredicts(
 
 \item{dummy}{A \code{logical} 'TRUE or FALSE'.}
 
-\item{tune_grid_size}{A \code{numeric} sets the grid size for hyperparamter tuning. Larger grid sizes increase computational time.}
+\item{morans}{\code{logical} 'TRUE or FALSE'. If 'TRUE' global Morans I is calculated for each response}
+
+\item{tune_grid_size}{A \code{numeric} sets the grid size for hyperparameter tuning. Larger grid sizes increase computational time. Ignored if racing=T.}
 
 \item{k}{A \code{numeric} sets the number of folds in the 10-fold cross-validation. 10 is the default.}
+
+\item{racing}{\code{logical} 'TRUE or FALSE'. If 'TRUE' MrIML performs the grid search using the 'racing' ANOVA method. See https://finetune.tidymodels.org/reference/tune_race_anova.html}
 }
 \description{
 Wrapper to generate multi-response predictive models.

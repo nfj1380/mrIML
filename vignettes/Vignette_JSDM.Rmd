@@ -2,7 +2,9 @@
 title: "MrIML JSDM vignette"
 author: "Nick Fountain-Jones"
 date: "`r Sys.Date()`"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ##Introduction
@@ -33,11 +35,17 @@ source("./R/mrCoOccurNet_bootstrap.R")
 source("./R/mrCovar.R") 
 source("./R/mrInteractionsSept23.R") 
 
-Y <- dplyr::select(Bird.parasites, -scale.prop.zos) #response variables eg. SNPs, pathogens, species....
+Y <- dplyr::select(Bird.parasites, -scale.prop.zos) %>% 
+  dplyr::select(sort(names(.)))#response variables eg. SNPs, pathogens, species....
 X <- dplyr::select(Bird.parasites, scale.prop.zos) # feature set
 
 X1 <- Y %>%
   dplyr::select(sort(names(.)))
+
+X1_fact <- X1 %>%
+  mutate_all(as.factor) %>% 
+  mutate_all(~ifelse(. == 0, "absent", "present"))
+
 ```
 
 Note that the inclusion of 'X1' converts MrIML into a JSDM by directly adding of the presence/absence patterns of the other taxa into the model (as well as environmental/host covariates). The order of X1 and Y need to match. 
@@ -80,12 +88,12 @@ yhats_rf <- mrIMLpredicts(X=X, Y=Y,
 
 #linear model
 yhats_lm <- mrIMLpredicts(X=X,Y=Y,
-                            X1=X1,
+                            X1=X1_fact,
                             Model=model_lm , 
                             balance_data='no',
                             mode='classification',
                             seed = sample.int(1e8, 1),
-                            prop=0.7, racing=F)
+                            prop=0.6, racing=F, k=5)
 
 ```
 ## Comparing performance
@@ -140,7 +148,7 @@ yhats_rf_downSamp <- mrIMLpredicts(X=X, Y=Y,
                           balance_data='down', #down sampling
                           mode='classification',
                           seed = sample.int(1e8, 1),
-                          prop=0.7, k=5, racing=T)
+                          prop=0.75, k=5, racing=T)
 
 ModelPerf_rf_downSamp <- mrIMLperformance(yhats_rf_downSamp, Model=model_rf, Y=Y, mode='classification')
 
@@ -158,7 +166,7 @@ MrIML2.0 makes it easy to get bootstrap estimates for a variety of interpreatble
 ```{r}
 #do bootstraps
 bs_malaria <- mrBootstrap(yhats=yhats_rf_downSamp,Y=Y,
-                          num_bootstrap = 50, 
+                          num_bootstrap = 10, 
                           alpha = 0.05) 
 #just 10 bootstraps to keep this short. We suggest using more for a final anaysis (100 is reasonable but depends on how big the data is)
 
@@ -190,8 +198,8 @@ If we want to explore the effect of host abundance overall we can use the follow
 
 ```{r, eval=FALSE, echo=T}
 #this needs fixing
-#covar <- mr_Covar(yhats_rf_downSamp, X=X, X1=X1, Y=Y,
-                 # var='scale.prop.zos', sdthresh =0.01) 
+covar <- mr_Covar(yhats=yhats_rf_downSamp, X=X, X1=X1, Y=Y,
+                  var='scale.prop.zos', sdthresh =0.01) 
 #sdthrsh just plots taxa responding the most.
 
 
@@ -201,7 +209,7 @@ Note that this isn't boostrapped now - each line represents a taxa.
 
 ## Co-occurrence network
 
-We can utilise all the bootstrapped partial dependence estimates (pds) to construct a co-occurence network. We show how this object can be converted to an igraph object and plotted.  This is a directed network and edges are scaled by the standard deviation of change in prediction. Red are positive associations (the predicted occurence of the taxa increases with the presence of the other) and blue are negative (the predicted occurence of the taxa decreases with the presence of the other).
+We can utilise all the bootstrapped partial dependence estimates (pds) to construct a co-occurence network. We show how this object can be converted to an igraph object and plotted.  This is a directed network and edges are scaled by the standard deviation of the marginal change in prediction. Red are positive associations (the predicted occurence of the taxa increases with the presence of the other) and blue are negative (the predicted occurence of the taxa decreases with the presence of the other).
 
 ```{r}
 
@@ -242,17 +250,29 @@ ggplot(gg, aes(x = x, y = y, xend = xend, yend = yend)) +
 
 ## 1 way, 2 way and 3 way interactions
 
-Finally,
+Finally, we can quantify the importance of interactions overall as well as one and two-way interaction importance using the same bootstrap approach.See https://github.com/mayer79/hstats for more details about the approach.
 
 ```{r}
 
-int_ <- mrInteractions(yhats, X, Y, num_bootstrap=50,
-                           feature = 'Hkillangoi', top.int=10)
+int_ <- mrInteractions(yhats=yhats_rf_downSamp, X, Y, num_bootstrap=10,
+                           feature = 'Plas', top.int=10)
+#10 bootstraps to keep it short. top int focusses on the 10 top interactions (all of them in this case).
 
 int_[[1]] # overall plot
 int_[[2]] # individual plot for the response of choice 
 int_[[3]] #two way plot
 
 ```
+Tye first plot shows that interactions account for on average 27% (bootstrap interval 23-34%) of variation in predictions for *H.killangoi* and less for the other taxa. The second plot shows that interactions involving host abundance impacts predictions of *Plasmodium* the most (but *H.zosteropis* is also important). This trend is similar community-wide. The next plot shows that the interaction between *Haemoproteus* species is the most important 2-way interaction for *Plasmodium* but this isn't true community wide as host abudance and *H.zosteropis* is the strongest interaction overall. Taken together, we can see that interactions between taxa are mediated by host abundance.
 
+Finally, we can explore specific interactions in more detail using 2D partial dependence plots. In case we choose the one of the more important 2-way interactions impacting the probability of detetcting *Plasmodium*.
+
+```{r}
+fl <- mrFlashlight(yhats=yhats_rf_downSamp, X=cbind(X, Y), Y=Y, response = "single", index=4, mode='classification') #index=4 selects Plasmodium
+
+plot(light_profile2d(fl,c("scale.prop.zos","Hzosteropis")))+
+  theme_bw()
+```
+
+So if *H.zosteropsis* is not present and the relative abundance of *Zosterops* species is low the probability of observing *Plasmodium* is high (~>0.7).
 

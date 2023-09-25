@@ -13,9 +13,6 @@ mrLocalExplainer(X, Model, Y)
 
 \item{Y}{\code{vector} vector containing the outcome for each data instance}
 }
-\value{
-
-}
 \description{
 Run local explanation methods for individual data points
 }

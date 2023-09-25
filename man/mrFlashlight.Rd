@@ -7,6 +7,7 @@
 mrFlashlight(
   yhats,
   X,
+  X1,
   Y,
   response = "multi",
   index = 1,
