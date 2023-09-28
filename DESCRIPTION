@@ -1,7 +1,7 @@
 Package: mrIML
 Type: Package
 Title: Multi Response Interpretable Machine Learning
-Version: 1.0.0
+Version: 2.0.0
 Author: Nick Fountain-Jones<nfountainjones@gmail.com>
   Gustavo Machado<gmachad@ncsu.edu>
   Chris Kozakiewicz<cpkoz@msu.edu>

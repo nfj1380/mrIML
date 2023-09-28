@@ -16,7 +16,7 @@ Currently, the models are optimized and tested on presence/absence data but abun
 First, we need to load up some extra functionality and some data. The first example is coinfection data from New Caledonian *Zosterops* species. A single continuous covariate is also included (scale.prop.zos), which reflects the relative abundance of *Zosterops* species among different sample sites. 
 
 
-```{r setup, include=FALSE}
+```{r, message = FALSE, warnings = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 pacman::p_load('MRFcov', 'mrIML', 'tidyverse', 'future.apply','tidymodels', 'finetune', 'themis', 'vip', 'flashlight', 'iml', 'vivid', 'igraph', 'ggnetwork', 'network',
@@ -24,15 +24,6 @@ pacman::p_load('MRFcov', 'mrIML', 'tidyverse', 'future.apply','tidymodels', 'fin
  'parsnip', 'cowplot', 'progress', 'hstats', 'geosphere')
 
 setwd("~/MrIML/mrIML")
-
-#these will go when I do a complete package update.
-source("./R/MrIMLpredicts.R")
-source("./R/mrBootstrap.R")
-source("./R/mrPD_bootstrap.R")
-source("./R/mrVI_bootstrap.R")
-source("./R/mrCoOccurNet_bootstrap.R")
-source("./R/mrCovar.R") 
-source("./R/mrInteractions.R") 
 
 Y <- dplyr::select(Bird.parasites, -scale.prop.zos) %>% 
   dplyr::select(sort(names(.)))#response variables eg. SNPs, pathogens, species....
