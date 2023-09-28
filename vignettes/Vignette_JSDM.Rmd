@@ -7,11 +7,11 @@ output:
   pdf_document: default
 ---
 
-##Introduction
+## Introduction
 
-This vignette guides you through the new functionality that turns mrIML into a joint species distribution model (JSDM). There is also new functions in MrIML 2.0 that can be used in non-JSDM models, such as for single taxon SDMs, epi models, gene environment association (GEA) studies and for landscape genetics. Advances in Tidymodels are in the core of the functions as are exciting advances in interpretable machine learning (e.g., for quantiying interactinos quickly). The capability to capture uncertainty via bootstraps and spatial patterns are also a feature of this MRIML module.  The examples are from the microbiome world but ofcourse  generalizable to any mutli-response problem. 
+This vignette guides you through the new functionality that turns mrIML into a joint species distribution model (JSDM). There is also new functions in MrIML 2.0 that can be used in non-JSDM models, such as for single taxon SDMs, epi models, gene environment association (GEA) studies and for landscape genetics. Advances in Tidymodels are in the core of the functions as are exciting advances in interpretable machine learning (e.g., for quantiying interactions quickly). The capability to capture uncertainty via bootstraps and spatial patterns are also a feature of this MRIML module.  The examples are from the microbiome world but of course  generalizable to any multi-response problem. 
 
-Currently, the models are optimized and tested on presence/absence data but abundance data could also be added (but user beware)
+Currently, the models are optimized and tested on presence/absence data but abundance data could also be added (but user beware).
 
 First, we need to load up some extra functionality and some data. The first example is coinfection data from New Caledonian *Zosterops* species. A single continuous covariate is also included (scale.prop.zos), which reflects the relative abundance of *Zosterops* species among different sample sites. 
 
@@ -27,13 +27,12 @@ setwd("~/MrIML/mrIML")
 
 #these will go when I do a complete package update.
 source("./R/MrIMLpredicts.R")
-source("./R/mrResponseStacks.R")
 source("./R/mrBootstrap.R")
 source("./R/mrPD_bootstrap.R")
 source("./R/mrVI_bootstrap.R")
 source("./R/mrCoOccurNet_bootstrap.R")
 source("./R/mrCovar.R") 
-source("./R/mrInteractionsSept23.R") 
+source("./R/mrInteractions.R") 
 
 Y <- dplyr::select(Bird.parasites, -scale.prop.zos) %>% 
   dplyr::select(sort(names(.)))#response variables eg. SNPs, pathogens, species....
@@ -48,13 +47,13 @@ X1_fact <- X1 %>%
 
 ```
 
-Note that the inclusion of 'X1' converts MrIML into a JSDM by directly adding of the presence/absence patterns of the other taxa into the model (as well as environmental/host covariates). The order of X1 and Y need to match. 
+Note that the inclusion of 'X1' converts MrIML into a JSDM by directly adding of the presence/absence patterns of the other taxa into the model (as well as environmental/host covariates). Note, the order of X1 and Y need to match. 
 
 ## Setting up the models
 
-Built into the MrIML architecture (and the big advantage with Tidymodels) in the capability to change the underlying model easily. We are going to set up two models to compare: a random forest model (RF) and a logistic regression (lm). MrIML takes advantage of multi-core processing so we set that up here to run on 5 cores. These steps are the same as in MrIML 1.0.
+Built into the MrIML architecture (and the big advantage with Tidymodels) is the capability to change the underlying model easily. We are going to set up two models to compare: a random forest model (RF) and a logistic regression (lm). MrIML takes advantage of multi-core processing so we set that up here to run on 5 cores. These steps are the same as in MrIML 1.0.
 
-```{r}
+```{r, message = FALSE, warnings = FALSE}
 
 model_rf <- 
   rand_forest(trees = 100, mode = "classification", mtry = tune(), min_n = tune()) %>% #100 trees are set for brevity. Aim to start with 1000
@@ -72,13 +71,12 @@ plan(cluster, workers=cl)
 
 ## Running the models
 
-Aside from adding JSDM functionality with the X1 call, we have also enable MrIML to tune hyperparameters using the very efficient 'racing' option (see Kuhn (2014)). In brief, this racing option take a small subsample and elimnates parameter combinations not improving fit using a repeated measure ANOVA model. Turning racing to 'FALSE' goes back to a grid serach if you want to manually set the tuning grid size. For the logistic regression there are no parameters to tune so set to 'FALSE'.
+Aside from adding JSDM functionality with the X1 call, we have also enabled MrIML to tune hyperparameters using the very efficient 'racing' option (see Kuhn (2014)). In brief, this racing option take a small subsample of parameters and eliminates parameter combinations that do not improve fit using a repeated measure ANOVA model. Turning racing to 'FALSE' goes back to a grid search if you want to manually set the tuning grid size. For the logistic regression there are no parameters to tune so set to 'FALSE'.
 
-```{r}
+```{r, message = FALSE, warnings = FALSE}
 #random forest
 yhats_rf <- mrIMLpredicts(X=X, Y=Y,
                           X1=X1,
-                          spatial_data=NULL, #no spatial data here
                           Model=model_rf,
                           balance_data='no',
                           mode='classification',
@@ -98,9 +96,9 @@ yhats_lm <- mrIMLpredicts(X=X,Y=Y,
 ```
 ## Comparing performance
 
-It's important to compare if there are any advantages to using a random forest approach. As you can see from the above warnings the logistic regression had an issue with some computations so may not be very reliable.
+It's important to compare if there are any advantages to using a random forest approach. Interpreation would be easier overall if logistic regression gave similar predictive performance.
 
-```{r}
+```{r, message = FALSE, warnings = FALSE}
 
 ModelPerf_rf <- mrIMLperformance(yhats_rf, Model=model_rf, Y=Y, mode='classification')
 
@@ -114,11 +112,11 @@ ModelPerf_lm[[2]]
 
 ```
 
-If we just look at the overall AUC values, it looks like model performance is quite similar (0.86 for the rf and 0.81 for the lm). However, when we look a the Mathew's correlation coefficient (MCC) for each taxa in the lm model we see that for *H.killangoi* and Plas (*Plasmodium*) the values are much lower (e.g. 0.02 (basically just a guess) compared to 0.31 for rf). Remember the classes are imbalanced so AUC tends to be an inflated measure. This is evidence that non-linear relationships can make a difference to prediction overall. We will interrogate the rf model further.
+If we just look at the overall AUC values, it looks like model performance is quite similar (0.86 for the rf and 0.81 for the lm). However, when we look a the Mathew's correlation coefficient (MCC) for each taxa in the lm model we see that for *H.killangoi* and Plas (*Plasmodium*) the values are much lower (e.g. 0.02, basically just a guess) compared to 0.31 for rf). Remember the classes are imbalanced so AUC tends to be an inflated measure. This is evidence that non-linear relationships can make a difference to prediction overall. We will interrogate the rf model further.
 
 We will now ask if including putative associations between taxa improves model performance overall or in the relationship between the parasites or is host relative abundance enough.
 
-```{r}
+```{r, message = FALSE, warnings = FALSE}
 yhats_rf_noAssoc <- mrIMLpredicts(X=X, Y=Y,
                           X1=NULL, #no associations for this one
                           Model=model_rf,
@@ -134,13 +132,13 @@ ModelPerf_rf[[1]] #performance including associations
 
 ```
 
-You can see that overall including assocations improved model performance overall but particularly in predicting *H.killangoi* and *Microfilaria*. Using MCC to compare models is problematic as for the association free model its not defined for these taxa (NA, probably as there are no false negatives for the low prevalence taxa in the association-free model). Positive predictive value (PPV) is useful in this case and shows that without associations we can't predict the occurence of these taxa (PPV=0 for both). Including associations increases PPV to ~0.2 - not great as 80% of our positive predictions for these taxa are false.
+You can see that overall including assocations improved model performance overall but particularly in predicting *H.killangoi* and *Microfilaria*. Using MCC to compare models is problematic as for the association free model its not defined for these taxa (NA, probably as there are no false negatives for the low prevalence taxa in the association-free model). Positive predictive value (PPV) is useful in this case and shows that without associations we can't predict the occurrence of these taxa (PPV=0 for both). Including associations increases PPV to ~0.2 - not great as 80% of our positive predictions for these taxa are false.
 
-##Downsampling
+## Downsampling
 
-Including associations makes a difference, but how can we do better in predicting our two rarer taxa? Upsampling is possible but in this case we'll try downsanmpling to see if correcting for class imbalance improves our model fit. 
+Including associations makes a difference, but how can we do better in predicting our two rarer taxa? Up sampling is possible but in this case we'll try down sampling to see if correcting for class imbalance improves our model fit. 
 
-```{r}
+```{r, message = FALSE, warnings = FALSE}
 
 yhats_rf_downSamp <- mrIMLpredicts(X=X, Y=Y,
                           X1=X1,
@@ -155,19 +153,19 @@ ModelPerf_rf_downSamp <- mrIMLperformance(yhats_rf_downSamp, Model=model_rf, Y=Y
 ModelPerf_rf_downSamp[[1]]
 
 ```
-Look at those PPV values now - much better. Our false positive rate is down to ~ < 15% overall. Now that we are happy with the performance of the model, now we can interogate further.
 
-##Interpreting the model
+Look at those PPV values now - much better. Our false positive rate is down to ~ < 15% overall. Now that we are happy with the performance of the model, now we can interrogate further.
 
-In many cases, like this dataset, community or microbiome data tend to be small in size. When we apply stochastic machine learning algorithms to such data, it can lead to challenges. For instance, the importance of variables may vary substantially when we create multiple models using the same data and algorithm. To handle this variability and better understand prediction uncertainty, MrIML 2.0 has functionality to capture uncertainty in our  tuned model. Additionally, this approach helps us estimate how variables affect the response, and these estimates align with the results obtained from traditional linear regression models (see Cooke et al., 2021).
+## Interpreting the model
 
-MrIML2.0 makes it easy to get bootstrap estimates for a variety of interpreatble machine learning tools, and uses these estimates to construct marginalized co-occurrence networks. First, lets do the boostrapping and calculate variable importance.
+In many cases, like this data set, community or microbiome data tend to be small in size. When we apply stochastic machine learning algorithms to such data, it can lead to challenges. For instance, the importance of variables may vary substantially when we create multiple models using the same data and algorithm. To handle this variability and better understand prediction uncertainty, MrIML 2.0 has functionality to capture uncertainty in our  tuned model using bootstraps. Additionally, this approach helps us estimate how variables affect the response, and these estimates align with the results obtained from traditional linear regression models (see Cook et al., 2021).
 
-```{r}
+MrIML2.0 makes it easy to get bootstrap estimates for a variety of interpretable machine learning tools, and uses these estimates to construct marginalized co-occurrence networks. First, lets do the bootstrapping and calculate variable importance.
+
+```{r, message = FALSE, warnings = FALSE}
 #do bootstraps
 bs_malaria <- mrBootstrap(yhats=yhats_rf_downSamp,Y=Y,
-                          num_bootstrap = 10, 
-                          alpha = 0.05) 
+                          num_bootstrap = 10)
 #just 10 bootstraps to keep this short. We suggest using more for a final anaysis (100 is reasonable but depends on how big the data is)
 
 bs_impVI <- mrVI_bootstrap(mrBootstrap_obj=bs_malaria, 
@@ -175,15 +173,16 @@ bs_impVI <- mrVI_bootstrap(mrBootstrap_obj=bs_malaria,
                            threshold=0.5, #AUC threshold  
                            X=X, Y=Y, global_top_var=10,
                            local_top_var=5)
+
 #the 'global_top_var' provides a limit to how many predictors are included in the community-wide plot. 'local_top_var provides a limit to the number of individual taxa plots. The threshold excludes plotting individual importance plots for taxa not well predicted by the model.
 
 ```
 
 You can see that host abundance is the most important predictor of this parasite community (followed by *H.zosteropsis*) . However, the second figure shows that there is important variability. For example, *H.zosteropsis* is the most important predictor for the occurence of *Microfilaria*, and host abundance (shortened to sc..) is less important. 
 
-##Bootstrap partial dependence plots
+## Bootstrap partial dependence plots
  
-To look at the the relationship between each variable and community structure, MrIML 2.0 has a convenient wrapper to plot boostrapped partial dependencies for a taxa of interest.  
+To look at the the relationship between each variable and community structure, MrIML 2.0 has a convenient wrapper to plot bootsrapped partial dependencies for a taxa of interest.  
 
 ```{r}
 
@@ -194,9 +193,9 @@ pds <- mrPD_bootstrap(mrBootstrap_obj=bs_malaria,
 ```
 These plots show that, for example, the presence of *Microfilaria* greatly increass the probability of observing *Plasmodium* (from ~0.32 to 0.58 while holding all other variables at their mean value). Note that these are marginal relationships (i.e. isolating the effect of just each predictor). When host abundance is high the probability of detecting *Plasmodium* descreases non-linearly (a threshold of around ~0). The other parasites have less effect.
 
-If we want to explore the effect of host abundance overall we can use the following function:
+If we want to explore the effect of host abundance overall we can use the 'mr_Covar' function.
 
-```{r, eval=FALSE, echo=T}
+```{r, message = FALSE, warnings = FALSE}
 #this needs fixing
 covar <- mr_Covar(yhats=yhats_rf_downSamp, X=X, X1=X1, Y=Y,
                   var='scale.prop.zos', sdthresh =0.01) 
@@ -205,11 +204,11 @@ covar <- mr_Covar(yhats=yhats_rf_downSamp, X=X, X1=X1, Y=Y,
 
 ```
 
-Note that this isn't boostrapped now - each line represents a taxa.
+Note that this isn't bootstrapped now - each line represents a taxon in this case. The second plot shows the community-wide change in occurrence probabilities across host abundance. Note the the occurrence probabilities of all taxa drop an intermediate levels of host abundance (0.75-1.25). 
 
 ## Co-occurrence network
 
-We can utilise all the bootstrapped partial dependence estimates (pds) to construct a co-occurence network. We show how this object can be converted to an igraph object and plotted.  This is a directed network and edges are scaled by the standard deviation of the marginal change in prediction. Red are positive associations (the predicted occurence of the taxa increases with the presence of the other) and blue are negative (the predicted occurence of the taxa decreases with the presence of the other).
+We can utilise all the bootstrapped partial dependence estimates (pds) to construct a co-occurrence network. We show how this object can be converted to an igraph object and plotted.  This is a directed network and edges are scaled by the standard deviation of the marginal change in prediction. Red are positive associations (the predicted occurrence of the taxa increases with the presence of the other) and blue are negative (the predicted occurence of the taxa decreases with the presence of the other).
 
 ```{r}
 
@@ -250,9 +249,9 @@ ggplot(gg, aes(x = x, y = y, xend = xend, yend = yend)) +
 
 ## 1 way, 2 way and 3 way interactions
 
-Finally, we can quantify the importance of interactions overall as well as one and two-way interaction importance using the same bootstrap approach.See https://github.com/mayer79/hstats for more details about the approach.
+Finally, we can quantify the importance of interactions overall as well as one and two-way interaction importance using the same bootstrap approach.See https://github.com/mayer79/hstats for more details about the method.
 
-```{r}
+```{r, message = FALSE, warnings = FALSE}
 
 int_ <- mrInteractions(yhats=yhats_rf_downSamp, X, Y, num_bootstrap=10,
                            feature = 'Plas', top.int=10)
@@ -263,11 +262,12 @@ int_[[2]] # individual plot for the response of choice
 int_[[3]] #two way plot
 
 ```
-Tye first plot shows that interactions account for on average 27% (bootstrap interval 23-34%) of variation in predictions for *H.killangoi* and less for the other taxa. The second plot shows that interactions involving host abundance impacts predictions of *Plasmodium* the most (but *H.zosteropis* is also important). This trend is similar community-wide. The next plot shows that the interaction between *Haemoproteus* species is the most important 2-way interaction for *Plasmodium* but this isn't true community wide as host abudance and *H.zosteropis* is the strongest interaction overall. Taken together, we can see that interactions between taxa are mediated by host abundance.
+
+The first plot shows that interactions account for on average 27% (bootstrap interval 23-34%) of variation in predictions for *H.killangoi* and less for the other taxa. The second plot shows that interactions involving host abundance impacts predictions of *Plasmodium* the most (but *H.zosteropis* is also important). This trend is similar community-wide. The next plot shows that the interaction between *Haemoproteus* species is the most important 2-way interaction for *Plasmodium* but this isn't true community wide as host abudance and *H.zosteropis* is the strongest interaction overall. Taken together, we can see that interactions between taxa are mediated by host abundance.
 
 Finally, we can explore specific interactions in more detail using 2D partial dependence plots. In case we choose the one of the more important 2-way interactions impacting the probability of detetcting *Plasmodium*.
 
-```{r}
+```{r, message = FALSE, warnings = FALSE}
 fl <- mrFlashlight(yhats=yhats_rf_downSamp, X=cbind(X, Y), Y=Y, response = "single", index=4, mode='classification') #index=4 selects Plasmodium
 
 plot(light_profile2d(fl,c("scale.prop.zos","Hzosteropis")))+
@@ -276,3 +276,10 @@ plot(light_profile2d(fl,c("scale.prop.zos","Hzosteropis")))+
 
 So if *H.zosteropsis* is not present and the relative abundance of *Zosterops* species is low the probability of observing *Plasmodium* is high (~>0.7).
 
+### References
+
+Cook et al., 2021: https://doi.org/10.18651/RWP2021-12
+
+Kuhn (2014): https://doi.org/10.48550/arXiv.1405.6974
+
+Fountain-Jones et al(2021): https://doi.org/10.1111/1755-0998.13495

@@ -8,7 +8,6 @@
 #' @param local_top_var The number of top local variables for each response to display (default: 5).
 #' 
 #' @return A list containing variable importance data and a combined plot.
-#' @export
 #'
 #' @examples
 #' \dontrun{
@@ -17,7 +16,6 @@
 #' Y <- dplyr::select(Bird.parasites, -scale.prop.zos)%>% 
 #' dplyr::select(sort(names(.)))#response variables eg. SNPs, pathogens, species....
 #' X <- dplyr::select(Bird.parasites, scale.prop.zos) # feature set
-
 #' X1 <- Y %>%
 #' dplyr::select(sort(names(.)))
 #'model_rf <- 
@@ -35,7 +33,8 @@
 #'threshold=0.8,  X=X, Y=Y, global_top_var=10,
 #'local_top_var=5)
 #'} 
-#' 
+#' @export
+
 mrVI_bootstrap <- function(mrBootstrap_obj, ModelPerf, X, Y,
                            threshold=0.1, global_top_var=10, local_top_var=5) {
   #threshold is AUC now (less NAs)
@@ -46,13 +45,14 @@ mrVI_bootstrap <- function(mrBootstrap_obj, ModelPerf, X, Y,
   complete_df <- cbind(Y, X)
   n_data <- ncol(complete_df)
   
+  bind_rows_by_name <- function(list_obj, object_name) {
+    filtered_list <- list_obj[names(list_obj) %in% object_name]
+    bind_rows(filtered_list)
+  }
+  
   internal_fit_function <- function(i) {
-    object_name <- names(complete_df[i])
     
-    bind_rows_by_name <- function(list_obj, object_name) {
-      filtered_list <- list_obj[names(list_obj) %in% object_name]
-      bind_rows(filtered_list)
-    }
+    object_name <- names(complete_df[i])
     
     combined_list <- list()  # Create an empty list to store combined objects
     
@@ -136,7 +136,6 @@ mrVI_bootstrap <- function(mrBootstrap_obj, ModelPerf, X, Y,
     filter(roc_AUC > threshold) %>% 
     ungroup()
   
-  #plot_boxplots <- function(vi_df){  
   # Create a list to store the plots
   plot_list <- list()
   

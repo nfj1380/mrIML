@@ -6,7 +6,6 @@
 #' @param Y The response data.
 #'
 #' @return A dataframe representing the co-occurrence network with strength and directionality.
-#' @export
 #'
 #' @examples
 #' \dontrun{
@@ -56,7 +55,7 @@
 #'                       size=2,
 #'                      segment.colour = "black",
 #'                      colour = "white", fill = "grey36")} 
-
+#' @export
 
 mrCoOccurNet_bootstrap <- function(mrPD_obj, Y){   #,  variable ='Plas
   

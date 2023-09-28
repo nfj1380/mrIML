@@ -6,7 +6,7 @@
 #' @param yhats A list of model predictions mrIMLpredicts
 #' @param num_bootstrap The number of bootstrap samples to generate (default: 10).
 #' @param Y The response data (default: Y).
-
+#' @param ice \code{logical} 'TRUE or FALSE'. True calculates individual conditional expectation (ICE)instead of partial dependencies. Recommend leaving as FALSE for ost datasets
 #' @return A list containing bootstrap samples of variable profiles for each response variable.
 #' @export
 #'
@@ -33,7 +33,7 @@
 #'} 
 
 
-mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y) {
+mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y, ice = FALSE) {
   
   n_response <- length(yhats)
   
@@ -43,7 +43,6 @@ mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y) {
     
     setTxtProgressBar(pb, k) #progressbar marker
     
-    #thinking that for downsampled models using the complete data gain could be better
     features <- colnames(yhats[[k]]$data)[-1]
     
     n <- nrow(yhats[[k]]$data)
@@ -55,7 +54,7 @@ mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y) {
       bootstrap_sample <- yhats[[k]]$data[sample(1:n, replace = TRUE), ] ###
       
       # Extract the workflow from the best fit
-      wflow <- yhats[[k]]$last_mod_fit %>% extract_workflow()
+      wflow <- yhats[[k]]$last_mod_fit %>% tune::extract_workflow()
       
       # Add the bootstrap data to the workflow
       wflow$data <- bootstrap_sample
@@ -90,7 +89,9 @@ mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y) {
       )
       
       for (j in seq_along(var_names)) {
-  
+        if (ice == TRUE) {
+          pd_ <- light_ice(fl, v = paste0(var_names[j]), center = 'first') #ice doesn't work well
+        } else {
           pd_ <- light_profile(fl, v = paste0(var_names[j]))
         }
         
@@ -103,7 +104,9 @@ mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y) {
         pd_data <-data.frame(cbind(pd_$data),  bs_name, bs_rep) #add bootstrap
         
         pd_raw[[i]][[var_names[j]]] <- pd_data  # Save pd_ as a list element
-      
+        
+        
+      }
     }
     
     return(pd_raw)  # Return pd_raw as a list

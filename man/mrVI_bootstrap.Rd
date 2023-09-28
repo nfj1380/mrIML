@@ -59,5 +59,4 @@ bs_impVI <- mrVI_bootstrap(mrBootstrap_obj=bs_analysis, ModelPerf=ModelPerf,
 threshold=0.8,  X=X, Y=Y, global_top_var=10,
 local_top_var=5)
 } 
-
 }
