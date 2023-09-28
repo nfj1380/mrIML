@@ -17,7 +17,6 @@ First, we need to load up some extra functionality and some data. The first exam
 
 
 ```{r, message = FALSE, warnings = FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 
 pacman::p_load('MRFcov', 'mrIML', 'tidyverse', 'future.apply','tidymodels', 'finetune', 'themis', 'vip', 'flashlight', 'iml', 'vivid', 'igraph', 'ggnetwork', 'network',
 'gridExtra', 'xgboost', 'brulee', 'fastshap', 'tabnet', 'bonsai',
