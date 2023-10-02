@@ -146,6 +146,13 @@ ModelPerf_rf_downSamp[[1]]
 
 Look at those PPV values now - much better. Our false positive rate is down to ~ < 15% overall. Now that we are happy with the performance of the model, now we can interrogate further.
 
+
+```{r}
+VI <- mrVip(yhats_rf_downSamp, X)
+
+vi_i <- interpret_Mrvi(VI=VI, modelPerf=ModelPerf_rf_downSamp, groupCov = NULL, cutoff = 0.5, mode = "classification" )
+```
+
 ## Interpreting the model
 
 In many cases, like this data set, community or microbiome data tend to be small in size. When we apply stochastic machine learning algorithms to such data, it can lead to challenges. For instance, the importance of variables may vary substantially when we create multiple models using the same data and algorithm. To handle this variability and better understand prediction uncertainty, MrIML 2.0 has functionality to capture uncertainty in our  tuned model using bootstraps. Additionally, this approach helps us estimate how variables affect the response, and these estimates align with the results obtained from traditional linear regression models (see Cook et al., 2021).

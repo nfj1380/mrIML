@@ -19,27 +19,20 @@
 
 interpret_Mrvi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.2,  mode='regression'){
   
-  #colnames(VI) <- names(X)
-  row.names(VI) <- names(Y)
-  #n_features <- sort(names(Y))
-  n_features <-  names(VI)
-  VIa <-  as.data.frame(t(VI))
   #----------------------------------------------------------------
   #Global importance
   #----------------------------------------------------------------
   
   #for interpretation of group features.
   
-  rs <- as.data.frame( rowSums(VIa)/sum(VIa) ) #make it a proportion
+  rs <- as.data.frame( rowSums(VI)/sum(VI)) #make it a proportion
   rsA <- rownames_to_column(rs)
   
   if (!is.null(groupCov)) { 
     
-    
     rsA <- cbind(rsA, groupCov) # attach group info
     names(rsA)[2] <- c('prop')
     rsA$row <- 1 #dummy x axis
-    
     
     p1 <-  ggplot(rsA, aes(fill= groupCov, y=prop, x= row)) + 
       theme_bw()+
@@ -50,48 +43,37 @@ interpret_Mrvi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.2,  mo
             axis.text.x=element_blank(),
             axis.ticks.x=element_blank())+
       labs(fill='Feature') 
-    
-    print(p1)
-    
-    # readline(prompt="Press [enter] to continue for the top individual models")
-    
+
     #----------------------------------------------------------------
     #Individual response importance
     #----------------------------------------------------------------
     
-    trans <- as.data.frame(VI)
-    features <-  colnames(trans) 
-    
-    combi <- bind_cols(modelPerf[1], trans ) %>% 
-      na.omit() #nas mean the model didn't work properly remove. Should provide a warning perhaps?
+    trans <- as.data.frame(t(VI))
     
     if (mode=='classification'){
+      
+      combi <- bind_cols(modelPerf[1]$mcc,trans) %>% 
+        na.omit() #nas mean the model didn't work properly remove. Should provide a warning perhaps?
       
       combi$mcc<- as.numeric(as.character(combi$mcc)) #have to make mcc numeric again.
       combiF <- filter(combi, mcc > cutoff) 
       # poorly performing models don't get included. COuld make this user defined. Need a warning here
-      combiF$response <- as.character(combiF$response) 
-      
+    
       combiF$model_name <- NULL #don't need these columns anymore. May be nice to print them on plot?
-      combiF$mcc <- NULL
-      combiF$sensitivity <- NULL
-      combiF$specificity <- NULL
-      combiF$roc_AUC <- NULL
-      combiF$prevalence <- NULL
-      combiF$ppv <- NULL
       
     }
     if (mode=='regression'){
       
+      combi <- bind_cols(modelPerf[1]$rsquared, trans) %>% 
+        na.omit() #nas mean the model didn't work properly remove. Should provide a warning perhaps?
+      
       combi$rsquared<- as.numeric(as.character(combi$rsquared)) #have to make mcc numeric again.
       combiF <- filter(combi, rsquared > cutoff)  
-      combiF$response <- as.character(combiF$response) 
       
-      combiF$rmse <- NULL #don't need these columns anymore. May be nice to print them on plot?
       combiF$rsquared <- NULL
-      combiF$model_name <- NULL 
       
     }
+    #switch the dataframe back around again.
     combiFT <- as.data.frame(t(combiF)) %>%  row_to_names(row_number = 1)
     
     #------------------------------------------------------------------  
@@ -112,90 +94,65 @@ interpret_Mrvi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.2,  mo
     
     p2 <- ggplot(finaldfg, aes(fill=charvecGroup  , y=importance, x=charvecGroup )) + 
       geom_bar(position="dodge", stat="identity") +
-      scale_fill_viridis(discrete = T, option = "E") +
+      viridis::scale_fill_viridis(discrete = T, option = "E") +
       ggtitle("Individual response models") +
       facet_wrap(~response) +
-      #theme_ipsum() +
       theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
             axis.ticks.x=element_blank())+
-      labs(fill='Feature set') #could be a nice extension to add mcc/spec/sens to the model
-    #theme(legend.position="none") + #I like the legend personally rather than lots of x axis text.
-    
-    #readline(prompt="Press [enter] to plot individual variable importance summaries")  
-    print(p2)
-  }
-  
+      labs(fill='Feature set')  
+    }
   
   #-----------------------------------------------------------------------------------------------------------  
   if (is.null(groupCov)) {
     
-    #FeatureName <- as.data.frame(names(Y))   #this is more flexible
-    # FNameOrdered <- FeatureName[order(FeatureName$'names(Y)'),]
-    
-    #rsA <- cbind(rsA, n ) # add feature names back
-    
     names(rsA)[2] <- c('prop')
     rsA$row <- 1 #dummy x axis
-    
     
     p1 <-  ggplot(rsA, aes(y=reorder(rowname, prop), x= prop)) + 
       geom_bar(stat="identity")+
       theme_bw()+
       labs(y= "Feature", x='Cumulative importance')
     
-    print(p1)
-    
-    #readline(prompt="Press [enter] to plot individual variable importance summaries")
-    
     #----------------------------------------------------------------
     #Individual response importance
     #----------------------------------------------------------------
     
-    trans <- as.data.frame(VI)
+    trans <- as.data.frame(t(VI))
     # colnames(trans) <- n_features
-    
-    combi <- bind_cols(modelPerf[1], trans ) 
-    combi[is.na(combi)] <- -1 #nas mean the model didn't work properly remove. Should provide a warning perhaps?
     
     if (mode=='classification'){
       
+      combi <- bind_cols(mcc=modelPerf[[1]]$mcc, trans ) 
+      combi[is.na(combi)] <- -1 
+      
       combi$mcc<- as.numeric(as.character(combi$mcc)) #have to make mcc numeric again. COuld use ppv or anything else
       combiF <- filter(combi, mcc > cutoff) 
-      # poorly performing models don't get included. COuld make this user defined. Need a warning here
-      combiF$response <- as.character(combiF$response) 
       
-      combiF$model_name <- NULL #don't need these columns anymore. May be nice to print them on plot?
       combiF$mcc <- NULL
-      combiF$sensitivity <- NULL
-      combiF$specificity <- NULL
-      combiF$roc_AUC <- NULL
-      combiF$prevalence <- NULL
-      combiF$ppv <- NULL
       
+    # poorly performing models don't get included. Could make this user defined. Need a warning here
+ 
     }
+    
     if (mode=='regression'){
       
-      
+      combi <- bind_cols(mcc=modelPerf[[1]]$rsquared, trans ) 
       combi$rsquared<- as.numeric(as.character(combi$rsquared)) #have to make mcc numeric again.
       combiF <- filter(combi, rsquared > cutoff)  
       combiF$response <- as.character(combiF$response) 
       
-      combiF$rmse <- NULL #don't need these columns anymore. May be nice to print them on plot?
-      combiF$rsquared <- NULL
-      combiF$model_name <- NULL 
-      
-      
+      combiF$rsquared <- NULL #not needed anymore
+
     }
     
-    combiFT <- as.data.frame(t(combiF)) %>%  row_to_names(row_number = 1) 
-    
+    combiFT <- as.data.frame(t(combiF))
+
     #------------------------------------------------------------------  
     
     data_long <- gather(combiFT,  key ='response', value = importance) #turns this wide frame into something more suitable to plot
     
     charvec <- rep(n_features, length(combiFT)) #create a vector of feature names
-    
     
     finaldf <- as.data.frame(cbind(data_long, charvec)) #if we want ungrouped features. COuld add this functionality
     #finaldfg <- as.data.frame(cbind(data_long, charvecGroup))
@@ -203,11 +160,10 @@ interpret_Mrvi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.2,  mo
     finaldf$importance <- as.numeric(finaldf$importance) 
     # finaldfg$importance <- as.numeric(finaldfg$importance)
     
-    #not the biggest fan of barplots  - but they are the easiest to see in this case.
-    
+  
     p2 <- ggplot(finaldf, aes(fill=charvec  , y=importance, x=charvec )) + 
       geom_bar(position="dodge", stat="identity") +
-      scale_fill_viridis(discrete = T, option = "E") +
+      viridis::scale_fill_viridis(discrete = T, option = "E") +
       ggtitle("Individual response models") +
       facet_wrap(~response) +
       # theme_ipsum() +
@@ -215,19 +171,11 @@ interpret_Mrvi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.2,  mo
             axis.text.x=element_blank(),
             axis.ticks.x=element_blank())+
       labs(fill='Feature set') #could be a nice extension to add mcc/spec/sens to the model
-    #theme(legend.position="none") + #I like the legend personally rather than lots of x axis text.
-    
-    print(p2)
-  }
+  } 
+  
   #------------------------------------------------------------------  
   #Importance PCA plot. Responses with similar importance scores group together
   #------------------------------------------------------------------    
-  
-  #readline(prompt="Press [enter] to plot the importance PCA plot")  
-  
-  # a1 <- a[,-1] %>%  mutate_if( is.factor, ~ as.numeric(as.character(.x))) #this is a handy function
-  #row.names(a1) <- a$rowname
-  #trans <- as.data.frame(t(VI) )
   
   a.pca <- trans %>% 
     
@@ -250,14 +198,14 @@ interpret_Mrvi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.2,  mo
     augment(trans) %>% 
     ggplot(aes(.fittedPC1, .fittedPC2)) + 
     geom_point() + 
-    geom_label_repel(aes(label = rownames(trans)),
+    ggrepel::geom_label_repel(aes(label = rownames(trans)),
                      box.padding   = 0.35, 
                      point.padding = 0.5,
                      label.size = 0.1,
                      segment.color = 'grey50') +
     theme_bw()
   
-  print(p3)
+  #print(p3)
   
   p4 <- a.pca %>%
     tidy(matrix = "eigenvalues") %>%
@@ -270,7 +218,7 @@ interpret_Mrvi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.2,  mo
     ) +
     theme_bw() 
   
-  print(p4)
+  combined_plot <- plot_grid(p1, p2, p3, p4, rel_heights = c(1, 0.5), labels = "auto")
   
   #readline(prompt="Press [enter] to plot the axis loadings") 
   # library(gridExtra)
@@ -283,6 +231,6 @@ interpret_Mrvi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.2,  mo
   # p4 <- plotly::plot_ly(uscores, x=~PC1, y=~PC2, z=~PC3, color = ~adapt, colors = c('#BF382A', '#0C4B8E', '#1DF20D','#B9B930' )) %>% 
   # plotly::add_markers()
   
-  return(list(outLiers=outL,  pca_val=pca_val, scores=uscores, p1))
+  return(list(outLiers=outL,  pca_val=pca_val, scores=uscores, combined_plot, p2,p3))
   
 }
