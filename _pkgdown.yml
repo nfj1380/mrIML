@@ -27,7 +27,7 @@ navbar:
     - functions
     - tutorials
     - news
-    right:
+  right:
     - icon: fa-github
       href: https://github.com/nfj1380/mrIML
   components:
