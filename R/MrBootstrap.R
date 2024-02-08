@@ -6,7 +6,6 @@
 #' @param yhats A list of model predictions mrIMLpredicts
 #' @param num_bootstrap The number of bootstrap samples to generate (default: 10).
 #' @param Y The response data (default: Y).
-#' @param ice \code{logical} 'TRUE or FALSE'. True calculates individual conditional expectation (ICE)instead of partial dependencies. Recommend leaving as FALSE for ost datasets
 #' @return A list containing bootstrap samples of variable profiles for each response variable.
 #' @export
 #'
@@ -33,15 +32,24 @@
 #'} 
 
 
-mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y, ice = FALSE) {
+mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y) {
   
   n_response <- length(yhats)
   
-  pb <- txtProgressBar(min = 0, max = n_response, style = 3) 
-  
+ pb <- txtProgressBar(min = 0, max = n_response, style = 3) 
+ # pb <- progress::progress_bar$new(format = "[:bar] :percent ETA: :eta", total = n_response )
+
+ #metric list for flashlight. Currently only for classification
+ metrics <- list(
+   logloss = MetricsWeighted::logLoss,
+   `ROC AUC` = MetricsWeighted::AUC,
+   `% Dev Red` = MetricsWeighted::r_squared_bernoulli
+ )
+ 
   internal_fit_function <- function(k) {
     
     setTxtProgressBar(pb, k) #progressbar marker
+   # pb$tick() 
     
     features <- colnames(yhats[[k]]$data)[-1]
     
@@ -50,8 +58,19 @@ mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y, ice = FALSE) {
     pd_raw <- vector("list", num_bootstrap)  # Initialize pd_raw as a list
     
     for (i in 1:num_bootstrap) {
+     
       # Generate bootstrap sample
-      bootstrap_sample <- yhats[[k]]$data[sample(1:n, replace = TRUE), ] ###
+      #bootstrap_sample <- yhats[[k]]$data[sample(1:n, replace = TRUE), ] ###
+      
+      #this may work better...
+      # Convert the data frame to a data table
+      data_table <- data.table::as.data.table(yhats[[k]]$data)
+      
+      # Generate random row indices
+      sample_indices <- sample(1:n, replace = TRUE)
+      
+      # Create the bootstrap sample using data table syntax
+      bootstrap_sample <- data_table[sample_indices]
       
       # Extract the workflow from the best fit
       wflow <- yhats[[k]]$last_mod_fit %>% tune::extract_workflow()
@@ -63,12 +82,6 @@ mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y, ice = FALSE) {
       model_fit <- fit(wflow, data = bootstrap_sample)
       
       # Create explainer
-      
-      metrics <- list(
-        logloss = MetricsWeighted::logLoss,
-        `ROC AUC` = MetricsWeighted::AUC,
-        `% Dev Red` = MetricsWeighted::r_squared_bernoulli
-      )
       
       var_names <- names(yhats[[k]]$data)[-1]
       
@@ -87,13 +100,11 @@ mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y, ice = FALSE) {
         predict_function = pred_fun,
         metrics = metrics
       )
+  
       
       for (j in seq_along(var_names)) {
-        if (ice == TRUE) {
-          pd_ <- light_ice(fl, v = paste0(var_names[j]), center = 'first') #ice doesn't work well
-        } else {
-          pd_ <- light_profile(fl, v = paste0(var_names[j]))
-        }
+        
+        pd_ <- light_profile(fl, v = paste0(var_names[j]))
         
         #add number of boostrap.
         bs_rep <- data.frame( bootstrap=rep(i, nrow(pd_$data)))
@@ -105,14 +116,16 @@ mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y, ice = FALSE) {
         
         pd_raw[[i]][[var_names[j]]] <- pd_data  # Save pd_ as a list element
         
-        
       }
     }
+    
+    gc() #clear junk
     
     return(pd_raw)  # Return pd_raw as a list
   }
   
   bstraps_pd_list <- future_lapply(seq(1, n_response), internal_fit_function, future.seed = TRUE)
+
   
   return(bstraps_pd_list)
 }

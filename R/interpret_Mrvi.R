@@ -27,6 +27,7 @@ interpret_Mrvi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.2,  mo
   
   rs <- as.data.frame( rowSums(VI)/sum(VI)) #make it a proportion
   rsA <- rownames_to_column(rs)
+  n_features <- names(X)
   
   if (!is.null(groupCov)) { 
     
@@ -73,9 +74,11 @@ interpret_Mrvi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.2,  mo
       combiF$rsquared <- NULL
       
     }
-    #switch the dataframe back around again.
-    combiFT <- as.data.frame(t(combiF)) %>%  row_to_names(row_number = 1)
     
+    #switch the dataframe back around again.
+    combiFT <- as.data.frame(t(combiF))
+    #combiFT <- as.data.frame(t(combiF)) %>%  janitor::row_to_names(row_number = 1)
+    #combiFT <- as.data.frame(t(combiF)) %>% rownames_to_column(var = "predictors")
     #------------------------------------------------------------------  
     
     data_long <- gather(combiFT,  key ='response', value = importance) #turns this wide frame into something more suitable to plot

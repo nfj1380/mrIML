@@ -14,6 +14,7 @@
 #' plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, groupCov, cutoff= 0.5)
 #' 
 #' @export 
+#' 
 mrVip <- function (yhats, X, Y) { 
   
   n_response <- length(yhats)
@@ -32,7 +33,7 @@ mrVip <- function (yhats, X, Y) {
     
     impVI <- vi(imp, num_features = length(X)) 
     impD <- impVI %>% 
-      arrange(Variable) %>% 
+      arrange(Importance) %>% #changed from Variable
       pluck("Importance")
     
     missing <- imp$fit$coefficients[is.na(imp$fit$coefficients)] 
