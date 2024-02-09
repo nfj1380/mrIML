@@ -126,6 +126,8 @@ yhats <- mrIMLpredicts(X=X, #Features/predictors
                        Y=Y, #Response data
                        Model=model1, #Specify your model
                        balance_data='no', #Chose how to balance your data 
+                       K= 5, 
+                       racing = F,
                        mode='classification', #Chose your mode (classification versus regression)
                        seed = 120) #Set seed
 
