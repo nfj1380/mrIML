@@ -39,7 +39,7 @@
 
 
 mrInteractions <- function(yhats, X, Y, num_bootstrap = 1,  
-                           feature = feature, top.int=10) {
+                           feature = feature, top.int=5) {
   
   n_response <- length(yhats)
   
@@ -91,6 +91,7 @@ mrInteractions <- function(yhats, X, Y, num_bootstrap = 1,
       one_way <- as.data.frame(h2_overall(s, plot = FALSE)) %>% 
         rownames_to_column('predictor')
       
+      #combine with metadata
       metadata <-  data.frame(response = rep(names(Y[k]), nrow(one_way)), bstrap = rep(i, nrow(one_way)))
       
       one_way_df <- cbind(one_way, metadata)
