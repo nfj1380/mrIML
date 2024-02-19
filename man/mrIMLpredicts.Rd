@@ -41,6 +41,8 @@ mrIMLpredicts(
 \item{k}{A \code{numeric} sets the number of folds in the 10-fold cross-validation. 10 is the default.}
 
 \item{racing}{\code{logical} 'TRUE or FALSE'. If 'TRUE' MrIML performs the grid search using the 'racing' ANOVA method. See https://finetune.tidymodels.org/reference/tune_race_anova.html}
+
+\item{seed}{A \code{numeric} as these models have a stochastic component, a seed is set to make to make the analysis reproducible. Defaults between 100 million and 1.}
 }
 \description{
 Wrapper to generate multi-response predictive models.
@@ -51,4 +53,17 @@ This function fits separate classification/regression models for each response v
 as Y. Class imbalance can be a real issue for classification analyses. Class imbalance can be addressed for each
 response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling)
 or 'no' (no balancing of classes).
+}
+\examples{
+all_cores <- parallel::detectCores(logical = FALSE)
+cl <- makePSOCKcluster(all_cores)
+registerDoParallel(cl)
+
+model1 <- 
+rand_forest(trees = 100, mode = "classification") \%>\% #this should cope with multinomial data alreadf
+  set_engine("ranger", importance = c("impurity","impurity_corrected")) \%>\% #model is not tuned to increase computational speed
+ set_mode("classification")
+ 
+yhats <- mrIMLpredicts(X= enviro_variables,Y=response_data, model1=model1, balance_data='no', model='classification',  
+tune_grid_size=5, k=10, seed = sample.int(1e8, 1)))
 }

@@ -4,7 +4,6 @@
 #' @param Model A \code{workflow} workflow object containing the machine learning model
 #' @param Y \code{vector} vector containing the outcome for each data instance
 #'
-#' @return 
 #' @export
 #'
 #' @examples

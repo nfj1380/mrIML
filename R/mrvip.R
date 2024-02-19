@@ -7,7 +7,7 @@
 #' 
 #' @details Calculates variable importance using based on partial dependencies but could do permutations as well (more memory intensive).
 #' Key input is the object created by MrIML. Can be plotted with the plot_vi function.
-#' @example 
+#' @examples 
 #' VI <- mrVip(yhats, X=X, Y=Y)
 #' groupCov <- c(rep ("Host_characteristics", 1),rep("Urbanisation", 3), rep("Vegetation", 2), rep("Urbanisation",1), rep("Spatial", 2), 
 #' rep('Host_relatedness', 6),rep ("Host_characteristics", 1),rep("Vegetation", 2), rep("Urbanisation",1))  

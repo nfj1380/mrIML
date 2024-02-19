@@ -17,3 +17,7 @@ Calculates resistance components from a list of pairwise resistance surfaces.
 \details{
 Outputs a data frame of significant resistance components for each matrix in the target folder. These data can be combined with non-pairwise matrix data.
 }
+\examples{
+Y <- resist_components(filename = 'Bobcat_cs_matrices', p_val=0.01)
+
+}

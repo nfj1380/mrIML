@@ -1,20 +1,23 @@
 #'Wrapper to generate multi-response predictive models.
 #'@param Y A \code{dataframe} is response variable data (species, OTUs, SNPs etc).
 #'@param X A \code{dataframe} represents predictor or feature data.
+#'#'@param X1 A \code{dataframe} extra predictor set used in each model. For the MrIML Joint species distribution model (JSDM) this is just a copy of the response data.
 #'@param balance_data A \code{character} 'up', 'down' or 'no'. 
 #'@param dummy A \code{logical} 'TRUE or FALSE'. 
 #'@param Model 1 A \code{list} can be any model from the tidy model package. See examples.
-#'@param tune_grid_size A \code{numeric} sets the grid size for hyperparamter tuning. Larger grid sizes increase computational time.
+#'@param tune_grid_size A \code{numeric} sets the grid size for hyperparameter tuning. Larger grid sizes increase computational time. Ignored if racing=T.
+#'@param racing \code{logical} 'TRUE or FALSE'. If 'TRUE' MrIML performs the grid search using the 'racing' ANOVA method. See https://finetune.tidymodels.org/reference/tune_race_anova.html
 #'@param k A \code{numeric} sets the number of folds in the 10-fold cross-validation. 10 is the default.
-#'@seed A \code{numeric} as these models have a stochastic component, a seed is set to make to make the analysis reproducible. Defaults between 100 million and 1.
+#'@param seed A \code{numeric} as these models have a stochastic component, a seed is set to make to make the analysis reproducible. Defaults between 100 million and 1.
 #'@param mode \code{character}'classification' or 'regression' i.e., is the generative model a regression or classification?
+#'@param morans \code{logical} 'TRUE or FALSE'. If 'TRUE' global Morans I is calculated for each response
 
 #'@details This function produces yhats that used in all subsequent functions.
 #' This function fits separate classification/regression models for each response variable in a data set.  Rows in X (features) have the same id (host/site/population)
 #'  as Y. Class imbalance can be a real issue for classification analyses. Class imbalance can be addressed for each
 #' response variable using 'up' (upsampling using ROSE bootstrapping), 'down' (downsampling) 
 #'or 'no' (no balancing of classes).
-#' @example 
+#' @examples 
 #' all_cores <- parallel::detectCores(logical = FALSE)
 
 #'cl <- makePSOCKcluster(all_cores)
@@ -30,17 +33,16 @@
 #'@export
 
 
-mrIMLpredicts<- function(X, X1=NULL, Y, Model, balance_data ='no', mode='regression', transformY='log',dummy=FALSE,
-                         prop=0.5, tune_grid_size= 10, k=10, racing=T, seed = sample.int(1e8, 1) ) { 
+mrIMLpredicts<- function(X, X1=NULL, Y, Model, balance_data ='no', mode='regression',dummy=FALSE, #spatial data=
+                         prop=0.5, morans=F, tune_grid_size= 10, k=10, racing=T, seed = sample.int(1e8, 1) ) { 
   
   n_response<- length(Y)
+ 
+  mod1_perf <- NULL #place to save performance matrix
   
   pb <- txtProgressBar(min = 0, max = n_response, style = 3)
   
-  mod1_perf <- NULL #place to save performance matrix
-
   internal_fit_function <- function( i ){
-    
     setTxtProgressBar(pb, i)
     
     if (!is.null(X1)) {
@@ -70,7 +72,6 @@ mrIMLpredicts<- function(X, X1=NULL, Y, Model, balance_data ='no', mode='regress
     set.seed(seed)
     
     data_split <- initial_split(data, prop = prop) 
-    #data_splitalt <- initial_split(data, strata = class)
     
     # extract training and testing sets
     data_train <- training(data_split)
@@ -80,30 +81,32 @@ mrIMLpredicts<- function(X, X1=NULL, Y, Model, balance_data ='no', mode='regress
     data_cv <- vfold_cv(data_train, v= k) 
     
     if(balance_data == 'down'){ 
+      
       data_recipe <- training(data_split) %>%
         recipe(class ~., data= data_train) %>% 
         themis::step_downsample(class) 
     }
     
     if(balance_data == 'up'){
+      
       data_recipe <- training(data_split) %>%
         recipe(class ~., data= data_train) %>%
         themis::step_rose(class) #ROSE works better on smaller data sets. SMOTE is an option too.
     }
     
     if(balance_data == 'no'){ 
+      
       data_recipe <- training(data_split) %>% 
         recipe(class ~., data= data_train)
     }
     
-    if ( transformY == 'log'){
-      data_recipe %>% step_log(all_numeric(), -all_outcomes()) #adds dummy variables if needed to any feature that is a factor
+    if ( dummy == TRUE){
+      
+      data_recipe <- data_recipe %>% step_dummy(all_nominal(), -all_outcomes(), one_hot = T) #adds dummy variables if needed to any feature that is a factor
     }
-    
-    if ( dummy == 'yes'){
-      data_recipe <- data_recipe %>% step_dummy(all_nominal(), -all_outcomes(),)#adds dummy variables if needed to any feature that is a factor
-    }
-    
+    # else{
+    #   data_recipe_final <- data_recipe
+   # }
     #optional recipe ingredients can be easily added to.
     #step_corr(all_predictors()) %>% # removes all correlated features
     #step_center(all_predictors(), -all_outcomes()) %>% #center features
@@ -115,17 +118,13 @@ mrIMLpredicts<- function(X, X1=NULL, Y, Model, balance_data ='no', mode='regress
       # add the model
       add_model(Model)
     
-   # c.metrics <- metric_set(mcc) #needed for mcc. may be a problem for regression
-    ## Tune the model
-    
-  # tune_m<-tune::tune_grid(mod_workflow,
-  #                           resamples = data_cv,
-  #                           grid = tune_grid_size)#,
-  #                           #metrics = c.metrics)
   
     if (racing == TRUE) {
+      
       tune_m <- finetune::tune_race_anova(mod_workflow, resamples = data_cv)
+      
     } else {
+      
       tune_m <- tune::tune_grid(mod_workflow, resamples = data_cv, grid = tune_grid_size)
     }
   
@@ -168,6 +167,7 @@ mrIMLpredicts<- function(X, X1=NULL, Y, Model, balance_data ='no', mode='regress
       
       truth <- as.numeric(as.character(data$class))
       
+      #pred_truth <- cbind(yhat, truth)
     
     deviance <- sapply(seq_along(truth), function(j) {
       resid <- ifelse(truth[j] == 1, 
@@ -176,6 +176,9 @@ mrIMLpredicts<- function(X, X1=NULL, Y, Model, balance_data ='no', mode='regress
       return(resid)
     })
     
+    deviance_morans <- deviance
+    deviance_morans[is.infinite(deviance_morans)] <- 2 #cant have Inf values. It means that the model isnt fitting this
+    #data point very well. This is a temporary fix
     }
     
     if (mode=='regression'){
@@ -188,25 +191,37 @@ mrIMLpredicts<- function(X, X1=NULL, Y, Model, balance_data ='no', mode='regress
       yhatT <- predict(mod1_k, new_data = data_test) # %>% 
       #bind_cols(data_test %>% select(class))
       
-      #deviance=NULL
-      resid=NULL
+      deviance=NULL
       
     }
     
-    # if(morans==T){ #add some extra if statements
-    #   
-    # coordinates(sp_data) <- c("longitude", "latitude")
-    # 
-    # sp_data_complete <- sp_data %>% na.omit
-    # # Calculate the spatial weights matrix
-    # spatial_weights <- dnearneigh(sp_data_complete, d1 = 0, d2 = 1)
-    # spatial_weights <- nb2listw(spatial_weights, style="W")
-    # 
-    # # Calculate Moran's I on residuals
-    # moran_residuals <- moran.mc(deviance, listw = spatial_weights, nsim = 999)
-    # 
-    # }
-  
+    moran_p <- NA  # Initialize moran_p with a default value
+    moran_stat <- NA
+    
+      if(morans==TRUE){
+      
+    combined_data <- cbind(spatial_data, deviance_morans)
+    
+    # Convert data to a SpatialPointsDataFrame or SpatialPolygonsDataFrame
+    sp::coordinates(combined_data) <- c("longitude", "latitude")
+    
+    # Calculate the spatial weights matrix
+    spatial_weights <- spdep::dnearneigh(combined_data, d1 = 0, d2 = 1)
+    
+    #create network
+    spatial_weights_listw <- spdep::nb2listw(spatial_weights, style = "W")
+    
+    # Calculate Moran's I on residuals
+    moran_residuals <- spdep::moran.mc(dev, listw =  spatial_weights_listw, nsim = 999)
+    
+    moran_p <- data.frame(response=names(Y[i]), morans_p=moran_residuals$p.value)
+    
+    moran_stat <- data.frame(response=names(Y[i]), morans_stat=moran_residuals$stat)
+    
+    }
+    
+    
+      
     # the last fit. Useful for some functionality
 
     last_mod_fit <- 
@@ -214,9 +229,9 @@ mrIMLpredicts<- function(X, X1=NULL, Y, Model, balance_data ='no', mode='regress
       last_fit(data_split)
     
     #save data
-    list(mod1_k = mod1_k, last_mod_fit=last_mod_fit,tune_m=tune_m,
-         data=data, data_testa=data_test, data_train=data_train, 
-         yhat = yhat, yhatT = yhatT, deviance = deviance)#, #moran=moran_residuals)
+    list(mod1_k = mod1_k, last_mod_fit=last_mod_fit,tune_m=tune_m, data=data, 
+         data_testa=data_test, data_train=data_train, yhat = yhat, yhatT = yhatT,
+         deviance = deviance, moran_p=moran_p,  moran_stat = moran_stat)
     
     
 }

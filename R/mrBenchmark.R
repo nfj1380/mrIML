@@ -6,11 +6,9 @@
 #' @param group A \code{character} column name of variable that individuals should be grouped by
 #' @param type A \code{character} specify within group "internal" or among group "external" benchmarking 
 #' @param label_by A \code{character} column name of variable representing the individual units. If stated, these will be labeled on the ggplot. By default labels will not be included
-#'
-#' @return
+#'@examples 
+#'mB <- mrBenchmark(data=data, Y='class')
 #' @export
-#'
-#' @examples
 
 
 mrBenchmark <- function(data = "data", Y = "class", pred = "predicted", group = "group1", label_by = "ID", type = "internal"){

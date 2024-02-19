@@ -74,3 +74,4 @@ RoxygenNote: 7.2.3
 URL: https://github.com/nfj1380/mrIML
 BugReports: https://github.com/nfj1380/mrIML/issues
 Config/testthat/edition: 3
+Encoding: UTF-8

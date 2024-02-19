@@ -4,7 +4,7 @@
 #'@param X is a data.frame with rows as sites or individuals or populations and columns as loci or species OTUs.
 #'@param lower is the lower threshold value  in which response varialkes are removed from the data.frame.
 #'@param higher is the upper threshold value  in which response varialkes are removed from the data.frame.
-#'@example
+#'@examples
 #'\dontrun{ 
 #' X <- filterRareCommon (Responsedata, lower=0.4, higher=0.7)}
 #'@export

@@ -21,3 +21,8 @@ Wrapper to calculate performance metrics (Mathews correlation coefficient, sensi
 \details{
 Outputs a dataframe of commonly used metric that can be used to compare model performance of classification models. Performance metrics are based on testing data. But MCC is useful (higher numbers = better fit)
 }
+\examples{
+\dontrun{
+ModelPerf <- mrIMLperformance(yhats, Model=model1, Y=Y) }
+
+}

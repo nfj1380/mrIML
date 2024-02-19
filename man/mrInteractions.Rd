@@ -4,7 +4,7 @@
 \alias{mrInteractions}
 \title{Calculate and visualize feature interactions}
 \usage{
-mrInteractions(yhats, X, Y, num_bootstrap = 1, feature = feature, top.int = 10)
+mrInteractions(yhats, X, Y, num_bootstrap = 1, feature = feature, top.int = 5)
 }
 \arguments{
 \item{yhats}{A list of model predictions.}

@@ -19,3 +19,11 @@ The aim of this function is to plot (1) a reduced set of response variables that
 and the average ALE of partial dependency  for all responses combined (plot 2). When there are many responses plot 1 makes interpretation easier by focussing on the
 the responses changing the most with a feature. The feature selected and plot type must be specified 'light_profile' function
 }
+\examples{
+flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi")
+
+profileData_pd <- light_profile(flashlightObj, v = "Grassland") #partial dependencies
+profileData_ale <- light_profile(flashlightObj, v = "Grassland", type = "ale") #acumulated local effects
+mrProfileplot(profileData_pd , sdthresh =0.05)
+mrProfileplot(profileData_ale , sdthresh =0.05)
+}

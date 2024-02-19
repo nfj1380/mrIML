@@ -4,7 +4,7 @@
 \alias{mrBootstrap}
 \title{Bootstrap model predictions}
 \usage{
-mrBootstrap(yhats, num_bootstrap = 10, Y = Y, ice = FALSE)
+mrBootstrap(yhats, num_bootstrap = 10, Y = Y)
 }
 \arguments{
 \item{yhats}{A list of model predictions mrIMLpredicts}
@@ -12,8 +12,6 @@ mrBootstrap(yhats, num_bootstrap = 10, Y = Y, ice = FALSE)
 \item{num_bootstrap}{The number of bootstrap samples to generate (default: 10).}
 
 \item{Y}{The response data (default: Y).}
-
-\item{ice}{\code{logical} 'TRUE or FALSE'. True calculates individual conditional expectation (ICE)instead of partial dependencies. Recommend leaving as FALSE for ost datasets}
 }
 \value{
 A list containing bootstrap samples of variable profiles for each response variable.

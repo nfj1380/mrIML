@@ -35,3 +35,10 @@ Plots global importance (i.e. cumulative importance of all features for all resp
 and individual response feature plots (2nd plot). Requires object generated from the R function mrvip as well as feature data (Y).
 Variables also need to be grouped to allow for easier interpretation.
 }
+\examples{
+\dontrun{
+
+groupCov <- c(rep ("Host_characteristics", 1),rep("Urbanisation", 3), rep("Vegetation", 2), rep("Urbanisation",1), rep("Spatial", 2), 
+rep('Host_relatedness', 6),rep ("Host_characteristics", 1),rep("Vegetation", 2), rep("Urbanisation",1))
+interpret_Mrvi(VI=VI,  X=fData,Y=FeaturesnoNA, modelPerf=ModelPerf, groupCov, cutoff= 0.5)}
+}

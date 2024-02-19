@@ -29,3 +29,6 @@ mrBenchmark(
 \description{
 Compare and benchmark disease outbreak risk among and within groups
 }
+\examples{
+mB <- mrBenchmark(data=data, Y='class')
+}

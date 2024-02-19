@@ -3,7 +3,7 @@
 #'@param Model A \code{list}  the model used to generate the yhats object 
 #'@param Y  A \code{dataframe} is a response variable data set (species, SNPs etc).
 #'@param mode \code{character}'classification' or 'regression' i.e., is the generative model a regression or classification?
-#'@example 
+#'@examples 
 #' \dontrun{
 #' ModelPerf <- mrIMLperformance(yhats, Model=model1, Y=Y) }
 #'

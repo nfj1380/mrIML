@@ -19,3 +19,7 @@ Function to import SNP data from a plink format into a format suitable for MrIML
 (presence/absence of an alelle for each locus).
 Currently if there is missing data (NAs) it either imputes them as the mode or leaves them. A histogram is also produced of the missing data.
 }
+\examples{
+\dontrun{snps <- readSnpsPed("bobcat.plink.ped", "bobcat.plink.map.map") #NAs in data and interpolated as the mode. 
+X <- filterRareCommon (snps, lower=0.4, higher=0.7) #these are harsh}
+}

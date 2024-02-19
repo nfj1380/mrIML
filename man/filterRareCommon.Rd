@@ -19,3 +19,7 @@ Filter rare response variables from the data
 \details{
 This function allows you to remove response units (OTUs or SNPs or species) from your response data as a preprocessing step. Suitable when the response is a binary outcome.
 }
+\examples{
+\dontrun{ 
+X <- filterRareCommon (Responsedata, lower=0.4, higher=0.7)}
+}

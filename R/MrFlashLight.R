@@ -11,7 +11,7 @@
 #'@details The aim of this function is to enable users to utilize interpretable machine learning methods
 #'to understand their multi-response and single response models
 #' 
-#' @example 
+#' @examples 
 #' #single response
 #' fl <- mrFlashlight(yhats, X, Y, response = "single", index=1, mode = "regression")
 #'

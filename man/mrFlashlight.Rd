@@ -37,3 +37,16 @@ mrFlashlight:  Wrapper to run multi-response model agnostic interpretable machin
 The aim of this function is to enable users to utilize interpretable machine learning methods
 to understand their multi-response and single response models
 }
+\examples{
+#single response
+fl <- mrFlashlight(yhats, X, Y, response = "single", index=1, mode = "regression")
+
+plot(light_performance(fl), fill = "orange") + labs(x = element_blank())
+
+plot(light_breakdown(fl , new_obs = cbind(X, Y)[1, ]),by = X, v=Y) #prints all responses - need to fix but could be quite handy.
+
+int <- light_interaction(fl, pairwise=TRUE) #not working, but possible!
+
+Multiple response
+flashlightObj <- mrFlashlight(yhats, X, Y, response = "multi", mode='regression')
+}
