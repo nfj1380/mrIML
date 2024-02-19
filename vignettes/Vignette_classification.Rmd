@@ -152,8 +152,6 @@ You can see that the random forests model outperforms the logistic regression in
 We also provide functionality to assess outlier SNPs utilizing a PCA on importance scores. We can see only one outlier was detected on PC3 (env24) indicating that this SNP was bets predicted by a different set of predictors. Looking at the indiivudal importance plots shows that, unlike the other SNPs, forest cover was the best predictor for env24. See the regression vignette for more details.
 
 ```{r, message = FALSE, warning = FALSE}
-source("~/MrIML/mrIML/R/mrvip.R")
-source("~/MrIML/mrIML/R/interpret_Mrvi.R")
 VI <- mrVip(yhats_glm, X=X, Y=Y) 
 #something isnt right...check other code
 vi_plots_pca <- interpret_Mrvi(VI=VI,  X=X,Y=Y,   modelPerf=ModelPerf_glm, cutoff= 0.05, mode='classification') #the cutoff reduces the number of individual models printed in the second plot. 
