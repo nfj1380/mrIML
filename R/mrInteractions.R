@@ -38,7 +38,7 @@
 #'int_[[3]] #two way plot# }
 
 
-mrInteractions <- function(yhats, X, Y, num_bootstrap = 1,  
+mrInteractions <- function(yhats, X, Y, num_bootstrap = 10,  
                            feature = feature, top.int=5) {
   
   n_response <- length(yhats)
@@ -86,9 +86,9 @@ mrInteractions <- function(yhats, X, Y, num_bootstrap = 1,
                   X = yhats[[k]]$data_train, pred_fun = pred_fun, n_max = 300, 
                   pairwise_m = length(names(yhats[[k]]$data_train)[-1]), threeway_m = 0, verbose=F )
       
-      overall <- data.frame(response = names(Y[k]), overall = h2(s), bs = i)
+      overall <- data.frame(response = names(Y[k]), overall = h2(s)[[1]], bs = i)
       
-      one_way <- as.data.frame(h2_overall(s, plot = FALSE)) %>% 
+      one_way <- data.frame(one_way = h2_overall(s, plot = FALSE)) %>% 
         rownames_to_column('predictor')
       
       #combine with metadata
@@ -96,7 +96,7 @@ mrInteractions <- function(yhats, X, Y, num_bootstrap = 1,
       
       one_way_df <- cbind(one_way, metadata)
       
-      two_way <- as.data.frame(h2_pairwise(s, plot = FALSE), top_m = inf) %>% 
+      two_way <- data.frame(two_way = h2_pairwise(s, plot = FALSE)) %>% 
         rownames_to_column('predictor')
       
       meta_data2 <-  data.frame(response = rep(names(Y[k])), bstrap = rep(i, nrow(two_way)))
@@ -163,7 +163,7 @@ mrInteractions <- function(yhats, X, Y, num_bootstrap = 1,
   
   top_int_one_way <-   filtered_one_way  %>%
     group_by(response,predictor) %>%
-    summarize(avg_Int = mean(V1), .groups = "drop")
+    summarize(avg_Int = mean(one_way), .groups = "drop")
   
   top_int_one_way_ordered <- top_int_one_way %>% 
     arrange(desc(avg_Int)) %>%  # Sort by in descending order
@@ -171,10 +171,10 @@ mrInteractions <- function(yhats, X, Y, num_bootstrap = 1,
   
  top_names_one_way <-  top_int_one_way_ordered$predictor
   
- one_way_int_final_top <- filtered_one_way %>% ###made change here
+ one_way_int_final_top <- filtered_one_way %>%
    dplyr::filter(predictor %in% top_names_one_way)
  
- p2 <- ggplot(one_way_int_final_top, aes(x = reorder(predictor, -V1), y = V1)) +
+ p2 <- ggplot(one_way_int_final_top, aes(x = reorder(predictor, -one_way), y = one_way)) +
    geom_boxplot() +
    labs(title = paste(feature,"one-way interactions", sep= " "), x = feature,
         y = paste(feature, "interaction importance", sep = " ")) +
@@ -184,11 +184,11 @@ mrInteractions <- function(yhats, X, Y, num_bootstrap = 1,
   #community. Takes the average across all bstraps
   avg_v_by_response <- overall_one_way_final %>%
     group_by(response, predictor) %>%
-    summarize(avg_V1 = mean(V1), .groups = "drop") %>% 
-    arrange(desc(avg_V1)) %>% 
+    summarize(avg_ow = mean(one_way), .groups = "drop") %>% 
+    arrange(desc(avg_ow)) %>% 
     dplyr::slice(1:top.int) 
   
-  p2_com <- ggplot(avg_v_by_response, aes(x = reorder(predictor, -avg_V1), y = avg_V1)) +
+  p2_com <- ggplot(avg_v_by_response, aes(x = reorder(predictor, -avg_ow), y = avg_ow)) +
     geom_boxplot() +
     labs(title = "Community-level one-way interactions", x = 'Predictors',
          y ="Community interaction importance") +
@@ -212,17 +212,18 @@ filtered_two_way <- overall_two_way_final %>%
 
 top_int_two_way <-   filtered_two_way  %>%
   group_by(response,predictor) %>%
-  summarize(avg_Int = mean(V1), .groups = "drop")
+  summarize(avg_Int = mean(two_way), .groups = "drop")
 
 top_int_two_way_ordered <- top_int_two_way %>% 
   arrange(desc(avg_Int)) %>%  # Sort by in descending order
   dplyr::slice(1:top.int) 
+
 top_names_two_way <-  top_int_two_way_ordered$predictor
 
 two_way_int_final_top <- filtered_two_way %>% 
   filter(predictor %in% top_names_two_way )
 
-p3 <- ggplot(two_way_int_final_top, aes(x = reorder(predictor, -V1), y = V1)) +
+p3 <- ggplot(two_way_int_final_top, aes(x = reorder(predictor, -two_way), y = two_way)) +
   geom_boxplot() +
   labs(title = paste(feature,"two-way interactions", sep= " "), x = feature,
        y = paste(feature, "interaction importance", sep = " ")) +
@@ -231,10 +232,10 @@ p3 <- ggplot(two_way_int_final_top, aes(x = reorder(predictor, -V1), y = V1)) +
 
 avg_v_by_response_two_way <- overall_two_way_final %>%
   group_by(response, predictor) %>%
-  summarize(avg_V1 = mean(V1), .groups = "drop") %>%  # Sort by in descending order
+  summarize(avg_tw = mean(two_way), .groups = "drop") %>%  # Sort by in descending order
   dplyr::slice(1:top.int) 
 
-p3_com <- ggplot(avg_v_by_response_two_way, aes(x = reorder(predictor, -avg_V1), y = avg_V1)) +
+p3_com <- ggplot(avg_v_by_response_two_way, aes(x = reorder(predictor, -avg_tw), y = avg_tw)) +
   geom_boxplot() +
   labs(title = "Community-level two-way interactions", x = 'Predictors',
        y = "Community interaction importance") +
