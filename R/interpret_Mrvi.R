@@ -141,10 +141,10 @@ interpret_Mrvi <- function (VI, modelPerf, Y, X, groupCov=NULL, cutoff= 0.2,  mo
     
     if (mode=='regression'){
       
-      combi <- bind_cols(mcc=modelPerf[[1]]$rsquared, trans ) 
-      combi$rsquared<- as.numeric(as.character(combi$rsquared)) #have to make mcc numeric again.
+      combi <- bind_cols(rsquared=modelPerf[[1]]$rsquared, trans ) 
+      combi$rsquared<- as.numeric(as.character(combi$rsquared))
+      #filter values based on an R2 cutoff
       combiF <- filter(combi, rsquared > cutoff)  
-      combiF$response <- as.character(combiF$response) 
       
       combiF$rsquared <- NULL #not needed anymore
 
