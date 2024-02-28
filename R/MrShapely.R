@@ -1,6 +1,3 @@
-######################################################################################
-#[1]CORE FUNCTION
-######################################################################################
 #' Generate SHAP (SHapley Additive exPlanations) Plots for Multiple Models and Responses
 #'
 #' This function generates SHAP (SHapley Additive exPlanations) plots for multiple models and responses.
@@ -111,6 +108,7 @@ MrShapely <- function(yhats, MultRespVars = Resp,
   } else {
     TaxonomicClass <- shapobj_list
     ResponseNames <- colnames(MultRespVars)
+    taxa <- seq_along(TaxonomicClass)
   }
   
   # Initialize an empty list to store plots with labels
@@ -256,6 +254,36 @@ MrShapely <- function(yhats, MultRespVars = Resp,
   final_plot <- do.call(gridExtra::grid.arrange, c(plots_with_labels, ncol = ncol))
   
   final.plot <- as.ggplot(final_plot)
+  
+  if (getFeaturePlot) {
+    if (kind == "beeswarm") {
+      final.plot <- final.plot +
+        labs(title="Feature Effect Plot")+
+        theme(plot.title.position = "plot")
+    } else if (kind == "bar") {
+      final.plot <- final.plot + 
+        labs(title="Feature Importance Plot")+
+        theme(plot.title.position = "plot")
+    } else if (kind == "both") {
+      final.plot <- final.plot + 
+        labs(title="Feature Effect and Importance Plot")+
+        theme(plot.title.position = "plot")
+    }
+  }
+  
+  if (getDependencyPlot) {
+    final.plot <- final.plot + 
+      labs(title="Dependency Plot")+
+      theme(plot.title.position = "plot")
+  }
+  
+  if (getInteractionPlot) {
+    final.plot <- final.plot + 
+      labs(title="Interaction Effect Plot")+
+      theme(plot.title.position = "plot")
+  }
+  
+  
   
   return(final.plot)
 }
