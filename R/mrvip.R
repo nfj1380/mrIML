@@ -22,6 +22,8 @@ mrVip <- function (yhats, X, Y) {
   
   modList <- yhats %>% purrr::map(pluck('mod1_k')) # extracts model
   
+  trainList <- yhats %>% purrr::map(pluck('data_train'))
+  
   imp_list <- lapply(seq_along(Y), function(i) {
     
     resp <- names(Y)[i]
@@ -31,7 +33,13 @@ mrVip <- function (yhats, X, Y) {
     
     imp$fit$coefficients[is.na(imp$fit$coefficients)] <- 0 # some algorithms will bring back NA coefficients
     
-    impVI <- vi(imp, num_features = length(X)) 
+    #hstats way
+    # impVIcalc <- hstats(imp, X = X)
+    # impVI <- pd_importance(impVIcalc)
+   
+    impVI <- vi(imp, method='firm',feature_names= names(X), train=trainList[[i]][-1] )
+    #impVI <- vi(imp, num_features = length(X)) 
+  
     impD <- impVI %>% 
       arrange(Importance) %>% #changed from Variable
       pluck("Importance")
