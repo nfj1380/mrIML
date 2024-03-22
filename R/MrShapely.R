@@ -17,7 +17,7 @@
 #' @param num_cores An integer specifying the number of CPU cores to use for parallel processing.
 #' @param class_selection An optional vector specifying which classes to include in the plots.
 #'
-#' @return A ggplot object containing SHAP plots for the specified responses and features.
+#' @return A ggplot object containing SHAP plots for the specified responses and features. Note that this function may not work for some algorithm classe (e.g., neural nets)
 #'
 #' @examples
 #' # Example usage:
@@ -25,12 +25,12 @@
 #' @export
 #' 
 
-MrShapely <- function(yhats, MultRespVars = Resp, 
-                      taxa = NULL, x_features = NULL,
-                      y_features = NULL, kind = "beeswarm",
-                      max_display = 15L, interactions = FALSE, 
-                      color_var = NULL, getFeaturePlot = TRUE, 
-                      getDependencyPlot = TRUE, getInteractionPlot = TRUE,
+MrShapely <- function(yhats, MultRespVars = Resp,
+                      taxa = NULL,
+                      kind = "beeswarm",
+                      max_display = 15L,
+                      color_var = NULL, getFeaturePlot = TRUE,
+                      getDependencyPlot = TRUE, get2DDependencyPlot = TRUE,
                       num_cores = 2,
                       class_selection = NULL) {
   
@@ -51,15 +51,15 @@ MrShapely <- function(yhats, MultRespVars = Resp,
     Xdata <- Xdata_list[[i]]
     Y_i <- Y_i_list[[i]]
     
-    # Deals with classification cases  
-    if (model$spec$mode == "classification") {     
+    # Deals with classification cases
+    if (model$spec$mode == "classification") {
       predfun <- function(model, newdata) {
         preds <- predict(model, as.data.frame(newdata), type = 'response') # probabilities
-        return(cbind(1 - preds, preds)) # for both classes 
+        return(cbind(1 - preds, preds)) # for both classes
       }
       
       if (inherits(model$fit, "glm")) {
-        Shap_kernel <- kernelshap(model$fit, X = X_i, 
+        Shap_kernel <- kernelshap(model$fit, X = X_i,
                                   pred_fun = predfun,
                                   bg_X = Xdata)
         shapobj <- shapviz(Shap_kernel)
@@ -71,20 +71,19 @@ MrShapely <- function(yhats, MultRespVars = Resp,
         shapobj <- shapviz(Shap_kernel)
         names(shapobj) <- levels(Y_i)
       } else {
-        shapobj <- shapviz(model$fit, 
+        shapobj <- shapviz(model$fit,
                            X_pred = data.matrix(X_i),
-                           X = Xdata,
-                           interactions = FALSE)
+                           X = Xdata)
         names(shapobj) <- levels(Y_i)
       }
       
       return(shapobj)
     }
     
-    # Deals with regression cases 
-    if (model$spec$mode == "regression") {     
+    # Deals with regression cases
+    if (model$spec$mode == "regression") {
       if (inherits(model$fit, "lm")) {
-        Shap_kernel <- kernelshap(model$fit, X = X_i, 
+        Shap_kernel <- kernelshap(model$fit, X = X_i,
                                   bg_X = Xdata)
         shapobj <- shapviz(Shap_kernel)
       } else if (inherits(model$fit, "randomForest") || inherits(model$fit, "ranger")) {
@@ -92,23 +91,35 @@ MrShapely <- function(yhats, MultRespVars = Resp,
                                   bg_X = Xdata)
         shapobj <- shapviz(Shap_kernel)
       } else {
-        shapobj <- shapviz(model$fit, 
-                           X_pred = data.matrix(X_i),
-                           interactions = FALSE)
+        shapobj <- shapviz(model$fit,
+                           X_pred = data.matrix(X_i))
       }
       
       return(shapobj)
     }
   },future.seed = TRUE)
   
+  
   # Subset the results based on the 'taxa' parameter
   if (!is.null(taxa)) {
-    TaxonomicClass <- shapobj_list[taxa]
-    ResponseNames <- colnames(MultRespVars[taxa])
+    if (is.numeric(taxa)) {
+      if (length(taxa) == 1) {
+        # print("Subset shapobj_list based on 'taxa'.")
+        shapobj_list <- list(shapobj_list[[taxa]])
+        ResponseNames <- colnames(MultRespVars)[taxa]
+      } else if (length(taxa) > 0 && all(taxa > 0 & taxa <= length(shapobj_list))) {
+        # print("Subset shapobj_list based on 'taxa'.")
+        shapobj_list <- shapobj_list[taxa]
+        ResponseNames <- colnames(MultRespVars)[taxa]
+      } else {
+        stop("Invalid value for 'taxa'. Please provide valid indices.")
+      }
+    } else {
+      stop("Invalid value for 'taxa'. Please provide numeric indices.")
+    }
   } else {
-    TaxonomicClass <- shapobj_list
     ResponseNames <- colnames(MultRespVars)
-    taxa <- seq_along(TaxonomicClass)
+    taxa <- seq_along(shapobj_list)
   }
   
   # Initialize an empty list to store plots with labels
@@ -116,7 +127,13 @@ MrShapely <- function(yhats, MultRespVars = Resp,
   
   # [1] FEATURE EFFECT PLOT FUNCTION
   if (isTRUE(getFeaturePlot)) {
-    feature_plots_with_labels <- future_lapply(taxa, function(i) {
+    if (is.null(taxa)) {
+      taxa_to_iterate <- seq_along(shapobj_list)
+    } else {
+      taxa_to_iterate <- seq_along(shapobj_list)
+    }
+    s
+    feature_plots_with_labels <- future_lapply(taxa_to_iterate, function(i) {
       response_name <- ifelse(is.null(ResponseNames[i]), "", ResponseNames[i])
       
       if (model_list[[i]]$spec$mode == "regression") {
@@ -124,7 +141,8 @@ MrShapely <- function(yhats, MultRespVars = Resp,
         shapobj <- shapobj_list[[i]]
         plot_obj <- sv_importance(shapobj, kind = kind, max_display = max_display) + labs(title = label)
       } else {
-        class_list <- TaxonomicClass[[i]]
+        class_list <- shapobj_list[[i]]
+        print(paste("Index:", i, "Length of shapobj_list:", length(shapobj_list)))
         class_feature_plots <- future_lapply(names(class_list), function(class_name) {
           if (!is.null(class_selection) && !(class_name %in% class_selection)) {
             return(NULL)
@@ -139,7 +157,7 @@ MrShapely <- function(yhats, MultRespVars = Resp,
         class_feature_plots <- class_feature_plots[!future_sapply(class_feature_plots, is.null)]
         
         if (length(class_feature_plots) > 0) {
-          return(do.call(gridExtra::grid.arrange, class_feature_plots))
+          return(class_feature_plots)
         } else {
           return(NULL)
         }
@@ -148,102 +166,126 @@ MrShapely <- function(yhats, MultRespVars = Resp,
     
     plots_with_labels <- c(plots_with_labels, feature_plots_with_labels)
   }
-  
   # END OF FEATURE EFFECT PLOT FUNCTION
   
   # [2] DEPENDENCY PLOT FUNCTION
   if (isTRUE(getDependencyPlot)) {
-    dependency_plots_with_labels <- future_lapply(1:length(TaxonomicClass), function(i) {
-      response_name <- ifelse(is.null(ResponseNames[i]), "", ResponseNames[i])
-      
-      if (model_list[[i]]$spec$mode == "regression") {
-        label <- response_name
-        shapobj <- shapobj_list[[i]]
-        dependency_plots <- future_lapply(x_features, function(x_feature) {
-          plot_obj <- sv_dependence(shapobj, x_feature, color_var = NULL) + labs(title = label)
-          return(plot_obj)
-        })
-        ncol <- length(x_features)
-        arranged_plots <- do.call(gridExtra::grid.arrange, c(dependency_plots, ncol = ncol))
-        return(arranged_plots)
-      } else {
-        class_list <- TaxonomicClass[[i]]
-        class_dependency_plots <- future_lapply(names(class_list), function(class_name) {
-          if (!is.null(class_selection) && !(class_name %in% class_selection)) {
-            return(NULL)
-          }
-          class_obj <- class_list[[class_name]]
-          label <- ifelse(is.null(class_name), response_name, paste(response_name, class_name, sep = " - "))
-          dependency_plots <- future_lapply(x_features, function(x_feature) {
-            plot_obj <- sv_dependence(class_obj, x_feature, color_var = NULL) + labs(title = label)
+    if (is.null(taxa)) {
+      taxa_to_iterate <- seq_along(shapobj_list)
+    } else {
+      taxa_to_iterate <- seq_along(shapobj_list)
+    }
+    
+    dependency_plots_with_labels <- 
+      future_lapply(taxa_to_iterate, function(i) {
+        response_name <- ifelse(is.null(ResponseNames[i]), "", ResponseNames[i])
+        
+        if (model_list[[i]]$spec$mode == "regression") {
+          label <- response_name
+          shapobj <- shapobj_list[[i]]
+          colnames_shapobj <- colnames(shapobj)
+          dependency_plots <- future_lapply(colnames_shapobj, function(x_feature) {
+            plot_obj <- sv_dependence(shapobj, x_feature, color_var = NULL) + labs(title = label)
             return(plot_obj)
-          },future.seed = TRUE)
-          ncol <- length(x_features)
+          })
+          ncol <- length(colnames_shapobj)
           arranged_plots <- do.call(gridExtra::grid.arrange, c(dependency_plots, ncol = ncol))
           return(arranged_plots)
-        },future.seed = TRUE)
-        
-        class_dependency_plots <- class_dependency_plots[!future_sapply(class_dependency_plots, is.null)]
-        
-        if (length(class_dependency_plots) > 0) {
-          return(do.call(gridExtra::grid.arrange, class_dependency_plots))
         } else {
-          return(NULL)
-        }
-      }
-    },future.seed = TRUE)
-    
-    plots_with_labels <- c(plots_with_labels, dependency_plots_with_labels)
-  }
-  
-  # END OF DEPENDENCY PLOT FUNCTION
-  
-  # [3] INTERACTION EFFECT PLOT FUNCTION
-  if (isTRUE(getInteractionPlot)) {
-    interaction_plots_with_labels <- future_lapply(1:length(TaxonomicClass), function(i) {
-      response_name <- ifelse(is.null(ResponseNames[i]), "", ResponseNames[i])
-      
-      if (model_list[[i]]$spec$mode == "regression") {
-        label <- response_name
-        shapobj <- shapobj_list[[i]]
-        interaction_plots <- future_lapply(y_features, function(y_feature) {
-          interaction_label <- paste(response_name, sep = " - ")
-          interaction_plot <- sv_dependence2D(shapobj, x_features, y_feature, interactions = interactions) + labs(title = interaction_label)
-          return(interaction_plot)
-        })
-        return(do.call(gridExtra::grid.arrange, interaction_plots))
-      } else {
-        class_list <- TaxonomicClass[[i]]
-        interaction_plots <- list()
-        
-        for (y_feature in y_features) {
-          interaction_plots_for_feature <- future_lapply(names(class_list), function(class_name) {
+          class_list <- shapobj_list[[i]]
+          class_dependency_plots <- future_lapply(names(class_list), function(class_name) {
             if (!is.null(class_selection) && !(class_name %in% class_selection)) {
               return(NULL)
             }
             class_obj <- class_list[[class_name]]
-            interaction_label <- paste(response_name, class_name, sep = " - ")
-            interaction_plot <- sv_dependence2D(class_obj, x_features, y_feature, interactions = interactions) + labs(title = interaction_label)
-            return(interaction_plot)
-          },future.seed = TRUE)
+            label <- ifelse(is.null(class_name), response_name, paste(response_name, class_name, sep = " - "))
+            colnames_class_obj <- colnames(class_obj)
+            dependency_plots <- future_lapply(colnames_class_obj, function(x_feature) {
+              plot_obj <- sv_dependence(class_obj, x_feature, color_var = NULL) + labs(title = label)
+              return(plot_obj)
+            }, future.seed = TRUE)
+            ncol <- length(colnames_class_obj)
+            arranged_plots <- do.call(gridExtra::grid.arrange, c(dependency_plots, ncol = ncol))
+            return(arranged_plots)
+          }, future.seed = TRUE)
           
-          interaction_plots_for_feature <- interaction_plots_for_feature[!future_sapply(interaction_plots_for_feature, is.null)]
+          class_dependency_plots <- class_dependency_plots[!future_sapply(class_dependency_plots, is.null)]
           
-          interaction_plots <- c(interaction_plots, interaction_plots_for_feature)
+          if (length(class_dependency_plots) > 0) {
+            return(class_dependency_plots)
+          } else {
+            return(NULL)
+          }
         }
+      }, future.seed = TRUE)
+    
+    plots_with_labels <- c(plots_with_labels, dependency_plots_with_labels)
+  }
+  
+  # [3] INTERACTION EFFECT PLOT FUNCTION
+  if (isTRUE(get2DDependencyPlot)) {
+    if (is.null(taxa)) {
+      taxa_to_iterate <- seq_along(shapobj_list)
+    } else {
+      taxa_to_iterate <- seq_along(shapobj_list)
+    }
+    
+    
+    interaction_plots_with_labels <- 
+      future_lapply(taxa_to_iterate, function(i) {
+        response_name <- ifelse(is.null(ResponseNames[i]), "", ResponseNames[i])
         
-        if (length(interaction_plots) > 0) {
-          return(do.call(gridExtra::grid.arrange, interaction_plots))
+        if (model_list[[i]]$spec$mode == "regression") {
+          label <- response_name
+          shapobj <- shapobj_list[[i]]
+          colnames_shapobj <- colnames(shapobj)
+          interactions <- combn(colnames_shapobj, 2, simplify = FALSE) # Get all combinations of features
+          interaction_plots <- lapply(interactions, function(int) {
+            x_feature <- int[1]
+            y_feature <- int[2]
+            interaction_label <- paste(response_name, sep = " - ")
+            interaction_plot <- sv_dependence2D(shapobj, x_feature, 
+                                                y_feature) + labs(title = interaction_label)
+            return(interaction_plot)
+          })
+          return(interaction_plots)
         } else {
-          return(NULL)
+          class_list <- shapobj_list[[i]]
+          interaction_plots <- list()
+          
+          for (class_name in names(class_list)) {
+            if (!is.null(class_selection) && !(class_name %in% class_selection)) {
+              next
+            }
+            class_obj <- class_list[[class_name]]
+            colnames_class_obj <- colnames(class_obj)
+            interactions <- combn(colnames_class_obj, 2, simplify = FALSE) # Get all combinations of features
+            interaction_plots_for_feature <- lapply(interactions, function(int) {
+              x_feature <- int[1]
+              y_feature <- int[2]
+              interaction_label <- paste(response_name, class_name, sep = " - ")
+              interaction_plot <- sv_dependence2D(class_obj, x_feature, y_feature) + labs(title = interaction_label)
+              return(interaction_plot)
+            })
+            interaction_plots <- c(interaction_plots, interaction_plots_for_feature)
+          }
+          
+          if (length(interaction_plots) > 0) {
+            return(interaction_plots)
+          } else {
+            return(NULL)
+          }
         }
-      }
-    },future.seed = TRUE)
+      })
     
     plots_with_labels <- c(plots_with_labels, interaction_plots_with_labels)
   }
   
-  # END OF INTERACTION EFFECT PLOT FUNCTION
+  # Flatten the list
+  plots_with_labels <- unlist(plots_with_labels, recursive = FALSE)
+  
+  # Remove NULL elements
+  plots_with_labels <- plots_with_labels[!sapply(plots_with_labels, is.null)]
   
   # Stop parallel processing
   future::plan(future::sequential)
@@ -255,35 +297,34 @@ MrShapely <- function(yhats, MultRespVars = Resp,
   
   final.plot <- as.ggplot(final_plot)
   
+  
   if (getFeaturePlot) {
     if (kind == "beeswarm") {
       final.plot <- final.plot +
         labs(title="Feature Effect Plot")+
         theme(plot.title.position = "plot")
     } else if (kind == "bar") {
-      final.plot <- final.plot + 
+      final.plot <- final.plot +
         labs(title="Feature Importance Plot")+
         theme(plot.title.position = "plot")
     } else if (kind == "both") {
-      final.plot <- final.plot + 
+      final.plot <- final.plot +
         labs(title="Feature Effect and Importance Plot")+
         theme(plot.title.position = "plot")
     }
   }
   
   if (getDependencyPlot) {
-    final.plot <- final.plot + 
+    final.plot <- final.plot +
       labs(title="Dependency Plot")+
       theme(plot.title.position = "plot")
   }
   
-  if (getInteractionPlot) {
-    final.plot <- final.plot + 
+  if (get2DDependencyPlot) {
+    final.plot <- final.plot +
       labs(title="Interaction Effect Plot")+
       theme(plot.title.position = "plot")
   }
-  
-  
   
   return(final.plot)
 }
