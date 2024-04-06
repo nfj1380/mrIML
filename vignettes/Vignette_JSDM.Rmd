@@ -22,7 +22,6 @@ pacman::p_load('MRFcov', 'mrIML', 'tidyverse', 'future.apply','tidymodels', 'fin
 'gridExtra', 'xgboost', 'brulee', 'fastshap', 'tabnet', 'bonsai',
  'parsnip', 'cowplot', 'progress', 'hstats', 'geosphere')
 
-setwd("~/MrIML/mrIML")
 
 Y <- dplyr::select(Bird.parasites, -scale.prop.zos) %>% 
   dplyr::select(sort(names(.)))#response variables eg. SNPs, pathogens, species....
