@@ -101,7 +101,7 @@ mrCoOccurNet_bootstrap <- function(mrPD_obj, Y){   #,  variable ='Plas
   
   complete_net <- do.call(rbind,result_final_df) 
   
-  complete_network <- complete_net %>%  rename(taxa_1=target,taxa_2= predictor) %>% 
+  complete_network <- complete_net %>%  rename(taxa_1=predictor,taxa_2= target) %>% 
     dplyr::select(taxa_1, taxa_2, direction, mean_strength, lower_ci, upper_ci, mean_direction)
   
   return(complete_network)
