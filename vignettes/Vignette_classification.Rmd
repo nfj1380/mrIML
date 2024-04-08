@@ -101,27 +101,7 @@ yhats_rf <- mrIMLpredicts(X=X,
                            balance_data='no',
                            mode='classification',
                           tune_grid_size=5, k=5,
-                          seed = sample.int(1e8, 1), racing=F ) ## in MrTidymodels. Balanced data= up upsamples and down downsampled to create a balanced set
-# save the model
-
-#save(yhats, file='rf_model')
-
-
-# test <- mrVip_mutlirun(X=X,
-#                           Y=Y,
-#                           ity=4,
-#                           Model=model_rf,
-#                           mode='classification',
-#                           tune_grid_size=5,
-#                           seed = sample.int(1e8, 1))
-
-# test <- mrVip_uncertainty(X=X,
-#                           Y=Y,
-#                           ity=4,
-#                           Model=model_rf,
-#                           mode='classification',
-#                           tune_grid_size=5,
-#                           seed = sample.int(1e8, 1))
+                          seed = sample.int(1e8, 1), racing=F ) ## in MrTidymodels. Balanced 
 
 ```
 
@@ -153,8 +133,10 @@ We also provide functionality to assess outlier SNPs utilizing a PCA on importan
 
 ```{r, message = FALSE, warning = FALSE}
 VI <- mrVip(yhats_glm, X=X, Y=Y) 
-#something isnt right...check other code
+
 vi_plots_pca <- interpret_Mrvi(VI=VI,  X=X,Y=Y,   modelPerf=ModelPerf_glm, cutoff= 0.05, mode='classification') #the cutoff reduces the number of individual models printed in the second plot. 
+
+vi_plots_pca[[4]]
 
 outlier_SNPS <- vi_plots_pca$outLiers
 outlier_SNPS

@@ -18,11 +18,12 @@ commit](https://img.shields.io/github/last-commit/nfj1380/mrIML?style=flat-squar
 
 This package aims to enable users to build and interpret multivariate
 machine learning models harnessing the tidyverse (tidy model syntax in
-particular). This package builds off ideas from Gradient Forests ([Ellis
+particular). This package builds off ideas from Gradient Forests [Ellis
 et al
 2012](https://esajournals-onlinelibrary-wiley-com.prox.lib.ncsu.edu/doi/full/10.1890/11-0252.1)),
-and ecological genomics [Fitzpatrick and Keller,
-2014](https://onlinelibrary.wiley.com/doi/abs/10.1111/ele.12376).
+ecological genomic approaches [Fitzpatrick and Keller,
+2014](https://onlinelibrary.wiley.com/doi/abs/10.1111/ele.12376) and
+multi-response stacking algorithms \[Xing et al 2019\].
 
 This package can be of use for any multi-response machine learning
 problem, but was designed to handle data common to community ecology
@@ -50,7 +51,7 @@ Install the stable version of the package:
 
 ``` r
 #install.packages("devtools")
-#devtools::install_github('nfj1380/mrIML')
+devtools::install_github('nfj1380/mrIML')
 library(mrIML)
 ```
 
@@ -79,7 +80,7 @@ first step to using the package is to load it as follows.
 Now all the data is loaded and ready to go we can formulate the model
 using tidymodel syntax. In this case we have binary data (SNP
 presence/absence at each loci) but the data could also be counts or
-continuous (the set\_model argument would be “regression” instead of
+continuous (the set_model argument would be “regression” instead of
 “classification”). The user can specify any model from the ‘tidymodel’
 universe as ‘model 1’ (see <https://www.tidymodels.org/find/> for
 details). However, we have done most of our testing on random forests
@@ -169,9 +170,15 @@ yhats <- mrIMLpredicts(X=X, #Features/predictors
                        Y=Y, #Response data
                        Model=model1, #Specify your model
                        balance_data='no', #Chose how to balance your data 
+                       k=5, 
+                       racing = F,
                        mode='classification', #Chose your mode (classification versus regression)
                        seed = 120) #Set seed
+```
 
+    ##   |                                                                              |                                                                      |   0%  |                                                                              |==                                                                    |   3%  |                                                                              |=====                                                                 |   7%  |                                                                              |=======                                                               |  10%  |                                                                              |==========                                                            |  14%  |                                                                              |============                                                          |  17%  |                                                                              |==============                                                        |  21%  |                                                                              |=================                                                     |  24%  |                                                                              |===================                                                   |  28%  |                                                                              |======================                                                |  31%  |                                                                              |========================                                              |  34%  |                                                                              |===========================                                           |  38%  |                                                                              |=============================                                         |  41%  |                                                                              |===============================                                       |  45%  |                                                                              |==================================                                    |  48%  |                                                                              |====================================                                  |  52%  |                                                                              |=======================================                               |  55%  |                                                                              |=========================================                             |  59%  |                                                                              |===========================================                           |  62%  |                                                                              |==============================================                        |  66%  |                                                                              |================================================                      |  69%  |                                                                              |===================================================                   |  72%  |                                                                              |=====================================================                 |  76%  |                                                                              |========================================================              |  79%  |                                                                              |==========================================================            |  83%  |                                                                              |============================================================          |  86%  |                                                                              |===============================================================       |  90%  |                                                                              |=================================================================     |  93%  |                                                                              |====================================================================  |  97%  |                                                                              |======================================================================| 100%
+
+``` r
 ModelPerf <- mrIMLperformance(yhats=yhats,
                               Model=model1,
                               Y=Y, mode='classification')
@@ -179,88 +186,97 @@ ModelPerf[[1]] #Predictive performance for individual responses
 ```
 
     ##    response  model_name           roc_AUC                mcc       sensitivity
-    ## 1   env_131 rand_forest                 1  0.666666666666667 0.666666666666667
-    ## 2   env_163 rand_forest              0.75               <NA>                 0
-    ## 3   env_164 rand_forest                 1                  1                 1
-    ## 4   env_167 rand_forest 0.583333333333333 -0.408248290463863 0.666666666666667
-    ## 5   env_169 rand_forest                 1  0.666666666666667 0.666666666666667
-    ## 6   env_212 rand_forest                 1                  1                 1
-    ## 7    env_23 rand_forest             0.875  0.408248290463863                 1
-    ## 8    env_24 rand_forest              0.25 -0.166666666666667               0.5
-    ## 9    env_41 rand_forest 0.583333333333333  0.166666666666667 0.666666666666667
-    ## 10   env_47 rand_forest                 1  0.666666666666667                 1
-    ## 11   env_59 rand_forest                 1  0.666666666666667 0.666666666666667
-    ## 12    env_8 rand_forest 0.666666666666667               <NA>                 1
-    ## 13   env_84 rand_forest                 1  0.666666666666667 0.666666666666667
-    ## 14   env_85 rand_forest                 1  0.666666666666667 0.666666666666667
-    ## 15   env_86 rand_forest               0.5               <NA>                 0
-    ## 16  pol_105 rand_forest             0.875  0.612372435695795              0.75
-    ## 17  pol_108 rand_forest              0.75  0.408248290463863               0.5
-    ## 18  pol_111 rand_forest                 1                  1                 1
-    ## 19  pol_117 rand_forest 0.583333333333333  0.166666666666667 0.666666666666667
-    ## 20  pol_132 rand_forest                 1  0.666666666666667                 1
-    ## 21  pol_159 rand_forest              0.25 -0.166666666666667               0.5
-    ## 22  pol_258 rand_forest              0.25 -0.166666666666667               0.5
-    ## 23   pol_30 rand_forest                 1  0.666666666666667                 1
-    ## 24  pol_340 rand_forest 0.416666666666667 -0.166666666666667 0.333333333333333
-    ## 25  pol_353 rand_forest               0.5               <NA>                 0
-    ## 26  pol_366 rand_forest                 1  0.666666666666667 0.666666666666667
-    ## 27   pol_87 rand_forest                 1  0.666666666666667                 1
-    ## 28   pol_88 rand_forest                 1  0.666666666666667                 1
-    ## 29   pol_89 rand_forest                 1  0.666666666666667                 1
-    ##          specificity        prevalence
-    ## 1                  1 0.421052631578947
-    ## 2                  1 0.631578947368421
-    ## 3                  1 0.421052631578947
-    ## 4                  0 0.421052631578947
-    ## 5                  1 0.421052631578947
-    ## 6                  1 0.684210526315789
-    ## 7                0.5 0.631578947368421
-    ## 8  0.333333333333333 0.421052631578947
-    ## 9                0.5 0.473684210526316
-    ## 10 0.666666666666667 0.473684210526316
-    ## 11                 1 0.421052631578947
-    ## 12                 0 0.473684210526316
-    ## 13                 1 0.421052631578947
-    ## 14                 1 0.421052631578947
-    ## 15                 1 0.421052631578947
-    ## 16                 1 0.473684210526316
-    ## 17                 1 0.421052631578947
-    ## 18                 1 0.421052631578947
-    ## 19               0.5 0.473684210526316
-    ## 20 0.666666666666667 0.473684210526316
-    ## 21 0.333333333333333 0.473684210526316
-    ## 22 0.333333333333333 0.473684210526316
-    ## 23 0.666666666666667 0.473684210526316
-    ## 24               0.5 0.421052631578947
-    ## 25                 1 0.421052631578947
-    ## 26                 1 0.421052631578947
-    ## 27 0.666666666666667 0.473684210526316
-    ## 28 0.666666666666667 0.473684210526316
-    ## 29 0.666666666666667 0.473684210526316
+    ## 1   env_131 rand_forest 0.904761904761905  0.654653670707977 0.714285714285714
+    ## 2   env_163 rand_forest 0.714285714285714  0.218217890235992 0.666666666666667
+    ## 3   env_164 rand_forest 0.833333333333333  0.612372435695795                 1
+    ## 4   env_167 rand_forest 0.395833333333333              -0.25               0.5
+    ## 5   env_169 rand_forest 0.904761904761905  0.654653670707977 0.714285714285714
+    ## 6   env_212 rand_forest            0.6875  0.102062072615966               0.5
+    ## 7    env_23 rand_forest              0.34 -0.333333333333333                 0
+    ## 8    env_24 rand_forest              0.52 -0.408248290463863               0.4
+    ## 9    env_41 rand_forest 0.583333333333333                  0               0.5
+    ## 10   env_47 rand_forest 0.895833333333333  0.816496580927726                 1
+    ## 11   env_59 rand_forest 0.904761904761905  0.654653670707977 0.714285714285714
+    ## 12    env_8 rand_forest               0.3 -0.408248290463863               0.2
+    ## 13   env_84 rand_forest 0.904761904761905  0.654653670707977 0.714285714285714
+    ## 14   env_85 rand_forest 0.904761904761905  0.654653670707977 0.714285714285714
+    ## 15   env_86 rand_forest 0.395833333333333              -0.25               0.5
+    ## 16  pol_105 rand_forest  0.80952380952381  0.218217890235992 0.142857142857143
+    ## 17  pol_108 rand_forest 0.476190476190476  0.218217890235992 0.142857142857143
+    ## 18  pol_111 rand_forest 0.833333333333333  0.612372435695795                 1
+    ## 19  pol_117 rand_forest               0.4 -0.218217890235992               0.6
+    ## 20  pol_132 rand_forest 0.895833333333333  0.816496580927726                 1
+    ## 21  pol_159 rand_forest             0.375 -0.583333333333333              0.25
+    ## 22  pol_258 rand_forest               0.3 -0.408248290463863               0.2
+    ## 23   pol_30 rand_forest 0.895833333333333  0.816496580927726                 1
+    ## 24  pol_340 rand_forest              0.24               -0.5                 0
+    ## 25  pol_353 rand_forest 0.395833333333333              -0.25               0.5
+    ## 26  pol_366 rand_forest 0.904761904761905  0.654653670707977 0.714285714285714
+    ## 27   pol_87 rand_forest 0.895833333333333  0.816496580927726                 1
+    ## 28   pol_88 rand_forest 0.895833333333333  0.816496580927726                 1
+    ## 29   pol_89 rand_forest 0.895833333333333  0.816496580927726                 1
+    ##                  ppv       specificity        prevalence
+    ## 1                  1                 1 0.421052631578947
+    ## 2  0.571428571428571               0.4 0.631578947368421
+    ## 3                0.5              0.75 0.421052631578947
+    ## 4               0.25               0.5 0.421052631578947
+    ## 5                  1                 1 0.421052631578947
+    ## 6              0.625              0.25 0.684210526315789
+    ## 7                0.8                 0 0.631578947368421
+    ## 8                0.2 0.333333333333333 0.421052631578947
+    ## 9                0.5               0.4 0.473684210526316
+    ## 10 0.833333333333333               0.8 0.473684210526316
+    ## 11                 1                 1 0.421052631578947
+    ## 12               0.4              0.25 0.473684210526316
+    ## 13                 1                 1 0.421052631578947
+    ## 14                 1                 1 0.421052631578947
+    ## 15              0.25               0.5 0.421052631578947
+    ## 16                 1                 1 0.473684210526316
+    ## 17                 1                 1 0.421052631578947
+    ## 18               0.5              0.75 0.421052631578947
+    ## 19               0.2 0.428571428571429 0.473684210526316
+    ## 20 0.833333333333333               0.8 0.473684210526316
+    ## 21 0.166666666666667 0.166666666666667 0.473684210526316
+    ## 22               0.4              0.25 0.473684210526316
+    ## 23 0.833333333333333               0.8 0.473684210526316
+    ## 24               0.6                 0 0.421052631578947
+    ## 25              0.25               0.5 0.421052631578947
+    ## 26                 1                 1 0.421052631578947
+    ## 27 0.833333333333333               0.8 0.473684210526316
+    ## 28 0.833333333333333               0.8 0.473684210526316
+    ## 29 0.833333333333333               0.8 0.473684210526316
 
 ``` r
 ModelPerf[[2]]#Overall predictive performance. r2 for regression and MCC for classification
 ```
 
-    ## [1] 0.7873563
+    ## [1] 0.6690887
 
 ## Plotting
 
 ``` r
-VI <- mrVip(yhats, X=X) 
-plot_vi(VI=VI,
-        X=X,
-        Y=Y,
-        modelPerf=ModelPerf, 
-       cutoff= 0, mode='classification') #The cutoff reduces the number of individual models printed in the second plot. 
+VI <- mrVip(yhats, X=X, Y=Y) 
+
+VI_plot <- interpret_Mrvi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0.0, mode='classification')
+
+VI_plot[[4]]#plot
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
-    ## Press [enter] to plot individual variable importance summaries
+``` r
+VI_plot[[1]] #list of outliers
+```
 
-![](README_files/figure-gfm/unnamed-chunk-7-2.png)<!-- -->
+    ## $PC1
+    ## named integer(0)
+    ## 
+    ## $PC2
+    ## env_167 pol_105 
+    ##       4      16 
+    ## 
+    ## $PC3
+    ## named integer(0)
 
 ## Effect of a feature on genetic change
 

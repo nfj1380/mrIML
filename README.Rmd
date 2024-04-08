@@ -35,7 +35,7 @@ Install the stable version of the package:
 
 ```{r, eval = FALSE}
 #install.packages("devtools")
-#devtools::install_github('nfj1380/mrIML')
+devtools::install_github('nfj1380/mrIML')
 library(mrIML)
 ```
 
@@ -61,6 +61,7 @@ library(xgboost); library(vegan);
 library(flashlight);library(ggrepel);
 library(iml); library(plyr);
 library(future.apply)
+library(cowplot)
 ```
 
 
@@ -142,11 +143,11 @@ ModelPerf[[2]]#Overall predictive performance. r2 for regression and MCC for cla
 ## Plotting
 ```{r message = FALSE, warning = FALSE}
 VI <- mrVip(yhats, X=X, Y=Y) 
-plot_vi(VI=VI,
-        X=X,
-        Y=Y,
-        modelPerf=ModelPerf, 
-       cutoff= 0, mode='classification') #The cutoff reduces the number of individual models printed in the second plot. 
+
+VI_plot <- interpret_Mrvi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0.0, mode='classification')
+
+VI_plot[[4]]#plot
+VI_plot[[1]] #list of outliers
 ```
 
 ## Effect of a feature on genetic change
