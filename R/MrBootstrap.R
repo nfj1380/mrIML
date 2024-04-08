@@ -28,7 +28,7 @@
 #'tune_grid_size=5,seed = sample.int(1e8, 1),'morans=F,
 #'prop=0.7, k=5, racing=T) #
 #'
-#'bs_analysis <- mrBootstrap(yhats=yhats_rf,Y=Y, num_bootstrap = 5)
+#'bs_analysis <- mrBootstrap(yhats=yhats_rf,Y=Y, num_bootstrap = 50)
 #'} 
 
 
@@ -129,3 +129,4 @@ mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y) {
   
   return(bstraps_pd_list)
 }
+
