@@ -108,7 +108,7 @@ mr_Covar <- function(yhats, Y, X, X1, var,  sdthresh =0.05) {
     mutate(change = ifelse(is.na(value - lag(value)), 0, value - lag(value)))
   
   # Step 4: Plot smoothed change in values
-  p2 <-ggplot(df, aes(x = cov_grid, y = change)) +
+  p2 <-ggplot(df, aes(x = cov_grid, y = abs(change))) +
     geom_boxplot() +
     labs(x = paste0(var), y = "Change in probability") +
     theme_bw()

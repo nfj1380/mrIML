@@ -18,11 +18,8 @@ First, we need to load up some extra functionality and some data. The first exam
 
 ```{r, message = FALSE, warnings = FALSE}
 
-pacman::p_load('MRFcov', 'mrIML', 'tidyverse', 'future.apply','tidymodels', 'finetune', 'themis', 'vip', 'flashlight', 'iml', 'vivid', 'igraph', 'ggnetwork', 'network',
-'gridExtra', 'xgboost', 'brulee', 'fastshap', 'tabnet', 'bonsai',
- 'parsnip', 'cowplot', 'progress', 'hstats', 'geosphere')
+pacman::p_load('MRFcov', 'mrIML', 'tidyverse', 'future.apply','tidymodels', 'finetune', 'themis', 'vip', 'flashlight', 'iml', 'vivid', 'igraph', 'ggnetwork', 'network','gridExtra', 'xgboost', 'brulee', 'fastshap', 'tabnet', 'bonsai', 'parsnip', 'cowplot', 'progress', 'hstats', 'geosphere')
 
-setwd("~/MrIML/mrIML")
 
 Y <- dplyr::select(Bird.parasites, -scale.prop.zos) %>% 
   dplyr::select(sort(names(.)))#response variables eg. SNPs, pathogens, species....
@@ -153,7 +150,8 @@ In many cases, like this data set, community or microbiome data tend to be small
 MrIML2.0 makes it easy to get bootstrap estimates for a variety of interpretable machine learning tools, and uses these estimates to construct marginalized co-occurrence networks. First, lets do the bootstrapping and calculate variable importance.
 
 ```{r, message = FALSE, warnings = FALSE}
-#do bootstraps
+#do bootstraps.
+source("~/MrIML/mrIML/R/MrBootstrap.R") #BUG not sure why this is needed
 bs_malaria <- mrBootstrap(yhats=yhats_rf_downSamp,Y=Y,
                           num_bootstrap = 10)
 #just 10 bootstraps to keep this short. We suggest using more for a final analysis (100 is reasonable but depends on how big the data is)
@@ -245,7 +243,7 @@ Finally, we can quantify the importance of interactions overall as well as one a
 
 int_ <- mrInteractions(yhats=yhats_rf_downSamp, X, Y, num_bootstrap=10,
                            feature = 'Plas', top.int=10)
-#10 bootstraps to keep it short. top int focuses on the 10 top interactions (all of them in this case).
+#10 bootstraps to keep it short. top int focusses on the 10 top interactions (all of them in this case).
 
 int_[[1]] # overall plot
 int_[[2]] # individual plot for the response of choice 
