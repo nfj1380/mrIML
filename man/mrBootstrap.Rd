@@ -4,7 +4,7 @@
 \alias{mrBootstrap}
 \title{Bootstrap model predictions}
 \usage{
-mrBootstrap(yhats, num_bootstrap = 10, Y = Y)
+mrBootstrap(yhats, num_bootstrap = 10, Y = Y, downsample = FALSE)
 }
 \arguments{
 \item{yhats}{A list of model predictions mrIMLpredicts}
@@ -12,6 +12,8 @@ mrBootstrap(yhats, num_bootstrap = 10, Y = Y)
 \item{num_bootstrap}{The number of bootstrap samples to generate (default: 10).}
 
 \item{Y}{The response data (default: Y).}
+
+\item{downsample}{Do the bootstrap samples need to be downsampled? Default is FALSE}
 }
 \value{
 A list containing bootstrap samples of variable profiles for each response variable.
@@ -38,6 +40,6 @@ balance_data='no',mode='classification',
 tune_grid_size=5,seed = sample.int(1e8, 1),'morans=F,
 prop=0.7, k=5, racing=T) #
 
-bs_analysis <- mrBootstrap(yhats=yhats_rf,Y=Y, num_bootstrap = 5)
+bs_analysis <- mrBootstrap(yhats=yhats_rf,Y=Y, num_bootstrap = 50)
 } 
 }

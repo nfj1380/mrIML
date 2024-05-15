@@ -8,15 +8,12 @@ MrShapely(
   yhats,
   MultRespVars = Resp,
   taxa = NULL,
-  x_features = NULL,
-  y_features = NULL,
   kind = "beeswarm",
   max_display = 15L,
-  interactions = FALSE,
   color_var = NULL,
   getFeaturePlot = TRUE,
   getDependencyPlot = TRUE,
-  getInteractionPlot = TRUE,
+  get2DDependencyPlot = TRUE,
   num_cores = 2,
   class_selection = NULL
 )
@@ -28,15 +25,9 @@ MrShapely(
 
 \item{taxa}{An optional vector specifying which responses to include based on their indices.}
 
-\item{x_features}{A character vector specifying the features to consider in the plots.}
-
-\item{y_features}{A character vector specifying the response features for interaction plots.}
-
 \item{kind}{A character string specifying the type of plots (e.g., "beeswarm" for feature effect plot, "bar" for variable importance plot, or "both").}
 
 \item{max_display}{An integer specifying the maximum number of features to display.}
-
-\item{interactions}{A logical indicating whether to create interaction effect plots.}
 
 \item{color_var}{A variable to use for coloring in the dependency plots.}
 
@@ -44,14 +35,20 @@ MrShapely(
 
 \item{getDependencyPlot}{A logical indicating whether to generate dependency plots.}
 
-\item{getInteractionPlot}{A logical indicating whether to generate interaction plots.}
-
 \item{num_cores}{An integer specifying the number of CPU cores to use for parallel processing.}
 
 \item{class_selection}{An optional vector specifying which classes to include in the plots.}
+
+\item{x_features}{A character vector specifying the features to consider in the plots.}
+
+\item{y_features}{A character vector specifying the response features for interaction plots.}
+
+\item{interactions}{A logical indicating whether to create interaction effect plots.}
+
+\item{getInteractionPlot}{A logical indicating whether to generate interaction plots.}
 }
 \value{
-A ggplot object containing SHAP plots for the specified responses and features.
+A ggplot object containing SHAP plots for the specified responses and features. Note that this function may not work for some algorithm classe (e.g., neural nets)
 }
 \description{
 This function generates SHAP (SHapley Additive exPlanations) plots for multiple models and responses.

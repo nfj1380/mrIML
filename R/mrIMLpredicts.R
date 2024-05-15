@@ -1,7 +1,7 @@
 #'Wrapper to generate multi-response predictive models.
 #'@param Y A \code{dataframe} is response variable data (species, OTUs, SNPs etc).
 #'@param X A \code{dataframe} represents predictor or feature data.
-#'#'@param X1 A \code{dataframe} extra predictor set used in each model. For the MrIML Joint species distribution model (JSDM) this is just a copy of the response data.
+#'@param X1 A \code{dataframe} extra predictor set used in each model. For the MrIML Joint species distribution model (JSDM) this is just a copy of the response data.
 #'@param balance_data A \code{character} 'up', 'down' or 'no'. 
 #'@param dummy A \code{logical} 'TRUE or FALSE'. 
 #'@param Model 1 A \code{list} can be any model from the tidy model package. See examples.
@@ -132,7 +132,7 @@ mrIMLpredicts<- function(X, X1=NULL, Y, Model, balance_data ='no', mode='regress
     
     # select the best model
     best_m <- tune_m %>%
-      select_best("roc_auc") #try mcc or roc_auc
+      select_best(metric="roc_auc") #try mcc or roc_auc
   }
   
   if (mode=='regression'){

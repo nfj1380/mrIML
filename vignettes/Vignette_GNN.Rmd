@@ -1,5 +1,5 @@
 ---
-title: "MrIML JSDM vignette"
+title: "MrIML GNM vignette"
 author: "Nick Fountain-Jones"
 date: "`r Sys.Date()`"
 output:
@@ -9,9 +9,9 @@ output:
 
 ## Introduction
 
-This vignette guides you through the new functionality that turns mrIML into a joint species distribution model (JSDM). There is also new functions in MrIML 2.0 that can be used in non-JSDM models, such as for single taxon SDMs, epi models, gene environment association (GEA) studies and for landscape genetics. Advances in Tidymodels are in the core of the functions as are exciting advances in interpretable machine learning (e.g., for quantiying interactions quickly). The capability to capture uncertainty via bootstraps and spatial patterns are also a feature of this MRIML module.  The examples are from the microbiome world but of course  generalizable to any multi-response problem. 
+This vignette guides you through the new functionality that turns mrIML into a graphical network model (GNMs). There is also new functions in MrIML 2.0 that can be used in non-GN models, such as for single taxon SDMs, epi models, gene environment association (GEA) studies and for landscape genetics. Advances in Tidymodels are in the core of the functions as are exciting advances in interpretable machine learning (e.g., for quantifying interactions quickly). The capability to capture uncertainty via bootstraps and spatial patterns are also a feature of this MRIML module.  The examples are from the microbiome world but of course  generalizable to any multi-response problem. 
 
-Currently, the models are optimized and tested on presence/absence data but abundance data could also be added (but user beware).
+Currently, the models are optimized and tested on presence/absence data. Models suitable for abundance data are being added in the future.
 
 First, we need to load up some extra functionality and some data. The first example is coinfection data from New Caledonian *Zosterops* species. A single continuous covariate is also included (scale.prop.zos), which reflects the relative abundance of *Zosterops* species among different sample sites. 
 
@@ -151,16 +151,27 @@ MrIML2.0 makes it easy to get bootstrap estimates for a variety of interpretable
 
 ```{r, message = FALSE, warnings = FALSE}
 #do bootstraps.
-source("~/MrIML/mrIML/R/MrBootstrap.R") #BUG not sure why this is needed
-bs_malaria <- mrBootstrap(yhats=yhats_rf_downSamp,Y=Y,
-                          num_bootstrap = 10)
+#source("~/MrIML/mrIML/R/MrBootstrap.R") 
+bs_malaria <- mrBootstrap(yhats=yhats_rf,Y=Y, #n
+                          num_bootstrap = 10, downsample = TRUE) 
+#make sure downsample=TRUE as this did improve performance
 #just 10 bootstraps to keep this short. We suggest using more for a final analysis (100 is reasonable but depends on how big the data is)
 
-bs_impVI <- mrVI_bootstrap(mrBootstrap_obj=bs_malaria, 
-                           ModelPerf=ModelPerf_rf_downSamp,
-                           threshold=0.5, #AUC threshold  
-                           X=X, Y=Y, global_top_var=10,
-                           local_top_var=5)
+bs_impVI <- mrvip(
+  mrBootstrap_obj = bs_malaria,
+  yhats = yhats_rf_downSamp,
+  X = X,
+  X1 = X1,
+  Y = Y,
+  mode = 'classification',
+  threshold = 0.0,
+  global_top_var = 10,
+  local_top_var = 5,
+  taxa = NULL,
+  ModelPerf = ModelPerf_rf_downSamp 
+)
+
+bs_impVI[[3]]  #importance plot. There are plenty of other insights possible
 
 #the 'global_top_var' provides a limit to how many predictors are included in the community-wide plot. 'local_top_var provides a limit to the number of individual taxa plots. The threshold excludes plotting individual importance plots for taxa not well predicted by the model.
 
@@ -184,7 +195,7 @@ These plots show that, for example, the presence of *Microfilaria* greatly incre
 If we want to explore the effect of host abundance overall we can use the 'mr_Covar' function.
 
 ```{r, message = FALSE, warnings = FALSE}
-#this needs fixing
+
 covar <- mr_Covar(yhats=yhats_rf_downSamp, X=X, X1=X1, Y=Y,
                   var='scale.prop.zos', sdthresh =0.01) 
 #sdthrsh just plots taxa responding the most.
@@ -196,7 +207,7 @@ Note that this isn't bootstrapped now - each line represents a taxon in this cas
 
 ## Co-occurrence network
 
-We can utilise all the bootstrapped partial dependence estimates (pds) to construct a co-occurrence network. We show how this object can be converted to an igraph object and plotted.  This is a directed network and edges are scaled by the standard deviation of the marginal change in prediction. Red are positive associations (the predicted occurrence of the taxa increases with the presence of the other) and blue are negative (the predicted occurence of the taxa decreases with the presence of the other).
+We can utilise all the bootstrapped partial dependence estimates (pds) to construct a co-occurrence network. We show how this object can be converted to an igraph object and plotted.  This is a directed network and edges are scaled by the standard deviation of the marginal change in prediction. Red are positive associations (the predicted occurrence of the taxa increases with the presence of the other) and blue are negative (the predicted occurrence of the taxa decreases with the presence of the other).
 
 ```{r}
 
@@ -241,7 +252,7 @@ Finally, we can quantify the importance of interactions overall as well as one a
 
 ```{r, message = FALSE, warnings = FALSE}
 
-int_ <- mrInteractions(yhats=yhats_rf_downSamp, X, Y, num_bootstrap=10,
+int_ <- mrInteractions(yhats=yhats_rf, X, Y, num_bootstrap=10,
                            feature = 'Plas', top.int=10)
 #10 bootstraps to keep it short. top int focusses on the 10 top interactions (all of them in this case).
 

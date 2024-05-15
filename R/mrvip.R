@@ -34,8 +34,16 @@
 #'bs_impVI <- mrvip(yhats=yhats_rf, mrBootstrap_obj=bs_analysis, ModelPerf=ModelPerf, 
 #'threshold=0.8,  X=X, Y=Y, X1=X1, global_top_var=10,
 #'local_top_var=5)
-#'} 
+#'bs_impVI[[1]] #importance data bootstrap
+#'bs_impVI[[2]] #importance data point estimate
+#'bs_impVI[[3]] #importance plot
+#'bs_impVI[[4]] #PCA
+#'bs_impVI[[5]] #outliers
+#'bs_impVI[[6]] #pc loadings
+#'bs_impVI[[7]] #PC scores
+#'
 #' @export
+
 mrvip <- function(yhats = NULL, mrBootstrap_obj = NULL,  X=X, X1=NULL, Y=Y,
                   mode = NULL, threshold = 0.1, global_top_var = 10,
                   local_top_var = 5, taxa=NULL, ModelPerf=ModelPerf) {

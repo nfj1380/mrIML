@@ -6,6 +6,7 @@
 #' @param yhats A list of model predictions mrIMLpredicts
 #' @param num_bootstrap The number of bootstrap samples to generate (default: 10).
 #' @param Y The response data (default: Y).
+#' @param downsample Do the bootstrap samples need to be downsampled? Default is FALSE
 #' @return A list containing bootstrap samples of variable profiles for each response variable.
 #' @export
 #'

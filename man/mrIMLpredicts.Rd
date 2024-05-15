@@ -21,8 +21,9 @@ mrIMLpredicts(
 )
 }
 \arguments{
-\item{X}{A \code{dataframe} represents predictor or feature data.
-#'@param X1 A \code{dataframe} extra predictor set used in each model. For the MrIML Joint species distribution model (JSDM) this is just a copy of the response data.}
+\item{X}{A \code{dataframe} represents predictor or feature data.}
+
+\item{X1}{A \code{dataframe} extra predictor set used in each model. For the MrIML Joint species distribution model (JSDM) this is just a copy of the response data.}
 
 \item{Y}{A \code{dataframe} is response variable data (species, OTUs, SNPs etc).}
 
