@@ -75,7 +75,7 @@ mrPD_bootstrap <- function(mrBootstrap_obj, vi_obj, X, Y, target, global_top_var
   
   plot_list <- list()  # Create an empty list to store individual plots
   
-  vi_obj <- vi_obj[[1]]  # Extract VI data
+  vi_obj <- vi_obj[[1]]  # Extract VI data #need to check
   
   G_target_data_avg <- vi_obj %>% 
     filter(response == {{target}}) %>% 

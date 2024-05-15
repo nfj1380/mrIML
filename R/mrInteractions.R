@@ -102,8 +102,17 @@ mrInteractions <- function(yhats, X, Y, num_bootstrap = 1, feature = feature, to
   }))
   
   # Filter and plot one-way interactions
-  filtered_one_way <- overall_one_way_final %>% filter(response == feature) %>% 
-    slice_max(order_by = one_way, n = top.int)
+  
+  filtered_one_way_pred <- overall_one_way_final %>% filter(response == feature) %>% 
+    group_by(predictor) %>% 
+    summarise(avg_one_way_int = mean(one_way)) %>% 
+    arrange(desc(avg_one_way_int)) %>% 
+    top_n(top.int)
+  
+  filtered_one_way<- overall_one_way_final %>% 
+    filter(response == feature) %>% 
+    filter(predictor %in% filtered_one_way_pred$predictor)
+  
   p2 <- ggplot(filtered_one_way, aes(x = reorder(predictor, -one_way), y = one_way)) + 
     geom_boxplot() + labs(title = paste(feature, "one-way interactions", sep = " "), 
                           x = feature, y = paste(feature, "interaction importance", sep = " ")) + theme_bw()
@@ -115,8 +124,15 @@ mrInteractions <- function(yhats, X, Y, num_bootstrap = 1, feature = feature, to
   }))
   
   # Filter and plot two-way interactions
-  filtered_two_way <- overall_two_way_final %>% filter(response == feature) %>% 
-    slice_max(order_by = two_way_int, n = top.int)
+  filtered_two_way_pred <- overall_two_way_final %>% filter(response == feature) %>% 
+    group_by(predictor) %>% 
+    summarise(avg_two_way_int = mean(two_way_int)) %>% 
+    arrange(desc(avg_two_way_int)) %>% 
+    top_n(top.int)
+  
+  filtered_two_way<- overall_two_way_final %>% 
+    filter(response == feature) %>% 
+    filter(predictor %in% filtered_two_way_pred$predictor)
   
   p3 <- ggplot(filtered_two_way, aes(x = reorder(predictor, -two_way_int), y = two_way_int)) + 
     geom_boxplot() + labs(title = paste(feature, "two-way interactions", sep = " "), 

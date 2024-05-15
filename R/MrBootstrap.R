@@ -32,7 +32,7 @@
 #'} 
 
 
-mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y) {
+mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y, downsample=FALSE) {
   
   n_response <- length(yhats)
   
@@ -59,10 +59,24 @@ mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y) {
     
     for (i in 1:num_bootstrap) {
      
-      # Generate bootstrap sample
-      #bootstrap_sample <- yhats[[k]]$data[sample(1:n, replace = TRUE), ] ###
-      
-      #this may work better...
+      if (downsample) {
+        # Determine the number of samples to draw for each class
+        class_counts <- table(Y[[k]])
+        min_class_count <- min(class_counts)
+        sample_size <- min_class_count * length(class_counts)
+        
+        # Initialize the bootstrap sample
+        bootstrap_sample <- NULL
+        
+        # Sample from each class to balance classes
+        for (cls in unique(Y[[k]])) {
+          cls_indices <- sample(which(Y[[k]] == cls), size = min_class_count, replace = FALSE)
+          bootstrap_sample <- rbind(bootstrap_sample, yhats[[k]]$data[cls_indices, ])
+        }
+        
+      } else {
+        
+  
       # Convert the data frame to a data table
       data_table <- data.table::as.data.table(yhats[[k]]$data)
       
@@ -71,6 +85,8 @@ mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y) {
       
       # Create the bootstrap sample using data table syntax
       bootstrap_sample <- data_table[sample_indices]
+      
+      }
       
       # Extract the workflow from the best fit
       wflow <- yhats[[k]]$last_mod_fit %>% tune::extract_workflow()
@@ -129,4 +145,5 @@ mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y) {
   
   return(bstraps_pd_list)
 }
+
 

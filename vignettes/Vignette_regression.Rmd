@@ -132,7 +132,7 @@ p2 <- as.data.frame(ModelPerf[[1]])
 You can see that predictive performance is actually slightly less using random forests (overall R2 = 0.12) but for some loci random forests does better than our linear models and sometimes worse. Which to choose? Generally simpler models are preferred (the linear model in this case) but it depends on how important to think non-linear response are. In future versions of MrIML we will implement ensemble models that will overcome this issue. For the time-being we will have a look at variable importance for the random forest based model.
 
 ```{r, message = FALSE, warning = FALSE }
-VI <- mrVip(yhats=yhats_rf, X=X) 
+VI <- mrVip(yhats=yhats_rf, X=X, Y=Y) 
 
 plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf,  cutoff= 0.1, mode='regression')
 

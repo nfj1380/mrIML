@@ -14,7 +14,7 @@
 #' Y <- data.frame(response1 = rnorm(100), response2 = rnorm(100))
 #' results <- mrVariableSelect(X, X1, Y)
 #' 
-mrVariableSelect <- function(X = NULL, X1 = NULL, Y) {
+mrVariableSelect <- function(X = NULL, X1 = NULL, Y, drop_threshold=0.75) {
   # Check if both X and X1 are provided
   if (!is.null(X) && !is.null(X1)) {
     predictors <- cbind(X, X1)
@@ -77,7 +77,7 @@ mrVariableSelect <- function(X = NULL, X1 = NULL, Y) {
          y = "Proportion rejected") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
-  varSelectX <- dropped_prop %>% filter(dropped_prop < 0.75) 
+  varSelectX <- dropped_prop %>% filter(dropped_prop < drop_threshold) 
   
   # Function to filter columns based on row names
   filter_columns <- function(df, row_names_df) {
