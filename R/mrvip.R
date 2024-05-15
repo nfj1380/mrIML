@@ -41,7 +41,7 @@
 #'bs_impVI[[5]] #outliers
 #'bs_impVI[[6]] #pc loadings
 #'bs_impVI[[7]] #PC scores
-#'
+#'}
 #' @export
 
 mrvip <- function(yhats = NULL, mrBootstrap_obj = NULL,  X=X, X1=NULL, Y=Y,

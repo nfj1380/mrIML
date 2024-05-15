@@ -45,3 +45,35 @@ A list containing variable importance data and a combined plot.
 \description{
 Calculates and helps interpret variable importance for mrIML models.
 }
+\examples{
+\dontrun{
+# Example usage:
+#set up analysis
+Y <- dplyr::select(Bird.parasites, -scale.prop.zos)\%>\% 
+dplyr::select(sort(names(.)))#response variables eg. SNPs, pathogens, species....
+X <- dplyr::select(Bird.parasites, scale.prop.zos) # feature set
+X1 <- Y \%>\%
+dplyr::select(sort(names(.)))
+model_rf <- 
+rand_forest(trees = 100, mode = "classification", mtry = tune(), min_n = tune()) \%>\% #100 trees are set for brevity. Aim to start with 1000
+set_engine("randomForest")
+yhats_rf <- mrIMLpredicts(X=X, Y=Y,
+X1=X1,'Model=model_rf , 
+balance_data='no',mode='classification',
+tune_grid_size=5,seed = sample.int(1e8, 1),'morans=F,
+prop=0.7, k=5, racing=T) #
+ModelPerf <- mrIMLperformance(yhats_rf, Model=model_rf, Y=Y, mode='classification')
+
+bs_analysis <- mrBootstrap(yhats=yhats_rf,Y=Y, num_bootstrap = 5)
+bs_impVI <- mrvip(yhats=yhats_rf, mrBootstrap_obj=bs_analysis, ModelPerf=ModelPerf, 
+threshold=0.8,  X=X, Y=Y, X1=X1, global_top_var=10,
+local_top_var=5)
+bs_impVI[[1]] #importance data bootstrap
+bs_impVI[[2]] #importance data point estimate
+bs_impVI[[3]] #importance plot
+bs_impVI[[4]] #PCA
+bs_impVI[[5]] #outliers
+bs_impVI[[6]] #pc loadings
+bs_impVI[[7]] #PC scores
+}
+}

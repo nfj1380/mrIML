@@ -6,8 +6,6 @@
 #' @param X1 Dataframe of additional predictors for predicting the response variables. (Optional)
 #' @param Y Dataframe with response variables, where column names are the response variable names.
 #' @return A list where each element corresponds to a response variable, containing the Boruta result object for that response variable.
-#' @import boruta ggplot2
-#' @export
 #' @examples
 #' X <- data.frame(matrix(rnorm(1000), ncol = 10))
 #' X1 <- data.frame(matrix(rnorm(100), ncol = 5))
