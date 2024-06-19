@@ -139,7 +139,7 @@ mrIMLpredicts<- function(X, X1=NULL, Y, Model, balance_data ='no', mode='regress
     
     # select the best model
     best_m <- tune_m %>%
-      select_best("rmse")
+      select_best(metric="rmse")
     
   }
   
@@ -236,7 +236,6 @@ mrIMLpredicts<- function(X, X1=NULL, Y, Model, balance_data ='no', mode='regress
     
 }
 
-     
     yhats <- future_lapply(seq(1,n_response), internal_fit_function, future.seed = TRUE)
     
    

@@ -41,7 +41,7 @@ mrIMLperformance <- function (yhats, Model, Y, mode = "regression"){
     colnames(mod1_perf) <- c("response", "model_name", 
                              "roc_AUC", "mcc", "sensitivity","ppv",
                              "specificity", "prevalence")
-    Global_summary <- as.numeric(as.character(unlist(mod1_perf$roc_AUC)))
+    Global_summary <- as.numeric(as.character(unlist(mod1_perf$mcc)))
     Global_summary[is.na(Global_summary)] <- 0
     Global_summary <- mean(Global_summary)
   }

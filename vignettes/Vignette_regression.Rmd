@@ -92,7 +92,8 @@ model_lm <- #model used to generate yhat
   # choose either the continuous regression or binary classification mode
   set_mode("regression")
 
-yhats_lm <- mrIMLpredicts(X=X,Y=Y, Model=model_lm, balance_data='no', mode='regression', seed = sample.int(1e8, 1)) ## Balanced data= up updamples and down downsampled to create a balanced set. For regression 'no' has to be selected.
+yhats_lm <- mrIMLpredicts(X=X,Y=Y,X1=NULL, Model=model_lm, balance_data='no', mode='regression', prop=0.7, morans=F, tune_grid_size= 10, k=10, racing=F) ## Balanced data= up updamples and down downsampled to create a balanced set. For regression 'no' has to be selected.
+#racing can't be used for linear models - no parameters to tune
 
 #save(yhats, file='Regression_lm') #always a good idea
 ```
@@ -100,7 +101,7 @@ yhats_lm <- mrIMLpredicts(X=X,Y=Y, Model=model_lm, balance_data='no', mode='regr
 Model performance can be examined the same way as in the classification example, however the metrics are different. We provide root mean square error (rmse) and R2. You can see that the overall R2 is 0.13 but there is substantial variation across loci in predictive performance.
 
 ```{r}
-ModelPerf <- mrIMLperformance(yhats_lm,  Model=model_lm, Y=Y, mode='regression')
+ModelPerf_lm <- mrIMLperformance(yhats_lm,  Model=model_lm, Y=Y, mode='regression')
 ModelPerf[[1]] #predictive performance for individual responses. 
 ModelPerf[[2]]#overall average r2 
 
@@ -119,12 +120,14 @@ yhats_rf <- mrIMLpredicts(X=X,Y=Y, Model=model_rf, balance_data='no', mode='regr
 
 #save(yhats, file='Regression_rf')
 
-ModelPerf <- mrIMLperformance(yhats_rf, Model=model_rf, Y, mode='regression')
+ModelPerf_rf <- mrIMLperformance(yhats_rf, Model=model_rf, Y, mode='regression')
 
-ModelPerf[[1]] #predictive performance for individual responses. 
-ModelPerf[[2]]#overall average r2 
+ModelPerf_rf[[1]] #predictive performance for individual responses. 
+ModelPerf_rf[[2]]#overall average r2 
 
-p2 <- as.data.frame(ModelPerf[[1]])
+# mrPerformancePlot(ModelPerf1 =ModelPerf_lm, ModelPerf2 = ModelPerf_rf,  ModelPerf3=NULL, mod_names=c('linear_model','rf_model') ) 
+
+
 ```
 
 ## Plotting
