@@ -88,7 +88,7 @@ mrFlashlight <- function(yhats, X, X1, Y, response = "multi", index = 1, mode = 
         
       )
       
-    } else if(response == "multi") {
+    } else if (response == "multi") {
       
       models <- lapply(yhats, `[[`, "mod1_k")
       

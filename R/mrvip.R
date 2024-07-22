@@ -45,7 +45,7 @@
 #' @export
 
 mrvip <- function(yhats = NULL, mrBootstrap_obj = NULL,  X=X, X1=NULL, Y=Y,
-                  mode = NULL, threshold = 0.1, global_top_var = 10,
+                  mode = 'classification', threshold = 0.1, global_top_var = 10,
                   local_top_var = 5, taxa=NULL, ModelPerf=ModelPerf) {
   
 
@@ -115,7 +115,7 @@ mrvip <- function(yhats = NULL, mrBootstrap_obj = NULL,  X=X, X1=NULL, Y=Y,
       # Calculate variable importance for each variable
       for (j in seq_along(var_names)) {
         
-        pd_ <- light_profile(fl_list[[i]], v = var_names[j])
+        pd_ <- flashlight::light_profile(fl_list[[i]], v = var_names[j])
         
         # Calculate standard deviation of each variable
         sd_value <- sd(pd_$data$value)
@@ -133,13 +133,13 @@ mrvip <- function(yhats = NULL, mrBootstrap_obj = NULL,  X=X, X1=NULL, Y=Y,
     
       # Get top variables
       G_target_data_avg <- vi_table %>% 
-        group_by(var) %>% 
-        summarise(mean_imp = mean(sd_value)) 
+        dplyr::group_by(var) %>% 
+        dplyr::summarise(mean_imp = mean(sd_value)) 
       
       #filter variables
       G_top_vars <- head(G_target_data_avg[order(-G_target_data_avg$mean_imp), ], global_top_var)
       G_target_data_final_df <- vi_table %>% 
-        filter(var %in% G_top_vars$var)
+        dplyr::filter(var %in% G_top_vars$var)
       
       #first plot
       p1 <- ggplot(G_target_data_final_df, aes(y = reorder(var, sd_value), x = sd_value))+
@@ -158,7 +158,16 @@ mrvip <- function(yhats = NULL, mrBootstrap_obj = NULL,  X=X, X1=NULL, Y=Y,
       unique_responses <- unique(G_target_data_final_df$response)
       
       #reduces number of plots - focuses on responses best predicted
+      
+      if (mode=='classification'){
+        
       perf_filter <- ModelPerf[[1]] %>% filter (roc_AUC > threshold)
+      
+      } else {
+        
+      perf_filter <- ModelPerf[[1]] %>% filter (rsquared > threshold)
+      }
+      
       response_names_filt <- perf_filter$response
       
       for (response_value in response_names_filt) {
@@ -187,19 +196,19 @@ mrvip <- function(yhats = NULL, mrBootstrap_obj = NULL,  X=X, X1=NULL, Y=Y,
       if(!is.null(taxa)){
         
         # Filter the data for the provided taxa
-        target_data <- vi_table %>% filter(response == taxa)
+        target_data <- vi_table %>% dplyr::filter(response == taxa)
         
         # Calculate the mean importance of each variable
         target_data_avg <- target_data %>% 
-          group_by(var) %>% 
-          summarise(mean_imp = mean(sd_value)) %>% 
+          dplyr::group_by(var) %>% 
+          dplyr::summarise(mean_imp = mean(sd_value)) %>% 
           ungroup()
         
         # Get the top variables
         top_vars <- head(target_data_avg[order(-target_data_avg$mean_imp), ], local_top_var)
         
         # Filter the data to include only the top variables
-        target_data_final_df <- target_data %>% filter(var %in% top_vars$var)
+        target_data_final_df <- target_data %>% dplyr::filter(var %in% top_vars$var)
         
         # Create the boxplot for the target
         p3 <- ggplot(target_data_final_df, aes(x = sd_value, y = reorder(var, sd_value))) +
@@ -265,7 +274,7 @@ mrvip <- function(yhats = NULL, mrBootstrap_obj = NULL,  X=X, X1=NULL, Y=Y,
         
         #calculate the standard deviation of each bootstrap for each taxa
         result <- df %>%
-          group_by(response, bootstrap) %>%
+          dplyr::group_by(response, bootstrap) %>%
           summarise(sd_value = sd(value))%>% 
           ungroup() 
         
@@ -283,7 +292,7 @@ mrvip <- function(yhats = NULL, mrBootstrap_obj = NULL,  X=X, X1=NULL, Y=Y,
       #NB#could have a groupCv argument here
       
       G_target_data_avg <- vi_df %>% 
-        group_by(var) %>% 
+        dplyr::group_by(var) %>% 
         summarise(mean_imp = mean(sd_value)) 
       
       # Create the boxplot for the target
@@ -292,7 +301,7 @@ mrvip <- function(yhats = NULL, mrBootstrap_obj = NULL,  X=X, X1=NULL, Y=Y,
       G_top_vars <- head(G_target_data_avg[order(-G_target_data_avg$mean_imp), ], global_top_var)
       
       G_target_data_final_df <- vi_df %>% 
-        filter(var %in% G_top_vars$var)
+        dplyr::filter(var %in% G_top_vars$var)
       
       #plot overall importance 
       p1 <- ggplot(G_target_data_final_df, aes(y=reorder(var,sd_value), x=sd_value))+
@@ -311,7 +320,7 @@ mrvip <- function(yhats = NULL, mrBootstrap_obj = NULL,  X=X, X1=NULL, Y=Y,
       # Filter the data based on the threshold and calculate mean values for each target
       
       filtered_data <-  vi_df %>%
-        group_by(response) %>%
+        dplyr::group_by(response) %>%
         summarise(sd_value = mean(sd_value)) %>%
         right_join(ModelPerf[[1]], by = join_by(response)) %>% 
         filter(roc_AUC > threshold) %>% 
@@ -330,8 +339,8 @@ mrvip <- function(yhats = NULL, mrBootstrap_obj = NULL,  X=X, X1=NULL, Y=Y,
           filter(response == {{target}})
         
         target_data_avg <- target_data %>% 
-          group_by(var) %>% 
-          summarise(mean_imp = mean(sd_value)) %>% 
+          dplyr::group_by(var) %>% 
+          dplyr::summarise(mean_imp = mean(sd_value)) %>% 
           ungroup()
         
         # Create the boxplot for the target
@@ -340,7 +349,7 @@ mrvip <- function(yhats = NULL, mrBootstrap_obj = NULL,  X=X, X1=NULL, Y=Y,
         top_vars <- head(target_data_avg[order(-target_data_avg$mean_imp), ], local_top_var)
         
         target_data_final_df <- target_data %>% 
-          filter(var %in% top_vars$var)
+          dplyr::filter(var %in% top_vars$var)
         
         plot <- ggplot(target_data_final_df, aes(x = sd_value, y = reorder(var, sd_value))) +
           geom_boxplot() +
@@ -371,7 +380,7 @@ mrvip <- function(yhats = NULL, mrBootstrap_obj = NULL,  X=X, X1=NULL, Y=Y,
           
           # Calculate the mean importance of each variable
           target_data_avg <- target_data %>% 
-            group_by(var) %>% 
+            dplyr::group_by(var) %>% 
             summarise(mean_imp = mean(sd_value)) %>% 
             ungroup()
           

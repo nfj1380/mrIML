@@ -10,7 +10,7 @@ mrvip(
   X = X,
   X1 = NULL,
   Y = Y,
-  mode = NULL,
+  mode = "classification",
   threshold = 0.1,
   global_top_var = 10,
   local_top_var = 5,

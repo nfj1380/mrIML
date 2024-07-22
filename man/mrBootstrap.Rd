@@ -4,7 +4,13 @@
 \alias{mrBootstrap}
 \title{Bootstrap model predictions}
 \usage{
-mrBootstrap(yhats, num_bootstrap = 10, Y = Y, downsample = FALSE)
+mrBootstrap(
+  yhats,
+  num_bootstrap = 10,
+  Y = Y,
+  downsample = FALSE,
+  mode = "classification"
+)
 }
 \arguments{
 \item{yhats}{A list of model predictions mrIMLpredicts}
@@ -14,6 +20,8 @@ mrBootstrap(yhats, num_bootstrap = 10, Y = Y, downsample = FALSE)
 \item{Y}{The response data (default: Y).}
 
 \item{downsample}{Do the bootstrap samples need to be downsampled? Default is FALSE}
+
+\item{mode}{\code{character}'classification' or 'regression' i.e., is the generative model a regression or classification?}
 }
 \value{
 A list containing bootstrap samples of variable profiles for each response variable.
@@ -40,6 +48,6 @@ balance_data='no',mode='classification',
 tune_grid_size=5,seed = sample.int(1e8, 1),'morans=F,
 prop=0.7, k=5, racing=T) #
 
-bs_analysis <- mrBootstrap(yhats=yhats_rf,Y=Y, num_bootstrap = 50)
+bs_analysis <- mrBootstrap(yhats=yhats_rf,Y=Y, num_bootstrap = 50, mode='classification')
 } 
 }

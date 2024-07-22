@@ -77,10 +77,12 @@ mrPD_bootstrap <- function(mrBootstrap_obj, vi_obj, X, Y, target, global_top_var
   
   vi_obj <- vi_obj[[1]]  # Extract VI data #need to check
   
+  vi_obj <- do.call(rbind, vi_obj)
+  
   G_target_data_avg <- vi_obj %>% 
-    filter(response == {{target}}) %>% 
+    dplyr::filter(response == {{target}}) %>% 
     group_by(var) %>% 
-    summarise(mean_imp = mean(sd_value)) %>% 
+    dplyr::summarise(mean_imp = mean(sd_value)) %>% 
     arrange(desc(mean_imp))
   
   G_top_vars <- head(G_target_data_avg[order(-G_target_data_avg$mean_imp), ], global_top_var)
@@ -89,7 +91,7 @@ mrPD_bootstrap <- function(mrBootstrap_obj, vi_obj, X, Y, target, global_top_var
   for (k in seq_along(pd_list)) {
     
     df <- pd_list[[k]] %>%
-      filter(target == {{target}})
+      dplyr::filter(target == {{target}})
     
     if (names(df)[1] %in% G_top_vars$var) {
       if (is.factor(df[[1]]) || (all(df[[1]] %in% c(0, 1)))) {

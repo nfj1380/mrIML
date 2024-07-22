@@ -6,10 +6,10 @@
 #' @param yhats A list of model predictions mrIMLpredicts
 #' @param num_bootstrap The number of bootstrap samples to generate (default: 10).
 #' @param Y The response data (default: Y).
+#'@param mode \code{character}'classification' or 'regression' i.e., is the generative model a regression or classification?
 #' @param downsample Do the bootstrap samples need to be downsampled? Default is FALSE
 #' @return A list containing bootstrap samples of variable profiles for each response variable.
 #' @export
-#'
 #' @examples
 #' \dontrun{
 #' # Example usage:
@@ -29,24 +29,18 @@
 #'tune_grid_size=5,seed = sample.int(1e8, 1),'morans=F,
 #'prop=0.7, k=5, racing=T) #
 #'
-#'bs_analysis <- mrBootstrap(yhats=yhats_rf,Y=Y, num_bootstrap = 50)
+#'bs_analysis <- mrBootstrap(yhats=yhats_rf,Y=Y, num_bootstrap = 50, mode='classification')
 #'} 
 
 
-mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y, downsample=FALSE) {
+mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y, downsample=FALSE, mode='classification') {
   
   n_response <- length(yhats)
   
  pb <- txtProgressBar(min = 0, max = n_response, style = 3) 
  # pb <- progress::progress_bar$new(format = "[:bar] :percent ETA: :eta", total = n_response )
 
- #metric list for flashlight. Currently only for classification
- metrics <- list(
-   logloss = MetricsWeighted::logLoss,
-   `ROC AUC` = MetricsWeighted::AUC,
-   `% Dev Red` = MetricsWeighted::r_squared_bernoulli
- )
- 
+
   internal_fit_function <- function(k) {
     
     setTxtProgressBar(pb, k) #progressbar marker
@@ -59,16 +53,18 @@ mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y, downsample=FALSE) {
     pd_raw <- vector("list", num_bootstrap)  # Initialize pd_raw as a list
     
     for (i in 1:num_bootstrap) {
-     
-      if (downsample) {
+      
+      # Initialize the bootstrap sample
+      bootstrap_sample <- NULL
+      
+      
+      if (downsample==TRUE) {
         # Determine the number of samples to draw for each class
         class_counts <- table(Y[[k]])
         min_class_count <- min(class_counts)
         sample_size <- min_class_count * length(class_counts)
         
-        # Initialize the bootstrap sample
-        bootstrap_sample <- NULL
-        
+       
         # Sample from each class to balance classes
         for (cls in unique(Y[[k]])) {
           cls_indices <- sample(which(Y[[k]] == cls), size = min_class_count, replace = FALSE)
@@ -102,12 +98,37 @@ mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y, downsample=FALSE) {
       
       var_names <- names(yhats[[k]]$data)[-1]
       
-      pred_fun <- function(m, dat) {
-        predict(
-          m, dat[, colnames(bootstrap_sample)[-1], drop = FALSE],
-          type = "prob"
-        )$`.pred_1`
+      if(mode=='classification'){
+        
+        #metric list for flashlight.
+        metrics <- list(
+          logloss = MetricsWeighted::logLoss,
+          `ROC AUC` = MetricsWeighted::AUC,
+          `% Dev Red` = MetricsWeighted::r_squared_bernoulli
+        )
+        
+        pred_fun <- function(m, dat) {
+          predict(
+            m, dat[, colnames(bootstrap_sample)[-1], drop = FALSE],
+            type = "prob"
+          )$`.pred_1`
+        }
+      } else {
+        
+        pred_fun <- function(m, dat) {
+          
+          predict(m, dat[, colnames(X), drop = FALSE])[[".pred"]]
+          
+        }
+        
+        # List of metrics
+        
+        metrics = list( 
+          rmse = MetricsWeighted::rmse,
+          `R-squared` = MetricsWeighted::r_squared
+        )
       }
+      
       
       fl <- flashlight(
         model = model_fit,
@@ -117,7 +138,6 @@ mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y, downsample=FALSE) {
         predict_function = pred_fun,
         metrics = metrics
       )
-  
       
       for (j in seq_along(var_names)) {
         
