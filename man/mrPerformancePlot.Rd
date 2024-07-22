@@ -2,7 +2,7 @@
 % Please edit documentation in R/mrPerformancePlot.R
 \name{mrPerformancePlot}
 \alias{mrPerformancePlot}
-\title{Multiple Response Variable Selection}
+\title{Plot Model Performance Comparison}
 \usage{
 mrPerformancePlot(
   ModelPerf1 = NULL,
@@ -12,22 +12,24 @@ mrPerformancePlot(
 )
 }
 \arguments{
-\item{X}{Dataframe of predictors. (Optional)}
+\item{ModelPerf1}{Dataframe of model performance metrics for the first model to compare.}
 
-\item{X1}{Dataframe of additional predictors for predicting the response variables. (Optional)}
+\item{ModelPerf2}{Dataframe of model performance metrics for the second model to compare.}
 
-\item{Y}{Dataframe with response variables, where column names are the response variable names.}
+\item{mod_names}{Character vector of model names. Default is \code{c('combined', 'Xonly_model')}.}
+
+\item{mode}{Character string indicating whether the mode is 'classification' or 'regression'. Default is 'classification'.}
 }
 \value{
-A list where each element corresponds to a response variable, containing the Boruta result object for that response variable.
+A list containing:
+\item{p1}{A ggplot object for the boxplot of model performance metrics.}
+\item{p2}{A ggplot object for the barplot of differences in performance metrics.}
+\item{wide_df}{A dataframe with the wide format of model performance metrics and their differences.}
 }
 \description{
-Identify predictors not useful in the prediction of multiple response variables using the Boruta algorithm.
+Create visualizations to compare the performance of two models based on their performance metrics.
 }
 \examples{
-X <- data.frame(matrix(rnorm(1000), ncol = 10))
-X1 <- data.frame(matrix(rnorm(100), ncol = 5))
-Y <- data.frame(response1 = rnorm(100), response2 = rnorm(100))
-results <- mrVariableSelect(X, X1, Y)
+plots <- mrPerformancePlot(ModelPerf1 =ModelPerf_lm, ModelPerf2 = ModelPerf_rf, mod_names=c('linear_reg','rand_forest'), mode='regression' )
 
 }
