@@ -12,7 +12,6 @@ Depends: R (>= 3.5.0)
 Imports:
     ape,
     breakDown,
-    Boruta,
     DALEX,
     ggtext,
     ggsci,
