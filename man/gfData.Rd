@@ -3,24 +3,26 @@
 \docType{data}
 \name{gfData}
 \alias{gfData}
-\title{Regression data from Fitzpatrick et al 2014}
+\title{Regression data from Fitzpatrick et al. 2014}
 \format{
-An object of class \code{data.frame} with 31 rows and 666 columns.
+A data frame with the following columns:
+\describe{
+\item{gfData}{Proportion of individuals in each population with each SNP and bioclimatic data
+(bio_1, bio_2, bio_7, bio_10, bio_15, bio_18) as well as spatial MEMs.}
+}
 }
 \source{
-Fitzpatrick et al 2014 Ecology Letters doi: 10.1111/ele.12376
-\describe{
-\item{gfData} Propotion of individuals in each population with each SNP and bioclim data (bio_1, bio_2, bio_7. bio_10, bio_15, bio_18 as well as spatial MEMs)
+Fitzpatrick et al. 2014, Ecology Letters, doi: 10.1111/ele.12376
 }
 \usage{
 gfData
 }
 \description{
-Regression data from Fitzpatrick et al 2014
+Regression data from Fitzpatrick et al. 2014
 }
 \examples{
 \dontrun{
- gfdata
+  head(gfData)
 }
 }
 \keyword{datasets}

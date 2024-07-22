@@ -5,14 +5,16 @@
 \alias{Features}
 \title{Landscape and host feature (variable) data}
 \format{
-A data frame with 20 columns (features) and 19 rows (sampled bobcat locations):
+A data frame with 20 columns (features) and 19 rows (sampled bobcat locations). The columns include:
 \describe{
-\item{Grassland}{the proportion of grassland in a 5km radius of the sample location}
-\item{Shrub.Scrub}{the proportion of scrub in a 5km radius of the sample location}
-\item{Forest}{the proportion of forest in a 5km radius of the sample location}
+\item{Grassland}{Proportion of grassland in a 5km radius of the sample location.}
+\item{Shrub.Scrub}{Proportion of scrub in a 5km radius of the sample location.}
+\item{Forest}{Proportion of forest in a 5km radius of the sample location.}
+\item{...}{Other columns representing additional features, each with a description of the feature they represent.}
+}
 }
 \source{
-Fountain‐Jones, NM, Craft, ME, Funk, WC, et al. Urban landscapes can change virus gene flow and evolution in a fragmentation‐sensitive carnivore. Mol Ecol. 2017; 26: 6487– 6498. https://doi.org/10.1111/mec.14375
+Fountain‐Jones, NM, Craft, ME, Funk, WC, et al. Urban landscapes can change virus gene flow and evolution in a fragmentation‐sensitive carnivore. Mol Ecol. 2017; 26: 6487–6498. https://doi.org/10.1111/mec.14375
 }
 \usage{
 Features
@@ -22,7 +24,7 @@ Landscape and host feature (variable) data
 }
 \examples{
 \dontrun{
- Features
+  head(Features)
 }
 }
 \keyword{datasets}
