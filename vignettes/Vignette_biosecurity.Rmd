@@ -6,13 +6,12 @@ opengraph:
   image:
     src: 
 output:
-  github_document: default
   rmarkdown::html_vignette: default
+  github_document: default
   css: extra.css
 vignette: |
   %\VignetteIndexEntry{mrIML}
   %\VignetteEncoding{UTF-8}
-
 ---
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
@@ -23,21 +22,19 @@ knitr::opts_chunk$set(
 # General introduction
 
 MrIML is a R package allows users to generate and interpret multi-response models (i.e., joint species distribution models) leveraging advances in data science and machine learning. MrIML couples the tidymodel infrastructure developed by Max Kuhn and colleagues with model agnostic interpretable machine learning tools to gain insights into multiple response data such as. As such MrIML is flexible and easily extendable allowing users to construct everything from simple linear models to tree-based methods for each response using the same syntax and same way to compare predictive performance.In this vignette we will guide you through how to apply the MrIML framework to identify and benchmark biosecurity practices in veterinary disease. 
-This working example is built upon a classification framework. More information about this can be found in the "Classification working example". 
+
+This working example is built upon a classification framework. More information about this can be found in the "Classification working example". In this case we are predicting one response.
 
 ### Lets load that data
 This is a synthesized dataset to simulate PRRSV infection, biosecurity practices and farm demographics on swine farms across the united states. 
 Please note that the data included in this package is simulated, and is not a reflection of any real farm, company or state. 
+
 ```{r load packages, include=TRUE, message=FALSE, results='hide'}
 #other packages needed
-library(mrIML);library(parsnip);
-library(tidymodels); library(workflows);
-library(tidyverse); library(flashlight);
-library(devtools); library(DALEX); 
-library(plyr);library(vip);
-library(ggsci); library(ggrepel);
-library(breakDown); library(future.apply);
-library(janitor)
+pacman::p_load(
+  mrIML, parsnip, tidymodels, workflows, tidyverse, flashlight,
+  devtools, DALEX, plyr, vip, ggsci, ggrepel, breakDown, future.apply, janitor, tune
+)
 
 set.seed(130) #set the seed to ensure consistency
 data <- as.data.frame(mrIML::biosecurity_vignette_data)
@@ -59,9 +56,9 @@ Y <- as.data.frame(data %>% select(1))
 X <- data %>% select(-c(1, 44, 45)) #remove class, group and ID
 model1 <- #model used to generate yhat
   #specify that the model is a random forest
-  rand_forest(trees = 100, mtry = tune(), min_n = tune(), mode = "classification") %>% 
-  #select the engine/package that underlies the model
-  set_engine("ranger", importance = c("impurity","impurity_corrected")) %>%
+  rand_forest(trees = 1000, mtry = tune(), min_n = tune(), mode = "classification") %>% 
+  set_engine("randomForest") %>% 
+  # #select the engine/package that underlies the model
   #must be set to classification for classification problems
   set_mode("classification")
 ```
@@ -75,6 +72,8 @@ for (i in 1:42) {
   names(data)[names(data) == X_names[i]] <- long_names[i]
   }
 names(X) <- as.character(names(X))
+
+X <-X[1:4]
 ```
 
 ###Parallel processing
@@ -98,7 +97,9 @@ yhats <- mrIMLpredicts(X=X, #features/predictors
                        Model=model1, #specify your model
                        balance_data='no', #chose how to balance your data 
                        mode='classification', #chose your mode (classification versus regression)
-                       seed = 120) #set seed
+                       seed = 123,#set seed
+                       racing=T) #turn off racing autotuning for now
+
 ```
 We can then assess our model performance using a number of performance metrics including area under the curve (AUC), sensitivity, specificity and Matthews correlation coefficient (MCC).
 ```{r performance, include=TRUE}
@@ -109,14 +110,27 @@ ModelPerf[[2]]#overall predictive performance. r2 for regression and MCC for cla
 
 ### Benchmarking: global importance
 Here we can look at the variable importance. This is the dependence between our outcome and biosecurity variables. 
-```{r variable importance, message=FALSE, error=FALSE, fig.height=9, fig.width=13, prompt=FALSE, }
+```{r variable importance, message=FALSE, error=FALSE, fig.height=9, fig.width=13, prompt=FALSE, eval = FALSE}
 #calculate variable importance
-VI <- mrVip(yhats=yhats, X=X)
+#still got a bug here to do with the PCA
+VI <- mrvip(yhats,  mrBootstrap_obj = NULL,
+  X = X,
+  Y = Y,
+  mode = 'classification',
+  threshold = 0.0,
+  global_top_var = 1,
+  local_top_var = 1,
+  ModelPerf = ModelPerf,
+  plot.pca =F
+)
+
+bs_impVI[[3]] #importance
+
 #plot cumulative variable importance 
-plot_vi_biosecurity(VI=VI, Y=Y, X=X,
-        modelPerf=ModelPerf,
-        cutoff= 0.6,
-        plot.pca='no') #Follow instructions in console
+# plot_vi_biosecurity(VI=VI, Y=Y, X=X,
+#         modelPerf=ModelPerf,
+#         cutoff= 0.6,
+#         plot.pca='no') #Follow instructions in console
 ```
 We can explore further and assess the partial dependence of each variable. Here we isolate the dependence of one variable and visualize how this dependence changes over different observed values.
 ```{r pdp, warning=FALSE, message=FALSE}
@@ -142,10 +156,15 @@ plot(light_profile(fl, v = "Premises_in_3_miles"))
 
 ### Benchmarking: predicted risk
 The following function allows you to visualize and compare predicted risk among and within groups 
-```{r, include=TRUE, warning=FALSE, message=FALSE, fig.width=13}
+```{r, include=TRUE, warning=FALSE, message=FALSE, eval=F, fig.width=13}
 #apply the trained model to the entire data set to provide risk of predicted outbreak
 fit_bio <- pull_workflow_fit(yhats[[1]]$mod1_k)
-preds_pos <- predict(fit_bio, data, "prob")
+
+predict(fit_bio, X[, colnames(yhats[[i]]$data[-1]), drop = FALSE],
+          type = "prob"
+        )$`.pred_1`
+
+preds_pos <- predict(fit_bio, X, "prob") #this doesnt work
 data$Predicted <- preds_pos$.pred_1
 #process data ready for the function
 data$Class <- as.factor(data$Class)
@@ -157,14 +176,14 @@ data1 <- data
 #plot among group comparison of predicted risk
 mrBenchmark(data = "data1", Y = "Class", pred = "Predicted", group = "Group", type = "external") 
 ```
-```{r, include=TRUE, warning=FALSE, message=FALSE}
+```{r, include=TRUE, warning=FALSE, message=FALSE, eval=FALSE}
 #plot within group comparison of predicted risk
 mrBenchmark(data = "data1", Y = "Class", pred = "Predicted", group = "Group", label_by = "ID", type = "internal") 
 ```
 
 ### Benchmarking: local importance 
 To investigate and interpret the contribution of variables at an individual level, we must use a local explanation method. Here we implement a local breakDown explainer. `mrLocalExplainer` produces both aggregated and individual results of variable contribution. Variables with a phi > 0 contribute to an increase in predicted PRRSV outbreak risk, while variables with a phi < 0 contribute to a decrease in predicted outbreak risk. 
-```{r, include=TRUE, warning=FALSE, message=FALSE, fig.height=9, fig.width=15}
+```{r, include=TRUE, warning=FALSE, message=FALSE, fig.height=9, fig.width=15, eval=FALSE}
 #Use this function to implement the local explainer 
 data<-data%>%
   mutate(Class = revalue(Class,
@@ -175,7 +194,7 @@ mrLocalExplainer(X = X1, Model = yhats, Y = data$Class)
 ```
 
 Individual plots are produced in the list object `LE_indiv_plots`. Each plot corresponds to a single farm. An example of a positive farm and a negative farm are shown here. 
-```{r, include=TRUE, warning=FALSE, message=FALSE, fig.height=9, fig.width=13}
+```{r, include=TRUE, warning=FALSE, message=FALSE, fig.height=9, fig.width=13, eval=F}
 LE_indiv_plots[1]
 LE_indiv_plots[2]
 ```

@@ -46,26 +46,26 @@ check_row_ids(data_frames)
 ```
 
 
-Once you have mad dsure everything matches, there are three key things to consider first when MrIML models aren't working.
+Once you have made sure everything matches, there are three key things to consider first when MrIML models aren't working.
 
 1. Are there NAs in the data? If so, many of the algorithms will give the following error:
 
 Warning: All models failed. Run `show_notes(.Last.tune.result)` for more
 #> information.
 
-To fix this, you can either remove all the rows with missing values or impute them using packages such as missing forests.
+To fix this, you can either remove all the rows with missing values or impute them using packages such as missing forests. Ensure that you do not include your response variable (to stop data leakage).
 
-```{r, run=F}
+```{r, eval=FALSE}
 
 library(missForest)
 
 #import data
 
-envData_final_noNA <- missForest(envData_final_predictors, variablewise=T) #default values have worked fine previously
+X_noNAmissF <- missForest(X, variablewise=T) #default values have worked fine previously
 
-envData_final_noNA$OOBerror #all really low mse
+X$OOBerror #make sure they have low mse.
 
-envData_final_noNA <- envData_final_noNA$ximp
+X <- X_noNAmissF$ximp #assing X the data without missing values
 
 ```
 
@@ -75,7 +75,17 @@ A | warning: No control observations were detected in `truth` with control level
 
 To fix this you can increase the ammount of data in the testing set by increasing the 'prop' in MrIMLpredicts.
 
-```{r}
+Also, for small data sets, you can see the error associated with the racing tuning algorithm:
+
+2dpo(.M2sym(from)) : 
+  not a positive definite matrix (and positive semidefiniteness is not checked)
+
+In this case, go back to standar grid based autotuning by setting ' racing = F'
+
+```{r, eval=FALSE}
+
+yhats_rf <- mrIMLpredicts(X=X,Y=Y, Model=model_rf, balance_data='no', mode='classification',k=5,  tune_grid_size=5, 
+                          seed = 123, racing=F )
 
 ```
 

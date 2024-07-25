@@ -6,8 +6,8 @@ opengraph:
   image:
     src: 
 output:
-  github_document: default
   rmarkdown::html_vignette: default
+  github_document: default
   css: extra.css
 vignette: |
   %\VignetteIndexEntry{mrIML}
@@ -42,20 +42,18 @@ We focus on the adaptive SNP loci from GIGANTEA-5 (GI5) gene that has known link
 library(mrIML)
 
 #other package we need:
-library(vip); library(tidymodels);
-library(randomForest);library(gbm);
-library(tidyverse);library(parallel); 
-library(doParallel); library(themis);
-library(viridis); library(janitor);
-library(hrbrthemes);  library(vegan);
-library(flashlight);library(iml);
-library(ggrepel); library(ranger);
-library(future.apply); library(plyr)
 
-#library(LEA) 
+pacman::p_load(
+  vip, tidymodels, randomForest, gbm, tidyverse, parallel,
+  doParallel, themis, viridis, janitor, hrbrthemes, vegan,
+  flashlight, iml, ggrepel, ranger, future.apply, plyr, gridExtra, cowplot
+)
+
 # read in data file with minor allele freqs & env/space variables
 envGF <- mrIML::gfData[,3:13] # get climate & MEM variables
-X <- envGF #for simplicity
+X <- envGF %>% 
+  mutate_if(is.integer, as.numeric)
+ #for simplicity
 
 # build individual SNP datasets
 SNPs_ref <- mrIML::gfData[,grep("REFERENCE",colnames(mrIML::gfData))] # reference
@@ -69,7 +67,7 @@ Y <- GI5 #for this example we are going to focus on the adaptive SNPs in the GI5
 
 MrIML provides uses the flexible future apply functionality to set up multi-core processing. In the example below, we set up a cluster using 4 cores. If you don't set up a cluster, the default settings will be used and the analysis will run sequentially.
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 # detectCores() #check how many cores you have available. We suggest keeping one core free for internet browsing etc.
 
 cl <- parallel::makeCluster(4)
@@ -102,11 +100,9 @@ Model performance can be examined the same way as in the classification example,
 
 ```{r}
 ModelPerf_lm <- mrIMLperformance(yhats_lm,  Model=model_lm, Y=Y, mode='regression')
-ModelPerf[[1]] #predictive performance for individual responses. 
-ModelPerf[[2]]#overall average r2 
+ModelPerf_lm[[1]] #predictive performance for individual responses. 
+ModelPerf_lm[[2]]#overall average r2 
 
-p1 <- as.data.frame(ModelPerf[[1]])
-#save as a dataframe to compare to other models.
 ```
 
 Lets compare the performance of linear models to that of random forests. Random forests is the computational engine in gradient forests. Notice for random forests we have two hyperparameters to tune; mtry (number of features to randomly include at each split) and min_n (the minimum number of data points in a node that are required for the node to be split further). The syntax 'tune()' acts a placeholder to tell MrIML to tune those hyperparamters across a grid of values (defined in MRIML predicts 'tune_grid_size' argument). Different algorithms will have different hyperparameters.See https://www.tidymodels.org/find/parsnip/ for parameter details. Note that large grid sizes (>10) for algorithms with lots of hyperparameters (such as extreme gradient boosting) will be computationally demanding. In this case we choose a grid size of 5.
@@ -125,8 +121,11 @@ ModelPerf_rf <- mrIMLperformance(yhats_rf, Model=model_rf, Y, mode='regression')
 ModelPerf_rf[[1]] #predictive performance for individual responses. 
 ModelPerf_rf[[2]]#overall average r2 
 
-# mrPerformancePlot(ModelPerf1 =ModelPerf_lm, ModelPerf2 = ModelPerf_rf,  ModelPerf3=NULL, mod_names=c('linear_model','rf_model') ) 
+#easier to see with plots
+plots <- mrPerformancePlot(ModelPerf1 =ModelPerf_lm, ModelPerf2 = ModelPerf_rf, mod_names=c('linear_reg','rand_forest'), mode='regression' ) 
 
+plots[[1]]
+plots[[2]]
 
 ```
 
@@ -135,20 +134,25 @@ ModelPerf_rf[[2]]#overall average r2
 You can see that predictive performance is actually slightly less using random forests (overall R2 = 0.12) but for some loci random forests does better than our linear models and sometimes worse. Which to choose? Generally simpler models are preferred (the linear model in this case) but it depends on how important to think non-linear response are. In future versions of MrIML we will implement ensemble models that will overcome this issue. For the time-being we will have a look at variable importance for the random forest based model.
 
 ```{r, message = FALSE, warning = FALSE }
-VI <- mrVip(yhats=yhats_rf, X=X, Y=Y) 
 
-plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf,  cutoff= 0.1, mode='regression')
+VI <- mrvip(yhats=yhats_rf ,mrBootstrap_obj = NULL, X=X, Y=Y, mode='regression', threshold = 0.1, global_top_var = 10,local_top_var = 5, taxa='CANDIDATE_GI5_9585', ModelPerf=ModelPerf_rf) 
+
+VI[[3]] #Importance plot
+VI[[4]] #PCA
 
 ```
 
 Cutoff reduces the number of individual SNP plots presented in the second plot and 'plot.pca='yes'' enables the variable importance scores to be analysed using principal component analysis (PCA) where SNPs closer in PCA space are shaped by similar combinations of features. You can see that bio_18 (summer precipitation), bio_1 (mean annual temperature) and bio_10 (mean summer temperature) are the most important features overall. Summer precipitation was not as important in Fitzpatrick et al but otherwise these results are similar. The second plot shows the individual models (with an r2 > 0.1, for your data you will need to play around with this threshold) and you can see for some SNPs bio_1 is more important whereas for another MEM.1 is more prominent.The PCA shows that candidate 5119, 9287, 5033 and 108  are shaped similarly by the features we included and may, for example, be product of linked selection.
 
+Note that you can also calculate bootstraps for importance scores (and partial dependencies), but this functionality is still under development for regression models.
+
 Now we can explore the model further my plotting the relationships between our SNPs and a feature in our set. Lets choose bio_1 (mean annual temperature) and plot the individual and global (average of all SNPs) partial dependency (PD) plots. 
 
 
-```{r warning=FALSE}
+```{r, warning=FALSE}
 
-flashlightObj <- mrFlashlight(yhats_rf, X, Y, response = "multi", mode='regression')
+#source('~/MrIML/mrIML/R/mrFlashlight.R')
+flashlightObj <- mrFlashlight(yhats=yhats_rf, X=X, Y=Y, response = "multi", mode="regression")
 
 profileData_pd <- light_profile(flashlightObj, v = "bio_1") #partial dependencies
 
@@ -168,35 +172,7 @@ mrProfileplot(profileData_ale , sdthresh =0.01)
 
 The effect of mean annual temperature on SNP turnover is not as distinct in the global ALE plot. This may mean that correlations between features may be important for the predictions.
 
-MrIML has easy to use functionality that can can quantify interactions between features. Note that this can take a while to compute.
-
-```{r warning=FALSE }
-interactions <-mrInteractions(yhats_rf, X, Y,  mode='regression') #this is computationally intensive so multicores are needed.
-
-mrPlot_interactions(interactions, X,Y, top_ranking = 2, top_response=2) #can increase the number of interactions/SNPs ('responses') shown
-
-#Make sure you save your results
-#save(interactions, 'Fitzpatrick2016interactions')
-
-#load('Fitzpatrick2016interactions')
-
-```
-
-The first plot reveals that the strongest global interaction is between mean annual (bio_1) temperature and summer precipitation (bio_1/bio_15) but the interactions between other bioclim features are also relatively strong. Mean temperature interacts to some degree with spatial patterns as well (MEMs) to shape SNP turnover. Note that importance is all relative. the second plot shows that the predictions of candidate 33 are most effected by interacting features and the third plot shows that the interaction is between mean annual temperature and altitude.
-
-We have also provided functionality to visualize the impact of interacting feature pairs using ALEs or PDs. First we need to convert the mrIML predictor object into a form suitable for the IML package and then 2D plots can be constructed. We strongly recommend using ALEs as they a more reliable method for quantifying interactions (see Molnar (2018) for more details.
-
-```{r warning=FALSE }
-mrIMLconverts_list_reg <- MrIMLconverts(yhats=yhats_rf, X=X, mode='regression')
-
-featureA = 'bio_1'
-featureB = 'bio_10'
-
-p2D <- mrProfile2D (mrIMLconverts_list_reg, featureA,featureB,  mode='regression',grid.size=30, method = "ale")
-
-plot(p2D) +theme_bw()
-```
-
+MrIML has easy to use functionality that can can quantify interactions between features. Note that this can take a while to compute and will be the topic of a future work.
 
 This is touching only the surface of what is possible in terms of interrogating this model. Both Flashlight and IML packages have a wide variety of tools that can offer novel insights into how these models perform. See https://cran.r-project.org/web/packages/flashlight/vignettes/flashlight.html and https://cran.r-project.org/web/packages/iml/vignettes/intro.html for other options.
 

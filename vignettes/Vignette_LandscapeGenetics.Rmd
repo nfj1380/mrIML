@@ -25,11 +25,12 @@ Features (a.k.a predictor variables) with missing data can be removed or interpo
 library(mrIML)
 
 #other package we need:
-library(vip); library(tidymodels); library(randomForest);  library(caret); library(gbm);
-library(tidyverse);library(parallel); library(doParallel); library(themis); library(viridis); library(janitor); library(hrbrthemes); library(xgboost); library(vegan);library(flashlight);
-library(ggrepel); library(iml); library(plyr);
-library(future.apply)
-
+pacman:: p_load(
+  vip, tidymodels, randomForest, caret, gbm,
+  tidyverse, parallel, doParallel, themis, viridis,
+  janitor, hrbrthemes, xgboost, vegan, flashlight,
+  ggrepel, iml, plyr, future.apply, gridExtra, cowplot, hstats
+)
 #library(LEA) 
 #if (!requireNamespace("BiocManager", quietly = TRUE))
 # install.packages("BiocManager") #LEA requires Biocmanager
@@ -88,9 +89,9 @@ model_rf <-
 
 ## detectCores() #check how many cores you have available. We suggest keeping one core free for internet browsing etc.
 
-##cl <- parallel::makeCluster(4)
+cl <- parallel::makeCluster(4)
 
-##plan(cluster, workers=cl)
+plan(cluster, workers=cl)
 ```
 
 Now we can run the model. Hyper parameter tuning (for algorithms that have hyper parameters) is done automatically by testing how model performance changes across a random grid of 10 parameters and the best performing combination is kept. The only choice to make is to either down/up sample data or leave it as is. As our viral data set is small, we will not do any up or down-sampling (option 'no'). We could also implement parallel processing for larger data sets. 
@@ -98,8 +99,8 @@ Now we can run the model. Hyper parameter tuning (for algorithms that have hyper
 ```{r, message = FALSE, warning = FALSE, results='hide'}
 
 
-yhats_rf <- mrIMLpredicts(X=X,Y=Y, Model=model_rf, balance_data='no', mode='classification',  tune_grid_size=5, 
-                          seed = sample.int(1e8, 1) ) ## in MrTidymodels. Balanced data= up upsamples and down downsampled to create a balanced set
+yhats_rf <- mrIMLpredicts(X=X,Y=Y, Model=model_rf, balance_data='no', mode='classification',k=5,  tune_grid_size=5, 
+                          seed = 123, racing=F ) ## in MrTidymodels. Balanced data= up upsamples and down downsampled to create a balanced set
 
 # save the model
 #save(yhats, file='rf_model')
@@ -123,30 +124,38 @@ model_glm <- #model used to generate yhat
   set_engine("glm") %>%
   set_mode("classification") 
 
-yhats_glm <- mrIMLpredicts(X=X,Y=Y, Model=model_glm, balance_data='no', mode='classification',  tune_grid_size=5, seed = sample.int(1e8, 1) )
+yhats_glm <- mrIMLpredicts(X=X,Y=Y, Model=model_glm, balance_data='no', mode='classification', k=5,  tune_grid_size=1, seed = sample.int(1e8, 1), racing=F )#no need for a tuning grid - no paramters to tune for logistic regression
 
 #save(yhats, file='logreg_model')
 ModelPerf_glm <- mrIMLperformance(yhats_glm, Model=model_glm, Y=Y, mode='classification') #
 ModelPerf_glm[[2]]
+
+plots <- mrPerformancePlot(ModelPerf1 =ModelPerf_glm, ModelPerf2 = ModelPerf_rf, mod_names=c('linear_reg','rand_forest'), mode='classification' ) 
+plots
+
 ```
 
-You can see that the random forests model outperforms the logistic regression in this case.  Once we are happy with the underlying model we can then dive in to see how this model predicts the SNPs. First we can check out variable importance.The first plot is the global importance (what features shape genetic change overall), the second shows the individual models (with an optional importance MCC threshold 'cutoff' value ).
+You can see that the random forests model outperforms the logistic regression in this case.  Once we are happy with the underlying model we can then dive in to see how this model predicts the SNPs. First we can check out variable importance.The first plot is the global importance (what features shape genetic change overall), the second shows the individual models (with an optional importance MCC threshold 'cutoff' value ). The next plot is a PCA plot of the importance scores to highlight SNPs that are potential outliers (predictions are shaped differently by landscape varables).
 
 ```{r, message = FALSE, warning = FALSE}
 
-VI <- mrVip(yhats_rf, X=X) 
+#bootstrap not working on this small data set.
 
-# plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf_rf, cutoff= 0, mode='classification') #the cutoff reduces the number of individual models printed in the second plot. 
+bs_impVI <- mrvip(
+  mrBootstrap_obj = NULL,
+  yhats = yhats_rf,
+  X = X,
+  Y = Y,
+  mode = 'classification',
+  threshold = 0.0,
+  global_top_var = 10,
+  local_top_var = 5,
+  taxa = 'pol_132',
+  ModelPerf = ModelPerf_rf 
+)
 
-```
-
-If your features can be grouped together this can make it easier to interpret variable importance plots.
-
-```{r, eval = FALSE}
-#for example
-groupCov <- c(rep ("Host_characteristics", 1),rep("Urbanisation", 3), rep("Vegetation", 2), rep("Urbanisation",1), rep("Spatial", 2), rep('Host_relatedness', 6),rep ("Host_characteristics", 1),rep("Vegetation", 2), rep("Urbanisation",1))
-
-# plot_vi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf_rf, groupCov=groupCov, cutoff= 0.5)
+bs_impVI[[3]] #importance
+bs_impVI[[4]] #PCA
 
 ```
 
@@ -167,6 +176,8 @@ We also wrap some flashlight functionality to visualize the marginal (i.e. parti
 
 When running this code yourself, you need to change 'v' to the variable of interest within your Y dataset.In this case we are looking at how grassland shapes genetic turnover.
 
+You could easily compare the plots generated above from our random forest model with the logistic regression model we also calculated.
+
 ```{r, message = FALSE, warning = FALSE}
 profileData_pd <- light_profile(mfl, v = "Grassland") #partial dependencies
 profileData_ale <- light_profile(mfl, v = "Grassland", type = "ale") #acumulated local effects
@@ -177,31 +188,18 @@ mrProfileplot(profileData_ale , sdthresh =0.05)
 
 ```
 
-Finally, we can assess how features interact overall to shape genetic change. Be warned this is memory intensive. Future updates to this package will enable users to visualize these interactions and explore them in more detail using 2D ALE plots for example.
+Finally, we can assess how features interact overall to shape genetic change.
 
 ```{r, message = FALSE, warning = FALSE}
 
-interactions <-mrInteractions(yhats= yhats_rf, X=X, Y=Y, mode='classification') #this is computationally intensive so multicores are needed. 
+interactions <-mrInteractions(yhats= yhats_rf, X=X, Y=Y, num_bootstrap = 10, feature = 'env_41', top.int = 5) 
 
-mrPlot_interactions(interactions, X=X,Y=Y, top_ranking = 3, top_response=3)
+interactions[[1]]
+interactions[[2]]
+
 
 ```
-
-You could easily compare the plots generated above from our random forest model with the logistic regression model we also calculated.
-
-You can visualize detected interactions by converting the MrIML predicts object into a form suitable for the R package IML (https://cran.r-project.org/web/packages/iml/vignettes/intro.html) using 'MrIMLconverts'. You can plot how two features interact to shape genetic change using 'mrProfile2D'. In effect, this heatmap shows the average prediction of the interacting features across loci/response variables.  ALEs or partial dependencies can be used  - but we highly recommend using ALEs for the most robust results (see Molnar (2019) for more detail)
-
-```{r}
-mrIMLconverts_list <- MrIMLconverts(yhats=yhats_glm,X=X, mode='classification')
-
-featureA = 'Forest'
-featureB = 'Grassland'
-
-p2d <- mrProfile2D (mrIMLconverts_list, featureA, 
-                featureB,  mode='classification',
-                grid.size=30, method = 'ale')
-plot(p2d) +theme_bw()
-```
+With this small data set with three predictors, interaction importance isn't particularly strong (H values > 0.1 on the y axis would indicate that interactions are somewhat important). If you rerun this with the complete set of predictors X there are many more. Also note, that 10 bootstraps is not generally enough -  particularly for small datsets where stochasticity plays more of a role - at least 100 is recommended. 
 
 This is just an example of the tools can be applied to better interpret multi-response models and in turn gain insights into how landscape impacts genetic change. We've demonstrated that this package is modular  and flexible, allowing future work on 'tidymodels' and interpretable machine learning to easily be incorporated. The predictions from these models, for example,  can be used to identify individual SNPs that may be adaptive assess gene flow across space (future updates) or to help better formulate probabilistic models such as generalized dissimilarity models (GDMs).    
 
