@@ -46,7 +46,7 @@
 
 mrvip <- function(yhats = NULL, mrBootstrap_obj = NULL,  X=X, X1=NULL, Y=Y,
                   mode = 'classification', threshold = 0.1, global_top_var = 10,
-                  local_top_var = 5, taxa=NULL, ModelPerf=ModelPerf) {
+                  local_top_var = 5, taxa=NULL, ModelPerf=ModelPerf, plot.pca =T) {
   
 
     # If bootstrap_obj is NULL, treat it as a predictive model (yhats)
@@ -412,6 +412,10 @@ mrvip <- function(yhats = NULL, mrBootstrap_obj = NULL,  X=X, X1=NULL, Y=Y,
     #Importance PCA plot. Responses with similar importance scores group together
     #------------------------------------------------------------------    
  
+
+      
+      if (plot.pca) {
+   
   vi_table_wide <- vi_table %>% 
     pivot_wider(
                 id_cols = 'var',
@@ -447,7 +451,7 @@ mrvip <- function(yhats = NULL, mrBootstrap_obj = NULL,  X=X, X1=NULL, Y=Y,
     a.pca <-  t(vi_table_wide) %>% 
       
       prcomp() # do PCA
-    
+    print('here')
     #-----------------------------------------------------------------------------------------
     #outlier detection
     
@@ -487,6 +491,15 @@ mrvip <- function(yhats = NULL, mrBootstrap_obj = NULL,  X=X, X1=NULL, Y=Y,
     
     combined_plot_PCA <- plot_grid( p3, p4, rel_heights = c(1, 0.5), labels = "auto")
     
+ }
+      else {
+
+        combined_plot_PCA <- NULL
+        outLiers  <- NULL
+        pca_val <- NULL
+        scores <- NULL
+      }
+
     return(list(vi_df,vi_table_wide, combined_plot,  combined_plot_PCA, outLiers=outL,  pca_val=pca_val, scores=uscores))
   }
 

@@ -75,7 +75,7 @@ A | warning: No control observations were detected in `truth` with control level
 
 To fix this you can increase the ammount of data in the testing set by increasing the 'prop' in MrIMLpredicts.
 
-Also, for small data sets, you can see the error associated with the racing tuning algorithm:
+Also, for small data sets, you can see the errodata:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAWElEQVR42mNgGPTAxsZmJsVqQApgmGw1yApwKcQiT7phRBuCzzCSDSHGMKINIeDNmWQlA2IigKJwIssQkHdINgxfmBBtGDEBS3KCxBc7pMQgMYE5c/AXPwAwSX4lV3pTWwAAAABJRU5ErkJggg==r associated with the racing tuning algorithm:
 
 2dpo(.M2sym(from)) : 
   not a positive definite matrix (and positive semidefiniteness is not checked)
