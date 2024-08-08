@@ -49,19 +49,12 @@ alone can be substantially computationally demanding depending on the number
 of outcomes you want to test. The first step to using the package is to load it as follows.
 
 ```{r, message = FALSE, message = FALSE, warning = FALSE, include=FALSE}
-library(mrIML)
-# to load
-library(vip); library(tidymodels);
-library(randomForest); library(caret);
-library(gbm); library(tidyverse);
-library(parallel); library(doParallel);
-library(themis); library(viridis);
-library(janitor); library(hrbrthemes);
-library(xgboost); library(vegan);
-library(flashlight);library(ggrepel);
-library(iml); library(plyr);
-library(future.apply)
-library(cowplot)
+pacman:: p_load(
+  vip, tidymodels, randomForest, caret, gbm,
+  tidyverse, parallel, doParallel, themis, viridis,
+  janitor, hrbrthemes, xgboost, vegan, flashlight,
+  ggrepel, iml, plyr, future.apply, gridExtra, cowplot, hstats
+)
 ```
 
 
@@ -70,11 +63,9 @@ Now all the data is loaded and ready to go we can formulate the model using tidy
 
 
 ```{r }
-model1 <- 
-  rand_forest(trees = 10, mode = "classification", 
-              mtry = tune(), 
-              min_n = tune()) %>% #100 trees are set for brevity
-              set_engine("randomForest")
+model_rf <- 
+  rand_forest(trees = 100, mode = "classification", mtry = tune(), min_n = tune()) %>% #100 trees are set for brevity. Aim to start with 1000
+  set_engine("randomForest")
 
 ```
  
@@ -109,10 +100,7 @@ plan(cluster,
 ```
 
 ``` {r message = FALSE, warning = FALSE}
-#Define set of features
-fData <- filterRareCommon (Responsedata,
-                           lower=0.4,
-                           higher=0.7) 
+
 Y <- fData #For simplicity when comparing
 #Define set the outcomes of interest
 str(Features) 
@@ -123,17 +111,16 @@ X <- FeaturesnoNA #For simplicity
 X <- FeaturesnoNA[c(1:3)] #Three features only
 
 
-yhats <- mrIMLpredicts(X=X, #Features/predictors 
-                       Y=Y, #Response data
-                       Model=model1, #Specify your model
-                       balance_data='no', #Chose how to balance your data 
-                       k=5, 
-                       racing = F,
-                       mode='classification', #Chose your mode (classification versus regression)
-                       seed = 120) #Set seed
+yhats_rf <- mrIMLpredicts(X=X,Y=Y, #specify which data to use
+                          Model=model_rf, #what model
+                          balance_data='no', #balance the data or not 
+                          mode='classification', #classification or regression
+                          k=5,  tune_grid_size=5, #tuning parameters
+                          
+                          seed = 123, racing=F )  #Set seed
 
-ModelPerf <- mrIMLperformance(yhats=yhats,
-                              Model=model1,
+ModelPerf <- mrIMLperformance(yhats=yhats_rf,
+                              Model=model_rf,
                               Y=Y, mode='classification')
 ModelPerf[[1]] #Predictive performance for individual responses 
 ModelPerf[[2]]#Overall predictive performance. r2 for regression and MCC for classification
@@ -142,12 +129,21 @@ ModelPerf[[2]]#Overall predictive performance. r2 for regression and MCC for cla
 
 ## Plotting
 ```{r message = FALSE, warning = FALSE}
-VI <- mrVip(yhats, X=X, Y=Y) 
+bs_impVI <- mrvip(
+  mrBootstrap_obj = NULL,
+  yhats = yhats_rf,
+  X = X,
+  Y = Y,
+  mode = 'classification',
+  threshold = 0.0,
+  global_top_var = 10,
+  local_top_var = 5,
+  taxa = 'pol_132',
+  ModelPerf = ModelPerf 
+)
 
-VI_plot <- interpret_Mrvi(VI=VI,  X=X,Y=Y, modelPerf=ModelPerf, cutoff= 0.0, mode='classification')
-
-VI_plot[[4]]#plot
-VI_plot[[1]] #list of outliers
+bs_impVI[[3]] #importance
+bs_impVI[[4]] #PCA
 ```
 
 ## Effect of a feature on genetic change
@@ -156,7 +152,7 @@ We also wrap some flashlight functionality to visualize the marginal (i.e. parti
 
 
 ```{r message = FALSE, warning = FALSE}
-flashlightObj <- mrFlashlight(yhats,
+flashlightObj <- mrFlashlight(yhats_rf,
                               X=X,
                               Y=Y,
                               response = "single",
