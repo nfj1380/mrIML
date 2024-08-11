@@ -13,7 +13,13 @@ vignette: |
   %\VignetteIndexEntry{mrIML}
   %\VignetteEncoding{UTF-8}
 ---
-
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+    fig.width = 8, fig.height = 6, fig.align = "center",
+  comment = "#>"
+)
+```
 ## Introduction to mrIML 
 
 MrIML is a R package allows users to generate and interpret multi-response models (i.e., joint species distribution models) leveraging advances in data science and machine learning. MrIML couples the tidymodel infrastructure developed by Max Kuhn and colleagues with model agnostic interpretable machine learning tools to gain insights into multiple response data such as. As such mrIML is flexible and easily extendable allowing users to construct everything from simple linear models to tree-based methods for each response using the same syntax and same way to compare predictive performance. In this vignette we will guide you through how to apply this package to landscape genetics problems but keep in mind any multiple-response data can be interrogated using this package (e.g., species or OTU presence/absence data).
@@ -39,6 +45,7 @@ library(hrbrthemes);library(vegan);
 library(flashlight);library(ggrepel);
 library(iml); library(plyr);library(cowplot)
 library(future.apply); library(hstats)
+library(gridExtra)
 #library(LEA) 
 #if (!requireNamespace("BiocManager", quietly = TRUE))
 # install.packages("BiocManager") #LEA requires Biocmanager
@@ -71,8 +78,8 @@ Y <- fData #for simplicity when comparing
 If your feature data consists of landscape resistance data generated from Circuitscape or similar, we provide functionality that can extract each surface from a folder and generate resistance components that can be used in these models (using principal coordinate analysis). This data can be easily merged if needs be with other non-matrix data (e.g., age/sex). There was no resistance surfaces here, but this is what the code looks like:
 
 ```{r, eval = FALSE, warning = FALSE}
-R <- resist_components(filename = 'location of pairwise matrices', p_val=0.01 ) # p values are used here to filter resistance components that aren't correlated with th original pairwise matrix.
-X<- cbind(R,X)
+#R <- resist_components(filename = 'location of pairwise matrices', p_val=0.01 ) # p values are used here to filter resistance components that aren't correlated with th original pairwise matrix.
+#X<- cbind(R,X)
 ```
 
 Now all the data is loaded and ready to go we can formulate the model using tidymodel syntax. In this case we have binary data (SNP presence/absence at each loci) but the data could also be counts or continuous (the set_model argument would be "regression" instead of "classification"). The user can specify any model from the tidymodel universe as 'model 1' (see https://www.tidymodels.org/find/ for details). However, we have done most of our testing on random forests (rf), xgr boost and glms (generalized linear models). Here we will specify a random forest classification model as the model applied to each response.
@@ -81,11 +88,6 @@ Now all the data is loaded and ready to go we can formulate the model using tidy
 model_rf <- 
   rand_forest(trees = 100, mode = "classification", mtry = tune(), min_n = tune()) %>% #100 trees are set for brevity. Aim to start with 1000
   set_engine("randomForest")
-#we are tuning mtry and min_n
-#set up parallel processing. If you don't add the code below it will still work but just on one core.
-## detectCores() #check how many cores you have available. We suggest keeping one core free for internet browsing etc.
-##cl <- parallel::makeCluster(4)
-##plan(cluster, workers=cl)
 ```
 
 Now we can run the model. Hyper parameter tuning (for algorithms that have hyper parameters) is done automatically by testing how model performance changes across a random grid of 10 parameters and the best performing combination is kept. The only choice to make is to either down/up sample data or leave it as is. As our viral data set is small, we will not do any up or down-sampling (option 'no'). We could also implement parallel processing for larger data sets. 
@@ -101,7 +103,7 @@ yhats_rf <- mrIMLpredicts(X=X,
                            balance_data='no',
                            mode='classification',
                           tune_grid_size=5, k=5,
-                          seed = sample.int(1e8, 1), racing=F ) ## in MrTidymodels. Balanced 
+                          seed = 123, racing=F ) ## in MrTidymodels. Balanced 
 
 ```
 
@@ -121,7 +123,7 @@ model_glm <- #model used to generate yhat
   set_engine("glm") %>%
   set_mode("classification") 
 
-yhats_glm <- mrIMLpredicts(X=X,Y=Y, Model=model_glm, balance_data='no', mode='classification',  tune_grid_size=5, seed = sample.int(1e8, 1), racing=F, k=5 )
+yhats_glm <- mrIMLpredicts(X=X,Y=Y, Model=model_glm, balance_data='no', mode='classification',  tune_grid_size=5, seed =123, racing=F, k=5 )
 
 #save(yhats, file='logreg_model')
 ModelPerf_glm <- mrIMLperformance(yhats_glm, Model=model_glm, Y=Y, mode='classification') #
@@ -132,14 +134,22 @@ You can see that the random forests model outperforms the logistic regression in
 We also provide functionality to assess outlier SNPs utilizing a PCA on importance scores. We can see only one outlier was detected on PC3 (env24) indicating that this SNP was bets predicted by a different set of predictors. Looking at the indiivudal importance plots shows that, unlike the other SNPs, forest cover was the best predictor for env24. See the regression vignette for more details.
 
 ```{r, message = FALSE, warning = FALSE}
-VI <- mrVip(yhats_glm, X=X, Y=Y) 
+glm_impVI <- mrvip(
+  yhats = yhats_glm,
+  mrBootstrap_obj = NULL,
+  X = X,
+  X1 = NULL,
+  Y = Y,
+  mode = "classification",
+  threshold = 0.1,
+  global_top_var = 10,
+  local_top_var = 5,
+  taxa = NULL,
+  ModelPerf = ModelPerf_glm
+)
 
-vi_plots_pca <- interpret_Mrvi(VI=VI,  X=X,Y=Y,   modelPerf=ModelPerf_glm, cutoff= 0.05, mode='classification') #the cutoff reduces the number of individual models printed in the second plot. 
-
-vi_plots_pca[[4]]
-
-outlier_SNPS <- vi_plots_pca$outLiers
-outlier_SNPS
+glm_impVI[[3]] #importance
+glm_impVI[[4]] #PCA
 ```
 
 If your features can be grouped together this can make it easier to interpret variable importance plots. The order of the groups should match the order of the columns in the X data.
