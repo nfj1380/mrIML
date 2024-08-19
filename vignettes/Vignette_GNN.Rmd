@@ -87,8 +87,6 @@ It's important to compare if there are any advantages to using a random forest a
 
 ```{r, message = FALSE, warnings = FALSE}
 
-source("~/MrIML/mrIML/R/mrPerformancePlot.R")
-
 ModelPerf_rf <- mrIMLperformance(yhats_rf, Model=model_rf, Y=Y, mode='classification')
 
 ModelPerf_rf[[1]] #across all parasites
@@ -98,9 +96,6 @@ ModelPerf_lm <- mrIMLperformance(yhats_lm, Model=model_lm, Y=Y, mode='classifica
 
 ModelPerf_lm[[1]]
 ModelPerf_lm[[2]]
-
-plots <- mrPerformancePlot(ModelPerf1 =ModelPerf_lm, ModelPerf2 = ModelPerf_rf, mod_names=c('linear_reg','rand_forest'), mode='classification' ) 
-plots
 
 ```
 
@@ -155,18 +150,12 @@ In many cases, like this data set, community or microbiome data tend to be small
 MrIML2.0 makes it easy to get bootstrap estimates for a variety of interpretable machine learning tools, and uses these estimates to construct marginalized co-occurrence networks. First, lets do the bootstrapping and calculate variable importance.
 
 ```{r, message = FALSE, warnings = FALSE}
-source("~/MrIML/mrIML/R/mrBootstrap.R")
-cl <- parallel::makeCluster(5) #can increase the number of cores as needed.
-plan(cluster, workers=cl)
-
 #do bootstraps.
-
+#source("~/MrIML/mrIML/R/MrBootstrap.R") 
 bs_malaria <- mrBootstrap(yhats=yhats_rf,Y=Y, #n
-                          num_bootstrap = 10, downsample = FALSE, mode='classification') 
-#make sure downsample=TRUE as this did improve performance
+                          num_bootstrap = 10) 
+#future versions will allow for bootraps to be downsampled too.
 #just 10 bootstraps to keep this short. We suggest using more for a final analysis (100 is reasonable but depends on how big the data is)
-
-#up to here -not working properly
 
 bs_impVI <- mrvip(
   mrBootstrap_obj = bs_malaria,

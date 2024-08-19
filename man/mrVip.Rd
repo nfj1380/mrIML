@@ -15,7 +15,8 @@ mrvip(
   global_top_var = 10,
   local_top_var = 5,
   taxa = NULL,
-  ModelPerf = ModelPerf
+  ModelPerf = ModelPerf,
+  plot.pca = T
 )
 }
 \arguments{
