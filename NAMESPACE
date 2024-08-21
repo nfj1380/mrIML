@@ -3,7 +3,7 @@
 export(MrShapely)
 export(filterRareCommon)
 export(mrBenchmark)
-export(mrBootstrap)
+export(MrBootstrap)
 export(mrCoOccurNet_bootstrap)
 export(mrFlashlight)
 export(mrIMLperformance)
