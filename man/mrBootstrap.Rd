@@ -13,15 +13,15 @@ mrBootstrap(
 )
 }
 \arguments{
-\item{yhats}{A list of model predictions mrIMLpredicts}
+\item{yhats}{A list of model predictions (e.g., from mrIMLpredicts).}
 
 \item{num_bootstrap}{The number of bootstrap samples to generate (default: 10).}
 
-\item{Y}{The response data (default: Y).}
+\item{Y}{The response data.}
 
-\item{downsample}{Do the bootstrap samples need to be downsampled? Default is FALSE}
+\item{downsample}{Logical. Should the bootstrap samples be downsampled? (default: FALSE).}
 
-\item{mode}{\code{character}'classification' or 'regression' i.e., is the generative model a regression or classification?}
+\item{mode}{\code{character}: 'classification' or 'regression' depending on the model type.}
 }
 \value{
 A list containing bootstrap samples of variable profiles for each response variable.
@@ -33,21 +33,15 @@ for each response variable based on the provided yhats.
 \examples{
 \dontrun{
 # Example usage:
-#set up analysis
-Y <- dplyr::select(Bird.parasites, -scale.prop.zos)\%>\% 
-dplyr::select(sort(names(.)))#response variables eg. SNPs, pathogens, species....
-X <- dplyr::select(Bird.parasites, scale.prop.zos) # feature set
-X1 <- Y \%>\%
-dplyr::select(sort(names(.)))
-model_rf <- 
-rand_forest(trees = 100, mode = "classification", mtry = tune(), min_n = tune()) \%>\% #100 trees are set for brevity. Aim to start with 1000
-set_engine("randomForest")
-yhats_rf <- mrIMLpredicts(X=X, Y=Y,
-X1=X1,'Model=model_rf , 
-balance_data='no',mode='classification',
-tune_grid_size=5,seed = sample.int(1e8, 1),'morans=F,
-prop=0.7, k=5, racing=T) #
 
-bs_analysis <- mrBootstrap(yhats=yhats_rf,Y=Y, num_bootstrap = 50, mode='classification')
-} 
+# Prepare response data
+Y <- dplyr::select(Bird.parasites, -scale.prop.zos) \%>\% 
+       dplyr::select(sort(names(.))) # Response variables (e.g., SNPs, pathogens, species)
+
+# Example list of yhats generated from mrIMLpredicts (assume yhats_rf is defined)
+yhats_rf <- mrIMLpredicts(...)  # Replace with actual code to generate yhats_rf
+
+# Perform bootstrap analysis
+bs_analysis <- mrBootstrap(yhats = yhats_rf, Y = Y, num_bootstrap = 50, mode = 'classification')
+}
 }

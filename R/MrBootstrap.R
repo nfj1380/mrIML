@@ -3,26 +3,28 @@
 #' This function bootstraps model predictions and generates variable profiles
 #' for each response variable based on the provided yhats.
 #'
-#' @param yhats A list of model predictions mrIMLpredicts
+#' @param yhats A list of model predictions (e.g., from mrIMLpredicts).
 #' @param num_bootstrap The number of bootstrap samples to generate (default: 10).
-#' @param Y The response data (default: Y).
-#'@param mode \code{character}'classification' or 'regression' i.e., is the generative model a regression or classification?
-#' @param downsample Do the bootstrap samples need to be downsampled? Default is FALSE
+#' @param Y The response data.
+#' @param mode \code{character}: 'classification' or 'regression' depending on the model type.
+#' @param downsample Logical. Should the bootstrap samples be downsampled? (default: FALSE).
 #' @return A list containing bootstrap samples of variable profiles for each response variable.
 #' @export
 #' @examples
 #' \dontrun{
 #' # Example usage:
-#' #set up analysis
-#' Y <- dplyr::select(Bird.parasites, -scale.prop.zos)%>% 
-#' dplyr::select(sort(names(.)))#response variables eg. SNPs, pathogens, species....
-#'balance_data='no',mode='classification',
-#'tune_grid_size=5,seed = sample.int(1e8, 1),'morans=F,
-#'prop=0.7, k=5, racing=T) #
-#'
-#'bs_analysis <- mrBootstrap(yhats=yhats_rf,Y=Y, num_bootstrap = 50, mode='classification')
 #' 
-  
+#' # Prepare response data
+#' Y <- dplyr::select(Bird.parasites, -scale.prop.zos) %>% 
+#'        dplyr::select(sort(names(.))) # Response variables (e.g., SNPs, pathogens, species)
+#'
+#' # Example list of yhats generated from mrIMLpredicts (assume yhats_rf is defined)
+#' yhats_rf <- mrIMLpredicts(...)  # Replace with actual code to generate yhats_rf
+#'
+#' # Perform bootstrap analysis
+#' bs_analysis <- mrBootstrap(yhats = yhats_rf, Y = Y, num_bootstrap = 50, mode = 'classification')
+#' }
+
   
   mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y, downsample=FALSE, mode='classification') {
     
@@ -153,7 +155,8 @@
     }
     
     bstraps_pd_list <- future_lapply(seq(1, n_response), internal_fit_function, future.seed = TRUE)
+   
+     return(bstraps_pd_list) 
+}
     
-  }
-
-    return(bstraps_pd_list)
+  
