@@ -154,5 +154,6 @@
     
     bstraps_pd_list <- future_lapply(seq(1, n_response), internal_fit_function, future.seed = TRUE)
     
-    
+  }
+
     return(bstraps_pd_list)
