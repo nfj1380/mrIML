@@ -154,8 +154,8 @@ MrIML2.0 makes it easy to get bootstrap estimates for a variety of interpretable
 
 ```{r, message = FALSE, warnings = FALSE}
 
-cl <- parallel::makeCluster(5) #can increase the number of cores as needed.
-plan(cluster, workers=cl)
+#cl <- parallel::makeCluster(5) #can increase the number of cores as needed.
+#plan(cluster, workers=cl)
 
 #do bootstraps.
 
