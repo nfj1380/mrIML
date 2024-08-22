@@ -1,18 +1,21 @@
-#' Bootstrap model predictions
+#' Bootstrap Partial Dependence plots
 #'
-#' This function bootstraps model predictions and generates variable profiles
-#' for each response variable based on the provided yhats.
+#' This function bootstraps model predictions and generates partial dependence plots for each response variable.
+#' It also creates a combined plot for the top variables of interest.
 #'
-#' @param yhats A list of model predictions mrIMLpredicts
-#' @param num_bootstrap The number of bootstrap samples to generate (default: 10).
-#' @param Y The response data (default: Y).
-#'@param mode \code{character}'classification' or 'regression' i.e., is the generative model a regression or classification?
-#' @param downsample Do the bootstrap samples need to be downsampled? Default is FALSE
-#' @return A list containing bootstrap samples of variable profiles for each response variable.
+#' @param mrBootstrap_obj A list of model bootstraps generated using mrBootstrap function.
+#' @param vi_obj Variable Importance data.
+#' @param X The predictor data.
+#' @param Y The response data.
+#' @param target The target variable for generating plots.
+#' @param global_top_var The number of top variables to consider (default: 2).
+#' 
+#' @return A list containing the partial dependence plots for each response variable and a combined plot.
 #' @export
+#'
 #' @examples
 #' \dontrun{
-#' # Example usage:
+#'#' # Example usage:
 #' #set up analysis
 #' Y <- dplyr::select(Bird.parasites, -scale.prop.zos)%>% 
 #' dplyr::select(sort(names(.)))#response variables eg. SNPs, pathogens, species....
@@ -28,143 +31,106 @@
 #'balance_data='no',mode='classification',
 #'tune_grid_size=5,seed = sample.int(1e8, 1),'morans=F,
 #'prop=0.7, k=5, racing=T) #
-#'
-#'bs_analysis <- mrBootstrap(yhats=yhats_rf,Y=Y, num_bootstrap = 50, mode='classification')
-#'} 
+#'bs_analysis <- mrBootstrap(yhats=yhats_rf,Y=Y, num_bootstrap = 5)
+#'pds <- mrPD_bootstrap(mrBootstrap_obj=bs_malaria, vi_obj=bs_impVIa, X, Y,
+#'target='Plas', global_top_var=5)
+#'pd_list <- pds[[1]] #data
+#'pds[[2]]#plot }
 
 
-mrBootstrap <- function(yhats, num_bootstrap = 10, Y=Y, downsample=FALSE, mode='classification') {
+mrPD_bootstrap <- function(mrBootstrap_obj, vi_obj, X, Y, target, global_top_var = 2) {
   
-  n_response <- length(yhats)
+  n_response <- ncol(Y)
+  complete_df <- cbind(Y, X)
+  n_data <- ncol(complete_df)
   
- pb <- txtProgressBar(min = 0, max = n_response, style = 3) 
- # pb <- progress::progress_bar$new(format = "[:bar] :percent ETA: :eta", total = n_response )
-
-
-  internal_fit_function <- function(k) {
-    
-    setTxtProgressBar(pb, k) #progressbar marker
-   # pb$tick() 
-    
-    features <- colnames(yhats[[k]]$data)[-1]
-    
-    n <- nrow(yhats[[k]]$data)
-    
-    pd_raw <- vector("list", num_bootstrap)  # Initialize pd_raw as a list
-    
-    for (i in 1:num_bootstrap) {
-      
-      # Initialize the bootstrap sample
-      bootstrap_sample <- NULL
-      
-      
-      if (downsample==TRUE) {
-        # Determine the number of samples to draw for each class
-        class_counts <- table(Y[[k]])
-        min_class_count <- min(class_counts)
-        sample_size <- min_class_count * length(class_counts)
-        
-       
-        # Sample from each class to balance classes
-        for (cls in unique(Y[[k]])) {
-          cls_indices <- sample(which(Y[[k]] == cls), size = min_class_count, replace = FALSE)
-          bootstrap_sample <- rbind(bootstrap_sample, yhats[[k]]$data[cls_indices, ])
-        }
-        
-      } else {
-        
+  # Internal function to combine objects by name
+  bind_rows_by_name <- function(list_obj, object_name) {
+    filtered_list <- list_obj[names(list_obj) %in% object_name]
+    bind_rows(filtered_list)
+  }
   
-      # Convert the data frame to a data table
-      data_table <- data.table::as.data.table(yhats[[k]]$data)
+  internal_fit_function <- function(i) {
+    object_name <- names(complete_df[i])
+    
+    combined_list <- list()  # Create an empty list to store combined objects
+    
+    for (j in 1:n_response) {
+      combined_object <- map_dfr(mrBootstrap_obj[[j]], bind_rows_by_name, object_name)
       
-      # Generate random row indices
-      sample_indices <- sample(1:n, replace = TRUE)
-      
-      # Create the bootstrap sample using data table syntax
-      bootstrap_sample <- data_table[sample_indices]
-      
-      }
-      
-      # Extract the workflow from the best fit
-      wflow <- yhats[[k]]$last_mod_fit %>% tune::extract_workflow()
-      
-      # Add the bootstrap data to the workflow
-      wflow$data <- bootstrap_sample
-      
-      # Fit the model using the bootstrap sample
-      model_fit <- fit(wflow, data = bootstrap_sample)
-      
-      # Create explainer
-      
-      var_names <- names(yhats[[k]]$data)[-1]
-      
-      if(mode=='classification'){
+      if (nrow(combined_object) > 0) {
+        combined_metadata <- data.frame(target = rep(names(Y)[j], nrow(combined_object)))
+        combined_object <- cbind(combined_object, combined_metadata)
         
-        #metric list for flashlight.
-        metrics <- list(
-          logloss = MetricsWeighted::logLoss,
-          `ROC AUC` = MetricsWeighted::AUC,
-          `% Dev Red` = MetricsWeighted::r_squared_bernoulli
-        )
-        
-        pred_fun <- function(m, dat) {
-          predict(
-            m, dat[, colnames(bootstrap_sample)[-1], drop = FALSE],
-            type = "prob"
-          )$`.pred_1`
-        }
-      } else {
-        
-        pred_fun <- function(m, dat) {
-          
-          predict(m, dat[, colnames(X), drop = FALSE])[[".pred"]]
-          
-        }
-        
-        # List of metrics
-        
-        metrics = list( 
-          rmse = MetricsWeighted::rmse,
-          `R-squared` = MetricsWeighted::r_squared
-        )
-      }
-      
-      
-      fl <- flashlight(
-        model = model_fit,
-        label = 'class',
-        data = bootstrap_sample,
-        y = 'class',
-        predict_function = pred_fun,
-        metrics = metrics
-      )
-      
-      for (j in seq_along(var_names)) {
-        
-        pd_ <- light_profile(fl, v = paste0(var_names[j]))
-        
-        #add number of boostrap.
-        bs_rep <- data.frame( bootstrap=rep(i, nrow(pd_$data)))
-        
-        #response name
-        bs_name <- data.frame( response=rep(names(Y[k]), nrow(pd_$data)))
-        
-        pd_data <-data.frame(cbind(pd_$data),  bs_name, bs_rep) #add bootstrap
-        
-        pd_raw[[i]][[var_names[j]]] <- pd_data  # Save pd_ as a list element
-        
+        combined_list[[j]] <- combined_object   # Append the combined object to the list
       }
     }
     
-    gc() #clear junk
+    combined_df <- do.call(rbind, combined_list)  # Convert the list to a data frame
     
-    return(pd_raw)  # Return pd_raw as a list
+    return(combined_df)
   }
   
-  bstraps_pd_list <- future_lapply(seq(1, n_response), internal_fit_function, future.seed = TRUE)
-
+  pd_list <- future_lapply(seq_len(n_data), internal_fit_function, future.seed = TRUE)
   
-  return(bstraps_pd_list)
+  plot_list <- list()  # Create an empty list to store individual plots
+  
+  vi_obj <- vi_obj[[1]]  # Extract VI data #need to check
+  
+  vi_obj <- do.call(rbind, vi_obj)
+  
+  G_target_data_avg <- vi_obj %>% 
+    dplyr::filter(response == {{target}}) %>% 
+    group_by(var) %>% 
+    dplyr::summarise(mean_imp = mean(sd_value)) %>% 
+    arrange(desc(mean_imp))
+  
+  G_top_vars <- head(G_target_data_avg[order(-G_target_data_avg$mean_imp), ], global_top_var)
+  
+  # Iterate through each pd_list and create individual plots
+  for (k in seq_along(pd_list)) {
+    
+    df <- pd_list[[k]] %>%
+      dplyr::filter(target == {{target}})
+    
+    if (names(df)[1] %in% G_top_vars$var) {
+      if (is.factor(df[[1]]) || (all(df[[1]] %in% c(0, 1)))) {
+        
+        d1 <- df %>%
+          mutate(class = recode(.[[1]], `0` = "absent", `1` = "present"))
+        
+        plot <- ggplot(d1, aes(x = class, y = value)) +
+          geom_boxplot() +
+          labs(x = names(d1)[1], y = paste(target, "prob", sep = " ")) +
+          theme_bw()
+        
+      } else {
+        
+        d1 <- df %>%
+          group_by(bootstrap) %>% 
+          rename(class = 1)
+        
+        plot <- ggplot(d1, aes(x = class, y = value, group = interaction(bootstrap, target)))+
+          geom_line(alpha = 0.3) +
+          labs(x =  names(df)[1], y = paste(target, "prob", sep = " ")) + 
+          theme_bw()
+      }
+      
+      plot_list[[k]] <- plot  # Add the plot to the list
+    }
+  }
+  
+  plot_list_updated <- plot_list[sapply(plot_list, function(p) any(p$data$value != 0))]
+  
+  p <- grid.arrange(grobs = plot_list_updated )
+  
+  # Create combined plot using the order from G_top_vars
+  #combined_plot <- plot_grid(  plot_list_updated =   plot_list_updated[G_top_vars$var], ncol = 1, rel_heights = rep(1, length(G_top_vars$var)))
+  
+  combined_plot <- plot_grid(p, ncol = 1, rel_heights = rep(1, length(G_top_vars$var)))
+  
+  return(list(pd_list, combined_plot ))  # Return both pd_list and combined_plot
 }
+
 
 
