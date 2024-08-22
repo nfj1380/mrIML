@@ -47,7 +47,7 @@ library(mrIML)
 [`mrIMLperformance`](https://nfj1380.github.io/mrIML/reference/mrIMLperformance.html), and 
 [`mrvip`](https://nfj1380.github.io/mrIML/reference/mrvip.html), [`mrFlashlight`](https://nfj1380.github.io/mrIML/reference/mrFlashlight.html), and[`mrProfileplots`](https://nfj1380.github.io/mrIML/reference/mrProfileplots.html).
 
-We also allow users to get bootstrapped estimation of partial dependencies and variable importance using [`mrBootstrap`](https://nfj1380.github.io/mrIML/reference/mrBootstrap.html). 
+We also allow users to get bootstrapped estimations of partial dependencies and variable importance using [`mrBootstrap`](https://nfj1380.github.io/mrIML/reference/mrBootstrap.html). 
 
 The first step to using the package is to load it as follows.
 
