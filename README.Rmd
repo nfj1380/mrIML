@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 
 ```
-# mrIML: Multivariate (multi-response) interpretable machine learning <a href='https://nfj1380.github.io/mrIML/index.html'><img src="man/figures/logo.png" align="right" height="120"/></a>
+# mrIML: Multivariate (multi-response) interpretable machine learning <a href='https://nfj1380.github.io/mrIML/index.html'><img src="man/figures/logo2.png" align="right" height="120"/></a>
 
 <!-- badges: start -->
 ![GitHub R package version](https://img.shields.io/github/r-package/v/nfj1380/mrIML?logo=github&logoColor=%2300ff37&style=flat-square)
@@ -45,10 +45,11 @@ library(mrIML)
 
 **mrIML** is designed to be used with a single function call or to be used in an ad-hoc fashion via individual function calls. In the following section we give an overview of the simple use case. For more on using each function see the [function documentation](https://nfj1380.github.io/mrIML/reference/index.html). The core functions for both regression and classification are: [`mrIMLpredicts`](https://nfj1380.github.io/mrIML/reference/mrIMLpredicts.html),
 [`mrIMLperformance`](https://nfj1380.github.io/mrIML/reference/mrIMLperformance.html), and 
-[`mrInteractions`](https://nfj1380.github.io/mrIML/reference/mrInteractions.html),for plotting and visualization
-[`mrVip`](https://nfj1380.github.io/mrIML/reference/mrVip.html), [`mrFlashlight`](https://nfj1380.github.io/mrIML/reference/mrFlashlight.html), and[`plot_vi`](https://nfj1380.github.io/mrIML/reference/plot_vi.html). Estimating the interactions
-alone can be substantially computationally demanding depending on the number
-of outcomes you want to test. The first step to using the package is to load it as follows.
+[`mrvip`](https://nfj1380.github.io/mrIML/reference/mrvip.html), [`mrFlashlight`](https://nfj1380.github.io/mrIML/reference/mrFlashlight.html), and[`mrProfileplots`](https://nfj1380.github.io/mrIML/reference/mrProfileplots.html).
+
+We also allow users to get bootstrapped estimation of partial dependencies and variable importance using [`mrBootstrap`](https://nfj1380.github.io/mrIML/reference/mrBootstrap.html). 
+
+The first step to using the package is to load it as follows.
 
 ```{r, message = FALSE, message = FALSE, warning = FALSE, include=FALSE}
 pacman:: p_load(

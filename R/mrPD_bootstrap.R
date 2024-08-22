@@ -77,7 +77,7 @@ mrPD_bootstrap <- function(mrBootstrap_obj, vi_obj, X, Y, target, global_top_var
   
   vi_obj <- vi_obj[[1]]  # Extract VI data #need to check
   
-  vi_obj <- do.call(rbind, vi_obj)
+  #vi_obj <- as.data.frame(do.call(rbind, vi_obj))
   
   G_target_data_avg <- vi_obj %>% 
     dplyr::filter(response == {{target}}) %>% 
