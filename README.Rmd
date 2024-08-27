@@ -97,7 +97,7 @@ MrIML provides uses the flexible future apply functionality to set up multi-core
 # detectCores() #check how many cores you have available. We suggest keeping one core free for internet browsing etc.
 
 cl <- parallel::makeCluster(4)
-plan(cluster,
+     plan(cluster,
      workers=cl)
 ```
 
@@ -123,7 +123,9 @@ yhats_rf <- mrIMLpredicts(X=X,Y=Y, #specify which data to use
 
 ModelPerf <- mrIMLperformance(yhats=yhats_rf,
                               Model=model_rf,
-                              Y=Y, mode='classification')
+                              Y=Y,
+                              mode='classification')
+
 ModelPerf[[1]] #Predictive performance for individual responses 
 ModelPerf[[2]]#Overall predictive performance. r2 for regression and MCC for classification
 ```
@@ -137,7 +139,7 @@ bs_impVI <- mrvip(
   X = X,
   Y = Y,
   mode = 'classification',
-  threshold = 0.0,
+  threshold = 0.1,
   global_top_var = 10,
   local_top_var = 5,
   taxa = 'pol_132',
