@@ -139,12 +139,11 @@ bs_impVI <- mrvip(
   X = X,
   Y = Y,
   mode = 'classification',
-  threshold = 0.1,
+  threshold = 0.8,
   global_top_var = 10,
   local_top_var = 5,
   taxa = 'pol_132',
-  ModelPerf = ModelPerf 
-)
+  ModelPerf = ModelPerf)
 
 bs_impVI[[3]] #importance
 bs_impVI[[4]] #PCA

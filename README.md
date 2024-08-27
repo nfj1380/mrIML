@@ -69,7 +69,7 @@ and [`mrvip`](https://nfj1380.github.io/mrIML/reference/mrvip.html),
 [`mrFlashlight`](https://nfj1380.github.io/mrIML/reference/mrFlashlight.html),
 and[`mrProfileplots`](https://nfj1380.github.io/mrIML/reference/mrProfileplots.html).
 
-We also allow users to get bootstrapped estimation of partial
+We also allow users to get bootstrapped estimations of partial
 dependencies and variable importance using
 [`mrBootstrap`](https://nfj1380.github.io/mrIML/reference/mrBootstrap.html).
 
@@ -123,7 +123,7 @@ and the analysis will run sequentially.
 # detectCores() #check how many cores you have available. We suggest keeping one core free for internet browsing etc.
 
 cl <- parallel::makeCluster(4)
-plan(cluster,
+     plan(cluster,
      workers=cl)
 ```
 
@@ -170,7 +170,9 @@ yhats_rf <- mrIMLpredicts(X=X,Y=Y, #specify which data to use
 
 ModelPerf <- mrIMLperformance(yhats=yhats_rf,
                               Model=model_rf,
-                              Y=Y, mode='classification')
+                              Y=Y,
+                              mode='classification')
+
 ModelPerf[[1]] #Predictive performance for individual responses 
 #>    response  model_name            roc_AUC                mcc       sensitivity
 #> 1   env_131 rand_forest  0.642857142857143  0.327326835353989 0.285714285714286
@@ -208,7 +210,7 @@ ModelPerf[[1]] #Predictive performance for individual responses
 #> 3                  1                 1 0.421052631578947
 #> 4                  0               0.4 0.421052631578947
 #> 5                  1                 1 0.421052631578947
-#> 6  0.444444444444444 0.166666666666667 0.684210526315789
+#> 6  0.444444444444444 0.166666666666667  0.68421052631579
 #> 7                0.8                 0 0.631578947368421
 #> 8                  0               0.5 0.421052631578947
 #> 9               0.25               0.4 0.473684210526316
@@ -245,7 +247,7 @@ bs_impVI <- mrvip(
   X = X,
   Y = Y,
   mode = 'classification',
-  threshold = 0.0,
+  threshold = 0.8,
   global_top_var = 10,
   local_top_var = 5,
   taxa = 'pol_132',
