@@ -38,7 +38,7 @@ We focus on the adaptive SNP loci from GIGANTEA-5 (GI5) gene that has known link
 library(mrIML)
 
 #other package we need:
-
+library(pacman)
 pacman::p_load(
   vip, tidymodels, randomForest, gbm, tidyverse, parallel,
   doParallel, themis, viridis, janitor, hrbrthemes, vegan,

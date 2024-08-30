@@ -27,6 +27,7 @@ Currently, the models are optimized and tested on presence/absence data. Models 
 First, we need to load up some extra functionality and some data. The first example is coinfection data from New Caledonian *Zosterops* species. A single continuous covariate is also included (scale.prop.zos), which reflects the relative abundance of *Zosterops* species among different sample sites. 
 
 ```{r pac, message = FALSE, warnings = FALSE, include=FALSE}
+library(pacman)
 pacman::p_load('MRFcov', 'tidyverse', 'future.apply','tidymodels', 'finetune', 'themis', 'vip', 'flashlight', 'iml', 'vivid', 'igraph', 'ggnetwork', 'network','gridExtra', 'xgboost', 'brulee', 'fastshap', 'tabnet', 'bonsai', 'parsnip', 'cowplot', 'progress', 'hstats', 'geosphere', 'mrIML')
 ```
 

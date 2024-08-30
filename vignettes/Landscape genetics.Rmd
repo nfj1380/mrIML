@@ -34,7 +34,7 @@ Features (a.k.a predictor variables) with missing data can be removed or interpo
 #   devtools:: install_github('nfj1380/mrIML')
 
 library(mrIML)
-
+library(pacman)
 #other package we need:
 pacman:: p_load(
   vip, tidymodels, randomForest, caret, gbm,

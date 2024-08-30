@@ -30,6 +30,7 @@ This is a synthesized dataset to simulate PRRSV infection, biosecurity practices
 Please note that the data included in this package is simulated, and is not a reflection of any real farm, company or state. 
 ```{r load packages, include=FALSE, message=FALSE, results='hide'}
 #other packages needed
+library(pacman)
 pacman::p_load(
   mrIML, parsnip, tidymodels, workflows, tidyverse, flashlight,
   devtools, DALEX, plyr, vip, ggsci, ggrepel, breakDown, future.apply, janitor, tune
