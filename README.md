@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# mrIML: Multivariate (multi-response) interpretable machine learning <a href='https://nfj1380.github.io/mrIML/index.html'><img src="man/figures/logo2.png" align="right" height="120"/></a>
+# mrIML: Multivariate (multi-response) interpretable machine learning <img src="man/figures/logo2.png" align="right" height="50"/></a>
 
 <!-- badges: start -->
 
@@ -88,8 +88,7 @@ details). However, we have done most of our testing on random forests
 forest classification model as the model applied to each response.
 
 ``` r
-model_rf <- 
-  rand_forest(trees = 100,
+model_rf <-rand_forest(trees = 100,
               mode = "classification",
               mtry = tune(),
               min_n = tune()) %>% #100 trees are set for brevity. Aim to start with 1000
@@ -251,8 +250,7 @@ bs_impVI <- mrvip(
   global_top_var = 10,
   local_top_var = 5,
   taxa = 'pol_132',
-  ModelPerf = ModelPerf 
-)
+  ModelPerf = ModelPerf)
 #> [1] "here"
 
 bs_impVI[[3]] #importance
@@ -265,8 +263,7 @@ bs_impVI[[4]] #PCA
 ```
 
 <img src="man/figures/README-unnamed-chunk-8-2.png" style="display: block; margin: auto;" />
-
-## Effect of a feature on genetic change
+\## Effect of a feature on genetic change
 
 We also wrap some flashlight functionality to visualize the marginal
 (i.e. partial dependencies) or conditional (accumulated local effects)
@@ -327,8 +324,22 @@ package will enable users to visualize these interactions and explore
 them in more detail using 2D ALE plots for example.
 
 ``` r
-#interactions <-mrInteractions(yhats,X,Y,mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
-#mrPlot_interactions(interactions,X,Y,top_ranking = 2,top_response=2)
+int_ <- mrInteractions(yhats=yhats_rf,
+                       X,
+                       Y,
+                       num_bootstrap=10,
+                       feature = 'Plas', 
+                       top.int=10)
+#10 bootstraps to keep it short. top int focusses on the 10 top interactions (all of them in this case).
+
+int_[[1]] # overall plot
+```
+
+<img src="man/figures/README-unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
+
+``` r
+#int_[[2]] # individual plot for the response of choice 
+#int_[[3]] # two way plot
 ```
 
 ## References

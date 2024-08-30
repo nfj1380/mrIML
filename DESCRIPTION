@@ -2,11 +2,14 @@ Package: mrIML
 Type: Package
 Title: Multi Response Interpretable Machine Learning
 Version: 2.0.0
-Author: Nick Fountain-Jones<nfountainjones@gmail.com>
-  Gustavo Machado<gmachad@ncsu.edu>
-  Chris Kozakiewicz<cpkoz@msu.edu>
-  Nick Clark<Nicholas.J.Clark1214@gmail.com>
-Maintainer: Nick Fountain-Jones<nfountainjones@email.com>
+Authors@R: c(
+    person("Nick", "Fountain-Jone", , "nfountainjones@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-9248-8493")),
+    person("Gustavo", "Machado", , "gmachad@ncsu.edu", role = c("aut"),
+           comment = c(ORCID = "0000-0001-7552-6144")),
+    person("Chris", "Kozakiewicz", role = "aut"),
+    person("Nick", "Clark", role = "aut")
+  )
 Description: This package aims to enable users to build and interpret multivariate machine learning models harnessing the tidyverse (tidy model syntax in particular). This package builds off ideas from Gradient Forests (Ellis et al 2012), ecological genomic approaches (Fitzpatrick and Keller, 2014) and multi-response stacking algorithms (Xing et al 2019).
 Depends: R (>= 3.5.0)
 Imports:

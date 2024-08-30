@@ -1,0 +1,198 @@
+---
+title: "Regression"
+opengraph:
+  image:
+    src: 
+output:
+  rmarkdown::html_vignette: default
+  github_document: default
+  css: extra.css
+vignette: |
+  %\VignetteIndexEntry{mrIML}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+    fig.width = 8, fig.height = 6, fig.align = "center",
+  comment = "#>"
+)
+```
+MrIML is a R package allows users to generate and interpret multi-response models (i.e., joint species distribution models) leveraging advances in data science and machine learning. MrIML couples the tidymodel infrastructure developed by Max Kuhn and colleagues with model agnostic interpretable machine learning tools to gain insights into multiple response data such as. As such mrIML is flexible and easily extendable allowing users to construct everything from simple linear models to tree-based methods for each response using the same syntax and same way to compare predictive performance. In this vignette we will guide you through how to apply this package to ecological genomics problems using the regression functionality of the package. This data set comes from Fitzpatrick et al 2014 who were examining adaptive genetic variation in relation to geography and climate adaptation (current and future) in balsam poplar(Populus balsamifera). See Ecology Letters, (2014) doi: 10.1111/ele.12376. In this paper they used the similar gradient forests routine (see Ellis et al 2012 Ecology), and we show that MrIML can not only provide more flexible model choice and interpretive capabilities, but can derive new insights into the relationship between climate and genetic variation. Further, we show that linear models of each loci have slightly greater predictive performance. 
+
+We focus on the adaptive SNP loci from GIGANTEA-5 (GI5) gene that has known links to stem development, plant circadian clock and light perception pathway. The data is the proportion of individuals in that population with that SNP loci. 
+
+### Lets load that data
+```{r load-packages, include=FALSE}
+
+#make sure you have installed devtools previously.
+#Install the most uptodate version from github
+
+#if (!requireNamespace("devtools", quietly = TRUE))
+# install.packages("devtools")
+#devtools:: install_github('nfj1380/mrIML')
+
+library(mrIML)
+
+#other package we need:
+
+pacman::p_load(
+  vip, tidymodels, randomForest, gbm, tidyverse, parallel,
+  doParallel, themis, viridis, janitor, hrbrthemes, vegan,
+  flashlight, iml, ggrepel, ranger, future.apply, plyr, gridExtra, cowplot
+)
+
+# read in data file with minor allele freqs & env/space variables
+envGF <- mrIML::gfData[,3:13] # get climate & MEM variables
+X <- envGF %>% 
+  mutate_if(is.integer, as.numeric)
+ #for simplicity
+
+# build individual SNP datasets
+SNPs_ref <- mrIML::gfData[,grep("REFERENCE",colnames(mrIML::gfData))] # reference
+GI5 <- mrIML::gfData[,grep("GI5",colnames(mrIML::gfData))] # GIGANTEA-5 (GI5)
+
+Y <- GI5 #for this example we are going to focus on the adaptive SNPs in the GI5 region.
+
+```
+###Parallel processing
+
+MrIML provides uses the flexible future apply functionality to set up multi-core processing. In the example below, we set up a cluster using 4 cores. If you don't set up a cluster, the default settings will be used and the analysis will run sequentially.
+```{r, eval = TRUE}
+# detectCores() #check how many cores you have available. We suggest keeping one core free for internet browsing etc.
+
+cl <- parallel::makeCluster(4)
+
+future::plan(cluster, workers=cl)
+```
+### Running the analyis
+
+Performing the analysis is very similar to our classification example. Lets start with a constructing a linear model for this data set. We set Model 1 to a linear regression. See https://www.tidymodels.org/find/ for other regression model options Note that 'mode' must be regression and in MrIMLpredicts, model has to be set to 'regression'. 
+
+```{r,  message = FALSE, warning = FALSE  }
+model_lm <- #model used to generate yhat
+  # specify that the model is a random forest
+  linear_reg() %>%
+  # select the engine/package that underlies the model
+  set_engine("lm") %>%
+  # choose either the continuous regression or binary classification mode
+  set_mode("regression")
+
+yhats_lm <- mrIMLpredicts(X=X,
+                          Y=Y,
+                          X1=NULL,
+                          Model=model_lm,
+                          balance_data='no',
+                          mode='regression',
+                          prop=0.7,
+                          morans=F,
+                          tune_grid_size= 10,
+                          k=10,
+                          racing=F) ## Balanced data= up updamples and down downsampled to create a balanced set. For regression 'no' has to be selected.
+#racing can't be used for linear models - no parameters to tune
+
+#save(yhats, file='Regression_lm') #always a good idea
+```
+
+Model performance can be examined the same way as in the classification example, however the metrics are different. We provide root mean square error (rmse) and R2. You can see that the overall R2 is 0.13 but there is substantial variation across loci in predictive performance.
+
+```{r}
+ModelPerf_lm <- mrIMLperformance(yhats_lm,
+                                 Model=model_lm,
+                                 Y=Y,
+                                 mode='regression')
+ModelPerf_lm[[1]] #predictive performance for individual responses. 
+ModelPerf_lm[[2]]#overall average r2 
+```
+Lets compare the performance of linear models to that of random forests. Random forests is the computational engine in gradient forests. Notice for random forests we have two hyperparameters to tune; mtry (number of features to randomly include at each split) and min_n (the minimum number of data points in a node that are required for the node to be split further). The syntax 'tune()' acts a placeholder to tell MrIML to tune those hyperparamters across a grid of values (defined in MRIML predicts 'tune_grid_size' argument). Different algorithms will have different hyperparameters.See https://www.tidymodels.org/find/parsnip/ for parameter details. Note that large grid sizes (>10) for algorithms with lots of hyperparameters (such as extreme gradient boosting) will be computationally demanding. In this case we choose a grid size of 5.
+
+```{r, message = FALSE, warning = FALSE}
+model_rf <- rand_forest(trees = 100,
+              mode = "regression",
+              mtry = tune(),
+              min_n = tune()) %>% #100 trees are set for brevity. Aim to start with 1000
+         set_engine("randomForest")
+
+yhats_rf <- mrIMLpredicts(X=X,
+                          Y=Y,
+                          Model=model_rf,
+                          balance_data='no',
+                          mode='regression',
+                          tune_grid_size=5,
+                          seed = sample.int(1e8, 1))
+
+#save(yhats, file='Regression_rf')
+
+ModelPerf_rf <- mrIMLperformance(yhats_rf,
+                                 Model=model_rf,
+                                 Y,
+                                 mode='regression')
+
+ModelPerf_rf[[1]] #predictive performance for individual responses. 
+ModelPerf_rf[[2]]#overall average r2 
+
+#easier to see with plots
+plots <- mrPerformancePlot(ModelPerf1=ModelPerf_lm,
+                           ModelPerf2 = ModelPerf_rf,
+                           mod_names=c('linear_reg','rand_forest'),
+                           mode='regression' ) 
+
+plots[[1]]
+plots[[2]]
+```
+## Plotting
+
+You can see that predictive performance is actually slightly less using random forests (overall R2 = 0.12) but for some loci random forests does better than our linear models and sometimes worse. Which to choose? Generally simpler models are preferred (the linear model in this case) but it depends on how important to think non-linear response are. In future versions of MrIML we will implement ensemble models that will overcome this issue. For the time-being we will have a look at variable importance for the random forest based model.
+
+```{r, message = FALSE, warning = FALSE }
+
+VI <- mrvip(yhats=yhats_rf,
+            mrBootstrap_obj = NULL,
+            X=X,
+            Y=Y,
+            mode='regression',
+            threshold = 0.1,
+            global_top_var = 10,
+            local_top_var = 5,
+            taxa='CANDIDATE_GI5_9585',
+            ModelPerf=ModelPerf_rf) 
+
+VI[[3]] #Importance plot
+VI[[4]] #PCA
+```
+Cutoff reduces the number of individual SNP plots presented in the second plot and 'plot.pca='yes'' enables the variable importance scores to be analysed using principal component analysis (PCA) where SNPs closer in PCA space are shaped by similar combinations of features. You can see that bio_18 (summer precipitation), bio_1 (mean annual temperature) and bio_10 (mean summer temperature) are the most important features overall. Summer precipitation was not as important in Fitzpatrick et al but otherwise these results are similar. The second plot shows the individual models (with an r2 > 0.1, for your data you will need to play around with this threshold) and you can see for some SNPs bio_1 is more important whereas for another MEM.1 is more prominent.The PCA shows that candidate 5119, 9287, 5033 and 108  are shaped similarly by the features we included and may, for example, be product of linked selection.
+
+Note that you can also calculate bootstraps for importance scores (and partial dependencies), but this functionality is still under development for regression models.
+
+Now we can explore the model further my plotting the relationships between our SNPs and a feature in our set. Lets choose bio_1 (mean annual temperature) and plot the individual and global (average of all SNPs) partial dependency (PD) plots. 
+```{r, warning=FALSE}
+flashlightObj <- mrFlashlight(yhats=yhats_rf,
+                              X=X,
+                              Y=Y,
+                              response = "multi",
+                              mode="regression")
+
+profileData_pd <- light_profile(flashlightObj,
+                                v = "bio_1") #partial dependencies
+
+mrProfileplot(profileData_pd,
+              sdthresh =0.01)
+```
+The first plot is a partial dependency for all SNPs that respond to mean annual temperature. What we mean by respond here is that the prediction surface (the line) deviates across the Y axis of the PD plots. We measure this deviation by calculating the standard deviation and use that as a threshold ('sd thresh=0.01' in this case and this will differ by data set) to ease visualization of these relationships.  The second plot is the smoothed average partial dependency of SNPs across a annual temperature gradient. This is very similar to the pattern observed by Fitzpatrick et al except with a slight decline in SNP turnover with mean annual temperatures > 0. Combined,you can see here only  few candidate SNPs are driving this pattern and these may warrant further interrogation. 
+
+Lets compare the PDs to accumulated local effect plots that are less sensitive to correlations among features (see Molnar 2019).
+
+```{r,warning=FALSE}
+profileData_ale <- light_profile(flashlightObj,
+                                 v = "bio_1",
+                                 type = "ale") #accumulated local effects
+
+mrProfileplot(profileData_ale,
+              sdthresh =0.01)
+```
+The effect of mean annual temperature on SNP turnover is not as distinct in the global ALE plot. This may mean that correlations between features may be important for the predictions.
+
+MrIML has easy to use functionality that can can quantify interactions between features. Note that this can take a while to compute and will be the topic of a future work.
+
+This is touching only the surface of what is possible in terms of interrogating this model. Both Flashlight and IML packages have a wide variety of tools that can offer novel insights into how these models perform. See https://cran.r-project.org/web/packages/flashlight/vignettes/flashlight.html and https://cran.r-project.org/web/packages/iml/vignettes/intro.html for other options.
