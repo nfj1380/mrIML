@@ -62,7 +62,6 @@ Imports:
     tabnet,
     bonsai,
     cowplot,
-    pacman,
     progress,
     hstats,
     geosphere
