@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
     fig.width = 8, fig.height = 6, fig.align = "center",
   comment = "#>"
 )
+options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 This vignette guides you through the new functionality that turns mrIML into a graphical network model (GNMs). There is also new functions in MrIML 2.0 that can be used in non-GN models, such as for single taxon SDMs, epi models, gene environment association (GEA) studies and for landscape genetics. Advances in Tidymodels are in the core of the functions as are exciting advances in interpretable machine learning (e.g., for quantifying interactions quickly). The capability to capture uncertainty via bootstraps and spatial patterns are also a feature of this MRIML module.  The examples are from the microbiome world but of course  generalizable to any multi-response problem. 
 

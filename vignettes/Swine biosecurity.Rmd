@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
     fig.path = "vignettes/man/figures/",
   comment = "#>"
 )
+options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 MrIML is a R package allows users to generate and interpret multi-response models (i.e., joint species distribution models) leveraging advances in data science and machine learning. MrIML couples the tidymodel infrastructure developed by Max Kuhn and colleagues with model agnostic interpretable machine learning tools to gain insights into multiple response data such as. As such MrIML is flexible and easily extendable allowing users to construct everything from simple linear models to tree-based methods for each response using the same syntax and same way to compare predictive performance.In this vignette we will guide you through how to apply the MrIML framework to identify and benchmark biosecurity practices in veterinary disease. 
 
