@@ -64,31 +64,6 @@ navbar:
         fig.height: 12
 
 
-reference:
-- title: All functions
-  contents:
-  - '`Features`'
-  - '`filterRareCommon`'
-  - '`gfData`'
-  - '`mr_Covar`'  
-  - '`mrBenchmark`'
-  - '`mrBootstrap`'
-  - '`mrCoOccurNet_bootstrap`'  
-  - '`mrFlashlight`'
-  - '`mrIMLperformance`'
-  - '`mrIMLpredicts`'
-  - '`mrInteractions`'
-  - '`mrLocalExplainer`'
-  - '`mrPD_bootstrap`'
-  - '`mrPerformancePlot`'
-  - '`mrPlot_interactions`'
-  - '`mrProfileplot`'
-  - '`MrShapely`'  
-  - '`mrvip`'
-  - '`readSnpsPed`'
-  - '`resist_components`'
-  - '`Responsedata`'
-
 articles:
 - title: All vignettes
   desc: ~
