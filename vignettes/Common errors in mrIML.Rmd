@@ -7,8 +7,9 @@ output:
   rmarkdown::html_vignette: default
   github_document: default
   css: extra.css
-vignette: |
-  %\VignetteIndexEntry{mrIML}
+vignette: >
+  %\VignetteIndexEntry{Common errors in mrIML}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 ```{r setup, include = FALSE}
