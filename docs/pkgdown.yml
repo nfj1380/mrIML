@@ -1,12 +1,15 @@
-pandoc: 2.11.4
-pkgdown: 1.6.1
+pandoc: '3.3'
+pkgdown: 2.0.9
 pkgdown_sha: ~
 articles:
-  Vignette_regression: Vignette_regression.html
-  Vignette_biosecurity: Vignette_biosecurity.html
-  Vignette_classification: Vignette_classification.html
-last_built: 2021-12-23T12:24Z
+  Common errors in mrIML: Common errors in mrIML.html
+  Graphical network model (GNM): Graphical network model (GNM).html
+  Landscape genetics (classification): Landscape genetics (classification).html
+  Landscape genetics: Landscape genetics.html
+  Regression: Regression.html
+  Swine biosecurity: Swine biosecurity.html
+last_built: 2024-08-30T15:23Z
 urls:
-  reference: nfj1380.io/mrIML//reference
-  article: nfj1380.io/mrIML//articles
+  reference: https://nfj1380.io/mrIML/reference
+  article: https://nfj1380.io/mrIML/articles
 

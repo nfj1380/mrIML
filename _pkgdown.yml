@@ -1,21 +1,25 @@
+url: https://github.com/nfj1380/mrIML
+
 home:
   title: mrIML
-
-url: nfj1380.io/mrIML/
-template:
-  params:
-    bootswatch: flatly
-  opengraph:
-    image:
-      src: man/figures/logo.png
-      alt: "Multivariate–multi-response–interpretable machine learning"
-    twitter:
-      creator: "@gustavoetal"
-      card: summary
 
 authors:
   Gustavo Machado:
     href: https://machado-lab.github.io/
+  Nick Fountain-Jone:
+    href: https://discover.utas.edu.au/Nick.FountainJones
+
+template:
+  bootstrap: 5
+  light-switch: true
+  bslib:
+    primary: "#0054AD"
+    border-radius: 0.5rem
+    btn-border-radius: 0.25rem
+    danger: "#A6081A"
+
+development:
+  mode: auto
 
 navbar:
   type: inverse
@@ -43,47 +47,31 @@ navbar:
     articles:
       text: Articles
       menu:
+      - text: Common errors in mrIML
+        href: articles/Common errors in mrIML.html      
       - text: Swine Biosecurity working example
-        href: articles/Vignette_biosecurity.html
+        href: articles/Swine biosecurity.html
       - text: Classification working example
-        href: articles/Vignette_classification.html
+        href: articles/Landscape genetics (classification).html
       - text: Regression working example
-        href: articles/Vignette_regression.html
+        href: articles/Regression.html
+      - text: Landscape genetics
+        href: articles/Landscape genetics.html
+      - text: Graphical network model (GNM)
+        href: articles/Graphical network model (GNM).html
       figures:
         fig.width: 12
         fig.height: 12
-  
-reference:
-- title: All functions
-  contents:
-  - '`devianceResids`'
-  - '`Features`'
-  - '`filterRareCommon`'
-  - '`gfData`'
-  - '`mrFlashlight`'
-  - '`mrIMLperformance`'
-  - '`mrIMLpredicts`'
-  - '`mrInteractions`'
-  - '`mrPlot_interactions`'
-  - '`mrProfileplot`'
-  - '`mrVip`'
-  - '`plot_vi`'
-  - '`readSnpsPed`'
-  - '`resist_components`'
-  - '`Responsedata`'
-  - '`vintTidy`'
-  - '`mrBenchmark`'
-  - '`mrLocalExplainer`'
-  - '`MrIMLconverts`'
-  - '`interpret_Mrvi`'
-  - '`mrProfile2D`'
-  - '`plot_vi_biosecurity`'
+
 
 articles:
 - title: All vignettes
   desc: ~
   contents:
-  - '`Vignette_biosecurity`'
-  - '`Vignette_classification`'
-  - '`Vignette_regression`'
+  - '`Common errors in mrIML`'
+  - '`Swine biosecurity`'
+  - '`Landscape genetics (classification)`'
+  - '`Graphical network model (GNM)`'
+  - '`Landscape genetics`'  
+  - '`Regression`'
 

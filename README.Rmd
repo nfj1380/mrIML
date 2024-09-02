@@ -1,19 +1,15 @@
 ---
 output: github_document
 ---
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
    fig.width = 10, fig.height = 6, fig.align = "center",
   comment = "#>",
-  fig.path = "man/figures/README-"
-)
-
+  fig.path = "man/figures/README-")
 ```
-# mrIML: Multivariate (multi-response) interpretable machine learning <a href='https://nfj1380.github.io/mrIML/index.html'><img src="man/figures/logo2.png" align="right" height="120"/></a>
+# mrIML: Multivariate (multi-response) interpretable machine learning <img src="man/figures/logo2.png" align="right" height="120"/></a>
 
 <!-- badges: start -->
 ![GitHub R package version](https://img.shields.io/github/r-package/v/nfj1380/mrIML?logo=github&logoColor=%2300ff37&style=flat-square)
@@ -40,7 +36,6 @@ Install the stable version of the package:
 #devtools::install_github('nfj1380/mrIML')
 library(mrIML)
 ```
-
 ## Quick start
 
 **mrIML** is designed to be used with a single function call or to be used in an ad-hoc fashion via individual function calls. In the following section we give an overview of the simple use case. For more on using each function see the [function documentation](https://nfj1380.github.io/mrIML/reference/index.html). The core functions for both regression and classification are: [`mrIMLpredicts`](https://nfj1380.github.io/mrIML/reference/mrIMLpredicts.html),
@@ -50,30 +45,23 @@ library(mrIML)
 We also allow users to get bootstrapped estimations of partial dependencies and variable importance using [`mrBootstrap`](https://nfj1380.github.io/mrIML/reference/mrBootstrap.html). 
 
 The first step to using the package is to load it as follows.
-
 ```{r, message = FALSE, message = FALSE, warning = FALSE, include=FALSE}
 pacman:: p_load(
   vip, tidymodels, randomForest, caret, gbm,
   tidyverse, parallel, doParallel, themis, viridis,
   janitor, hrbrthemes, xgboost, vegan, flashlight,
-  ggrepel, iml, plyr, future.apply, gridExtra, cowplot, mrIML,hstats
-)
+  ggrepel, iml, plyr, future.apply, gridExtra, cowplot, mrIML,hstats)
 ```
-
 ## Model component
 Now all the data is loaded and ready to go we can formulate the model using tidymodel syntax. In this case we have binary data (SNP presence/absence at each loci) but the data could also be counts or continuous (the set_model argument would be "regression" instead of "classification"). The user can specify any model from the 'tidymodel' universe as 'model 1' (see https://www.tidymodels.org/find/ for details). However, we have done most of our testing on random forests (rf) and glms (generalized linear models). Here we will specify a random forest classification model as the model applied to each response.
-
-
 ```{r }
-model_rf <- 
-  rand_forest(trees = 100,
+model_rf <-rand_forest(trees = 100,
               mode = "classification",
               mtry = tune(),
               min_n = tune()) %>% #100 trees are set for brevity. Aim to start with 1000
              set_engine("randomForest")
 
 ```
- 
 ### [`mrIMLpredicts`](https://nfj1380.github.io/mrIML/reference/mrIMLpredicts.html)
 
 This function represents the core functionality of the package and
@@ -81,26 +69,22 @@ includes results reporting, plotting and optional saving.  It requires a
 data frame of X t( the snp data for example) and Y represented by the covariates or features.
 
 Load example data (cite) data from `{mrIML}`.
-
 ``` {r}
 fData <- filterRareCommon (Responsedata,
                            lower=0.4,
                            higher=0.7) 
 data <- fData[1:20]
 ```
-
 ## Parallel processing
 
 MrIML provides uses the flexible future apply functionality to set up multi-core processing. In the example below, we set up a cluster using 4 cores. If you don't set up a cluster, the default settings will be used and the analysis will run sequentially.
-
 ```{r, eval = FALSE}
 # detectCores() #check how many cores you have available. We suggest keeping one core free for internet browsing etc.
 
 cl <- parallel::makeCluster(4)
-plan(cluster,
+     plan(cluster,
      workers=cl)
 ```
-
 ``` {r message = FALSE, warning = FALSE}
 Y <- fData #For simplicity when comparing
 #Define set the outcomes of interest
@@ -123,12 +107,12 @@ yhats_rf <- mrIMLpredicts(X=X,Y=Y, #specify which data to use
 
 ModelPerf <- mrIMLperformance(yhats=yhats_rf,
                               Model=model_rf,
-                              Y=Y, mode='classification')
+                              Y=Y,
+                              mode='classification')
+
 ModelPerf[[1]] #Predictive performance for individual responses 
 ModelPerf[[2]]#Overall predictive performance. r2 for regression and MCC for classification
 ```
-
-
 ## Plotting
 ```{r message = FALSE, warning = FALSE}
 bs_impVI <- mrvip(
@@ -137,22 +121,18 @@ bs_impVI <- mrvip(
   X = X,
   Y = Y,
   mode = 'classification',
-  threshold = 0.0,
+  threshold = 0.8,
   global_top_var = 10,
   local_top_var = 5,
   taxa = 'pol_132',
-  ModelPerf = ModelPerf 
-)
+  ModelPerf = ModelPerf)
 
 bs_impVI[[3]] #importance
 bs_impVI[[4]] #PCA
 ```
-
 ## Effect of a feature on genetic change
 
 We also wrap some flashlight functionality to visualize the marginal (i.e. partial dependencies) or conditional (accumulated local effects) effect of a feature on genetic change. Partial dependencies take longer to calculate and are more sensitive to correlated features
-
-
 ```{r message = FALSE, warning = FALSE}
 flashlightObj <- mrFlashlight(yhats_rf,
                               X=X,
@@ -179,22 +159,25 @@ mrProfileplot(profileData_ale,
               sdthresh =0.01)
 #the second plot is the cumulative turnover function
 ```
-
-
 ## Interacting predictors or features
 
 Finally, we can assess how features interact overall to shape genetic change. Be warned this is memory intensive. Future updates to this package will enable users to visualize these interactions and explore them in more detail using 2D ALE plots for example.
-
 ```{r message = FALSE, warning = FALSE}
-#interactions <-mrInteractions(yhats,X,Y,mod='classification') #this is computationally intensive so multicores are needed. If stopped prematurely - have to reload things
-#mrPlot_interactions(interactions,X,Y,top_ranking = 2,top_response=2)
+int_ <- mrInteractions(yhats=yhats_rf,
+                       X,
+                       Y,
+                       num_bootstrap=10,
+                       feature = 'Plas', 
+                       top.int=10)
+#10 bootstraps to keep it short. top int focusses on the 10 top interactions (all of them in this case).
+
+int_[[1]] # overall plot
+#int_[[2]] # individual plot for the response of choice 
+#int_[[3]] # two way plot
 ```
-
-
 ## References
 Xing, L, Lesperance, ML and Zhang, X (2020). Simultaneous prediction of multiple outcomes using revised stacking algorithms. Bioinformatics, 36, 65-72. doi:10.1093/bioinformatics/btz531.
 
 Fitzpatrick, M.C. & Keller, S.R. (2015) Ecological genomics meets community-level modelling of biodiversity: mapping the genomic landscape of current and future environmental adaptation. Ecology Letters 18, 1–16.doi.org/10.1111/ele.12376
 
 Ellis, N., Smith, S.J. and Pitcher, C.R. (2012), Gradient forests: calculating importance gradients on physical predictors. Ecology, 93: 156-168. doi:10.1890/11-0252.1
-
