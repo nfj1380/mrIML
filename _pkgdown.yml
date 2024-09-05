@@ -26,10 +26,8 @@ navbar:
   structure:
     left:
     - home
-    - intro
     - articles
     - functions
-    - tutorials
     - news
   right:
     - icon: fa-github
@@ -74,4 +72,3 @@ articles:
   - '`Graphical network model (GNM)`'
   - '`Landscape genetics`'  
   - '`Regression`'
-
