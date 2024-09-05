@@ -9,11 +9,6 @@ authors:
   Nick Fountain-Jone:
     href: https://discover.utas.edu.au/Nick.FountainJones
 
-template:
-  bootstrap: 5
-  theme: breeze-light
-
-
 navbar:
   type: inverse
   structure:
