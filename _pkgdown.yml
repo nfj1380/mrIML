@@ -11,15 +11,8 @@ authors:
 
 template:
   bootstrap: 5
-  light-switch: true
-  bslib:
-    primary: "#0054AD"
-    border-radius: 0.5rem
-    btn-border-radius: 0.25rem
-    danger: "#A6081A"
+  theme: breeze-light
 
-development:
-  mode: auto
 
 navbar:
   type: inverse
@@ -72,3 +65,4 @@ articles:
   - '`Graphical network model (GNM)`'
   - '`Landscape genetics`'  
   - '`Regression`'
+  
