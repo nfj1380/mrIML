@@ -28,7 +28,7 @@ First, we need to load up some extra functionality and some data. The first exam
 
 ```{r pac, message = FALSE, warnings = FALSE, include=FALSE}
 library(pacman)
-pacman::p_load('MRFcov', 'tidyverse', 'future.apply','tidymodels', 'finetune', 'themis', 'vip', 'flashlight', 'iml', 'vivid', 'igraph', 'ggnetwork', 'network','gridExtra', 'xgboost', 'brulee', 'fastshap', 'tabnet', 'bonsai', 'parsnip', 'cowplot', 'progress', 'hstats', 'geosphere', 'mrIML')
+pacman::p_load('MRFcov', 'tidyverse', 'future.apply','tidymodels', 'finetune', 'themis', 'vip', 'flashlight', 'iml', 'vivid', 'igraph', 'ggnetwork', 'network','gridExtra', 'xgboost', 'brulee', 'fastshap', 'tabnet', 'bonsai', 'parsnip', 'cowplot', 'progress', 'hstats', 'geosphere', 'mrIML','lme4')
 ```
 
 ```{r, message = FALSE, warnings = FALSE}
