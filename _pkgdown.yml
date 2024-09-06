@@ -1,0 +1,63 @@
+url: https://github.com/nfj1380/mrIML
+
+home:
+  title: mrIML
+
+authors:
+  Gustavo Machado:
+    href: https://machado-lab.github.io/
+  Nick Fountain-Jone:
+    href: https://discover.utas.edu.au/Nick.FountainJones
+
+navbar:
+  type: inverse
+  structure:
+    left:
+    - home
+    - articles
+    - functions
+    - news
+  right:
+    - icon: fa-github
+      href: https://github.com/nfj1380/mrIML
+  components:
+    home:
+      icon: fas fa-home fa-lg
+      href: index.html
+    news:
+      text: News
+      href: news/index.html
+    reference:
+      text: Functions
+      href: reference/index.html
+    articles:
+      text: Articles
+      menu:
+      - text: Common errors in mrIML
+        href: articles/Common errors in mrIML.html      
+      - text: Swine Biosecurity working example
+        href: articles/Swine biosecurity.html
+      - text: Classification working example
+        href: articles/Landscape genetics (classification).html
+      - text: Regression working example
+        href: articles/Regression.html
+      - text: Landscape genetics
+        href: articles/Landscape genetics.html
+      - text: Graphical network model (GNM)
+        href: articles/Graphical network model (GNM).html
+      figures:
+        fig.width: 12
+        fig.height: 12
+
+
+articles:
+- title: All vignettes
+  desc: ~
+  contents:
+  - '`Common errors in mrIML`'
+  - '`Swine biosecurity`'
+  - '`Landscape genetics (classification)`'
+  - '`Graphical network model (GNM)`'
+  - '`Landscape genetics`'  
+  - '`Regression`'
+  
