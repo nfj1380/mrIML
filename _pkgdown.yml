@@ -3,6 +3,9 @@ url: https://github.com/nfj1380/mrIML
 home:
   title: mrIML
 
+template:
+  bootstrap: 5
+  
 authors:
   Gustavo Machado:
     href: https://machado-lab.github.io/
