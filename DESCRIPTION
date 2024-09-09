@@ -23,6 +23,7 @@ Imports:
     tidymodels,
     randomForest,
     gbm,
+    pacman,
     tidyverse,
     parallel,
     doParallel,
