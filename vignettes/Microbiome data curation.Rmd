@@ -1,0 +1,215 @@
+---
+title: "Microbiome data curation"
+author: "Nick Fountain-Jones"
+date: "`r Sys.Date()`"
+output: html_document
+---
+In this vignette, we will walk you through how to curate your microbiome data extracted from pipelines such as QIIME 2 into a format suitable for MrIML. The main problem with using the raw data as the ASV names a long character vectors of nucleotide data which will make interpretation impossible. The data set is just 10 ASVs from the ostrich case study in Fountain-Jones et al (2024) to keep things simple. We will check out the data and load the required packages.
+
+```{r setup, include=FALSE}
+pacman::p_load('MRFcov', 'mrIML', 'tidyverse', 'future.apply','tidymodels', 'finetune',
+               'themis', 'vip', 'flashlight', 'iml', 'vivid', 'igraph', 'ggnetwork', 'network',
+               'gridExtra', 'xgboost', 'brulee', 'fastshap', 'tabnet', 'bonsai',
+               'parsnip','data.table', 'cowplot', 'progress', 'hstats', 'geosphere')
+
+
+#raw ASV data
+#load("~/MrIML/mrIML/data/asv_data.rda")
+asv_data <- otu_table_ostrich
+str(asv_data)
+
+#corresponding taxa table
+#load("~/MrIML/mrIML/data/asv_taxa_table.rda")
+asv_taxa_table <- taxa_table_ostrich
+str(asv_taxa_table)
+```
+
+##Preparing the ASV table
+
+The first step is to prepare the taxa table by removing columns and making sure columns aren't identical. This will help when we start to create meaningful names for the ASVs.
+
+```{r cars}
+#----------------------------------------------------
+# Prepare ASV table
+#----------------------------------------------------
+
+#ASV column not needed
+asv_taxa_table$ASV <- NULL
+asv_taxa_table$Kingdom<- NULL
+asv_taxa_table$Class<- NULL
+asv_taxa_table$Phylum<- NULL
+
+#create_names
+create_name <- function(row) {
+  non_na_values <- na.omit(row)
+  unique_values <- unique(non_na_values)  # Remove duplicates
+  
+  if (length(unique_values) > 3) {
+    unique_values <- unique_values[1:2]
+  }
+  
+  # Extract genus and species names if available
+  family <- ifelse("Family" %in% names(row), row["Family"], NA)
+  genus <- ifelse("Genus" %in% names(row), row["Genus"], NA)
+  species <- ifelse("Species" %in% names(row), row["Species"], NA)
+  
+  # Combine genus, species, and unique values into a name
+  name_parts <- c(family,genus, species, unique_values)
+  name_parts <- name_parts[!is.na(name_parts)]  # Remove NA values
+  return(paste(name_parts, collapse = "_"))
+}
+
+# Create the 'Name' column
+asv_taxa_table$Name <- apply(asv_taxa_table, 1, create_name)
+
+```
+
+## Creating names
+
+The next functions take the ASV table data and make unique names for the new column in the taxa table.
+
+```{r,, echo=FALSE}
+#make names unique
+make_names_unique <- function(names_vector, remove_duplicates = character(0)) {
+  # Remove specified strings (e.g., "Clostridiales") from the names vector
+  names_vector <- names_vector[!names_vector %in% remove_duplicates]
+  
+  # Create a named vector to keep track of counts for each name
+  name_counts <- numeric(length(names_vector))
+  names(name_counts) <- names_vector
+  
+  # Initialize a result vector
+  result_names <- character(length(names_vector))
+  
+  for (i in seq_along(names_vector)) {
+    name <- names_vector[i]
+    
+    # Check if the name exists in name_counts
+    if (!is.na(name_counts[name])) {
+      # Check if the name has occurred before
+      if (name_counts[name] > 1) {
+        # Append a number to make the name unique
+        result_names[i] <- paste0(name, "_", name_counts[name])
+      } else {
+        result_names[i] <- name
+      }
+      
+      # Update the count for this name
+      name_counts[name] <- name_counts[name] + 1
+    } else {
+      # If name doesn't exist in name_counts, treat it as the first occurrence
+      result_names[i] <- name
+      name_counts[name] <- 1
+    }
+  }
+  
+  return(result_names)
+}
+
+
+asv_taxa_table$Name_f <- make_names_unique(asv_taxa_table$Name)
+
+replace_empty_names <- function(names_vector) {
+  # Find indices where names are empty
+  empty_indices <- names_vector == ""
+  
+  # Count occurrences of empty names
+  empty_counts <- cumsum(empty_indices)
+  
+  # Replace empty names with "Taxon" followed by count
+  names_vector[empty_indices] <- paste0("Taxon ", empty_counts[empty_indices])
+  
+  return(names_vector)
+}
+
+asv_taxa_table$Name_comp <-replace_empty_names(asv_taxa_table$Name_f)
+
+make_names_unique3 <- function(names_vector) {
+  # Initialize a counter to keep track of occurrences of each name
+  name_counts <- list()
+  
+  # Initialize a result vector to store the modified names
+  result_names <- character(length(names_vector))
+  
+  for (i in seq_along(names_vector)) {
+    name <- names_vector[i]
+    
+    # Check if the name is empty or has occurred before
+    if (name == "" || is.null(name_counts[[name]]) || name_counts[[name]] > 0) {
+      # Increment the count for this name
+      count <- ifelse(is.null(name_counts[[name]]), 1, name_counts[[name]] + 1)
+      name_counts[[name]] <- count
+      
+      # Append a number to make the name unique
+      result_names[i] <- paste0(name, ".", count)
+    } else {
+      result_names[i] <- name
+      # First occurrence of this name, initialize count to 1
+      name_counts[[name]] <- 1
+    }
+  }
+  
+  return(result_names)
+}
+
+asv_taxa_table$Name_comp1 <- make_names_unique3(asv_taxa_table$Name_comp)
+```
+
+
+Now we can start fomatting our Y (response data) ready for MrIML. This includes filtering rare and common taxa.
+
+```{r}
+
+#make sure names match
+final_ASV_table <- asv_data
+final_ASV_table$ASV <- asv_taxa_table$Name_comp1 
+
+#add row names
+final_ASV_table_r <- final_ASV_table %>% 
+  column_to_rownames(var='ASV')
+#get into right format for MrIML
+final_ASV_table_df <-as.data.frame(t(final_ASV_table_r ))
+
+#make presence/absence
+pa_ASV_table <- final_ASV_table_df %>% 
+  mutate_all(~ ifelse(. > 0, 1, .))
+
+#remove rare and common ASVs
+Y <- filterRareCommon(pa_ASV_table , lower=0.1, higher=0.9) %>% 
+  dplyr::select(sort(names(.))) #0.2
+
+colnames(Y) <- sub(".*_(.*_.*)$", "\\1", colnames(Y))
+
+## Find duplicated column names
+duplicated_cols <- duplicated(colnames(Y))
+
+colnames(Y) <- make.names(colnames(Y), unique = TRUE)
+
+#more tidying
+Y <- Y %>% 
+  rename_all(~make.names(str_remove_all(., "`")))
+
+# Shorten the part to the left of the underscore to 4 characters
+
+abbreviate_names <- function(names_vector) {
+  abbreviated_names <- sapply(strsplit(names_vector, "_"), function(parts) {
+    first_part <- substr(parts[1], 1, 4)
+    second_part <- parts[2]
+    return(paste(first_part, second_part, sep = "_"))
+  })
+  return(abbreviated_names)
+}
+
+# Use the function to shorten the names(
+modified_col_names <- abbreviate_names(colnames(Y))
+
+colnames(Y) <- modified_col_names
+glimpse(Y)
+
+
+
+```
+
+Now we are good to go and the MrIML 2.0 grahical network models can be generated!
+
+
