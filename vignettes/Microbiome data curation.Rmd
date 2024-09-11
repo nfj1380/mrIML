@@ -1,12 +1,28 @@
 ---
 title: "Microbiome data curation"
-author: "Nick Fountain-Jones"
-date: "`r Sys.Date()`"
-output: html_document
+opengraph:
+  image:
+    src: 
+output:
+  rmarkdown::html_vignette: default
+  github_document: default
+  css: extra.css
+vignette: >
+  %\VignetteIndexEntry{Microbiome data curation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+    fig.width = 8, fig.height = 6, fig.align = "center",
+  comment = "#>"
+)
+options(rmarkdown.html_vignette.check_title = FALSE)
+```
 In this vignette, we will walk you through how to curate your microbiome data extracted from pipelines such as QIIME 2 into a format suitable for MrIML. The main problem with using the raw data as the ASV names a long character vectors of nucleotide data which will make interpretation impossible. The data set is just 10 ASVs from the ostrich case study in Fountain-Jones et al (2024) to keep things simple. We will check out the data and load the required packages.
 
-```{r setup, include=FALSE}
+```{r include=FALSE}
 pacman::p_load('MRFcov', 'mrIML', 'tidyverse', 'future.apply','tidymodels', 'finetune',
                'themis', 'vip', 'flashlight', 'iml', 'vivid', 'igraph', 'ggnetwork', 'network',
                'gridExtra', 'xgboost', 'brulee', 'fastshap', 'tabnet', 'bonsai',
@@ -14,7 +30,6 @@ pacman::p_load('MRFcov', 'mrIML', 'tidyverse', 'future.apply','tidymodels', 'fin
 
 
 #raw ASV data
-#load("~/MrIML/mrIML/data/asv_data.rda")
 asv_data <- otu_table_ostrich
 str(asv_data)
 

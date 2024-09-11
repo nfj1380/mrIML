@@ -48,6 +48,8 @@ navbar:
         href: articles/Landscape genetics.html
       - text: Graphical network model (GNM)
         href: articles/Graphical network model (GNM).html
+      - text: Microbiome data curation
+        href: articles/Microbiome data curation.html
       figures:
         fig.width: 12
         fig.height: 12
@@ -63,4 +65,5 @@ articles:
   - '`Graphical network model (GNM)`'
   - '`Landscape genetics`'  
   - '`Regression`'
+  - '`Microbiome data curation`'
   
