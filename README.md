@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# mrIML: Multivariate (multi-response) interpretable machine learning <img src="man/figures/logo2.png" align="right" height="120"/></a>
+# mrIML: Multivariate (multi-response) interpretable machine learning <img src="man/figures/logo.png" align="right" height="120"/></a>
 
 <!-- badges: start -->
 
