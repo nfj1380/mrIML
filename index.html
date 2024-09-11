@@ -253,10 +253,10 @@
 <span><span class="co">#&gt; [1] "here"</span></span>
 <span></span>
 <span><span class="va">bs_impVI</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span> <span class="co">#importance</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-8-1.png" style="display: block; margin: auto;"></p>
+<p><img src="reference/figures/unnamed-chunk-8-1.png"><!-- --></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bs_impVI</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span> <span class="co">#PCA</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-8-2.png" style="display: block; margin: auto;"> ## Effect of a feature on genetic change</p>
+<p><img src="reference/figures/unnamed-chunk-8-2.png"><!-- --> ## Effect of a feature on genetic change</p>
 <p>We also wrap some flashlight functionality to visualize the marginal (i.e. partial dependencies) or conditional (accumulated local effects) effect of a feature on genetic change. Partial dependencies take longer to calculate and are more sensitive to correlated features</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">flashlightObj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mrFlashlight.html">mrFlashlight</a></span><span class="op">(</span><span class="va">yhats_rf</span>,</span>
@@ -270,14 +270,14 @@
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">light_scatter</span><span class="op">(</span><span class="va">flashlightObj</span>,</span>
 <span>                   v <span class="op">=</span> <span class="st">"Forest"</span>,</span>
 <span>                   type <span class="op">=</span> <span class="st">"predicted"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-9-1.png" style="display: block; margin: auto;"></p>
+<p><img src="reference/figures/unnamed-chunk-9-1.png"><!-- --></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co">#plots everything on one plot (partial dependency, ALE, scatter)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">light_effects</span><span class="op">(</span><span class="va">flashlightObj</span>,</span>
 <span>                   v <span class="op">=</span> <span class="st">"Grassland"</span><span class="op">)</span>,</span>
 <span>                   use <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-9-2.png" style="display: block; margin: auto;"></p>
+<p><img src="reference/figures/unnamed-chunk-9-2.png"><!-- --></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">profileData_ale</span> <span class="op">&lt;-</span> <span class="fu">light_profile</span><span class="op">(</span><span class="va">flashlightObj</span>,</span>
@@ -286,9 +286,9 @@
 <span></span>
 <span><span class="fu"><a href="reference/mrProfileplot.html">mrProfileplot</a></span><span class="op">(</span><span class="va">profileData_ale</span>,</span>
 <span>              sdthresh <span class="op">=</span><span class="fl">0.01</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-9-3.png" style="display: block; margin: auto;"></p>
+<p><img src="reference/figures/unnamed-chunk-9-3.png"><!-- --></p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co">#&gt;  Press [enter] to continue to the global summary plot</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-9-4.png" style="display: block; margin: auto;"></p>
+<p><img src="reference/figures/unnamed-chunk-9-4.png"><!-- --></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#the second plot is the cumulative turnover function</span></span></code></pre></div>
 </div>
@@ -306,7 +306,7 @@
 <span><span class="co">#10 bootstraps to keep it short. top int focusses on the 10 top interactions (all of them in this case).</span></span>
 <span></span>
 <span><span class="va">int_</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co"># overall plot</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-10-1.png" style="display: block; margin: auto;"></p>
+<p><img src="reference/figures/unnamed-chunk-10-1.png"><!-- --></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#int_[[2]] # individual plot for the response of choice </span></span>
 <span><span class="co">#int_[[3]] # two way plot</span></span></code></pre></div>
