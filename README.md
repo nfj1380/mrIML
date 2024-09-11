@@ -256,14 +256,14 @@ bs_impVI <- mrvip(
 bs_impVI[[3]] #importance
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
+![](man/figures/unnamed-chunk-8-1.png)<!-- -->
 
 ``` r
 bs_impVI[[4]] #PCA
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-2.png" style="display: block; margin: auto;" />
-\## Effect of a feature on genetic change
+![](man/figures/unnamed-chunk-8-2.png)<!-- --> \## Effect of a feature
+on genetic change
 
 We also wrap some flashlight functionality to visualize the marginal
 (i.e. partial dependencies) or conditional (accumulated local effects)
@@ -284,7 +284,7 @@ plot(light_scatter(flashlightObj,
                    type = "predicted"))
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
+![](man/figures/unnamed-chunk-9-1.png)<!-- -->
 
 ``` r
 
@@ -294,7 +294,7 @@ plot(light_effects(flashlightObj,
                    use = "all")
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-2.png" style="display: block; margin: auto;" />
+![](man/figures/unnamed-chunk-9-2.png)<!-- -->
 
 ``` r
 
@@ -306,11 +306,11 @@ mrProfileplot(profileData_ale,
               sdthresh =0.01)
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-3.png" style="display: block; margin: auto;" />
+![](man/figures/unnamed-chunk-9-3.png)<!-- -->
 
     #>  Press [enter] to continue to the global summary plot
 
-<img src="man/figures/README-unnamed-chunk-9-4.png" style="display: block; margin: auto;" />
+![](man/figures/unnamed-chunk-9-4.png)<!-- -->
 
 ``` r
 #the second plot is the cumulative turnover function
@@ -335,7 +335,7 @@ int_ <- mrInteractions(yhats=yhats_rf,
 int_[[1]] # overall plot
 ```
 
-<img src="man/figures/README-unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
+![](man/figures/unnamed-chunk-10-1.png)<!-- -->
 
 ``` r
 #int_[[2]] # individual plot for the response of choice 

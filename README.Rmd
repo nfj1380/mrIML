@@ -5,9 +5,9 @@ output: github_document
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-   fig.width = 10, fig.height = 6, fig.align = "center",
   comment = "#>",
-  fig.path = "man/figures/README-")
+  fig.path = "man/figures/"
+)
 ```
 # mrIML: Multivariate (multi-response) interpretable machine learning <img src="man/figures/logo2.png" align="right" height="120"/></a>
 
