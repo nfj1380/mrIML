@@ -9,8 +9,6 @@
 version](https://img.shields.io/github/r-package/v/nfj1380/mrIML?logo=github&logoColor=%2300ff37&style=flat-square)
 ![GitHub
 contributors](https://img.shields.io/github/contributors/nfj1380/mrIML?style=flat-square)
-![GitHub all
-releases](https://img.shields.io/github/downloads/nfj1380/mriml/total?style=flat-square)
 ![GitHub last
 commit](https://img.shields.io/github/last-commit/nfj1380/mrIML?style=flat-square)
 [![R-CMD-check](https://github.com/nfj1380/mrIML/workflows/R-CMD-check/badge.svg)](https://github.com/nfj1380/mrIML/actions)
@@ -29,21 +27,6 @@ This package can be of use for any multi-response machine learning
 problem, but was designed to handle data common to community ecology
 (site by species data) and ecological genomics (individual or population
 by SNP loci).
-
-## Recent mrIML publications
-
-1.  Fountain-Jones, N. M., Kozakiewicz, C. P., Forester, B. R.,
-    Landguth, E. L., Carver, S., Charleston, M., Gagne, R. B.,
-    Greenwell, B., Kraberger, S., Trumbo, D. R., Mayer, M., Clark, N.
-    J., & Machado, G. (2021). MrIML: Multi-response interpretable
-    machine learning to model genomic landscapes. Molecular Ecology
-    Resources, 21, 2766– 2781. <https://doi.org/10.1111/1755-0998.13495>
-
-2.  Sykes, A. L., Silva, G. S., Holtkamp, D. J., Mauch, B. W., Osemeke,
-    O., Linhares, D. C.L., & Machado, G. (2021). Interpretable machine
-    learning applied to on-farm biosecurity and porcine reproductive and
-    respiratory syndrome virus. Transboundary and Emerging Diseases, 00,
-    1– 15. <https://doi.org/10.1111/tbed.14369>
 
 ## Installation
 
@@ -341,6 +324,21 @@ int_[[1]] # overall plot
 #int_[[2]] # individual plot for the response of choice 
 #int_[[3]] # two way plot
 ```
+
+## Recent mrIML publications
+
+1.  Fountain-Jones, N. M., Kozakiewicz, C. P., Forester, B. R.,
+    Landguth, E. L., Carver, S., Charleston, M., Gagne, R. B.,
+    Greenwell, B., Kraberger, S., Trumbo, D. R., Mayer, M., Clark, N.
+    J., & Machado, G. (2021). MrIML: Multi-response interpretable
+    machine learning to model genomic landscapes. Molecular Ecology
+    Resources, 21, 2766– 2781. <https://doi.org/10.1111/1755-0998.13495>
+
+2.  Sykes, A. L., Silva, G. S., Holtkamp, D. J., Mauch, B. W., Osemeke,
+    O., Linhares, D. C.L., & Machado, G. (2021). Interpretable machine
+    learning applied to on-farm biosecurity and porcine reproductive and
+    respiratory syndrome virus. Transboundary and Emerging Diseases, 00,
+    1– 15. <https://doi.org/10.1111/tbed.14369>
 
 ## References
 
