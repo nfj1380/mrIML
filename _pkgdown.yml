@@ -5,6 +5,12 @@ home:
 
 template:
   bootstrap: 5
+  light-switch: true
+  bslib:
+    primary: "#0054AD"
+    border-radius: 0.5rem
+    btn-border-radius: 0.25rem
+    danger: "#A6081A"
   
 authors:
   Gustavo Machado:
@@ -57,7 +63,7 @@ navbar:
 
 articles:
 - title: All vignettes
-  desc: ~
+  navbar: ~
   contents:
   - '`Common errors in mrIML`'
   - '`Swine biosecurity`'
@@ -66,3 +72,11 @@ articles:
   - '`Landscape genetics`'  
   - '`Regression`'
   - '`Microbiome data curation`'
+  
+  
+reference:
+- title: Build
+
+development:
+  mode: auto
+  
