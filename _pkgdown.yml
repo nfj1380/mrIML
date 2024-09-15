@@ -5,7 +5,6 @@ home:
 
 template:
   bootstrap: 5
-  light-switch: true
   bslib:
     primary: "#0054AD"
     border-radius: 0.5rem
