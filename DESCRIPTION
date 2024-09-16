@@ -3,7 +3,7 @@ Type: Package
 Title: Multi Response Interpretable Machine Learning
 Version: 2.0.0
 Authors@R: c(
-    person("Nick", "Fountain-Jone", , "nfountainjones@gmail.com", role = c("aut", "cre"),
+    person("Nick", "Fountain-Jones", , "nfountainjones@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-9248-8493")),
     person("Gustavo", "Machado", , "gmachad@ncsu.edu", role = c("aut"),
            comment = c(ORCID = "0000-0001-7552-6144")),
